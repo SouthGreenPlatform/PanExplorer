@@ -1,0 +1,420 @@
+ 
+# Copyright 2012-2014 Alexis Dereeper, Felix Homa
+#
+# ###########################
+# # SNiPlay scripts
+# ###########################
+#
+#    This file is part of SNiPlay.
+#
+#    SNiPlay is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    SNiPlay is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with SNiPlay.  If not, see <http://www.gnu.org/licenses/>.
+
+ 
+
+=head1 NAME
+
+Config::Configuration - Store all the constants (file and direcoriy names...)
+
+=head1 SYNOPSIS
+
+my $WEB_DIR = $Configuration::WEB_DIR;
+
+=head1 REQUIRES
+
+=head1 DESCRIPTION
+
+This package enable to store all constants which can be used by any program or module : file and directory names...
+
+=cut
+
+package Configuration;
+
+# Package constants
+####################
+
+=pod
+
+=head1 CONSTANTS
+
+B<HOMEPAGE>:  String, public
+
+                   URL of the web page
+
+B<WEB_DIR>:  String, public
+
+                   used to define the URL of the web server
+
+B<HOME_DIR>:  String, public
+
+                   used to define the directory of the web server
+=cut
+
+########################### URL #########################
+our $HOMEPAGE = "INI.HTML_URL/";
+our $WEB_DIR = "INI.HTML_URL";
+
+
+######################## directories ####################
+# Absolute path of html public directory, $HOME_DIR must be HTML_DIR (htdocs or public_html folder)
+our $HOME_DIR = "INI.HTML_DIR";
+# Absolute path of cgi directory
+our $CGI_DIR = "INI.CGI_DIR";
+
+#All analysis are pocessed in this folder (need to make a specific cron job to remove analysis files periodically)
+our $TEMP_EXECUTION_DIR = "INI.EXECUTION_DIR";
+
+our $NETWORK_IMAGES_DIR = $HOME_DIR . "/network_images/";
+
+our $R_DIR          = $HOME_DIR . "/R";
+our $JAVASCRIPT_DIR = $WEB_DIR . "/javascript";
+our $IMAGES_DIR     = $WEB_DIR . "/images";
+our $STYLE_DIR      = $WEB_DIR . "/styles";
+our $CGI_WEB_DIR    = "INI.CGI_URL";
+
+our $EXAMPLES_DIR = $HOME_DIR . "/examples";
+
+our $DATA_DIR = "INI.DATA_DIR";
+
+our $ADMIN_MAIL = "";
+
+our $BUG_REPORT_PAGE = "";
+
+our $GIGWA_IMPORT_URL = "";
+our $GIGWA_URL_SCRATCH = "";
+our $GIGWA_URL = "";
+
+######################## input files ##########################
+our $DUMP_TXT         = "dump";
+our $DUMP_ZIP         = "dumps_zip";
+our $DUMP_TAR_GZ      = "dumps_targz";
+our $DEPTH_ZIP        = "depths_zip";
+our $DEPTH_TAR_GZ     = "depths_targz";
+our $HETEROZYGOTES_FILE = "heterozygotes_file";
+our $VARFILE          = "sample_var";
+our $FASTA_ALIGNMENT  = "alignment";
+our $GENALYS_ALIGNMENT= "alignment_genalys";
+our $GENALYS_OUTPUT   = "genalys";
+our $CAP3_OUTPUT      = "cap3output";
+our $ACE_ASSEMBLY     = "ace_assembly";
+
+our $VCFFILE          = "vcf";
+our $REFERENCE        = "reference";
+our $DEPTH_OF_COVERAGE= "depth_of_coverage";
+our $CHROMATO_ZIP     = "chromato.zip";
+our $CHROMATO_TAR_GZ  = "chromato.tar.gz";
+our $SNPEFF_INPUT     = "snpEff.input";
+our $SNPEFF_OUTPUT    = "snpEff.output";
+our $HAPMAP_INPUT     = "hapmap";
+our $EMMA_HAPMAP_INPUT= "hapmap";
+our $TRAIT_INPUT      = "trait";
+our $STRUCT_INPUT     = "structure";
+our $KINSHIP_INPUT    = "kinship";
+our $MAP_INPUT        = "map";
+our $CLUSTER_INPUT    = "cluster";
+our $MLMM_PHENO       = "mlmm_pheno.txt";
+our $MLMM_GENO        = "mlmm_geno.txt";
+our $MLMM_KIN         = "mlmm_kin.txt";
+our $MLMM_INFO        = "mlmm_snp_info.txt";
+
+######################## output files ##########################
+our $PEDFILE          = "pedfile";
+our $GENETABLE_FILE   = "genes.xls";
+our $GENOTYPING_FILE  = "genotyping_data.xls";
+our $INFOFILE         = "sample.info";
+our $GLOBAL_MAP_FILE  = "global.map";
+
+######################## limitations ##########################
+our $MAX_NB_INDIV_FASTA      = 1000;
+our $MAX_NB_GENES            = 20000;
+our $MAX_NB_INDIV_GENOTYPING = 500;
+our $MAX_NB_SNP_GENOTYPING   = 500;
+our $MAX_NB_CHROMATOGRAMS    = 4000;
+our $MAX_SIZE                = 500 * 1024 * 1024;
+
+our $MAX_NB_GENES_FOR_PHASING = 100;
+our $MAX_NB_SNPS_FOR_PHASING  = 300;
+
+#################### included programs ##########################
+our $HAPLOPHYLE_NAME = "Haplophyle";
+#our $HAPLOPHYLE_PATH = "/apps/opt/bioinfo/jar";
+our $HAPLOPHYLE_PATH = $CGI_DIR . "/../jars";
+our $HAPLOPHYLE_EXE = "INI.JAVA_EXE -jar NetworkCreator_fat.jar";
+
+
+our $SNIPLOID_EXE = "INI.PERL_EXE $CGI_DIR/../misc/sniploid/SNiPloid.pl";
+our $MAPDRAW_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/sniploid/DrawMapOfOccurences.pl";
+
+our $MLMM_CONVERSION_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/HapmapToMLMMFiles.pl";
+our $CHECK_GWAS_INPUTS_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/CheckGWASInputs.pl";
+our $CREATE_QQPLOT_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/CreateQQPlot.pl";
+our $MLMM_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/MLMM.pl";
+
+our $ROOTING_EXE = "INI.JAVA_EXE -jar $CGI_DIR/../jars/Rootings_54.jar";
+
+our $DENSITY_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/CalculateSlidingWindowsSNPdensitiesFromHapmap.pl";
+our $VCFTOOLSSTATS_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/VCFToolsStats.pl";
+our $VCFTOOLS_COMPARE_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/CompareSNPinVCF.pl";
+our $VCFTOOLSSLIDING_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/VCFToolsSlidingWindow.pl";
+our $VCFTOOLSFILTER_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/VCFToolsFilter.pl";
+our $VCF2HAPMAP_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/VCF2FastaAndHapmap.pl";
+our $PED2FASTA_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/Ped2Fasta.pl";
+our $MDSPLOT_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/MDSbasedOnIBSmatrix.pl";
+our $GEVALTINBATCH_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/GevaltinBatch.pl";
+our $CONVERT_POS_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/ConvertVCFinGenomicPositions.pl";
+our $SNPEFF_PIPE_EXE  = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/SnpEff.pl";
+our $FILTER_VCF_ON_ANNOTATIONS = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/FilterVCFonAnnotations.pl";
+our $GET_GENES_FROM_VCF = "INI.PERL_EXE $CGI_DIR/../misc/galaxy/GetGenesFromVCF.pl";
+
+#################### external programs ##########################
+
+our $TOOL_DIR = $CGI_DIR . "/../tools/INI.ARCH32_OR_64";
+
+our $EGGLIB_NAME = "EggLib";
+our $EGGLIB_EXE = "$TOOL_DIR/eggstats";
+
+
+our $GEVALT_NAME = "Gevalt";
+our $GEVALT_PATH = "INI.GEVALT_DIR";
+our $GEVALT_EXE = "INI.JAVA_EXE -jar Gevalt.jar";
+our $GEVALT_TIMEOUT = 301; # timeout in second
+
+our $PHASE_NAME   = "Phase";
+our $PHASE_EXE    = "INI.PHASE_EXE";
+
+
+
+our $DNADIST_EXE ="INI.DNADIST_EXE";
+our $READSEQ_EXE = "INI.JAVA_EXE -jar INI.READSEQ_JAR";
+our $FASTME_EXE = "INI.FASTME_EXE";
+
+our $CLUSTALW_NAME = "ClustalW";
+our $CLUSTALW_EXE = "INI.CLUSTALW_EXE";
+
+our $BLAST_NAME = "Blast";
+our $BLAST_EXE  = "INI.BLASTN_EXE";
+our $BLASTP_EXE = "INI.BLASTP_EXE";
+our $TBLASTN_EXE = "INI.TBLASTN_EXE";
+our $BLASTX_EXE = "INI.BLASTX_EXE";
+
+
+our $ADMIXTURE_NAME = "Admixture";
+our $ADMIXTURE_EXE  = "INI.ADMIXTURE_EXE";
+
+our $GRAPHVIZ_EXE   = "INI.NEATO_EXE";
+
+our $SNPEFF_NAME   = "snpEff";
+our $SNPEFF_EXE    = "INI.JAVA_EXE -jar $TOOL_DIR/../snpEff_2_0_5d/snpEff.jar eff";
+our $SNPEFF_CONFIG = "$TOOL_DIR/../snpEff_2_0_5d/snpEff.config";
+
+our $TASSEL_NAME   = "TASSEL";
+our $TASSEL_PATH   = "INI.TASSEL_DIR";
+our $TASSEL_EXE    = "INI.PERL_EXE run_pipeline.pl";
+
+our $PLINK_EXE     = "INI.PLINK_EXE";
+
+
+our $CONVERT_EXE = "INI.CONVERT_EXE";
+our $R_EXE       = "INI.R_EXE";
+our $RSCRIPT_EXE = "INI.RSCRIPT_EXE";
+
+######################### databases #############################
+our $HOST_FOR_SNP        = "INI.DATABASE_HOSTNAME";
+our $HOST                = "INI.DATABASE_HOSTNAME";
+our %SNIPLAY_DATABASES;
+$SNIPLAY_DATABASES{"speciesname"}    = "INI.DATABASE_NAME";
+our $LOGIN_FOR_SNP       = "INI.DATABASE_USERNAME";
+our $PASSWORD_FOR_SNP    = "INI.DATABASE_PASSWD";
+
+
+###################### banks for Blast ###########################
+our %BLAST_DATABASES;
+
+
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"path"}           = "$CGI_DIR/../data/vitis_12X";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"db"}             = "$CGI_DIR/../data/genomes/vitis_12X.fa";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"annotation"}     = "$CGI_DIR/../data/vitis_12X/Vitis_vinifera_annotation.gff";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"peptids"}        = "$CGI_DIR/../data/vitis_12X/Vitis_vinifera_peptide.fa";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"ref_genotype"}   = "cPNI";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"type"}           = "genome";
+$BLAST_DATABASES{"Vitis_vinifera_12X_Genoscope"}{"genome_version"} = "vitis_12X";
+
+$BLAST_DATABASES{"Coffea_canephora"}{"path"}                         = "$CGI_DIR/../data/coffea";
+$BLAST_DATABASES{"Coffea_canephora"}{"db"}                           = "$CGI_DIR/../data/genomes/coffea.fa";
+$BLAST_DATABASES{"Coffea_canephora"}{"annotation"}                   = "$CGI_DIR/../data/coffea/coffea_canephora.gff3";
+$BLAST_DATABASES{"Coffea_canephora"}{"peptids"}                      = "$CGI_DIR/../data/coffea/coffea_pep.faa";
+$BLAST_DATABASES{"Coffea_canephora"}{"type"}                         = "genome";
+$BLAST_DATABASES{"Coffea_canephora"}{"genome_version"}               = "coffea";
+
+
+our %PRIVATE_BLAST_DATABASES;
+
+
+
+our $DEFAULT_DATABASE = "Vitis_vinifera_12X_Genoscope";
+
+our $BLAST_UNIPROT_SPROT_PATH = "$CGI_DIR/../data/uniprot_sprot.fasta";
+our $BLAST_UNIPROT_TREMBL_PATH = "";
+
+########################## accounts ###############################
+
+our $MAX_LOGIN_TRIES = 2;
+our $ACCOUNT_LOCK_DELAY = 120; # seconds
+
+our $USER_FLAG_ADMIN = 1;
+our $USER_FLAG_CONSULTATION = 2;
+our $USER_FLAG_SUBMISSION = 3;
+our $USER_FLAG_LOCKED = 5;
+
+############# programs publications references ###############
+our $SNIPLAY_REF     = "Dereeper A., Nicolas S., Lecunff L., Bacilieri R., Doligez A., Peros JP., Ruiz M., This P. <i>SNiPlay: a web-based tool for detection, management and analysis of SNPs. Application to grapevine diversity projects.</i>. BMC Bioinformatics. 2011. May 5;12(1):134. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=21545712\" target=\"_blank\">PubMed</a>)";
+our $POLYMORFIND_REF = "Gaillard S. Foucher F., Pernet A. <i>http://genhort.angers.inra.fr/projects/polymorfind/wiki/index.php/Polymorfind</i>. 2008. (<a href=\"http://genhort.angers.inra.fr/projects/polymorfind/wiki/index.php/Polymorfind\" target=\"_blank\">Polymorfind</a>)";
+our $GEVALT_REF      = "Davidovich O., Kimmel G., Shamir R. <i>GEVALT: An integrated software tool for genotype analysis.</i> BMC Bioinformatics. 2007 Feb 1;8:36. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=17270038\" target=\"_blank\">PubMed</a>)";
+our $SHAPEIT_REF     = "Delaneau O., Coulonges C, Zagury JF. <i>Shape-IT: new rapid and accurate algorithm for haplotype inference.</i> BMC Bioinformatics. 2008 Dec 16;9:540. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=19087329 \" target=\"_blank\">PubMed</a>)";
+our $HAPLOPHYLE_REF  = "Sarah G., Ruiz M., Perrier X., Billot C. <i>http://haplophyle.cirad.fr/index.jsp</i>. 2007. (<a href=\"http://haplophyle.cirad.fr/index.jsp\" target=\"_blank\">Haplophyle</a>)";
+our $PHASE_REF       = "Stephens M., Scheet P. <i>Accounting for decay of linkage disequilibrium in haplotype inference and missing-data imputation.</i> Am J Hum Genet. 2005 Mar;76(3):449-62.(<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=15700229 \" target=\"_blank\">PubMed</a>)";
+our $BLAST_REF       = "Altschul SF., Madden TL., Schaffer AA., Zhang J., Zhang Z., Miller W., Lipman DJ. <i>Gapped BLAST and PSI-BLAST: a new generation of protein database search programs.</i> Nucleic Acids Res. 1997 Sep 1;25(17):3389-402.(<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=9254694 \" target=\"_blank\">PubMed</a>)";
+our $SEQLIB_REF      = "De Mita S. <i>http://seqlib.sourceforge.net</i>. 2008. (<a href=\"http://seqlib.sourceforge.net/\" target=\"_blank\">SeqLib library</a>)";
+our $VENNY_REF       = "Oliveros JC. VENNY. An interactive tool for comparing lists with Venn Diagrams.<i>http://bioinfogp.cnb.csic.es/tools/venny/index.html</i>. 2007. (<a href=\"http://bioinfogp.cnb.csic.es/tools/venny/index.html./\" target=\"_blank\">Venny</a>)";
+our $TASSEL_REF      = "Bradbury PJ1, Zhang Z, Kroon DE, Casstevens TM, Ramdoss Y, Buckler ES. <i>TASSEL: software for association mapping of complex traits in diverse samples.</i> Bioinformatics. 2007 Oct 1;23(19):2633-5. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=17586829\" target=\"_blank\">PubMed</a>)";
+our $MLMM_REF        = "V. Segura, B.J. Vilhjalmsson, A. Platt, A. Korte, U. Seren, Q. Long, M. Nordborg. <i>An efficient multi-locus mixed-model approach for genome-wide association studies in structured populations.</i> Nature Genetics 44: 825-830, 2012. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=22706313\" target=\"_blank\">PubMed</a>)";
+our $EGGLIB_REF      = "De Mita S, Siol M. <i>EggLib: processing, analysis and simulation tools for population genetics and genomics.</i> BMC Genet. 2012 Apr 11;13:27. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=22494792\" target=\"_blank\">PubMed</a>)";
+our $FASTME_REF      = "Desper R, Gascuel O. <i>Fast and accurate phylogeny reconstruction algorithms based on the minimum-evolution principle.</i> J Comput Biol. 2002;9(5):687-705. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=12487758\" target=\"_blank\">PubMed</a>)";
+our $PLINK_REF       = "Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MA, Bender D, Maller J, Sklar P, de Bakker PI, Daly MJ, Sham PC.<i> PLINK: a tool set for whole-genome association and population-based linkage analyses.</i> Am J Hum Genet. 2007 Sep;81(3):559-75. Epub 2007 Jul 25. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=17701901\" target=\"_blank\">PubMed</a>)";
+our $VCFTOOLS_REF    = "Danecek P, Auton A, Abecasis G, Albers CA, Banks E, DePristo MA, Handsaker RE, Lunter G, Marth GT, Sherry ST, McVean G, Durbin R; 1000 Genomes Project Analysis Group.<i> The variant call format and VCFtools.</i> Bioinformatics. 2011 Aug 1;27(15):2156-8. Epub 2007 Jul 25. (<a href=\"http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&amp;db=PubMed&amp;list_uids=21653522\" target=\"_blank\">PubMed</a>)";
+
+
+######################### IP #####################################
+
+our $SITE_SERVER_IP           = '195.221.173.65';
+our $REMOTE_CLIENT_IP = '';
+# get client IP
+if ($ENV{'HTTP_X_FORWARDED_FOR'}
+    && ((not $ENV{'REMOTE_ADDR'})
+        || ($ENV{'REMOTE_ADDR'} eq $SITE_SERVER_IP)
+        || ($ENV{'REMOTE_ADDR'} =~ m/^(?:0|127)\.0\.0\./)))
+{
+    # remote address not specified, try to use forwarded request
+    $REMOTE_CLIENT_IP = $ENV{'HTTP_X_FORWARDED_FOR'};
+}
+else
+{
+    $REMOTE_CLIENT_IP = $ENV{'REMOTE_ADDR'};
+}
+
+
+######################## IUPAC code ###############################
+our %IUPAC = 
+(
+	'[A/G]'=> "R",
+	'[G/A]'=> "R",
+	'[C/T]'=> "Y",
+	'[T/C]'=> "Y",
+	'[T/G]'=> "K",
+	'[G/T]'=> "K",
+	'[C/G]'=> "S",
+	'[G/C]'=> "S",
+	'[A/T]'=> "W",
+	'[T/A]'=> "W",
+	'[A/C]'=> "M",
+	'[C/A]'=> "M",
+	'[C/A/T]'=> "H",
+	'[A/T/C]'=> "H",
+	'[A/C/T]'=> "H",
+	'[C/T/A]'=> "H",
+	'[T/C/A]'=> "H",
+	'[T/A/C]'=> "H",			
+	'[C/A/G]'=> "V",
+	'[A/G/C]'=> "V",
+	'[A/C/G]'=> "V",
+	'[C/G/A]'=> "V",
+	'[G/C/A]'=> "V",
+	'[G/A/C]'=> "V",
+	'[C/T/G]'=> "B",
+	'[T/G/C]'=> "B",
+	'[T/C/G]'=> "B",
+	'[C/G/T]'=> "B",
+	'[G/C/T]'=> "B",
+	'[G/T/C]'=> "B",
+	'[T/A/G]'=> "D",
+	'[A/G/T]'=> "D",
+	'[A/T/G]'=> "D",
+	'[T/G/A]'=> "D",
+	'[G/T/A]'=> "D",
+	'[G/A/T]'=> "D",
+	'[C/T/A/G]'=> "N",
+	'[C/A/G/T]'=> "N",
+	'[C/A/T/G]'=> "N",
+	'[C/T/G/A]'=> "N",
+	'[C/G/T/A]'=> "N",
+	'[C/G/A/T]'=> "N",
+	'[A/C/T/G]'=> "N",
+	'[A/T/G/C]'=> "N",
+	'[A/T/C/G]'=> "N",
+	'[A/C/G/T]'=> "N",
+	'[A/G/C/T]'=> "N",
+	'[A/G/T/C]'=> "N",
+	'[T/C/A/G]'=> "N",
+	'[T/A/G/C]'=> "N",
+	'[T/A/C/G]'=> "N",
+	'[T/C/G/A]'=> "N",
+	'[T/G/C/A]'=> "N",
+	'[T/G/A/C]'=> "N",
+	'[G/C/A/T]'=> "N",
+	'[G/A/T/C]'=> "N",
+	'[G/A/C/T]'=> "N",
+	'[G/C/T/A]'=> "N",
+	'[G/T/C/A]'=> "N",
+	'[G/T/A/C]'=> "N"
+);
+
+######################## Opal services #######################
+our %USE_OPAL_SERVICES_FOR_PROGRAM;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"MLMM"} = 0;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"SnpEff"} = 0;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"Gevalt"} = 0;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"Tree"} = 0;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"Haplophyle"} = 0;
+$USE_OPAL_SERVICES_FOR_PROGRAM{"Admixture"} = 0;
+our $USE_OPAL_SERVICES = 0;
+
+################### ThaliaDB crosslink #######################
+our %USE_THALIADB;
+$USE_THALIADB{"Grape"} = 0;
+
+
+
+
+############# Genome Browser crosslink #######################
+our %GBROWSE_CROSSLINK;
+$GBROWSE_CROSSLINK{"Banana"} = "http://banana-genome.cirad.fr/cgi-bin/gbrowse/musatract_tripal/";
+$GBROWSE_CROSSLINK{"Coffee"} = "http://coffee-genome.org/jbrowse";
+$GBROWSE_CROSSLINK{"Cassava"} = "http://dev.cassava-genome.cirad.fr/cassava/jbrowse/index.html";
+
+                   
+=pod
+
+=head1 AUTHORS
+
+Alexis DEREEPER (IRD), alexis.dereeper@ird.fr
+
+=head1 VERSION
+
+Version 0.1
+
+=head1 SEE ALSO
+
+=cut
+
+return 1; # package return
+                   
