@@ -167,7 +167,7 @@ my $paragraph = qq~
         </div>
       </section>
 <div class="text-center">
-<p><img width='80%' src=\"https://panexplorer.southgreen.fr/images/GraphicalAbstract.png\"></p>
+<p><img width='80%' src=\"$Configuration::WEB_DIR/images/GraphicalAbstract.png\"></p>
 </div>
 
 <section class="jumbotron text-center">
