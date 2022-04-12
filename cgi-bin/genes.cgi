@@ -144,19 +144,6 @@ print $menu;
 if (!-d $execution_dir){
 	mkdir($execution_dir);
 }
-my $execution_dir2 = $execution_dir."2";
-if (!-d $execution_dir2){
-        mkdir($execution_dir2);
-}
-my $execution_dir3 = $execution_dir."3";
-if (!-d $execution_dir3){
-        mkdir($execution_dir3);
-}
-my $execution_dir4 = $execution_dir."4";
-if (!-d $execution_dir4){
-        mkdir($execution_dir4);
-}
-
 
 
 

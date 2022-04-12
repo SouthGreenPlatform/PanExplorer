@@ -136,7 +136,7 @@ if ($action eq "check_id"){
 		foreach my $genbank(@genbank_ids){
                         if ($genbank =~/([\w\.]+)/){
                                 $genbank = $1;
-                                my $get_genbank = `/www/panexplorer.southgreen.fr/tools/edirect/efetch -id $genbank -db nuccore -mode text >$Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.json`;
+                                my $get_genbank = `$Configuration::TOOLS_DIR/edirect/efetch -id $genbank -db nuccore -mode text >$Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.json`;
                                 #my $wget = `wget -O $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.uid https://www.ncbi.nlm.nih.gov/nuccore/$genbank?report=gilist&format=text`;
 				#my $ok = 0;
 				#open(F,"$Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.uid");
@@ -406,14 +406,14 @@ if ($action eq "upload"){
         close(LS);
 
 	my $options = join(",",keys(%strains));
-	my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/GetSequences.pl -i $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes";
+	my $cmd = "perl $Configuration::CGI_DIR/GetSequences.pl -i $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes";
 	system($cmd);
 	if ($software eq 'roary'){
-		my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/Run_Roary_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
+		my $cmd = "perl $Configuration::CGI_DIR/Run_Roary_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
 		system($cmd);
 	}
 	else{
-		my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/Run_PGAP_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
+		my $cmd = "perl $Configuration::CGI_DIR/Run_PGAP_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
 		system($cmd);
 	}
 	#system("cp -rf $execution_dir/Galaxy1-\[Orthologs_Clusters\].txt $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/1.Orthologs_Cluster.txt");
@@ -450,7 +450,7 @@ if ($action eq "check_idsii"){
                                 $genbank = $1;
 				my $grep = `grep 'gi ' $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.json | head -1`;
 				if ($grep =~/gi (\d+)$/){$genbank = $1;}
-                                my $get_genbank = `/www/panexplorer.southgreen.fr/tools/edirect/efetch -id $genbank -db nuccore -format gb >$Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.gb`;
+                                my $get_genbank = `$Configuration::TOOLS_DIR/edirect/efetch -id $genbank -db nuccore -format gb >$Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.gb`;
                                 my $strain = `grep 'DEFINITION' $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes/$genbank.gb`;
                                 if ($strain =~/DEFINITION  (.*)$/){
                                         $strain = $1;
@@ -582,7 +582,7 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 	system("sed \"s/444444444444444/$session/g\" $Configuration::HOME_DIR/hiveplot_json/test.html >$Configuration::HOME_DIR/hiveplot_json/hiveplot.$session.html");
 	open(JSON,">$Configuration::HOME_DIR/hiveplot_json/data.$session.json") or print "Can not write file $Configuration::HOME_DIR/hiveplot_json/data.$session.json";
 	#open(CIRCOS,">$Configuration::HOME_DIR/circosjs/$session.circos_stack.txt");
-	open(CIRCOS,">/www/panexplorer.southgreen.fr/prod/htdocs/circosjs/$session.circos_stack.txt");
+	open(CIRCOS,">$Configuration::HOME_DIR/circosjs/$session.circos_stack.txt");
 
 	#print "$session.circos_stack.txt";
 	print JSON "[\n";
@@ -802,7 +802,7 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 	close(CIRCOS);
 
 	#open(CHROM_LENGTH,">$Configuration::HOME_DIR/circosjs/$session.chrom_length.txt");
-	open(CHROM_LENGTH,">/www/panexplorer.southgreen.fr/prod/htdocs/circosjs/$session.chrom_length.txt");
+	open(CHROM_LENGTH,">$Configuration::HOME_DIR/circosjs/$session.chrom_length.txt");
 	print CHROM_LENGTH "Chr $max_size_chrom\n";
 	close(CHROM_LENGTH);
 
@@ -838,10 +838,10 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 		my $macrosynteny_part = qq~
 		Each node is a cluster of the core-genome.<br/>
 		
-		<iframe src='https://panexplorer.southgreen.fr/hiveplot_json/hiveplot.$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>~;
+		<iframe src='$Configuration::WEB_DIR/hiveplot_json/hiveplot.$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>~;
 		print $macrosynteny_part;
 		
-		print "<br/><iframe src='https://panexplorer.southgreen.fr/mauve_viewer/mauve-viewer/demo/$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>";
+		print "<br/><iframe src='$Configuration::WEB_DIR/mauve_viewer/mauve-viewer/demo/$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>";
 	}
 	
 	
@@ -858,7 +858,7 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 		print "<input type=\"hidden\" name=\"chromosome\" value=\"$Configuration::WEB_DIR/circosjs/$session.chrom_length.txt\" />\n";
 		if ($feature eq "gcpercent"){
 		
-			open(CIRCOS,">/www/panexplorer.southgreen.fr/prod/htdocs/circosjs/$session.circos_line.txt");
+			open(CIRCOS,">$Configuration::HOME_DIR/circosjs/$session.circos_line.txt");
 			#print "Minimum: " . $heatmap_extreme{"min"}."<br>";
 			#print "Maximum: " . $heatmap_extreme{"max"}."<br>";
 			#print "Mediane: $mediane /www/panexplorer.southgreen.fr/prod/htdocs/circosjs/$session.circos_line.txt<br>";
