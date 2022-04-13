@@ -1,0 +1,2158 @@
+Streptococcus pneumoniae Hungary19A-6, complete genome.
+2155 proteins
+Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
+197..1558	+	1362	ACA35587.1	dnaA	SPH_0001	-	-	chromosomal replication initiator protein DnaA
+1717..2853	+	1137	ACA37560.1	dnaN	SPH_0002	-	-	DNA polymerase III, beta subunit
+2918..3112	+	195	ACA35979.1	-	SPH_0003	-	-	conserved domain protein
+3196..4311	+	1116	ACA37643.1	ychF	SPH_0004	-	-	GTP-binding protein YchF
+4382..4951	+	570	ACA36759.1	pth	SPH_0005	-	-	peptidyl-tRNA hydrolase
+4952..8461	+	3510	ACA36127.1	mfd	SPH_0006	-	-	transcription-repair coupling factor
+8519..8785	+	267	ACA37240.1	-	SPH_0007	-	-	ribosome-associated heat shock protein implicated in the recycling of the 50S subunit
+8778..9146	+	369	ACA36470.1	-	SPH_0008	-	-	septum formation initiator
+9151..9273	+	123	ACA36281.1	-	SPH_0009	-	-	conserved hypothetical protein
+9266..10534	+	1269	ACA35534.1	-	SPH_0010	-	-	beta-lactamase class A
+10531..11808	+	1278	ACA37443.1	-	SPH_0011	-	-	tRNA(Ile)-lysidine synthase (tRNA(Ile)-lysidinesynthetase) (tRNA(Ile)-2-lysyl-cytidine synthase)
+11812..12354	+	543	ACA36727.1	hpt	SPH_0012	-	-	hypoxanthine phosphoribosyltransferase
+12370..14328	+	1959	ACA36486.1	hflB	SPH_0013	-	-	ATP-dependent metallopeptidase HflB
+14450..14929	+	480	ACA36028.1	-	SPH_0014	-	-	competence-specific global transcription modulator
+21502..21738	+	237	ACA37312.1	-	SPH_0024	-	-	conserved hypothetical protein
+21927..23255	+	1329	ACA35650.1	purA	SPH_0025	-	-	adenylosuccinate synthetase
+23497..24645	-	1149	ACA36105.1	-	SPH_0026	-	-	integrase
+24816..25616	-	801	ACA37573.1	-	SPH_0028	-	-	hypothetical protein
+25743..26498	-	756	ACA37058.1	-	SPH_0029	-	-	phage transcriptional repressor
+26672..26878	+	207	ACA37537.1	-	SPH_0030	-	-	conserved domain protein
+26949..27083	+	135	ACA35859.1	-	SPH_0031	-	-	hypothetical protein
+27095..27223	+	129	ACA35710.1	-	SPH_0033	-	-	conserved domain protein
+27186..27863	-	678	ACA37374.1	-	SPH_0032	-	-	gp14
+27918..28631	+	714	ACA37115.1	-	SPH_0034	-	-	gp15
+28644..28901	+	258	ACA37524.1	-	SPH_0035	-	-	phage protein
+28987..29307	+	321	ACA37052.1	-	SPH_0036	-	-	conserved hypothetical protein
+29323..29616	+	294	ACA36324.1	-	SPH_0037	-	-	gp18
+29600..30448	+	849	ACA35867.1	-	SPH_0038	-	-	gp19
+30436..30594	+	159	ACA37289.1	-	SPH_0039	-	-	conserved domain protein
+30588..31358	+	771	ACA36817.1	-	SPH_0040	-	-	gp21
+31373..31567	+	195	ACA37260.1	-	SPH_0041	-	-	hypothetical protein
+31567..31794	+	228	ACA37049.1	-	SPH_0042	-	-	conserved hypothetical protein
+31979..32170	+	192	ACA36754.1	-	SPH_0043	-	-	hypothetical protein
+32160..32492	+	333	ACA37019.1	-	SPH_0044	-	-	conserved hypothetical protein
+32532..32996	+	465	ACA36251.1	-	SPH_0045	-	-	conserved hypothetical protein
+33105..33647	+	543	ACA35724.1	-	SPH_0046	-	-	prophage LambdaSa2, site-specific recombinase, phage integrase family
+34077..34394	+	318	ACA37340.1	-	SPH_0047	-	-	HNH endonuclease domain protein
+34537..35016	+	480	ACA37125.1	-	SPH_0048	-	-	conserved hypothetical protein
+35009..36721	+	1713	ACA36678.1	-	SPH_0049	-	-	putative phage terminase, large subunit
+36946..37872	+	927	ACA36051.1	-	SPH_0050	-	-	conserved hypothetical protein
+37919..38461	+	543	ACA37554.1	-	SPH_0051	-	-	phage prohead protease, HK97 family
+38476..39729	+	1254	ACA37274.1	-	SPH_0052	-	-	conserved hypothetical protein
+39755..40090	+	336	ACA37078.1	-	SPH_0053	-	-	conserved hypothetical protein
+40087..40392	+	306	ACA37202.1	-	SPH_0054	-	-	phage head-tail adaptor, putative
+40392..40739	+	348	ACA35493.1	-	SPH_0055	-	-	conserved hypothetical protein
+40726..41070	+	345	ACA36284.1	-	SPH_0056	-	-	conserved hypothetical protein
+41084..41752	+	669	ACA36627.1	-	SPH_0057	-	-	phage major tail protein, Phi13 family
+41754..42230	+	477	ACA36958.1	-	SPH_0058	-	-	conserved hypothetical protein
+42269..42397	+	129	ACA35688.1	-	SPH_0059	-	-	conserved hypothetical protein
+42417..45155	+	2739	ACA35922.1	-	SPH_0060	-	-	prophage LambdaSa04, tail tape measure protein, family
+45152..45874	+	723	ACA36531.1	-	SPH_0061	-	-	conserved hypothetical protein
+45875..54991	+	9117	ACA36622.1	-	SPH_0062	-	-	PblB
+55085..55288	+	204	ACA35986.1	-	SPH_0063	-	-	conserved hypothetical protein
+55291..55641	+	351	ACA37462.1	-	SPH_0064	-	-	conserved hypothetical protein
+55651..56067	+	417	ACA36862.1	-	SPH_0065	-	-	putative holin 1
+56071..56403	+	333	ACA36272.1	-	SPH_0066	-	-	phage holin, LL-H family
+56407..57363	+	957	ACA35679.1	-	SPH_0067	-	-	lytic amidase (N-acetylmuramoyl-L-alanine amidase)
+57526..57681	-	156	ACA37215.1	-	SPH_0068	-	-	hypothetical protein
+58253..58720	+	468	ACA36634.1	-	SPH_0069	-	-	tRNA-specific adenosine deaminase
+58929..60071	-	1143	ACA37017.1	-	SPH_0070	-	-	integrase
+60190..60540	-	351	ACA36137.1	-	SPH_0071	-	-	conserved hypothetical protein
+60554..60934	-	381	ACA35849.1	-	SPH_0072	-	-	conserved hypothetical protein
+60956..61312	-	357	ACA37619.1	-	SPH_0073	-	-	repressor protein
+61588..61773	+	186	ACA35946.1	-	SPH_0074	-	-	repressor
+61775..62473	+	699	ACA36390.1	-	SPH_0075	-	-	phage antirepressor protein
+62659..63000	+	342	ACA36938.1	-	SPH_0076	-	-	phage replication protein
+63157..63423	+	267	ACA37390.1	-	SPH_0077	-	-	gp16
+63507..63959	+	453	ACA36248.1	-	SPH_0078	-	-	conserved hypothetical protein
+63965..64666	+	702	ACA36712.1	-	SPH_0079	-	-	putative Erf protein
+64669..65661	+	993	ACA36710.1	-	SPH_0080	-	-	conserved hypothetical protein
+65683..65859	+	177	ACA36165.1	-	SPH_0081	-	-	conserved hypothetical protein
+65849..66394	+	546	ACA35700.1	-	SPH_0082	-	-	single-stranded DNA-binding protein (SSB) (Helix-destabilizingprotein)
+66420..67187	+	768	ACA37325.1	-	SPH_0083	-	-	hypothetical protein
+67192..67560	+	369	ACA37038.1	-	SPH_0084	-	-	hypothetical protein
+67595..67798	+	204	ACA36082.1	-	SPH_0085	-	-	conserved hypothetical protein
+67852..68286	+	435	ACA37235.1	-	SPH_0086	-	-	conserved hypothetical protein
+68288..69025	+	738	ACA36475.1	-	SPH_0087	-	-	conserved hypothetical protein
+69042..69254	+	213	ACA36283.1	-	SPH_0088	-	-	conserved hypothetical protein
+69508..69666	+	159	ACA35520.1	-	SPH_0089	-	-	RUS
+69668..69874	+	207	ACA37440.1	-	SPH_0090	-	-	conserved hypothetical protein
+69924..70238	+	315	ACA36722.1	-	SPH_0091	-	-	gp24
+70240..70740	+	501	ACA36490.1	-	SPH_0092	-	-	conserved hypothetical protein
+70740..71033	+	294	ACA36630.1	-	SPH_0093	-	-	conserved hypothetical protein
+71033..71425	+	393	ACA37422.1	-	SPH_0094	-	-	conserved hypothetical protein
+71497..72585	+	1089	ACA35882.1	-	SPH_0095	-	-	conserved hypothetical protein
+72566..73312	+	747	ACA35560.1	-	SPH_0097	-	-	conserved hypothetical protein
+73278..73454	-	177	ACA37639.1	-	SPH_0096	-	-	hypothetical protein
+73516..73974	+	459	ACA36401.1	-	SPH_0098	-	-	conserved hypothetical protein
+73964..75274	+	1311	ACA36973.1	-	SPH_0099	-	-	phage terminase, large subunit, pbsx family
+75287..76855	+	1569	ACA36896.1	-	SPH_0100	-	-	phage minor capsid protein
+76842..77015	+	174	ACA37487.1	-	SPH_0101	-	-	conserved hypothetical protein
+77058..78209	+	1152	ACA36278.1	-	SPH_0102	-	-	phage minor capsid protein 2
+78348..78911	+	564	ACA36929.1	-	SPH_0103	-	-	phage minor structural protein GP20
+78929..79810	+	882	ACA36430.1	-	SPH_0104	-	-	major capsid protein
+79821..80054	+	234	ACA35977.1	-	SPH_0105	-	-	conserved hypothetical protein
+80097..80489	+	393	ACA35983.1	-	SPH_0106	-	-	conserved hypothetical protein
+80479..80850	+	372	ACA36604.1	-	SPH_0107	-	-	putative minor capsid protein 2
+80850..81194	+	345	ACA36111.1	-	SPH_0108	-	-	putative minor capsid protein
+81194..81601	+	408	ACA35683.1	-	SPH_0109	-	-	putative minor capsid protein
+81598..82047	+	450	ACA36589.1	-	SPH_0110	-	-	major tail shaft protein
+82112..82600	+	489	ACA36163.1	-	SPH_0111	-	-	conserved hypothetical protein
+82613..83182	+	570	ACA35745.1	-	SPH_0112	-	-	phage protein
+83175..86456	+	3282	ACA36293.1	-	SPH_0113	-	-	phage protein
+86486..87967	+	1482	ACA35678.1	-	SPH_0114	-	-	tail protein
+87969..94910	+	6942	ACA37222.1	-	SPH_0115	-	-	phage minor structural protein
+94921..96969	+	2049	ACA36084.1	-	SPH_0116	-	-	structural protein
+97029..97292	+	264	ACA36019.1	-	SPH_0117	-	-	conserved hypothetical protein
+97302..97718	+	417	ACA37570.1	-	SPH_0118	-	-	putative holin 1
+97722..98054	+	333	ACA36959.1	-	SPH_0119	-	-	phage holin, LL-H family
+99296..99739	+	444	ACA36223.1	-	SPH_0122	-	-	deoxyuridine 5'-triphosphate nucleotidohydrolase (dUTPase) (dUTP pyrophosphatase)
+99699..100256	+	558	ACA37245.1	-	SPH_0123	-	-	phosphoglycerate mutase family protein
+100369..101631	+	1263	ACA35592.1	radA	SPH_0124	-	-	DNA repair protein RadA
+101704..102201	+	498	ACA36154.1	-	SPH_0125	-	-	carbonate dehydratase
+102222..103037	+	816	ACA36838.1	-	SPH_0126	-	-	membrane protein, putative
+103182..104150	+	969	ACA37252.1	-	SPH_0127	-	-	ribose-Phosphate pyrophosphokinase
+104692..104925	-	234	ACA35603.1	-	SPH_0128	-	-	conserved hypothetical protein
+104918..105034	-	117	ACA36288.1	-	SPH_0129	-	-	conserved hypothetical protein
+105249..105506	-	258	ACA36984.1	-	SPH_0130	-	-	conserved hypothetical protein
+105855..108488	+	2634	ACA36682.1	-	SPH_0131	-	-	DNA polymerase I (POL I)
+108573..109010	+	438	ACA35772.1	-	SPH_0132	-	-	CoA binding protein
+109051..109401	+	351	ACA36792.1	-	SPH_0133	-	-	hypothetical protein
+109420..110430	-	1011	ACA36946.1	-	SPH_0134	-	-	membrane protein Spr0034
+110579..111748	+	1170	ACA35680.1	-	SPH_0135	-	-	putative aminotransferase A
+111745..112515	+	771	ACA35616.1	recO	SPH_0136	-	-	DNA repair protein RecO
+112512..113504	+	993	ACA36074.1	plsX	SPH_0137	-	-	fatty acid/phospholipid synthesis protein PlsX
+113510..113743	+	234	ACA36346.1	-	SPH_0138	-	-	conserved domain protein
+113786..114079	+	294	ACA37095.1	-	SPH_0139	-	-	mobile genetic element
+114282..114512	+	231	ACA37269.1	-	SPH_0140	-	-	conserved domain protein
+114515..114640	+	126	ACA35827.1	-	SPH_0141	-	-	hypothetical protein
+115263..116156	+	894	ACA36052.1	-	SPH_0142	-	-	transcriptional regulator, XRE-family
+116699..116995	+	297	ACA37165.1	-	SPH_0143	-	-	conserved domain protein
+117002..118138	+	1137	ACA35614.1	-	SPH_0144	-	-	membrane protein, putative
+118375..118617	+	243	ACA36194.1	-	SPH_0145	-	-	hypothetical protein
+118614..119210	+	597	ACA36753.1	-	SPH_0146	-	-	hypothetical protein
+119191..119682	+	492	ACA37470.1	-	SPH_0147	-	-	hypothetical protein
+120062..122215	+	2154	ACA35944.1	-	SPH_0148	-	-	transport/processing ATP-binding protein ComA
+122228..123577	+	1350	ACA36437.1	-	SPH_0149	-	-	transport protein ComB
+123746..124453	+	708	ACA37010.1	purC	SPH_0150	-	-	phosphoribosylaminoimidazole-succinocarboxamide synthase
+124464..124598	+	135	ACA37393.1	-	SPH_0151	-	-	phosphoribosylaminoimidazole-succinocarboxamide synthase (saicar synthetase)
+124655..128380	+	3726	ACA37152.1	-	SPH_0152	-	-	phosphoribosylformylglycinamidine synthase
+128473..129915	+	1443	ACA36770.1	purF	SPH_0153	-	-	amidophosphoribosyltransferase
+129952..130974	+	1023	ACA36868.1	purM	SPH_0154	-	-	phosphoribosylformylglycinamidine cyclo-ligase
+130971..131516	+	546	ACA37477.1	purN	SPH_0155	-	-	phosphoribosylglycinamide formyltransferase
+131600..132109	+	510	ACA37496.1	-	SPH_0156	-	-	teicoplanin resistance protein
+132134..133681	+	1548	ACA35789.1	purH	SPH_0157	-	-	bifunctional purine biosynthesis protein PurH
+133803..135065	+	1263	ACA36802.1	purD	SPH_0158	-	-	phosphoribosylamine--glycine ligase
+135322..135438	+	117	ACA37258.1	-	SPH_0159	-	-	conserved hypothetical protein
+135468..135956	+	489	ACA36182.1	purE	SPH_0160	-	-	phosphoribosylaminoimidazole carboxylase, catalytic subunit
+135943..137034	+	1092	ACA35723.1	purK	SPH_0161	-	-	phosphoribosylaminoimidazole carboxylase, ATPase subunit
+137044..137271	+	228	ACA35785.1	-	SPH_0162	-	-	conserved hypothetical protein
+137334..138632	+	1299	ACA35642.1	purB	SPH_0163	-	-	adenylosuccinate lyase
+138687..142625	-	3939	ACA37025.1	-	SPH_0164	-	-	beta-N-acetylhexosaminidase
+142940..143683	-	744	ACA36617.1	-	SPH_0165	-	-	transcriptional regulator, GntR family protein
+144004..145791	+	1788	ACA36358.1	-	SPH_0166	-	-	beta-galactosidase
+145788..146264	+	477	ACA35736.1	-	SPH_0167	-	-	phosphotransferase system sugar-specific eiib component
+146292..147197	+	906	ACA37297.1	-	SPH_0168	-	-	phosphotransferase system sugar-specific eiic component
+147184..147999	+	816	ACA36575.1	-	SPH_0169	-	-	PTS system, IID component
+148006..148410	+	405	ACA36594.1	-	SPH_0170	-	-	phosphotransferase system sugar-specific EII component
+148663..149829	+	1167	ACA36018.1	-	SPH_0171	-	-	AgaS
+149945..150982	+	1038	ACA37568.1	-	SPH_0172	-	-	aldose 1-epimerase
+151189..152043	+	855	ACA36044.1	-	SPH_0173	-	-	glyoxalase family protein
+152193..152450	+	258	ACA36645.1	-	SPH_0174	-	-	conserved hypothetical protein
+152618..152854	-	237	ACA36740.1	-	SPH_0175	-	-	chlorohydrolase
+153194..153313	-	120	ACA37332.1	-	SPH_0176	-	-	coenzyme A disulfide reductase
+153425..154189	+	765	ACA37510.1	-	SPH_0177	-	-	phosphorylase, Pnp/Udp family
+154445..154585	+	141	ACA35941.1	-	SPH_0178	-	-	conserved hypothetical protein
+154754..156133	+	1380	ACA37018.1	-	SPH_0179	-	-	Trk transporter membrane-spanning protein - K+ transport
+156147..156812	+	666	ACA37636.1	-	SPH_0180	-	-	potassium uptake protein, Trk family
+156947..157060	+	114	ACA35522.1	-	SPH_0181	-	-	hypothetical protein
+158254..161283	+	3030	ACA35889.1	-	SPH_0184	-	-	cell wall surface anchor family protein
+161450..162148	+	699	ACA37205.1	-	SPH_0185	-	-	response regulator SaeR
+162145..163197	+	1053	ACA36643.1	-	SPH_0186	-	-	histidine kinase
+163392..164003	+	612	ACA35767.1	rpsD	SPH_0187	-	-	ribosomal protein S4
+164189..164347	+	159	ACA35701.1	-	SPH_0188	-	-	transposase
+164771..165031	+	261	ACA36987.1	-	SPH_0189	-	-	conserved hypothetical protein
+164985..165206	+	222	ACA36400.1	-	SPH_0190	-	-	conserved hypothetical protein
+165495..166454	+	960	ACA35521.1	-	SPH_0191	-	-	ABC transporter membrane-spanning permease - sugar transport
+166468..167391	+	924	ACA37217.1	-	SPH_0192	-	-	protein LplC
+167649..169124	+	1476	ACA37493.1	-	SPH_0193	-	-	ABC transporter, substrate-binding protein
+169396..170382	+	987	ACA35942.1	-	SPH_0194	-	-	rhodanese domain protein
+170504..171223	+	720	ACA36882.1	-	SPH_0195	-	-	hypothetical protein
+171502..172566	-	1065	ACA37497.1	-	SPH_0196	-	-	conserved hypothetical protein
+172629..173540	-	912	ACA37481.1	-	SPH_0197	-	-	conserved hypothetical protein
+173533..174126	-	594	ACA36875.1	-	SPH_0198	-	-	conserved hypothetical protein
+174113..174439	-	327	ACA37186.1	-	SPH_0199	-	-	transcription regulator
+174578..175744	-	1167	ACA35640.1	-	SPH_0200	-	-	cyanate permease
+175895..176959	+	1065	ACA35911.1	-	SPH_0201	-	-	glycosyl transferase
+177001..178851	+	1851	ACA36516.1	-	SPH_0202	-	-	CapD protein, required for the biosynthesis of type 1 capsular polysaccharide
+178971..179087	+	117	ACA35533.1	-	SPH_0203	-	-	hypothetical protein
+179112..179744	-	633	ACA36126.1	-	SPH_0204	-	-	phosphoglycolate phosphatase
+179766..180638	-	873	ACA36901.1	sdaAA	SPH_0205	-	-	L-serine dehydratase, iron-sulfur-dependent, alpha subunit
+180647..181318	-	672	ACA37509.1	sdaAB	SPH_0206	-	-	L-serine dehydratase, iron-sulfur-dependent, beta subunit
+181560..182147	+	588	ACA35964.1	-	SPH_0207	-	-	LysM domain protein
+182199..183062	-	864	ACA36595.1	-	SPH_0208	-	-	helix-turn-helix domain protein
+183226..183339	+	114	ACA37226.1	-	SPH_0209	-	-	conserved hypothetical protein
+183385..183972	+	588	ACA35632.1	-	SPH_0210	-	-	hypothetical protein
+184385..184633	+	249	ACA36226.1	-	SPH_0211	-	-	bacteriocin, lactococcin 972 family
+184688..186796	+	2109	ACA36864.1	-	SPH_0212	-	-	ABC transporter membrane-spanning permease - amino acid transport
+186793..187434	+	642	ACA37063.1	-	SPH_0213	-	-	macrolide export ATP-binding/permease protein MacB
+187641..188447	+	807	ACA37535.1	-	SPH_0214	-	-	ABC transporter solute-binding protein - amino acid transport
+188464..189660	+	1197	ACA36199.1	argG	SPH_0215	-	-	argininosuccinate synthase
+189689..191080	+	1392	ACA35784.1	argH	SPH_0216	-	-	argininosuccinate lyase
+191369..191584	-	216	ACA37459.1	-	SPH_0217	-	-	conserved hypothetical protein
+192447..192818	+	372	ACA36982.1	-	SPH_0218	-	-	conserved hypothetical protein
+192826..193038	+	213	ACA36491.1	-	SPH_0219	-	-	conserved hypothetical protein
+193412..193537	+	126	ACA35997.1	-	SPH_0220	-	-	conserved hypothetical protein
+193518..193655	+	138	ACA36628.1	-	SPH_0221	-	-	hypothetical protein
+193843..194901	+	1059	ACA36166.1	-	SPH_0222	-	-	conserved hypothetical protein
+195216..196193	+	978	ACA36083.1	-	SPH_0223	-	-	hypothetical protein
+196665..197039	+	375	ACA35631.1	-	SPH_0224	-	-	conserved hypothetical protein
+197046..197228	+	183	ACA37618.1	-	SPH_0225	-	-	conserved hypothetical protein
+197247..198149	+	903	ACA36071.1	-	SPH_0226	-	-	conserved hypothetical protein
+198205..198558	+	354	ACA36395.1	-	SPH_0227	-	-	conserved hypothetical protein
+198555..199283	+	729	ACA35856.1	-	SPH_0228	-	-	membrane protein, putative
+200515..200658	+	144	ACA37418.1	-	SPH_0229	-	-	conserved hypothetical protein
+200673..200990	-	318	ACA35717.1	-	SPH_0230	-	-	hypothetical protein
+200944..201084	+	141	ACA36500.1	-	SPH_0231	-	-	hypothetical protein
+201209..203326	+	2118	ACA36951.1	-	SPH_0232	-	-	PspA
+203567..203704	+	138	ACA36290.1	-	SPH_0233	-	-	hypothetical protein
+203726..204847	+	1122	ACA37448.1	trmU	SPH_0234	-	-	tRNA (5-methylaminomethyl-2-thiouridylate)-methyltransferase
+204988..205443	+	456	ACA35845.1	-	SPH_0235	-	-	MutT/nudix family protein
+205453..207366	+	1914	ACA36543.1	gidA	SPH_0236	-	-	tRNA uridine 5-carboxymethylaminomethyl modification enzyme GidA
+207745..209424	-	1680	ACA36647.1	-	SPH_0237	-	-	metallo-beta-lactamase superfamily protein
+209426..209659	-	234	ACA37173.1	-	SPH_0238	-	-	conserved domain protein
+209985..210230	-	246	ACA37416.1	-	SPH_0239	-	-	hypothetical protein
+210477..210629	-	153	ACA36231.1	-	SPH_0240	-	-	bacteriocin-type signal sequence domain protein
+210631..210816	-	186	ACA37532.1	-	SPH_0241	-	-	conserved hypothetical protein
+210994..211677	+	684	ACA35831.1	-	SPH_0242	-	-	glycoprotein endopeptidase
+211674..212111	+	438	ACA36038.1	rimI	SPH_0243	-	-	ribosomal-protein-alanine acetyltransferase
+212101..213111	+	1011	ACA35590.1	-	SPH_0244	-	-	O-sialoglycoprotein endopeptidase (Glycoprotease)
+215164..215367	-	204	ACA36017.1	-	SPH_0247	-	-	degenerative transposase
+215718..216932	+	1215	ACA36468.1	-	SPH_0248	-	-	glycosyl transferase, group 1 family protein
+216925..217878	+	954	ACA36654.1	-	SPH_0249	-	-	glycosyl transferase, family 2
+217888..219504	+	1617	ACA37167.1	-	SPH_0250	-	-	ABC transporter, ATP-binding protein
+220205..220855	+	651	ACA35704.1	-	SPH_0251	-	-	hypothetical protein
+220966..222138	+	1173	ACA36237.1	-	SPH_0252	-	-	UDP-glucose 6-dehydrogenase
+222533..223396	+	864	ACA37218.1	-	SPH_0253	-	-	MutR
+223687..223884	+	198	ACA35526.1	-	SPH_0254	-	-	hypothetical protein
+223952..224617	+	666	ACA37329.1	-	SPH_0255	-	-	caax amino protease family
+224689..225915	+	1227	ACA35665.1	-	SPH_0256	-	-	transporter, major facilitator family protein
+226191..226478	-	288	ACA36941.1	-	SPH_0257	-	-	hypothetical protein
+226549..227205	+	657	ACA37387.1	-	SPH_0258	-	-	branched-chain amino acid permease
+227195..227518	+	324	ACA35981.1	-	SPH_0259	-	-	branched-chain amino acid transport protein AzlD
+227622..228452	+	831	ACA36446.1	-	SPH_0260	-	-	ABC transporter substrate-binding protein - amino acid transport
+228606..229460	+	855	ACA36672.1	-	SPH_0261	-	-	lipoprotein
+229560..230933	+	1374	ACA37156.1	-	SPH_0262	-	-	acetylornithine deacetylase/succinyl-diaminopimelate desuccinylase
+230926..231987	+	1062	ACA37046.1	-	SPH_0263	-	-	methionine import ATP-binding protein MetN
+231989..232681	+	693	ACA35694.1	-	SPH_0264	-	-	ABC transporter permease protein
+232711..233280	-	570	ACA35834.1	-	SPH_0265	-	-	membrane-bound protein
+233415..234029	+	615	ACA36307.1	-	SPH_0266	-	-	protein of unknown function
+234079..235677	+	1599	ACA37055.1	-	SPH_0267	-	-	sensor histidine kinase, putative
+235689..236975	+	1287	ACA37551.1	-	SPH_0268	-	-	response regulator
+237027..237560	+	534	ACA36619.1	-	SPH_0269	-	-	conserved hypothetical protein
+237638..238108	+	471	ACA35846.1	-	SPH_0271	-	-	ribonucleotide reductase
+238105..238236	-	132	ACA37272.1	-	SPH_0270	-	-	conserved hypothetical protein
+238414..239760	-	1347	ACA36350.1	-	SPH_0272	-	-	Spn1 transposase
+240110..241372	-	1263	ACA37305.1	-	SPH_0273	-	-	mn2+ and fe2+ transporter of the nramp family
+241682..242140	-	459	ACA36253.1	-	SPH_0274	-	-	conserved hypothetical protein
+242137..242577	-	441	ACA35653.1	-	SPH_0275	-	-	response regulator of the LytR/AlgR family
+242665..242790	-	126	ACA37511.1	-	SPH_0276	-	-	hypothetical protein
+242933..244882	+	1950	ACA36884.1	-	SPH_0277	-	-	DNA mismatch repair protein MutL
+245207..245674	-	468	ACA36558.1	ribH	SPH_0278	-	-	6,7-dimethyl-8-ribityllumazine synthase
+245675..246880	-	1206	ACA35945.1	-	SPH_0279	-	-	riboflavin biosynthesis protein ribAB
+246900..247535	-	636	ACA36736.1	ribE	SPH_0280	-	-	riboflavin synthase, alpha subunit
+247520..248620	-	1101	ACA36123.1	ribD	SPH_0281	-	-	riboflavin biosynthesis protein RibD
+249025..249618	+	594	ACA35751.1	ruvA	SPH_0282	-	-	holliday junction DNA helicase RuvA
+249628..250191	+	564	ACA35769.1	-	SPH_0283	-	-	DNA-3-methyladenine glycosylase 1
+250188..250865	+	678	ACA37375.1	-	SPH_0284	-	-	caax amino protease family
+251002..252033	-	1032	ACA36216.1	-	SPH_0285	-	-	MccC family protein
+252094..252246	+	153	ACA35619.1	-	SPH_0286	-	-	conserved hypothetical protein
+252288..252971	-	684	ACA37177.1	-	SPH_0287	-	-	conserved hypothetical protein
+252983..253927	-	945	ACA36945.1	-	SPH_0288	-	-	magnesium and cobalt transporter
+254088..255254	-	1167	ACA37571.1	-	SPH_0289	-	-	prophage Sa05, site-specific recombinase, phage integrase family
+255339..256853	-	1515	ACA35963.1	-	SPH_0290	-	-	divergent AAA domain family
+257014..257727	-	714	ACA35549.1	-	SPH_0291	-	-	putative DNA-binding phage protein
+257928..258065	+	138	ACA36614.1	-	SPH_0292	-	-	conserved domain protein
+258125..258751	+	627	ACA35652.1	-	SPH_0293	-	-	conserved hypothetical protein
+259225..259575	+	351	ACA35879.1	-	SPH_0294	-	-	conserved hypothetical protein
+259572..259772	+	201	ACA36247.1	-	SPH_0295	-	-	conserved hypothetical protein
+259774..259989	+	216	ACA37431.1	-	SPH_0296	-	-	conserved domain protein
+259986..260327	+	342	ACA35875.1	-	SPH_0297	-	-	phage protein
+260320..260601	+	282	ACA35615.1	-	SPH_0298	-	-	phage protein
+260736..261602	+	867	ACA37283.1	-	SPH_0299	-	-	phage protein
+261655..263124	+	1470	ACA37388.1	-	SPH_0300	-	-	prophage Sa05, DNA primase, P4 family
+263487..263654	+	168	ACA36967.1	-	SPH_0301	-	-	hypothetical protein
+263738..264268	+	531	ACA35878.1	-	SPH_0302	-	-	phage protein
+264339..264848	+	510	ACA35850.1	-	SPH_0303	-	-	conserved hypothetical protein
+266055..266474	+	420	ACA36473.1	-	SPH_0304	-	-	phage protein
+266963..269794	+	2832	ACA36735.1	uvrA	SPH_0305	-	-	excinuclease ABC, A subunit
+269787..270848	+	1062	ACA37371.1	-	SPH_0306	-	-	Xaa-Pro dipeptidase
+270980..271378	+	399	ACA35543.1	-	SPH_0307	-	-	regulatory protein spx
+271444..272013	+	570	ACA36140.1	-	SPH_0308	-	-	lipoprotein, putative
+272100..272366	+	267	ACA37001.1	-	SPH_0309	-	-	conserved hypothetical protein
+272370..272789	+	420	ACA37572.1	-	SPH_0310	-	-	conserved hypothetical protein
+272805..273110	+	306	ACA36267.1	-	SPH_0311	-	-	conserved hypothetical protein
+273247..273372	-	126	ACA36306.1	-	SPH_0312	-	-	hypothetical protein
+273523..274773	+	1251	ACA37593.1	-	SPH_0313	-	-	dihydrofolate:folylpolyglutamate synthetase
+274857..275312	+	456	ACA37077.1	-	SPH_0314	-	-	lipoprotein, putative
+275458..276990	+	1533	ACA37037.1	-	SPH_0315	-	-	cardiolipin synthase
+277248..278786	+	1539	ACA36557.1	-	SPH_0316	-	-	competence-induced protein Ccs4
+278906..281113	+	2208	ACA36069.1	nrdD	SPH_0317	-	-	anaerobic ribonucleoside-triphosphate reductase
+281125..281265	+	141	ACA35629.1	-	SPH_0318	-	-	conserved hypothetical protein
+281309..281815	+	507	ACA36777.1	-	SPH_0319	-	-	acetyltransferase, gnat family
+281808..282398	+	591	ACA36056.1	nrdG	SPH_0320	-	-	anaerobic ribonucleoside-triphosphate reductase activating protein
+282395..283012	+	618	ACA35883.1	-	SPH_0321	-	-	phosphoribulokinase / Uridine kinase family
+283279..283587	+	309	ACA37263.1	rpsJ	SPH_0322	-	-	ribosomal protein S10
+283804..284430	+	627	ACA36492.1	rplC	SPH_0323	-	-	ribosomal protein L3
+284455..285078	+	624	ACA36255.1	rplD	SPH_0324	-	-	ribosomal protein L4/L1 family
+285078..285374	+	297	ACA37485.1	rplW	SPH_0325	-	-	ribosomal protein L23
+285392..286225	+	834	ACA36904.1	rplB	SPH_0326	-	-	ribosomal protein L2
+286329..286610	+	282	ACA36513.1	rpsS	SPH_0327	-	-	ribosomal protein S19
+286622..286966	+	345	ACA36008.1	rplV	SPH_0328	-	-	ribosomal protein L22
+286979..287632	+	654	ACA37486.1	rpsC	SPH_0329	-	-	ribosomal protein S3
+287636..288049	+	414	ACA36886.1	rplP	SPH_0330	-	-	ribosomal protein L16
+288059..288265	+	207	ACA36519.1	rpmC	SPH_0331	-	-	ribosomal protein L29
+288290..288550	+	261	ACA35935.1	rpsQ	SPH_0332	-	-	ribosomal protein S17
+288576..288944	+	369	ACA37197.1	rplN	SPH_0333	-	-	ribosomal protein L14
+288991..289326	+	336	ACA36524.1	rplX	SPH_0334	-	-	ribosomal protein L24
+289350..289892	+	543	ACA35907.1	-	SPH_0335	-	-	50S ribosomal protein L5 (BL6)
+289910..290179	+	270	ACA37306.1	-	SPH_0336	-	-	30S ribosomal protein S14
+290464..290862	+	399	ACA36033.1	rpsH	SPH_0337	-	-	ribosomal protein S8
+291054..291590	+	537	ACA35577.1	-	SPH_0338	-	-	50S ribosomal protein L6
+291674..292030	+	357	ACA36204.1	rplR	SPH_0339	-	-	ribosomal protein L18
+292048..292542	+	495	ACA35676.1	rpsE	SPH_0340	-	-	ribosomal protein S5
+292556..292738	+	183	ACA37428.1	rpmD	SPH_0341	-	-	ribosomal protein L30
+292883..293323	+	441	ACA36948.1	rplO	SPH_0342	-	-	ribosomal protein L15
+293336..294646	+	1311	ACA36453.1	-	SPH_0343	-	-	preprotein translocase, SecY subunit
+294797..295435	+	639	ACA37276.1	-	SPH_0344	-	-	adenylate kinase
+295552..295770	+	219	ACA37410.1	infA	SPH_0345	-	-	translation initiation factor IF-1
+295795..295911	+	117	ACA36922.1	rpmJ	SPH_0346	-	-	ribosomal protein L36
+295929..296294	+	366	ACA36232.1	rpsM	SPH_0347	-	-	ribosomal protein S13p/S18e
+296312..296695	+	384	ACA35565.1	rpsK	SPH_0348	-	-	ribosomal protein S11
+296738..297673	+	936	ACA37131.1	rpoA	SPH_0349	-	-	DNA-directed RNA polymerase, alpha subunit
+297685..298071	+	387	ACA37065.1	rplQ	SPH_0350	-	-	ribosomal protein L17
+298336..298602	+	267	ACA36388.1	-	SPH_0351	-	-	ACT domain protein
+298612..299949	+	1338	ACA35801.1	-	SPH_0352	-	-	conserved hypothetical protein
+300239..300931	+	693	ACA36392.1	-	SPH_0353	-	-	phosphoglycerate mutase family protein
+302676..303767	-	1092	ACA36631.1	-	SPH_0356	-	-	lactose transport ATP-binding protein LacK
+305873..306256	-	384	ACA37347.1	-	SPH_0362	-	-	Two-component sensor kinase YesM
+306589..307365	-	777	ACA35500.1	-	SPH_0363	-	-	pyruvate formate-lyase 3
+307488..308234	+	747	ACA36088.1	-	SPH_0364	-	-	putative HTH-type transcriptional regulator YciT
+308247..309227	+	981	ACA35904.1	-	SPH_0365	-	-	transcriptional regulator
+309422..309742	+	321	ACA36110.1	-	SPH_0366	-	-	phosphotransferase system sugar-specific eiia component
+309788..310096	+	309	ACA36841.1	-	SPH_0367	-	-	phosphotransferase system sugar-specific eiib component
+310113..311411	+	1299	ACA37275.1	-	SPH_0368	-	-	lichenan permease iic component
+311562..314000	+	2439	ACA36220.1	-	SPH_0369	-	-	pyruvate formate-lyase
+314019..314687	+	669	ACA36393.1	-	SPH_0370	-	-	fructose-6-phosphate aldolase
+314705..315793	+	1089	ACA36897.1	-	SPH_0371	-	-	glycerol dehydrogenase (gldh)
+316248..318749	+	2502	ACA37591.1	leuS	SPH_0372	-	-	leucyl-tRNA synthetase
+318888..319730	+	843	ACA37401.1	-	SPH_0373	-	-	hypothetical protein
+319786..320481	+	696	ACA36025.1	-	SPH_0374	-	-	acetyltransferase, gnat family
+320493..320909	+	417	ACA35948.1	-	SPH_0375	-	-	acetyltransferase, gnat family
+321950..322948	+	999	ACA37135.1	ruvB	SPH_0376	-	-	holliday junction DNA helicase RuvB
+322929..323501	+	573	ACA35938.1	-	SPH_0377	-	-	conserved hypothetical protein
+323732..324490	+	759	ACA36185.1	uppS	SPH_0378	-	-	di-trans,poly-cis-decaprenylcistransferase
+324499..325302	+	804	ACA36613.1	cdsA	SPH_0379	-	-	phosphatidate cytidylyltransferase
+325324..326583	+	1260	ACA35817.1	rseP	SPH_0380	-	-	RIP metalloprotease RseP
+326596..328449	+	1854	ACA36387.1	proS	SPH_0381	-	-	prolyl-tRNA synthetase
+328548..329927	+	1380	ACA36979.1	-	SPH_0382	-	-	glycosyl hydrolase, family 1
+330119..331927	+	1809	ACA37617.1	glmS	SPH_0383	-	-	glutamine-fructose-6-phosphate transaminase (isomerizing)
+331947..332141	-	195	ACA36992.1	-	SPH_0384	-	-	chlorohydrolase
+332198..333247	+	1050	ACA36819.1	-	SPH_0385	-	-	oxidoreductase
+333347..337210	-	3864	ACA37282.1	-	SPH_0386	-	-	pullulanase, extracellular
+337627..338040	+	414	ACA35626.1	rpsL	SPH_0387	-	-	ribosomal protein S12
+338060..338530	+	471	ACA37356.1	rpsG	SPH_0388	-	-	ribosomal protein S7
+338955..341036	+	2082	ACA35557.1	fusA	SPH_0389	-	-	translation elongation factor G
+341140..345531	+	4392	ACA36146.1	polC	SPH_0390	-	-	DNA polymerase III, alpha subunit, Gram-positive type
+345633..345896	+	264	ACA37587.1	-	SPH_0391	-	-	addiction module antitoxin, RelB/DinJ family
+345889..346167	+	279	ACA36014.1	-	SPH_0392	-	-	DNA damage inducible protein
+346188..346340	+	153	ACA36370.1	-	SPH_0393	-	-	conserved hypothetical protein
+346362..347603	+	1242	ACA36732.1	-	SPH_0394	-	-	aminopeptidase PepS
+347657..348637	-	981	ACA37576.1	-	SPH_0395	-	-	HNH endonuclease domain protein
+348752..349474	+	723	ACA35884.1	-	SPH_0396	-	-	RNA pseudouridine synthase family protein
+349586..350920	+	1335	ACA37539.1	-	SPH_0397	-	-	aminopeptidase C (Bleomycin hydrolase)
+350976..351887	-	912	ACA37041.1	-	SPH_0398	-	-	PTS system, mannose/fructose/sorbose family, EIID component
+351911..352714	-	804	ACA36031.1	-	SPH_0399	-	-	PTS system sorbose-specific EIIC component
+352742..353731	-	990	ACA35589.1	-	SPH_0400	-	-	mannose-specific phosphotransferase system component iiab
+353962..354981	-	1020	ACA37367.1	-	SPH_0401	-	-	alcohol dehydrogenase, propanol-preferring
+355321..356133	-	813	ACA37400.1	-	SPH_0402	-	-	Cof family protein
+356269..357741	+	1473	ACA36914.1	-	SPH_0403	-	-	xanthine/uracil permease family protein
+357794..358501	+	708	ACA37402.1	-	SPH_0404	-	-	caax amino protease family protein
+358618..358731	+	114	ACA37286.1	-	SPH_0405	-	-	hypothetical protein
+358746..359726	+	981	ACA36978.1	folP	SPH_0406	-	-	dihydropteroate synthase
+359728..361050	+	1323	ACA36100.1	-	SPH_0407	-	-	dihydrofolate synthetase
+361031..361585	+	555	ACA35791.1	folE	SPH_0408	-	-	GTP cyclohydrolase I
+361628..362440	+	813	ACA37627.1	-	SPH_0409	-	-	bifunctional folate synthesis protein
+362485..362802	-	318	ACA36241.1	-	SPH_0410	-	-	conserved hypothetical protein
+363158..363604	+	447	ACA36411.1	rplM	SPH_0411	-	-	ribosomal protein L13
+363624..364016	+	393	ACA37290.1	rpsI	SPH_0412	-	-	ribosomal protein S9
+364279..365157	-	879	ACA36600.1	-	SPH_0413	-	-	integrase/recombinase, phage integrase family
+365399..366088	-	690	ACA36313.1	-	SPH_0414	-	-	hypothetical protein
+366175..366585	-	411	ACA35933.1	-	SPH_0415	-	-	conserved hypothetical protein
+366642..367532	-	891	ACA37127.1	-	SPH_0416	-	-	hypothetical protein
+367735..368475	+	741	ACA36534.1	-	SPH_0417	-	-	conserved hypothetical protein
+368591..368947	+	357	ACA36169.1	-	SPH_0418	-	-	hypothetical protein
+369502..369723	-	222	ACA35586.1	-	SPH_0419	-	-	integrase/recombinase, phage integrase family
+369828..369947	-	120	ACA37047.1	-	SPH_0420	-	-	conserved hypothetical protein
+370279..371487	-	1209	ACA36442.1	-	SPH_0421	-	-	ATPase
+371575..371700	+	126	ACA35693.1	-	SPH_0422	-	-	hypothetical protein
+371892..372068	+	177	ACA37518.1	-	SPH_0423	-	-	conserved hypothetical protein
+372469..374682	+	2214	ACA36590.1	-	SPH_0424	-	-	glycosyl hydrolase, family 31
+374904..375380	-	477	ACA36113.1	-	SPH_0425	-	-	peroxiredoxin Hyr1
+375603..378806	+	3204	ACA36441.1	-	SPH_0426	-	-	hyaluronate lyase
+379950..380579	-	630	ACA35932.1	-	SPH_0428	-	-	keto-hydroxyglutarate-aldolase/keto-deoxy- phosphogluconate aldolase
+380589..381590	-	1002	ACA36536.1	-	SPH_0429	-	-	2-keto-3-deoxygluconate kinase
+381621..382262	-	642	ACA36639.1	-	SPH_0430	-	-	ribose 5-phosphate isomerase RpiB
+382281..383096	-	816	ACA37204.1	-	SPH_0431	-	-	gluconate 5-dehydrogenase (5-keto-D-gluconate 5-reductase)
+383368..383802	+	435	ACA36289.1	-	SPH_0432	-	-	phosphotransferase system sugar-specific EII component
+383814..385004	+	1191	ACA36615.1	-	SPH_0433	-	-	unsaturated glucuronyl hydrolase
+385015..385506	+	492	ACA36866.1	-	SPH_0434	-	-	N-acetylgalactosamine-specific phosphotransferase enzyme iib component2
+385521..386300	+	780	ACA37172.1	-	SPH_0435	-	-	phosphotransferase system sugar-specific EII component
+386287..387105	+	819	ACA36050.1	-	SPH_0436	-	-	phosphotransferase system sugar-specific EII component
+387105..387398	+	294	ACA35992.1	yajC1	SPH_0437	-	-	preprotein translocase, YajC subunit
+387420..389321	+	1902	ACA37451.1	-	SPH_0438	-	-	oligohyaluronate lyase
+389381..390382	+	1002	ACA36969.1	-	SPH_0439	-	-	sugar binding transcriptional regulator RegR
+390492..390827	-	336	ACA35853.1	-	SPH_0440	-	-	hypothetical protein
+390838..391080	-	243	ACA35677.1	-	SPH_0441	-	-	hypothetical protein
+391091..391633	-	543	ACA37349.1	-	SPH_0442	-	-	conserved hypothetical protein
+391649..391843	-	195	ACA36674.1	-	SPH_0443	-	-	conserved domain protein
+392011..392961	+	951	ACA35591.1	mraW	SPH_0444	-	-	S-adenosyl-methyltransferase MraW
+392973..393290	+	318	ACA36471.1	ftsL	SPH_0445	-	-	cell division protein FtsL
+393294..395546	+	2253	ACA37085.1	-	SPH_0446	-	-	penicillin-binding protein 2X
+395548..396528	+	981	ACA35960.1	mraY	SPH_0447	-	-	phospho-N-acetylmuramoyl-pentapeptide- transferase
+396665..396817	+	153	ACA36302.1	-	SPH_0448	-	-	hypothetical protein
+397277..399382	+	2106	ACA36909.1	-	SPH_0449	-	-	ATP-dependent Clp protease ATP-binding subunit ClpL
+399678..400160	-	483	ACA36718.1	luxS	SPH_0450	-	-	S-ribosylhomocysteinase LuxS
+400255..401739	-	1485	ACA35682.1	-	SPH_0451	-	-	conserved hypothetical protein
+401892..403499	+	1608	ACA36280.1	-	SPH_0452	-	-	trehalose-6-phosphate hydrolase (Alpha,alpha-phosphotrehalase)
+403659..403832	+	174	ACA36605.1	-	SPH_0453	-	-	lipoprotein, putative
+404341..404670	-	330	ACA37199.1	-	SPH_0454	-	-	transposase
+404901..406346	+	1446	ACA36147.1	-	SPH_0455	-	-	integral membrane regulatory protein Wzg
+406348..407079	+	732	ACA35552.1	-	SPH_0456	-	-	tyrosine-protein phosphatase CpsB
+407088..407780	+	693	ACA36877.1	-	SPH_0457	-	-	Cps19aC
+407790..408479	+	690	ACA36803.1	-	SPH_0458	-	-	tyrosine-protein kinase CpsD
+408494..409855	+	1362	ACA35949.1	-	SPH_0459	-	-	galactosyl transferase CpsE
+409861..410604	+	744	ACA37502.1	-	SPH_0460	-	-	UDP-N-acetyl-D-mannosamine transferase
+410601..411425	+	825	ACA36599.1	-	SPH_0461	-	-	Cps19aG
+411427..412305	+	879	ACA36528.1	-	SPH_0462	-	-	putative glycosyl transferase
+412306..413640	+	1335	ACA35757.1	-	SPH_0463	-	-	polysaccharide polymerase Cps19aI
+413668..415092	+	1425	ACA36894.1	-	SPH_0464	-	-	flippase Wzx
+415157..416245	+	1089	ACA37489.1	-	SPH_0465	-	-	UDP-N-acetylglucosamine 2-epimerase
+416408..417277	+	870	ACA37073.1	rfbA	SPH_0466	-	-	glucose-1-phosphate thymidylyltransferase
+417278..417871	+	594	ACA36562.1	-	SPH_0467	-	-	dTDP-4-dehydrorhamnose 3,5-epimerase
+417883..418932	+	1050	ACA35950.1	rfbB	SPH_0468	-	-	dTDP-glucose 4,6-dehydratase
+418998..419849	+	852	ACA37126.1	rfbD	SPH_0469	-	-	dTDP-4-dehydrorhamnose reductase
+422552..424534	+	1983	ACA36406.1	-	SPH_0474	-	-	oligopeptide binding protein
+424907..430138	+	5232	ACA37625.1	-	SPH_0475	-	-	endo-alpha-N-acetylgalactosaminidase
+430305..432464	-	2160	ACA37407.1	-	SPH_0476	-	-	penicillin-binding protein 1A
+432461..433057	-	597	ACA37316.1	recU	SPH_0477	-	-	recombination protein U
+433124..433651	+	528	ACA36719.1	-	SPH_0478	-	-	conserved hypothetical protein
+433721..434062	+	342	ACA36132.1	-	SPH_0479	-	-	cell division initiation protein
+434548..435705	+	1158	ACA37190.1	-	SPH_0480	-	-	methyltransferase
+435718..437130	+	1413	ACA37089.1	-	SPH_0481	-	-	conserved hypothetical protein
+437206..438630	+	1425	ACA36482.1	gnd	SPH_0482	-	-	6-phosphogluconate dehydrogenase, decarboxylating
+438642..439331	+	690	ACA35890.1	-	SPH_0483	-	-	response regulator
+439430..440449	+	1020	ACA35802.1	-	SPH_0484	-	-	choline-binding protein F
+440567..441799	-	1233	ACA37456.1	-	SPH_0485	-	-	transporter, major facilitator family protein
+443536..443658	+	123	ACA36878.1	-	SPH_0487	-	-	choline-binding protein F
+443780..444658	+	879	ACA37231.1	mvk	SPH_0488	-	-	mevalonate kinase
+444640..445593	+	954	ACA35923.1	mvaD	SPH_0489	-	-	diphosphomevalonate decarboxylase
+445580..446587	+	1008	ACA35625.1	-	SPH_0490	-	-	phosphomevalonate kinase
+446571..447581	+	1011	ACA36094.1	fni	SPH_0491	-	-	isopentenyl-diphosphate delta-isomerase, type 2
+447658..448356	+	699	ACA36751.1	-	SPH_0492	-	-	conserved hypothetical protein
+448353..449348	+	996	ACA37338.1	-	SPH_0493	-	-	histidine kinase
+449362..449994	+	633	ACA36981.1	-	SPH_0494	-	-	response regulator
+450914..451153	+	240	ACA37182.1	-	SPH_0498	-	-	conserved hypothetical protein
+452082..453104	+	1023	ACA36798.1	-	SPH_0501	-	-	choline binding protein F
+453234..454067	-	834	ACA36860.1	-	SPH_0502	-	-	integrase core domain protein
+454714..456483	+	1770	ACA36851.1	-	SPH_0504	-	-	pts system mannitol-specific eiicb component (eiicb-mtl) (eii-mtl)
+456507..458462	+	1956	ACA37267.1	-	SPH_0505	-	-	putative transcriptional regulator MtlR
+458464..458901	+	438	ACA35957.1	-	SPH_0506	-	-	mannitol-specific phosphotransferase enzyme iia component
+458963..460099	+	1137	ACA36431.1	-	SPH_0507	-	-	mannitol-1-phosphate 5-dehydrogenase
+460443..460556	+	114	ACA36778.1	-	SPH_0508	-	-	conserved hypothetical protein
+460860..462143	+	1284	ACA37142.1	tig	SPH_0509	-	-	trigger factor
+462191..464557	-	2367	ACA35594.1	-	SPH_0510	-	-	helicase, RecD/TraA family
+464791..465405	-	615	ACA37026.1	lepB	SPH_0511	-	-	signal peptidase I
+465417..466289	-	873	ACA37430.1	rnhC	SPH_0512	-	-	ribonuclease hiii
+466376..466678	+	303	ACA35792.1	-	SPH_0513	-	-	conserved hypothetical protein
+466675..467223	+	549	ACA36450.1	cvpA	SPH_0514	-	-	CvpA family protein
+467327..469663	+	2337	ACA35692.1	-	SPH_0515	-	-	MutS2 family protein
+470010..471332	+	1323	ACA37185.1	-	SPH_0516	-	-	D-alanine glycine permease
+471550..472098	+	549	ACA36598.1	-	SPH_0517	-	-	macrophage infectivity potentiator protein
+472208..473107	+	900	ACA36203.1	-	SPH_0518	-	-	exfoliative toxin A
+473132..474406	-	1275	ACA35647.1	serS	SPH_0519	-	-	seryl-tRNA synthetase
+474620..474991	-	372	ACA37542.1	-	SPH_0520	-	-	ManO
+474994..476358	-	1365	ACA36944.1	-	SPH_0521	-	-	aspartate kinase
+476536..476691	-	156	ACA35506.1	-	SPH_0522	-	-	conserved hypothetical protein
+476683..477468	+	786	ACA36009.1	-	SPH_0523	-	-	enoyl-CoA hydratase
+477562..477996	+	435	ACA36713.1	-	SPH_0524	-	-	transcriptional regulator
+477996..478970	+	975	ACA36928.1	-	SPH_0525	-	-	beta-ketoacyl-acyl carrier protein synthase III
+479030..479254	+	225	ACA36821.1	-	SPH_0526	-	-	conserved domain protein
+479373..480347	+	975	ACA36092.1	-	SPH_0527	-	-	putative enoyl-(acyl-carrier-protein) reductase II
+480340..481260	+	921	ACA37404.1	fabD	SPH_0528	-	-	malonyl CoA-acyl carrier protein transacylase
+481294..482025	+	732	ACA37281.1	fabG	SPH_0529	-	-	3-oxoacyl-(acyl-carrier-protein) reductase
+482047..483282	+	1236	ACA36305.1	-	SPH_0531	-	-	3-oxoacyl-[acyl-carrier-protein] synthase 2
+483285..483770	+	486	ACA35618.1	accB	SPH_0532	-	-	acetyl-CoA carboxylase, biotin carboxyl carrier protein
+483767..484189	+	423	ACA37525.1	fabZ	SPH_0533	-	-	beta-hydroxyacyl-(acyl-carrier-protein) dehydratase FabZ
+484201..485568	+	1368	ACA37381.1	accC	SPH_0534	-	-	acetyl-CoA carboxylase, biotin carboxylase
+485605..486471	+	867	ACA35926.1	accD	SPH_0535	-	-	acetyl-CoA carboxylase, carboxyl transferase, beta subunit
+486468..487235	+	768	ACA37463.1	accA	SPH_0536	-	-	acetyl-CoA carboxylase, carboxyl transferase, alpha subunit
+487498..487683	+	186	ACA36869.1	-	SPH_0537	-	-	conserved hypothetical protein
+487740..488174	+	435	ACA36373.1	-	SPH_0538	-	-	conserved hypothetical protein
+488472..488894	-	423	ACA36012.1	nusB	SPH_0539	-	-	transcription antitermination factor NusB
+488887..489276	-	390	ACA36022.1	-	SPH_0540	-	-	general stress protein, Gls24 family
+489298..489858	-	561	ACA37149.1	efp	SPH_0541	-	-	translation elongation factor P
+489987..491429	-	1443	ACA36675.1	-	SPH_0542	-	-	aspartyl/glutamyl-tRNA(Asn/Gln) amidotransferase subunit B (Asp/Glu-ADT subunit B)
+491429..492895	-	1467	ACA36173.1	-	SPH_0543	-	-	glutamyl-tRNA(Gln) amidotransferase subunit A (Glu-ADTsubunit A)
+492895..493197	-	303	ACA36179.1	gatC	SPH_0544	-	-	glutamyl-tRNA(Gln) amidotransferase, C subunit
+493410..494954	+	1545	ACA36729.1	prfC	SPH_0545	-	-	peptide chain release factor 3
+495821..496009	+	189	ACA37130.1	rpmB	SPH_0548	-	-	ribosomal protein L28
+496166..496531	+	366	ACA35744.1	-	SPH_0549	-	-	alkaline shock protein
+496534..498201	+	1668	ACA35737.1	-	SPH_0550	-	-	dihydroxyacetone kinase family protein
+498402..500102	+	1701	ACA36195.1	ilvB	SPH_0551	-	-	acetolactate synthase, large subunit, biosynthetic type
+500095..500571	+	477	ACA37555.1	ilvN	SPH_0552	-	-	acetolactate synthase, small subunit
+500637..501659	+	1023	ACA36002.1	ilvC	SPH_0553	-	-	ketol-acid reductoisomerase
+501766..502002	+	237	ACA37066.1	-	SPH_0554	-	-	conserved hypothetical protein
+502240..502596	+	357	ACA36505.1	-	SPH_0555	-	-	conserved hypothetical protein
+502646..503896	+	1251	ACA37255.1	ilvA	SPH_0556	-	-	threonine dehydratase
+504038..504226	+	189	ACA37464.1	-	SPH_0557	-	-	conserved hypothetical protein
+504767..504982	+	216	ACA35778.1	-	SPH_0558	-	-	conserved hypothetical protein
+505091..505831	-	741	ACA36487.1	-	SPH_0559	-	-	L-cystine import ATP-binding protein TcyN
+505831..507396	-	1566	ACA37523.1	-	SPH_0560	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+507534..509423	+	1890	ACA36093.1	-	SPH_0562	-	-	conserved hypothetical protein
+509420..509590	-	171	ACA35575.1	-	SPH_0561	-	-	conserved domain protein
+511007..511852	+	846	ACA37015.1	-	SPH_0565	-	-	undecaprenyl-diphosphatase
+511845..511973	+	129	ACA36369.1	-	SPH_0566	-	-	conserved hypothetical protein
+511999..513060	-	1062	ACA36020.1	-	SPH_0567	-	-	DNA polymerase IV (Pol IV)
+513095..513226	-	132	ACA37319.1	-	SPH_0568	-	-	hypothetical protein
+513453..515777	+	2325	ACA36726.1	pflB	SPH_0569	-	-	formate acetyltransferase
+515835..517097	-	1263	ACA36422.1	-	SPH_0570	-	-	transposase
+517362..518891	-	1530	ACA35958.1	-	SPH_0571	-	-	transcriptional regulator, putative
+519407..522058	+	2652	ACA35517.1	-	SPH_0572	-	-	cell wall surface anchor family protein
+522291..524225	+	1935	ACA36988.1	-	SPH_0574	-	-	cell wall surface anchor family protein
+524191..524577	-	387	ACA37160.1	-	SPH_0573	-	-	hypothetical protein
+524542..525453	+	912	ACA35771.1	-	SPH_0575	-	-	cell wall surface anchor family protein
+525791..526693	+	903	ACA36724.1	-	SPH_0576	-	-	sortase family protein
+526680..527573	+	894	ACA37315.1	-	SPH_0577	-	-	sortase
+527560..528411	+	852	ACA37611.1	-	SPH_0578	-	-	sortase, putative
+529924..530073	-	150	ACA36064.1	-	SPH_0582	-	-	conserved hypothetical protein
+530066..530350	-	285	ACA35588.1	-	SPH_0583	-	-	conserved hypothetical protein
+530742..530915	+	174	ACA35898.1	-	SPH_0584	-	-	hypothetical protein
+531784..533007	-	1224	ACA36191.1	-	SPH_0585	-	-	ROK family protein
+533175..534497	+	1323	ACA36930.1	-	SPH_0586	-	-	lichenan permease iic component
+534499..536385	+	1887	ACA37333.1	-	SPH_0587	-	-	conserved hypothetical protein
+536553..536897	+	345	ACA36010.1	-	SPH_0588	-	-	lactose-specific phosphotransferase enzyme iia component
+536907..538319	+	1413	ACA36493.1	lacG1	SPH_0589	-	-	6-phospho-beta-galactosidase
+538389..540068	+	1680	ACA36114.1	-	SPH_0590	-	-	pts system lactose-specific eiicb component (eiicb-lac) (eii-lac)
+540194..541633	-	1440	ACA36596.1	-	SPH_0591	-	-	Trk transporter membrane-spanning protein - K+ transport
+541637..542986	-	1350	ACA37461.1	-	SPH_0592	-	-	potassium uptake protein, Trk family
+543175..544023	+	849	ACA35752.1	-	SPH_0593	-	-	protein of unknown function
+544038..544586	+	549	ACA36532.1	-	SPH_0594	-	-	protein YdcD
+544593..544895	+	303	ACA35579.1	-	SPH_0595	-	-	chlorohydrolase
+544997..546679	+	1683	ACA37044.1	-	SPH_0596	-	-	putative ABC transporter ATP-binding protein //
+546664..547494	+	831	ACA36591.1	-	SPH_0597	-	-	cobalt transport family protein
+547687..548190	+	504	ACA37012.1	-	SPH_0598	-	-	RNA methyltransferase, TrmH family, group 2
+548643..549206	+	564	ACA37469.1	-	SPH_0599	-	-	conserved hypothetical protein
+549220..549846	+	627	ACA37378.1	-	SPH_0600	-	-	PAP2 family protein
+549873..550262	+	390	ACA36923.1	-	SPH_0601	-	-	conserved hypothetical protein
+550267..550716	+	450	ACA36426.1	-	SPH_0602	-	-	conserved hypothetical protein
+550844..551431	+	588	ACA35989.1	rpoE	SPH_0603	-	-	DNA-directed RNA polymerase, delta subunit
+551521..551646	-	126	ACA35516.1	-	SPH_0604	-	-	hypothetical protein
+551821..553428	+	1608	ACA36890.1	pyrG	SPH_0605	-	-	CTP synthase
+553969..555600	-	1632	ACA36413.1	-	SPH_0606	-	-	sodium-dependent phosphate transporter
+555893..560806	+	4914	ACA35891.1	-	SPH_0607	-	-	endo-beta-N-acetylglucosaminidase D
+560896..562092	+	1197	ACA37613.1	pgk	SPH_0608	-	-	phosphoglycerate kinase
+562228..562755	+	528	ACA36597.1	-	SPH_0609	-	-	conserved hypothetical protein
+562832..563188	+	357	ACA36202.1	-	SPH_0610	-	-	HTH-type transcriptional regulator GlnR
+563225..564571	+	1347	ACA35754.1	glnA	SPH_0611	-	-	glutamine synthetase, type I
+564661..564780	-	120	ACA37247.1	-	SPH_0612	-	-	conserved hypothetical protein
+565038..565175	+	138	ACA36899.1	-	SPH_0613	-	-	conserved hypothetical protein
+565346..566626	+	1281	ACA36546.1	-	SPH_0614	-	-	type I site-specific deoxyribonuclease chain S
+566683..567480	+	798	ACA37139.1	-	SPH_0615	-	-	integrase/recombinase, phage integrase family
+567491..568096	+	606	ACA37637.1	-	SPH_0617	-	-	Type I restriction modification DNA specificity domain protein
+568044..569612	-	1569	ACA37501.1	-	SPH_0616	-	-	type I restriction-modification system, S subunit
+569612..571075	-	1464	ACA36786.1	-	SPH_0618	-	-	type I restriction enzyme EcoEI M protein (M.EcoEI)
+571088..573421	-	2334	ACA36542.1	-	SPH_0619	-	-	type I restriction-modification system, R subunit
+573799..573993	+	195	ACA35809.1	-	SPH_0620	-	-	conserved hypothetical protein
+574100..574537	+	438	ACA35990.1	-	SPH_0621	-	-	hypothetical protein
+574701..575735	+	1035	ACA37580.1	hrcA	SPH_0622	-	-	heat-inducible transcription repressor HrcA
+575762..576286	+	525	ACA36068.1	grpE	SPH_0623	-	-	co-chaperone GrpE
+576766..578589	+	1824	ACA35607.1	dnaK	SPH_0624	-	-	chaperone protein DnaK
+579349..580485	+	1137	ACA35611.1	dnaJ	SPH_0625	-	-	chaperone protein DnaJ
+580807..581094	-	288	ACA35815.1	-	SPH_0626	-	-	conserved hypothetical protein
+581104..581514	-	411	ACA36592.1	-	SPH_0627	-	-	histidine triad domain protein
+581582..582313	+	732	ACA37194.1	-	SPH_0628	-	-	ABC-type transporter ATP-binding protein EcsA
+582310..583359	+	1050	ACA36448.1	-	SPH_0629	-	-	ABC transporter, permease protein
+583527..583856	-	330	ACA35975.1	-	SPH_0630	-	-	BlpT protein, fusion
+584132..584470	+	339	ACA37447.1	-	SPH_0631	-	-	BlpS protein
+584475..585212	+	738	ACA37008.1	-	SPH_0632	-	-	response regulator
+585226..586566	+	1341	ACA36603.1	-	SPH_0633	-	-	histidine kinase
+586608..586763	-	156	ACA36451.1	-	SPH_0634	-	-	double glycine cleavage site bacteriolysin superfamily
+586820..588181	-	1362	ACA35657.1	-	SPH_0635	-	-	BlpC ABC transporter
+588192..590345	-	2154	ACA35940.1	-	SPH_0636	-	-	transport/processing ATP-binding protein ComA
+590627..590824	+	198	ACA37484.1	-	SPH_0637	-	-	conserved domain protein
+591291..591560	+	270	ACA36263.1	-	SPH_0638	-	-	bacteriocin BlpJ
+591629..591859	+	231	ACA35637.1	-	SPH_0639	-	-	conserved domain protein
+591862..591981	+	120	ACA35651.1	-	SPH_0640	-	-	hypothetical protein
+592278..592442	+	165	ACA37309.1	-	SPH_0641	-	-	conserved hypothetical protein
+592439..592825	+	387	ACA37091.1	-	SPH_0642	-	-	hypothetical protein
+592925..593308	+	384	ACA36521.1	-	SPH_0643	-	-	hypothetical protein
+593360..594049	+	690	ACA36809.1	-	SPH_0644	-	-	immunity protein BlpY
+594475..595086	+	612	ACA35813.1	-	SPH_0646	-	-	caax amino protease family
+595247..596041	+	795	ACA36561.1	-	SPH_0647	-	-	phosphotransferase enzyme family
+596038..596673	+	636	ACA37022.1	trmB	SPH_0648	-	-	tRNA (guanine-N(7)-)-methyltransferase
+596799..597278	+	480	ACA36667.1	-	SPH_0649	-	-	conserved hypothetical protein
+597322..598458	+	1137	ACA37209.1	nusA	SPH_0650	-	-	transcription termination factor NusA
+598480..598773	+	294	ACA36458.1	-	SPH_0651	-	-	ylxr homolog
+598766..599065	+	300	ACA36853.1	-	SPH_0652	-	-	ribosomal protein HS6-type
+599082..601874	+	2793	ACA37465.1	-	SPH_0653	-	-	translation initiation factor IF-2
+602125..602475	+	351	ACA35664.1	rbfA	SPH_0654	-	-	ribosome-binding factor A
+602754..603533	+	780	ACA36118.1	-	SPH_0655	-	-	conserved hypothetical protein
+603535..603717	+	183	ACA36721.1	-	SPH_0656	-	-	conserved hypothetical protein
+603714..603854	+	141	ACA36933.1	-	SPH_0657	-	-	conserved hypothetical protein
+603984..604136	-	153	ACA35499.1	-	SPH_0658	-	-	hypothetical protein
+604167..604400	+	234	ACA37171.1	-	SPH_0659	-	-	conserved hypothetical protein
+604400..605734	+	1335	ACA35699.1	-	SPH_0660	-	-	hemerythrin HHE cation binding domain subfamily, putative
+605744..605998	+	255	ACA37174.1	-	SPH_0661	-	-	conserved hypothetical protein
+606094..606489	+	396	ACA36646.1	-	SPH_0662	-	-	conserved hypothetical protein
+606901..607350	+	450	ACA36433.1	-	SPH_0663	-	-	hypothetical protein
+607337..607897	+	561	ACA35987.1	-	SPH_0664	-	-	acetyltransferase, gnat family
+607897..608475	+	579	ACA37392.1	-	SPH_0665	-	-	shikimate kinase
+608468..611119	+	2652	ACA35681.1	valS	SPH_0666	-	-	valyl-tRNA synthetase
+611200..611364	+	165	ACA37466.1	-	SPH_0667	-	-	conserved domain protein
+611415..612323	+	909	ACA36952.1	-	SPH_0668	-	-	hypothetical protein
+612347..613018	+	672	ACA36212.1	-	SPH_0669	-	-	hypothetical protein
+613398..614201	+	804	ACA36772.1	-	SPH_0670	-	-	Fic protein family
+617557..618396	+	840	ACA36420.1	-	SPH_0674	-	-	transcription antiterminator LicT
+618414..620252	+	1839	ACA36120.1	-	SPH_0675	-	-	phosphotransferase system sugar-specific EII component
+620265..621680	+	1416	ACA36794.1	-	SPH_0677	-	-	beta-glucosidase
+622271..623317	+	1047	ACA36057.1	pheS	SPH_0678	-	-	phenylalanyl-tRNA synthetase, alpha subunit
+623317..623826	+	510	ACA35674.1	-	SPH_0679	-	-	acetyltransferase, gnat family
+623903..626308	+	2406	ACA37476.1	pheT	SPH_0680	-	-	phenylalanyl-tRNA synthetase, beta subunit
+626376..627377	-	1002	ACA37080.1	-	SPH_0681	-	-	endonuclease/exonuclease/phosphatase family
+627534..628028	+	495	ACA36333.1	-	SPH_0682	-	-	transposase
+628107..628373	+	267	ACA37365.1	-	SPH_0683	-	-	helix-turn-helix domain protein
+628633..630882	+	2250	ACA36765.1	metE	SPH_0684	-	-	5-methyltetrahydropteroyltriglutamate-- homocysteine S-methyltransferase
+630946..631812	+	867	ACA37359.1	metF	SPH_0685	-	-	5,10-methylenetetrahydrofolate reductase
+632497..634710	+	2214	ACA36702.1	pnp	SPH_0686	-	-	polyribonucleotide nucleotidyltransferase
+634726..635343	+	618	ACA36312.1	cysE	SPH_0687	-	-	serine O-acetyltransferase
+635355..636239	+	885	ACA37048.1	-	SPH_0688	-	-	acetyltransferase, gnat family
+636292..637665	+	1374	ACA37517.1	cysS	SPH_0689	-	-	cysteinyl-tRNA synthetase
+637658..638044	+	387	ACA37335.1	-	SPH_0690	-	-	ribonuclease III family protein
+638048..638932	+	885	ACA35713.1	-	SPH_0691	-	-	leucine-rich protein
+639069..639668	+	600	ACA36189.1	-	SPH_0692	-	-	hypothetical protein
+640337..641614	+	1278	ACA36418.1	-	SPH_0694	-	-	ABC transporter membrane-spanning permease - Pep export
+641627..642274	+	648	ACA35836.1	-	SPH_0695	-	-	ABC transporter ATP-binding protein - Pep export
+642326..643705	+	1380	ACA36089.1	-	SPH_0696	-	-	ABC transporter membrane-spanning permease - Pep export
+644017..644673	+	657	ACA36788.1	-	SPH_0697	-	-	VncR, response regulator
+644670..645998	+	1329	ACA37249.1	-	SPH_0698	-	-	VncS, histidine kinase
+646139..647020	+	882	ACA37468.1	fba	SPH_0699	-	-	fructose-1,6-bisphosphate aldolase, class II
+647341..648531	-	1191	ACA35762.1	-	SPH_0700	-	-	oxidoreductase, NAD-binding
+648789..649448	-	660	ACA36525.1	-	SPH_0701	-	-	ABC transporter membrane-spanning permease - glutamine transport
+649458..650135	-	678	ACA37005.1	-	SPH_0702	-	-	ABC transporter membrane-spanning permease - glutamine transport
+650148..650942	-	795	ACA37137.1	-	SPH_0703	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor
+650953..651711	-	759	ACA35666.1	-	SPH_0704	-	-	glutamine transport ATP-binding protein GlnQ
+651988..654210	+	2223	ACA36257.1	recJ	SPH_0705	-	-	single-stranded-DNA-specific exonuclease RecJ
+654385..656046	+	1662	ACA36329.1	-	SPH_0706	-	-	metallo-beta-lactamase superfamily protein
+656115..656894	+	780	ACA35835.1	-	SPH_0707	-	-	tributyrin esterase
+657025..658245	+	1221	ACA37304.1	-	SPH_0708	-	-	MurM
+658250..659482	+	1233	ACA36790.1	-	SPH_0709	-	-	MurN
+659561..660262	+	702	ACA36039.1	-	SPH_0710	-	-	matrixin family
+660302..662149	+	1848	ACA35570.1	uvrC	SPH_0711	-	-	excinuclease ABC, C subunit
+662139..662972	+	834	ACA37370.1	-	SPH_0712	-	-	metallophosphoesterase
+663154..663954	-	801	ACA36805.1	-	SPH_0713	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor
+664125..664730	+	606	ACA36072.1	-	SPH_0714	-	-	oxidoreductase
+664743..666143	+	1401	ACA35609.1	pepV	SPH_0715	-	-	dipeptidase PepV
+666197..666775	+	579	ACA36155.1	-	SPH_0716	-	-	uracil DNA glycosylase family protein
+666935..667087	+	153	ACA35561.1	-	SPH_0717	-	-	hypothetical protein
+667103..667222	+	120	ACA37583.1	-	SPH_0718	-	-	hypothetical protein
+667394..668719	+	1326	ACA37030.1	brnQ	SPH_0719	-	-	branched-chain amino acid transport system II carrier protein
+668817..669854	+	1038	ACA35628.1	-	SPH_0720	-	-	peptidase, M42
+669856..670317	+	462	ACA36258.1	-	SPH_0721	-	-	HIT family protein
+670332..671048	+	717	ACA36601.1	-	SPH_0722	-	-	D-alanyl-D-alanine carboxypeptidase
+671171..671596	+	426	ACA37203.1	rplK	SPH_0723	-	-	ribosomal protein L11
+671804..672493	+	690	ACA37311.1	rplA	SPH_0724	-	-	ribosomal protein L1
+673034..673225	-	192	ACA35512.1	-	SPH_0725	-	-	chlorohydrolase
+673239..673601	+	363	ACA36812.1	-	SPH_0726	-	-	conserved hypothetical protein
+674646..675638	+	993	ACA37364.1	-	SPH_0727	-	-	ABC transporter ATP-binding protein - role in polysaccharide efflux
+675640..676458	+	819	ACA35582.1	-	SPH_0728	-	-	membrane protein
+676460..677245	+	786	ACA36547.1	-	SPH_0729	-	-	ABC transporter permease protein
+677284..677562	+	279	ACA36810.1	-	SPH_0730	-	-	hypothetical protein
+677547..677744	+	198	ACA37372.1	-	SPH_0731	-	-	hypothetical protein
+678020..678244	-	225	ACA37380.1	-	SPH_0732	-	-	conserved hypothetical protein
+678477..684893	+	6417	ACA36336.1	-	SPH_0733	-	-	serine protease
+685580..685825	-	246	ACA37599.1	-	SPH_0735	-	-	transposase family protein
+687333..687809	+	477	ACA35978.1	-	SPH_0738	-	-	phosphotransferase system sugar-specific EII component
+687847..688152	+	306	ACA37433.1	-	SPH_0739	-	-	PTS system, galactose-specific IIB component
+688200..689675	+	1476	ACA36898.1	-	SPH_0740	-	-	phosphotransferase system sugar-specific EII component
+690025..696726	+	6702	ACA36565.1	-	SPH_0741	-	-	beta-galactosidase
+696974..697597	-	624	ACA35894.1	-	SPH_0742	-	-	hypothetical protein
+697585..697830	-	246	ACA35585.1	-	SPH_0743	-	-	hypothetical protein
+697800..697967	+	168	ACA35885.1	-	SPH_0744	-	-	hypothetical protein
+698041..698400	-	360	ACA36351.1	-	SPH_0745	-	-	integral membrane protein
+699432..699989	+	558	ACA37411.1	-	SPH_0748	-	-	SAM-dependent methyltransferase
+700096..700236	+	141	ACA35808.1	-	SPH_0749	-	-	conserved hypothetical protein
+702480..703340	+	861	ACA36461.1	-	SPH_0752	-	-	ribonuclease BN
+703551..704261	+	711	ACA35759.1	-	SPH_0753	-	-	cytoChrome c-type biogenesis protein
+704281..704847	+	567	ACA37620.1	-	SPH_0754	-	-	thioredoxin family protein
+704858..705970	+	1113	ACA37006.1	-	SPH_0755	-	-	peptide methionine sulfoxide reductase MsrA/msrB
+706418..707155	+	738	ACA35578.1	-	SPH_0756	-	-	response regulator
+707152..708843	+	1692	ACA37266.1	-	SPH_0757	-	-	histidine kinase
+708959..709522	+	564	ACA36752.1	-	SPH_0758	-	-	conserved hypothetical protein
+709544..715246	+	5703	ACA36139.1	zmpB	SPH_0759	-	-	zinc metalloprotease ZmpB
+715321..717042	+	1722	ACA36995.1	-	SPH_0760	-	-	chorismate binding enzyme
+717043..717660	+	618	ACA36372.1	-	SPH_0761	-	-	conserved hypothetical protein
+717710..718636	+	927	ACA35624.1	-	SPH_0762	-	-	excalibur domain family
+718835..719794	+	960	ACA37163.1	-	SPH_0763	-	-	glucokinase (Glucose kinase)
+719892..720731	+	840	ACA36839.1	thyA	SPH_0764	-	-	thymidylate synthase
+720779..720949	-	171	ACA36167.1	-	SPH_0765	-	-	conserved hypothetical protein
+721070..721954	+	885	ACA36399.1	miaA	SPH_0766	-	-	tRNA delta(2)-isopentenylpyrophosphate transferase
+721947..723185	+	1239	ACA36932.1	hflX	SPH_0767	-	-	GTP-binding proten HflX
+723178..723801	+	624	ACA36495.1	-	SPH_0768	-	-	cystathionine beta-lyase
+723816..724745	+	930	ACA36703.1	rnz	SPH_0769	-	-	ribonuclease Z
+724766..725521	+	756	ACA37159.1	-	SPH_0770	-	-	oxidoreductase
+725575..726543	-	969	ACA35655.1	-	SPH_0771	-	-	regulatory function on capsule expression
+726547..726816	+	270	ACA35855.1	-	SPH_0772	-	-	conserved hypothetical protein
+726816..727196	+	381	ACA36335.1	-	SPH_0773	-	-	rhodanese family protein
+727285..727512	+	228	ACA37079.1	-	SPH_0774	-	-	conserved hypothetical protein
+727552..728277	-	726	ACA37521.1	-	SPH_0775	-	-	ribosomal small subunit pseudouridine synthase A, putative
+728439..730280	+	1842	ACA35623.1	typA	SPH_0776	-	-	GTP-binding protein TypA/BipA
+730300..730554	+	255	ACA37317.1	-	SPH_0777	-	-	conserved hypothetical protein
+730918..731217	+	300	ACA36300.1	-	SPH_0778	-	-	bacteriocin, lactococcin 972 family
+733309..733950	+	642	ACA37105.1	-	SPH_0781	-	-	ABC transporter, ATP-binding protein
+734054..735406	+	1353	ACA36235.1	murD	SPH_0782	-	-	UDP-N-acetylmuramoylalanine--D-glutamate ligase
+735408..736466	+	1059	ACA35508.1	-	SPH_0783	-	-	UDP-N-acetylglucosamine--N-acetylmuramyl- (pentapeptide)pyrophosphoryl-undecaprenol N-acetylglucosamine transferase
+736476..737642	+	1167	ACA37292.1	-	SPH_0784	-	-	cell division protein DivIB
+737908..738609	+	702	ACA36671.1	pyrF	SPH_0785	-	-	orotidine 5'-phosphate decarboxylase
+738643..739275	+	633	ACA36317.1	pyrE	SPH_0786	-	-	orotate phosphoribosyltransferase
+739736..739858	+	123	ACA37021.1	-	SPH_0787	-	-	hypothetical protein
+739954..740718	+	765	ACA35613.1	-	SPH_0788	-	-	membrane protein, putative
+740718..741470	+	753	ACA36065.1	-	SPH_0789	-	-	lipoprotein, putative
+741474..742178	+	705	ACA36808.1	-	SPH_0790	-	-	membrane protein, putative
+742175..742822	+	648	ACA37259.1	-	SPH_0791	-	-	ABC transporter, ATP-binding protein
+742909..743775	-	867	ACA35842.1	-	SPH_0792	-	-	ABC-type amino acid transport/signal transduction system, periplasmic component/domain
+745234..745854	-	621	ACA35929.1	-	SPH_0797	-	-	ABC transporter membrane-spanning permease - glutamine transport
+746129..746275	+	147	ACA36548.1	-	SPH_0798	-	-	conserved domain protein
+746403..747893	+	1491	ACA35903.1	lysS	SPH_0799	-	-	lysyl-tRNA synthetase
+750209..750877	+	669	ACA35749.1	-	SPH_0802	-	-	tena/thi-4 family
+750932..751063	-	132	ACA37426.1	-	SPH_0803	-	-	hypothetical protein
+751165..751947	+	783	ACA36964.1	thiM	SPH_0804	-	-	hydroxyethylthiazole kinase
+751949..752578	+	630	ACA36466.1	thiE1	SPH_0805	-	-	thiamine-phosphate pyrophosphorylase
+753137..753697	+	561	ACA37257.1	-	SPH_0806	-	-	ABC-type cobalt transport system, permease component
+753698..755083	+	1386	ACA35550.1	-	SPH_0807	-	-	ABC transporter ATP-binding protein - cobalt or other cation transport
+755085..755735	+	651	ACA36915.1	-	SPH_0808	-	-	conserved hypothetical protein
+755746..756438	+	693	ACA37442.1	-	SPH_0809	-	-	tena/thi-4 family
+756443..756967	+	525	ACA35985.1	thiW	SPH_0810	-	-	ThiW protein
+756967..757770	+	804	ACA36432.1	-	SPH_0811	-	-	hydroxyethylthiazole kinase
+757763..758395	+	633	ACA36655.1	thiE2	SPH_0812	-	-	thiamine-phosphate pyrophosphorylase
+758604..759395	-	792	ACA37250.1	thiD	SPH_0813	-	-	phosphomethylpyrimidine kinase
+759761..760156	+	396	ACA37608.1	-	SPH_0814	-	-	copper transport repressor, CopY/TcrY family
+760167..760538	+	372	ACA36045.1	-	SPH_0815	-	-	conserved hypothetical protein
+760548..762791	+	2244	ACA36275.1	-	SPH_0816	-	-	copper-translocating P-type ATPase
+762998..764773	+	1776	ACA35648.1	spxB	SPH_0817	-	-	pyruvate oxidase
+764884..765231	+	348	ACA35645.1	-	SPH_0818	-	-	glyoxalase family protein
+765888..766154	-	267	ACA36539.1	-	SPH_0820	-	-	transposase
+766705..767313	-	609	ACA36895.1	-	SPH_0822	-	-	hypothetical protein
+769060..769653	+	594	ACA35568.1	-	SPH_0824	-	-	NanE/NanK bifunctional enzyme
+769654..770586	+	933	ACA37244.1	-	SPH_0825	-	-	protein LplB
+770597..771526	+	930	ACA35909.1	-	SPH_0826	-	-	protein LplC
+771540..772979	+	1440	ACA37187.1	-	SPH_0827	-	-	conserved hypothetical protein
+773048..774625	+	1578	ACA36124.1	-	SPH_0828	-	-	bacterial extracellular solute-binding protein
+774727..776145	+	1419	ACA35523.1	-	SPH_0829	-	-	putative dihydrolipoamide dehydrogenase
+776167..776622	+	456	ACA36016.1	-	SPH_0830	-	-	diadenosine tetraphosphate
+777127..777576	+	450	ACA37303.1	-	SPH_0833	-	-	conserved hypothetical protein
+777904..778035	-	132	ACA36520.1	-	SPH_0835	-	-	conserved hypothetical protein
+778100..778381	+	282	ACA36119.1	-	SPH_0836	-	-	6-phospho-beta-glucosidase AscB, truncation
+778513..779457	+	945	ACA36610.1	manA	SPH_0837	-	-	mannose-6-phosphate isomerase, class I
+779497..780363	-	867	ACA36871.1	-	SPH_0838	-	-	sodium-dependent transporter
+781254..781463	-	210	ACA36544.1	-	SPH_0841	-	-	conserved hypothetical protein
+781514..782686	-	1173	ACA37158.1	-	SPH_0843	-	-	conserved hypothetical protein
+782745..783590	-	846	ACA35617.1	-	SPH_0844	-	-	conserved hypothetical protein
+783715..784272	+	558	ACA36264.1	-	SPH_0845	-	-	transcriptional regulator, TetR family
+784291..784758	+	468	ACA37585.1	-	SPH_0846	-	-	ComE operon protein 2
+784826..785476	+	651	ACA36991.1	upp	SPH_0847	-	-	uracil phosphoribosyltransferase
+785650..786240	+	591	ACA35598.1	clpP	SPH_0848	-	-	Clp protease
+786319..786567	+	249	ACA37150.1	-	SPH_0849	-	-	conserved hypothetical protein
+786669..787829	+	1161	ACA36508.1	-	SPH_0850	-	-	ABC transporter substrate-binding protein - branched chain amino acid transport
+788097..788966	+	870	ACA35899.1	-	SPH_0851	-	-	high-affinity branched-chain amino acid transport system permeaseprotein LivH (LIV-I protein H)
+788970..789926	+	957	ACA35874.1	-	SPH_0852	-	-	ABC transporter membrane-spanning permease - branched chain amino acid transport
+789926..790690	+	765	ACA37558.1	-	SPH_0853	-	-	high-affinity branched-chain amino acid transport ATP-binding proteinlivG (LIV-I protein G)
+790690..791400	+	711	ACA36725.1	-	SPH_0854	-	-	high-affinity branched-chain amino acid transport ATP-binding proteinlivF (LIV-I protein F)
+791707..792363	+	657	ACA36244.1	-	SPH_0855	-	-	AcuB family protein
+792577..793566	+	990	ACA35545.1	prfB	SPH_0856	-	-	peptide chain release factor 2
+793584..794276	+	693	ACA36130.1	ftsE	SPH_0857	-	-	cell division ATP-binding protein FtsE
+794269..795195	+	927	ACA36421.1	-	SPH_0858	-	-	cell division ABC transporter, permease protein FtsX
+795481..797661	+	2181	ACA37056.1	-	SPH_0859	-	-	pts system, iibc component
+797713..798528	+	816	ACA37399.1	-	SPH_0860	-	-	metal-dependent hydrolase
+798668..800011	+	1344	ACA35796.1	-	SPH_0861	-	-	ATP-dependent RNA helicase
+800226..801416	+	1191	ACA37087.1	metK	SPH_0862	-	-	methionine adenosyltransferase
+801969..802904	+	936	ACA35514.1	-	SPH_0863	-	-	dihydroorotate dehydrogenase
+802938..803975	+	1038	ACA35865.1	holA	SPH_0864	-	-	DNA polymerase III, delta subunit
+804148..804753	+	606	ACA36501.1	-	SPH_0865	-	-	superoxide dismutase [Mn] (General stress protein 24)(GSP24)
+804910..805440	+	531	ACA37420.1	-	SPH_0866	-	-	transcriptional regulator
+805461..806546	+	1086	ACA36007.1	-	SPH_0867	-	-	radical SAM enzyme, Cfr family
+806546..807028	+	483	ACA36479.1	-	SPH_0868	-	-	VanZ family protein
+807030..808571	+	1542	ACA36685.1	-	SPH_0869	-	-	ABC transporter, ATP-binding protein
+808627..809430	-	804	ACA37138.1	-	SPH_0870	-	-	peptidyl-prolyl cis-trans isomerase
+809513..809734	-	222	ACA35709.1	-	SPH_0871	-	-	conserved hypothetical protein
+810213..810422	-	210	ACA37166.1	-	SPH_0872	-	-	hypothetical protein
+810592..810864	+	273	ACA35735.1	rpsP	SPH_0873	-	-	ribosomal protein S16
+810884..811123	+	240	ACA36215.1	-	SPH_0874	-	-	conserved domain protein
+811700..812488	+	789	ACA37473.1	-	SPH_0875	-	-	hydrolase, alpha/beta fold family, putative
+812519..813037	+	519	ACA37439.1	rimM	SPH_0876	-	-	16S rRNA processing protein RimM
+813027..813746	+	720	ACA36211.1	trmD	SPH_0877	-	-	tRNA (guanine-N1)-methyltransferase
+813758..814096	+	339	ACA36934.1	-	SPH_0878	-	-	oxygen-sensitive ribonucleoside-triphosphate reductase
+814126..814446	-	321	ACA37118.1	-	SPH_0879	-	-	conserved hypothetical protein
+814544..814759	+	216	ACA35659.1	-	SPH_0881	-	-	conserved domain protein
+814756..814902	-	147	ACA35734.1	-	SPH_0880	-	-	chlorohydrolase
+814963..815499	-	537	ACA36240.1	-	SPH_0882	-	-	biotin synthase
+815696..817042	-	1347	ACA36563.1	gor	SPH_0883	-	-	glutathione-disulfide reductase
+817307..818506	+	1200	ACA37112.1	-	SPH_0884	-	-	membrane-fusion protein
+818490..819191	+	702	ACA35869.1	-	SPH_0885	-	-	macrolide export ATP-binding/permease protein MacB
+819193..820452	+	1260	ACA35563.1	-	SPH_0886	-	-	ABC-type antimicrobial peptide transport system, permease component
+820576..822573	+	1998	ACA35743.1	metG	SPH_0887	-	-	methionyl-tRNA synthetase
+822645..823901	-	1257	ACA36900.1	-	SPH_0888	-	-	transposase
+824046..824282	+	237	ACA36662.1	-	SPH_0889	-	-	chlorohydrolase
+824372..824692	+	321	ACA36174.1	-	SPH_0890	-	-	transcriptional regulator, PadR family
+824696..825511	+	816	ACA36768.1	-	SPH_0891	-	-	membrane protein, putative
+825501..825614	+	114	ACA36145.1	-	SPH_0892	-	-	hypothetical protein
+825586..826512	+	927	ACA37437.1	-	SPH_0893	-	-	oxidoreductase, aldo/keto reductase family protein
+826612..826848	+	237	ACA37324.1	-	SPH_0894	-	-	conserved hypothetical protein
+826841..827539	+	699	ACA36498.1	-	SPH_0895	-	-	3-ketoacyl-(acyl-carrier-protein) reductase
+827550..828050	+	501	ACA36824.1	-	SPH_0896	-	-	MutT/nudix family protein
+828028..828897	+	870	ACA36823.1	-	SPH_0897	-	-	PEP-utilizing enzyme family protein
+828872..829312	+	441	ACA37144.1	-	SPH_0898	-	-	conserved hypothetical protein
+829435..831981	+	2547	ACA35596.1	-	SPH_0899	-	-	aminopeptidase N
+832090..832764	+	675	ACA36980.1	-	SPH_0900	-	-	transcriptional regulatory protein CiaR
+832754..834088	+	1335	ACA36974.1	-	SPH_0901	-	-	sensor protein CiaH
+834122..834409	-	288	ACA37631.1	-	SPH_0902	-	-	conserved hypothetical protein
+834549..835478	+	930	ACA35794.1	-	SPH_0903	-	-	protease
+835678..838128	+	2451	ACA36389.1	-	SPH_0904	-	-	DnaQ family exonuclease/DinG family helicase, putative
+838138..839388	+	1251	ACA36196.1	-	SPH_0905	-	-	RodA
+839399..839953	+	555	ACA36396.1	-	SPH_0906	-	-	4-methyl-5
+840038..840601	+	564	ACA36285.1	-	SPH_0907	-	-	phosphoglycolate phosphatase
+840616..842562	+	1947	ACA36635.1	gyrB	SPH_0908	-	-	DNA gyrase, B subunit
+842644..844371	+	1728	ACA36994.1	ezrA	SPH_0909	-	-	septation ring formation regulator EzrA
+845358..845624	+	267	ACA37601.1	-	SPH_0910	-	-	transposase
+846165..846515	-	351	ACA37271.1	-	SPH_0913	-	-	transposase
+847545..848081	-	537	ACA36983.1	-	SPH_0916	-	-	transposase
+848217..848516	-	300	ACA35733.1	-	SPH_0917	-	-	conserved hypothetical protein
+848681..849136	-	456	ACA35816.1	-	SPH_0918	-	-	MutT/nudix family protein
+850265..852523	-	2259	ACA37232.1	-	SPH_0920	-	-	negative regulator of genetic competence ClpC/mecB
+852752..852982	-	231	ACA35913.1	-	SPH_0921	-	-	conserved hypothetical protein
+853172..853855	+	684	ACA36377.1	-	SPH_0922	-	-	amino acid ABC transporter, permease protein
+853855..854589	+	735	ACA36593.1	-	SPH_0923	-	-	glutamine transport ATP-binding protein GlnQ
+854722..855600	+	879	ACA37556.1	-	SPH_0924	-	-	bifunctional protein FolD
+855742..856614	+	873	ACA35668.1	-	SPH_0925	-	-	putative YjeF homolog, C-terminus
+856896..857579	+	684	ACA37117.1	rpiA	SPH_0926	-	-	ribose 5-phosphate isomerase A
+857593..858804	+	1212	ACA37494.1	deoB	SPH_0927	-	-	phosphopentomutase
+858806..859348	+	543	ACA36781.1	-	SPH_0928	-	-	conserved hypothetical protein
+859364..860173	+	810	ACA36316.1	-	SPH_0929	-	-	purine nucleoside phosphorylase I, inosine and guanosine-specific
+860649..861044	+	396	ACA35870.1	-	SPH_0930	-	-	hypothetical protein
+861054..861629	+	576	ACA37460.1	-	SPH_0931	-	-	hypothetical protein
+861687..862076	+	390	ACA36989.1	-	SPH_0932	-	-	hypothetical protein
+862272..862385	+	114	ACA36206.1	-	SPH_0933	-	-	hypothetical protein
+862820..863530	+	711	ACA35732.1	deoD	SPH_0934	-	-	purine nucleoside phosphorylase
+863553..864077	-	525	ACA36689.1	-	SPH_0935	-	-	topology modulation protein
+864130..864366	-	237	ACA36315.1	rpsT	SPH_0936	-	-	ribosomal protein S20
+864434..865354	-	921	ACA35822.1	coaA	SPH_0937	-	-	pantothenate kinase
+865552..865956	+	405	ACA37302.1	-	SPH_0938	-	-	hypothetical protein
+866047..866166	+	120	ACA36795.1	-	SPH_0939	-	-	hypothetical protein
+866172..866753	+	582	ACA36030.1	-	SPH_0940	-	-	methyltransferase small domain superfamily
+866750..868027	+	1278	ACA35573.1	-	SPH_0941	-	-	pyrimidine-nucleoside phosphorylase (pynp)
+868047..868709	+	663	ACA35906.1	deoC	SPH_0942	-	-	deoxyribose-phosphate aldolase
+868696..869085	+	390	ACA37590.1	cdd	SPH_0943	-	-	cytidine deaminase
+869175..870227	+	1053	ACA36972.1	-	SPH_0944	-	-	lipoprotein
+870371..871906	+	1536	ACA36409.1	-	SPH_0945	-	-	ribose import ATP-binding protein RbsA
+871899..872957	+	1059	ACA36449.1	-	SPH_0946	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+872960..873916	+	957	ACA36013.1	-	SPH_0947	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+874516..875349	+	834	ACA36252.1	-	SPH_0950	-	-	integrase core domain protein
+875394..876035	-	642	ACA35498.1	-	SPH_0951	-	-	membrane protein, putative
+876171..878114	+	1944	ACA37201.1	parE	SPH_0952	-	-	DNA topoisomerase IV, B subunit
+878235..878360	+	126	ACA36472.1	-	SPH_0953	-	-	hypothetical protein
+878525..881005	+	2481	ACA36001.1	parC	SPH_0954	-	-	DNA topoisomerase IV, A subunit
+881137..882159	+	1023	ACA37323.1	ilvE	SPH_0955	-	-	branched-chain amino acid aminotransferase
+882215..882919	+	705	ACA36906.1	-	SPH_0956	-	-	conserved hypothetical protein
+882984..883673	+	690	ACA37640.1	-	SPH_0957	-	-	permease
+883670..884593	+	924	ACA35886.1	-	SPH_0958	-	-	permease
+884608..885252	+	645	ACA36670.1	pcp	SPH_0959	-	-	pyroglutamyl-peptidase I
+885420..885650	+	231	ACA37122.1	-	SPH_0960	-	-	conserved hypothetical protein
+886022..887224	+	1203	ACA35766.1	-	SPH_0963	-	-	putative 30S ribosomal protein S1 homolog
+888829..889326	+	498	ACA35644.1	-	SPH_0967	-	-	GAF domain-containing protein
+889326..890981	+	1656	ACA37081.1	-	SPH_0968	-	-	DNA polymerase III subunit gamma/tau
+891081..891203	+	123	ACA37569.1	-	SPH_0969	-	-	conserved hypothetical protein
+891352..892122	+	771	ACA37129.1	sufC	SPH_0970	-	-	FeS assembly ATPase SufC
+892150..893412	+	1263	ACA35529.1	sufD	SPH_0971	-	-	FeS assembly protein SufD
+893423..894649	+	1227	ACA36282.1	-	SPH_0972	-	-	cysteine desulfurase
+894636..895076	+	441	ACA36683.1	-	SPH_0973	-	-	SUF system FeS assembly protein, NifU family
+895130..896542	+	1413	ACA37111.1	sufB	SPH_0974	-	-	FeS assembly protein SufB
+896546..896728	+	183	ACA35841.1	-	SPH_0975	-	-	hypothetical protein
+896773..898014	-	1242	ACA36192.1	-	SPH_0976	-	-	penicillin-binding protein 3
+898195..899226	+	1032	ACA37098.1	-	SPH_0977	-	-	membrane protein
+900538..901278	+	741	ACA36902.1	-	SPH_0979	-	-	transcriptional repressor of the fructose operon
+901275..902186	+	912	ACA36560.1	pfkB	SPH_0980	-	-	1-phosphofructokinase
+902183..904135	+	1953	ACA35731.1	-	SPH_0981	-	-	PTS system, Fru family, IIC component
+904156..904305	+	150	ACA37270.1	-	SPH_0982	-	-	hypothetical protein
+904299..906524	+	2226	ACA36663.1	-	SPH_0983	-	-	DNA translocase FtsK
+906569..907003	-	435	ACA36043.1	-	SPH_0984	-	-	conserved hypothetical protein
+907141..908283	+	1143	ACA36538.1	-	SPH_0985	-	-	cysteine desulfurase
+908292..909506	+	1215	ACA35930.1	thiI	SPH_0986	-	-	thiamine biosynthesis/tRNA modification protein ThiI
+909643..910467	+	825	ACA37313.1	-	SPH_0987	-	-	putative esterase superfamily
+910489..910824	+	336	ACA36737.1	-	SPH_0988	-	-	hypothetical protein
+910821..911228	+	408	ACA36918.1	-	SPH_0989	-	-	hypothetical protein
+911241..912407	+	1167	ACA36171.1	-	SPH_0990	-	-	carbamoylphosphate synthase large subunit
+912667..912792	+	126	ACA36298.1	-	SPH_0991	-	-	hypothetical protein
+912915..914408	+	1494	ACA35848.1	-	SPH_0992	-	-	type I restriction modification enzyme methylase subunit
+914421..915338	+	918	ACA37530.1	-	SPH_0993	-	-	type I restriction enzyme EcoBI specificity protein (S protein)(S.EcoBI)
+915430..915666	+	237	ACA36108.1	-	SPH_0994	-	-	conserved hypothetical protein
+915663..916076	+	414	ACA36159.1	-	SPH_0995	-	-	prophage maintenance system killer protein
+916194..917159	+	966	ACA35556.1	-	SPH_0996	-	-	integrase/recombinase, phage integrase family
+917193..918215	+	1023	ACA37366.1	-	SPH_0997	-	-	restriction modification system DNA specificity domain
+918444..921794	+	3351	ACA36766.1	-	SPH_0998	-	-	type I restriction-modification system R subunit
+922065..922220	+	156	ACA36954.1	-	SPH_0999	-	-	chlorohydrolase
+922337..922807	-	471	ACA36970.1	-	SPH_1000	-	-	arginine repressor
+922824..925097	-	2274	ACA37589.1	-	SPH_1001	-	-	Xaa-pro dipeptidyl-peptidase
+925445..928546	+	3102	ACA35919.1	-	SPH_1002	-	-	DNA polymerase III subunit alpha
+928629..929636	+	1008	ACA36661.1	pfkA	SPH_1003	-	-	6-phosphofructokinase
+929695..931200	+	1506	ACA35705.1	pyk	SPH_1004	-	-	pyruvate kinase
+931420..931608	-	189	ACA35954.1	-	SPH_1005	-	-	hypothetical protein
+932935..933807	+	873	ACA36883.1	-	SPH_1007	-	-	lipoprotein, putative
+933914..934297	-	384	ACA35776.1	-	SPH_1008	-	-	mobile genetic element
+934440..934751	+	312	ACA37213.1	-	SPH_1009	-	-	conserved hypothetical protein
+934755..935471	+	717	ACA36611.1	-	SPH_1010	-	-	conserved hypothetical protein
+935601..936416	-	816	ACA36555.1	-	SPH_1011	-	-	ABC transporter, substrate-binding protein
+936413..937318	-	906	ACA37506.1	-	SPH_1012	-	-	putative permease
+937319..937450	-	132	ACA36977.1	-	SPH_1013	-	-	hypothetical protein
+937532..939904	+	2373	ACA36818.1	-	SPH_1014	-	-	S1 RNA binding domain protein
+939891..940340	+	450	ACA35820.1	-	SPH_1015	-	-	zinc-dependent metalloprotease
+940399..940671	+	273	ACA37273.1	-	SPH_1016	-	-	PspC domain family
+940719..940883	-	165	ACA36782.1	-	SPH_1017	-	-	hypothetical protein
+941025..941216	-	192	ACA35539.1	-	SPH_1018	-	-	hypothetical protein
+941644..942402	+	759	ACA36549.1	-	SPH_1019	-	-	bacitracin export ATP-binding protein BceA
+942404..944392	+	1989	ACA37471.1	-	SPH_1020	-	-	ABC-type antimicrobial peptide transport system, permease component
+944434..945024	-	591	ACA37128.1	-	SPH_1021	-	-	integral membrane protein
+946332..946445	-	114	ACA36620.1	-	SPH_1024	-	-	conserved hypothetical protein
+946806..948281	+	1476	ACA35608.1	-	SPH_1026	-	-	arginine decarboxylase
+949217..950077	+	861	ACA35821.1	speE	SPH_1027	-	-	spermidine synthase
+950074..951333	+	1260	ACA36299.1	lys	SPH_1028	-	-	saccharopine dehydrogenase
+951333..952460	+	1128	ACA36625.1	nspC	SPH_1029	-	-	carboxynorspermidine decarboxylase
+952457..953542	+	1086	ACA35830.1	aguA	SPH_1030	-	-	agmatine deiminase
+953552..954427	+	876	ACA36331.1	aguB	SPH_1031	-	-	N-carbamoylputrescine amidase
+954607..955416	-	810	ACA37076.1	-	SPH_1032	-	-	Cof family protein
+955688..955909	+	222	ACA37575.1	-	SPH_1033	-	-	conserved hypothetical protein
+955963..956634	+	672	ACA37221.1	-	SPH_1034	-	-	caax amino protease family
+956686..956883	-	198	ACA35716.1	-	SPH_1035	-	-	conserved hypothetical protein
+956876..957784	+	909	ACA36160.1	-	SPH_1036	-	-	regulatory function on capsule expression in group B streptococci
+957781..958242	+	462	ACA36907.1	lspA	SPH_1037	-	-	signal peptidase II
+958232..959119	+	888	ACA37445.1	rluD	SPH_1038	-	-	ribosomal large subunit pseudouridine synthase D
+959122..961017	+	1896	ACA35994.1	-	SPH_1039	-	-	choline binding protein E
+961118..962227	+	1110	ACA36040.1	proB	SPH_1040	-	-	glutamate 5-kinase
+962237..963499	+	1263	ACA35729.1	proA	SPH_1041	-	-	glutamate-5-semialdehyde dehydrogenase
+963503..964300	+	798	ACA36541.1	proC	SPH_1042	-	-	pyrroline-5-carboxylate reductase
+964520..965158	+	639	ACA35838.1	tmk	SPH_1043	-	-	thymidylate kinase
+965155..966045	+	891	ACA36330.1	-	SPH_1044	-	-	DNA polymerase III subunit delta
+966085..966402	+	318	ACA35843.1	-	SPH_1045	-	-	initiation-control protein YabA
+966405..967283	+	879	ACA37254.1	-	SPH_1046	-	-	conserved hypothetical protein
+967418..968752	+	1335	ACA36820.1	trmFO	SPH_1047	-	-	tRNA:M(5)U-54 methyltransferase
+968836..969573	+	738	ACA36053.1	pyrH	SPH_1048	-	-	UMP kinase
+969582..970139	+	558	ACA35595.1	frr	SPH_1049	-	-	ribosome recycling factor
+970160..971053	+	894	ACA37176.1	-	SPH_1050	-	-	s1 RNA binding domain
+971062..971277	+	216	ACA36571.1	-	SPH_1051	-	-	conserved domain protein
+971363..972367	+	1005	ACA35947.1	-	SPH_1052	-	-	PhoH family protein
+972475..973044	+	570	ACA37498.1	-	SPH_1053	-	-	acetyltransferase, gnat family
+973112..973762	+	651	ACA36887.1	-	SPH_1054	-	-	competence protein
+973746..975986	+	2241	ACA36274.1	-	SPH_1055	-	-	DNA internalization-related competence protein ComEC/Rec2
+976207..976353	+	147	ACA35685.1	-	SPH_1056	-	-	conserved hypothetical protein
+976385..976972	+	588	ACA37214.1	-	SPH_1057	-	-	ABC transporter, ATP-binding protein
+976976..978157	+	1182	ACA35649.1	-	SPH_1058	-	-	membrane protein, putative
+978174..978308	-	135	ACA37229.1	-	SPH_1059	-	-	hypothetical protein
+978437..978994	+	558	ACA35738.1	infC	SPH_1060	-	-	translation initiation factor IF-3
+979027..979227	+	201	ACA36117.1	rpmI	SPH_1061	-	-	ribosomal protein L35
+979279..979638	+	360	ACA36966.1	rplT	SPH_1062	-	-	ribosomal protein L20
+979696..980076	+	381	ACA37308.1	-	SPH_1063	-	-	lactoylglutathione lyase
+980326..981126	+	801	ACA36489.1	-	SPH_1064	-	-	dihydroorotate dehydrogenase electron transfer subunit
+981137..982075	+	939	ACA37083.1	-	SPH_1065	-	-	dihydroorotate dehydrogenase B, catalytic subunit
+982174..984282	+	2109	ACA36158.1	-	SPH_1067	-	-	endo-beta-N-acetylglucosaminidase
+984254..985999	-	1746	ACA35544.1	-	SPH_1066	-	-	fibronectin/fibrinogen binding protein
+986104..986601	+	498	ACA36294.1	-	SPH_1068	-	-	conserved hypothetical protein
+986582..986977	+	396	ACA36586.1	-	SPH_1069	-	-	diacylglycerol kinase (dagk) (diglyceride kinase)(dgk)
+986994..987893	+	900	ACA37408.1	era	SPH_1070	-	-	GTP-binding protein Era
+987908..988765	+	858	ACA36917.1	mutM	SPH_1071	-	-	formamidopyrimidine-DNA glycosylase
+988765..989370	+	606	ACA36481.1	coaE	SPH_1072	-	-	dephospho-CoA kinase
+989357..990556	+	1200	ACA36021.1	-	SPH_1073	-	-	multidrug resistance protein MdtG
+990556..990705	+	150	ACA36363.1	rpmG1	SPH_1074	-	-	ribosomal protein L33
+990745..990978	+	234	ACA35525.1	secG	SPH_1075	-	-	preprotein translocase, SecG subunit
+991080..993434	+	2355	ACA37132.1	rnr	SPH_1076	-	-	ribonuclease R
+993397..993864	+	468	ACA36921.1	smpB	SPH_1077	-	-	SsrA-binding protein
+993880..994740	+	861	ACA36221.1	tehB	SPH_1078	-	-	tellurite resistance protein TehB
+994813..995766	+	954	ACA37198.1	-	SPH_1079	-	-	competence protein
+995785..997587	+	1803	ACA36452.1	pepF1	SPH_1080	-	-	oligoendopeptidase F
+997589..998302	+	714	ACA37504.1	-	SPH_1081	-	-	O-methyltransferase family protein
+998369..999310	+	942	ACA37287.1	-	SPH_1082	-	-	foldase protein PrsA
+999429..999779	-	351	ACA35496.1	-	SPH_1083	-	-	integrase core domain, putative
+999769..999903	-	135	ACA36582.1	-	SPH_1084	-	-	conserved domain protein
+1000529..1001149	-	621	ACA37192.1	-	SPH_1085	-	-	phosphoglycerate mutase
+1001149..1001631	-	483	ACA35939.1	-	SPH_1086	-	-	regulatory protein
+1001631..1002473	-	843	ACA36517.1	-	SPH_1087	-	-	integral membrane protein
+1002568..1003317	-	750	ACA37279.1	-	SPH_1088	-	-	lyzozyme M1
+1003512..1004891	+	1380	ACA36832.1	glmU	SPH_1089	-	-	UDP-N-acetylglucosamine diphosphorylase/glucosamine-1-phosphate N-acetyltransferase
+1004901..1005446	+	546	ACA36332.1	-	SPH_1090	-	-	ADP-ribose pyrophosphatase
+1005458..1005772	+	315	ACA36301.1	-	SPH_1091	-	-	conserved hypothetical protein
+1005789..1006481	+	693	ACA37096.1	mtnN	SPH_1092	-	-	MTA/SAH nucleosidase
+1006570..1007049	+	480	ACA37531.1	-	SPH_1093	-	-	protein of unknown function
+1007147..1007737	+	591	ACA37544.1	-	SPH_1094	-	-	DNA polymerase III subunit epsilon
+1007746..1009509	+	1764	ACA36101.1	-	SPH_1095	-	-	glycerophosphoryl diester phosphodiesterase family protein
+1010229..1010369	+	141	ACA37262.1	-	SPH_1097	-	-	conserved domain protein
+1010530..1010730	+	201	ACA35927.1	-	SPH_1098	-	-	conserved hypothetical protein
+1010772..1011176	+	405	ACA36553.1	-	SPH_1099	-	-	conserved hypothetical protein
+1011407..1012114	+	708	ACA36876.1	-	SPH_1100	-	-	cytoChrome c-type biogenesis protein
+1012125..1012682	+	558	ACA37357.1	-	SPH_1101	-	-	thioredoxin family protein
+1013056..1014447	+	1392	ACA36644.1	-	SPH_1102	-	-	amino acid permease family protein
+1014590..1015507	+	918	ACA36138.1	-	SPH_1103	-	-	zinc-binding lipoprotein AdcA
+1015515..1018064	+	2550	ACA37154.1	-	SPH_1104	-	-	pneumococcal histidine triad protein B
+1018275..1021394	+	3120	ACA37646.1	-	SPH_1105	-	-	pneumococcal histidine triad protein E
+1022404..1022880	+	477	ACA36715.1	-	SPH_1107	-	-	pneumococcal histidine triad protein E
+1023175..1023432	+	258	ACA36417.1	-	SPH_1108	-	-	hypothetical protein
+1023383..1023793	+	411	ACA35777.1	-	SPH_1109	-	-	hypothetical protein
+1023829..1025052	-	1224	ACA37334.1	pepT	SPH_1110	-	-	peptidase T
+1025207..1026301	+	1095	ACA36484.1	hemH	SPH_1111	-	-	ferrochelatase
+1026343..1026720	-	378	ACA35660.1	mscL	SPH_1112	-	-	large conductance mechanosensitive channel protein
+1026802..1027233	-	432	ACA37151.1	-	SPH_1113	-	-	MesH protein
+1027356..1027865	+	510	ACA37233.1	-	SPH_1114	-	-	citrulline cluster-linked gene
+1028133..1028291	-	159	ACA36618.1	-	SPH_1116	-	-	hypothetical protein
+1028622..1029698	+	1077	ACA35756.1	asd	SPH_1117	-	-	aspartate-semialdehyde dehydrogenase
+1029754..1030689	+	936	ACA35687.1	dapA	SPH_1118	-	-	dihydrodipicolinate synthase
+1030736..1032109	-	1374	ACA37264.1	trmE	SPH_1119	-	-	tRNA modification GTPase TrmE
+1032246..1032428	-	183	ACA36813.1	-	SPH_1120	-	-	conserved domain protein
+1032551..1033150	+	600	ACA36035.1	tdk	SPH_1121	-	-	thymidine kinase
+1033140..1033619	+	480	ACA35864.1	-	SPH_1122	-	-	acetyltransferase, gnat family
+1033629..1034708	+	1080	ACA36334.1	prfA	SPH_1123	-	-	peptide chain release factor 1
+1034708..1035547	+	840	ACA36840.1	hemK	SPH_1124	-	-	protein-(glutamine-N5) methyltransferase, release factor-specific
+1035531..1036133	+	603	ACA37072.1	-	SPH_1125	-	-	Sua5/YciO/YrdC/YwlC family protein
+1036135..1036566	+	432	ACA36454.1	-	SPH_1126	-	-	acetyltransferase, gnat family protein
+1036628..1037884	+	1257	ACA37237.1	glyA	SPH_1127	-	-	serine hydroxymethyltransferase
+1037892..1038866	+	975	ACA36608.1	-	SPH_1128	-	-	conserved hypothetical protein
+1038866..1039480	+	615	ACA36210.1	-	SPH_1129	-	-	pneumococcal vaccine antigen A
+1039554..1040528	+	975	ACA35750.1	-	SPH_1130	-	-	conserved hypothetical protein
+1040602..1042233	+	1632	ACA35982.1	rumA	SPH_1131	-	-	23S rRNA (uracil-5-)-methyltransferase RumA
+1042982..1043200	+	219	ACA36903.1	-	SPH_1132	-	-	conserved hypothetical protein
+1043204..1043473	+	270	ACA36968.1	-	SPH_1133	-	-	hypothetical protein
+1043593..1044618	+	1026	ACA36345.1	-	SPH_1134	-	-	ABC transporter substrate-binding protein - iron transport
+1044608..1045615	+	1008	ACA37412.1	-	SPH_1135	-	-	iron-compound ABC transporter, permease protein
+1045615..1046622	+	1008	ACA36953.1	-	SPH_1136	-	-	ABC transporter membrane-spanning permease - iron transport
+1046622..1047416	+	795	ACA36440.1	-	SPH_1137	-	-	ferric enterobactin transport ATP-binding protein FepC
+1047984..1048193	+	210	ACA36003.1	-	SPH_1138	-	-	conserved hypothetical protein
+1048354..1048485	+	132	ACA37391.1	-	SPH_1139	-	-	conserved hypothetical protein
+1049169..1049330	+	162	ACA36920.1	-	SPH_1140	-	-	conserved hypothetical protein
+1049422..1051101	+	1680	ACA36439.1	-	SPH_1141	-	-	Low similarity to site-specific recombinase
+1051369..1051935	+	567	ACA37328.1	-	SPH_1142	-	-	conserved hypothetical protein
+1052257..1052445	+	189	ACA36834.1	-	SPH_1143	-	-	conserved hypothetical protein
+1052507..1053265	+	759	ACA37360.1	-	SPH_1144	-	-	hypothetical protein
+1053323..1054177	+	855	ACA36716.1	-	SPH_1145	-	-	ADP-ribosylation/Crystallin J1
+1054289..1055173	+	885	ACA36121.1	-	SPH_1146	-	-	conserved hypothetical protein
+1055336..1057075	+	1740	ACA35501.1	-	SPH_1147	-	-	neopullulanase
+1057350..1057652	+	303	ACA36000.1	-	SPH_1148	-	-	hypothetical protein
+1057708..1058136	+	429	ACA37453.1	-	SPH_1149	-	-	aminoglycoside 6'-N-acetyltransferase
+1058233..1058490	+	258	ACA36854.1	-	SPH_1150	-	-	hypothetical protein
+1058519..1058803	+	285	ACA36296.1	-	SPH_1151	-	-	hypothetical ABC transporter ATP-binding protein
+1059896..1061125	+	1230	ACA37397.1	-	SPH_1154	-	-	cell division protein FtsW
+1061145..1063841	+	2697	ACA36911.1	ppc	SPH_1155	-	-	phosphoenolpyruvate carboxylase
+1064254..1065258	+	1005	ACA36943.1	-	SPH_1157	-	-	ABC transporter substrate binding protein
+1065327..1066193	+	867	ACA35515.1	-	SPH_1159	-	-	ABC transporter, ATP-binding protein
+1067038..1068798	+	1761	ACA37141.1	dnaG	SPH_1160	-	-	DNA primase
+1068801..1069910	+	1110	ACA36748.1	-	SPH_1161	-	-	RNA polymerase sigma factor RpoD (Sigma-A) (Sigma-43)
+1069924..1070253	+	330	ACA36141.1	-	SPH_1162	-	-	N-6 Adenine-specific DNA methylase YitW
+1070368..1071411	+	1044	ACA36783.1	-	SPH_1163	-	-	glycosyl transferase CpoA
+1071427..1072752	+	1326	ACA37145.1	-	SPH_1164	-	-	glycosyl transferase, group 1
+1072766..1072957	+	192	ACA35962.1	-	SPH_1165	-	-	conserved domain protein
+1073016..1073150	+	135	ACA36201.1	-	SPH_1166	-	-	conserved hypothetical protein
+1073220..1074524	+	1305	ACA37029.1	-	SPH_1167	-	-	Spo0B-associated GTP-binding protein
+1074534..1074692	+	159	ACA36371.1	-	SPH_1168	-	-	conserved hypothetical protein
+1076412..1076537	+	126	ACA35814.1	-	SPH_1171	-	-	hypothetical protein
+1076905..1077030	-	126	ACA36641.1	-	SPH_1172	-	-	hypothetical protein
+1077173..1078432	+	1260	ACA37082.1	murA1	SPH_1173	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1078448..1078999	+	552	ACA35725.1	-	SPH_1174	-	-	acetyltransferase, gnat family protein
+1078992..1080269	+	1278	ACA36178.1	-	SPH_1175	-	-	cytosolic protein containing multiple CBS domains
+1080285..1081145	+	861	ACA36791.1	map	SPH_1176	-	-	methionine aminopeptidase, type I
+1082521..1084812	+	2292	ACA35877.1	pcrA	SPH_1179	-	-	ATP-dependent DNA helicase PcrA
+1084855..1085535	+	681	ACA37522.1	-	SPH_1181	-	-	DNA repair protein RadC
+1085532..1086221	-	690	ACA35839.1	-	SPH_1180	-	-	glutamine amidotransferase, class I
+1086239..1086880	-	642	ACA37053.1	-	SPH_1182	-	-	redox-sensing transcriptional repressor rex
+1086963..1087106	-	144	ACA36584.1	-	SPH_1183	-	-	conserved hypothetical protein
+1087186..1087533	-	348	ACA35511.1	-	SPH_1184	-	-	conserved hypothetical protein
+1087538..1088653	-	1116	ACA36107.1	-	SPH_1185	-	-	putative Probable cysteine desulfurase (NifS protein homolog)
+1088663..1089622	-	960	ACA36756.1	-	SPH_1186	-	-	ribose-Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p-rib-pp synthetase) (prpp synthetase)
+1089735..1090304	-	570	ACA37343.1	-	SPH_1187	-	-	adenylate cyclase
+1090432..1091103	+	672	ACA36773.1	-	SPH_1188	-	-	GTP pyrophosphokinase
+1091087..1091905	+	819	ACA36304.1	-	SPH_1189	-	-	probable inorganic polyphosphate/ATP-NAD kinase (Poly(P)/ATP NAD kinase)
+1091902..1092798	+	897	ACA35826.1	-	SPH_1190	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1092842..1093816	+	975	ACA37527.1	pta	SPH_1191	-	-	phosphate acetyltransferase
+1095585..1095884	-	300	ACA37614.1	-	SPH_1195	-	-	conserved hypothetical protein
+1096286..1096984	+	699	ACA36784.1	-	SPH_1196	-	-	membrane protein, putative
+1097172..1097486	+	315	ACA36328.1	rplU	SPH_1197	-	-	ribosomal protein L21
+1097502..1097846	+	345	ACA36172.1	-	SPH_1198	-	-	conserved hypothetical protein
+1097863..1098156	+	294	ACA35722.1	rpmA	SPH_1199	-	-	ribosomal protein L27
+1098538..1098666	-	129	ACA36652.1	-	SPH_1201	-	-	conserved hypothetical protein
+1099004..1099921	+	918	ACA35604.1	ribF	SPH_1202	-	-	riboflavin biosynthesis protein RibF
+1100014..1100862	-	849	ACA37277.1	-	SPH_1203	-	-	conserved hypothetical protein
+1101004..1101843	+	840	ACA37630.1	-	SPH_1204	-	-	conserved hypothetical protein
+1101950..1102225	+	276	ACA36070.1	-	SPH_1205	-	-	DNA-binding protein HU 1 (DNA-binding protein II) (HB)
+1102651..1104552	+	1902	ACA35887.1	-	SPH_1207	-	-	ATPase component of ABC transporter with duplicated ATPase domains
+1104555..1105418	+	864	ACA36184.1	-	SPH_1208	-	-	transcriptional regulator
+1105498..1106676	+	1179	ACA35555.1	-	SPH_1209	-	-	ABC transporter membrane-spanning permease - macrolide efflux
+1106769..1108727	+	1959	ACA37382.1	ligA	SPH_1210	-	-	DNA ligase, NAD-dependent
+1108839..1111118	+	2280	ACA36767.1	pulA	SPH_1211	-	-	pullulanase, type I
+1111169..1111330	+	162	ACA35837.1	-	SPH_1212	-	-	conserved hypothetical protein
+1111663..1113087	+	1425	ACA36474.1	-	SPH_1213	-	-	NADP-dependent glyceraldehyde-3-phosphate dehydrogenase
+1113570..1115498	+	1929	ACA36303.1	glgB	SPH_1214	-	-	1,4-alpha-glucan branching enzyme
+1115488..1116630	+	1143	ACA36230.1	glgC	SPH_1215	-	-	glucose-1-phosphate adenylyltransferase
+1116620..1117759	+	1140	ACA36704.1	glgD	SPH_1216	-	-	glucose-1-phosphate adenylyltransferase, GlgD subunit
+1117756..1119189	+	1434	ACA37169.1	-	SPH_1217	-	-	glycogen synthase (Starch [bacterial glycogen]synthase)
+1119902..1121017	+	1116	ACA35819.1	-	SPH_1221	-	-	glycerate kinase
+1121014..1121460	-	447	ACA37564.1	-	SPH_1220	-	-	conserved hypothetical protein
+1121624..1122928	+	1305	ACA37424.1	eno	SPH_1222	-	-	phosphopyruvate hydratase
+1123066..1123446	-	381	ACA35661.1	-	SPH_1223	-	-	integrase/recombinase, phage integrase family protein
+1124783..1128058	+	3276	ACA36414.1	rexB	SPH_1225	-	-	ATP-dependent nuclease subunit B
+1128055..1131705	+	3651	ACA37039.1	addA	SPH_1226	-	-	recombination helicase AddA
+1131716..1131907	+	192	ACA37588.1	-	SPH_1227	-	-	conserved hypothetical protein
+1131920..1132867	+	948	ACA37027.1	-	SPH_1228	-	-	hypothetical protein
+1133305..1138983	+	5679	ACA36572.1	-	SPH_1229	-	-	immunoglobulin A1 protease
+1139217..1140473	-	1257	ACA37196.1	-	SPH_1230	-	-	transposase
+1141097..1141270	+	174	ACA35663.1	-	SPH_1231	-	-	conserved hypothetical protein
+1141267..1142046	+	780	ACA36569.1	-	SPH_1232	-	-	replication initiator protein A (RepA) N-terminus
+1142145..1143503	+	1359	ACA35924.1	-	SPH_1233	-	-	methyl transferase
+1143487..1143936	+	450	ACA36325.1	-	SPH_1234	-	-	conserved hypothetical protein
+1143929..1144309	+	381	ACA35847.1	-	SPH_1235	-	-	conserved hypothetical protein
+1144322..1144555	+	234	ACA37288.1	-	SPH_1236	-	-	conserved hypothetical protein
+1144558..1145145	+	588	ACA36797.1	-	SPH_1237	-	-	caax amino protease family
+1145275..1145865	+	591	ACA36078.1	-	SPH_1238	-	-	conserved hypothetical protein
+1145865..1146701	+	837	ACA37562.1	-	SPH_1239	-	-	conserved hypothetical protein
+1146983..1147282	+	300	ACA36856.1	-	SPH_1240	-	-	conserved hypothetical protein
+1147272..1147760	+	489	ACA36349.1	-	SPH_1241	-	-	conserved hypothetical protein
+1147760..1149637	+	1878	ACA35858.1	-	SPH_1242	-	-	TraG/TraD family protein
+1149658..1149900	+	243	ACA36776.1	-	SPH_1243	-	-	conserved hypothetical protein
+1149917..1150771	+	855	ACA37093.1	-	SPH_1244	-	-	membrane protein, putative
+1150825..1151184	+	360	ACA37441.1	-	SPH_1245	-	-	conserved hypothetical protein
+1151177..1153492	+	2316	ACA35494.1	-	SPH_1246	-	-	conserved hypothetical protein
+1153504..1156317	+	2814	ACA36097.1	-	SPH_1247	-	-	M23 peptidase domain protein
+1156555..1157130	+	576	ACA35541.1	-	SPH_1248	-	-	conserved hypothetical protein
+1157282..1157692	+	411	ACA36143.1	-	SPH_1249	-	-	Ig domain protein, group 2 domain protein
+1164038..1164322	+	285	ACA36690.1	-	SPH_1252	-	-	conserved hypothetical protein
+1164336..1164656	+	321	ACA37574.1	-	SPH_1253	-	-	conserved hypothetical protein
+1165386..1166423	+	1038	ACA36181.1	-	SPH_1254	-	-	hypothetical protein
+1166468..1166866	+	399	ACA36833.1	-	SPH_1255	-	-	hypothetical protein
+1167194..1168075	+	882	ACA35793.1	-	SPH_1256	-	-	conserved hypothetical protein
+1168479..1169120	+	642	ACA35670.1	-	SPH_1257	-	-	conserved hypothetical protein
+1169130..1170215	+	1086	ACA36523.1	-	SPH_1258	-	-	DNA primase
+1170266..1170499	+	234	ACA36870.1	-	SPH_1259	-	-	conserved hypothetical protein
+1170496..1170879	+	384	ACA37236.1	-	SPH_1260	-	-	methyl-accepting chemotaxis protein
+1170917..1171189	+	273	ACA35893.1	-	SPH_1261	-	-	ATPases with chaperone activity, ATP-binding subunit
+1171455..1171736	+	282	ACA36910.1	-	SPH_1262	-	-	conserved hypothetical protein
+1171736..1172494	+	759	ACA36425.1	-	SPH_1263	-	-	signal recognition particle GTPase
+1172970..1173758	+	789	ACA36456.1	-	SPH_1264	-	-	hypothetical protein
+1173997..1174245	+	249	ACA35984.1	-	SPH_1265	-	-	hypothetical protein
+1174416..1175066	+	651	ACA36705.1	-	SPH_1266	-	-	chloramphenicol O-acetyltransferase
+1175931..1176854	-	924	ACA36234.1	-	SPH_1267	-	-	replication protein
+1177117..1177608	+	492	ACA36885.1	-	SPH_1269	-	-	N-(5'-phosphoribosyl)anthranilate isomerase (prai)
+1177785..1179527	+	1743	ACA36403.1	-	SPH_1270	-	-	neopullulanase
+1179647..1179958	+	312	ACA35971.1	-	SPH_1271	-	-	conserved hypothetical protein
+1179962..1180696	+	735	ACA35973.1	-	SPH_1272	-	-	conserved hypothetical protein
+1181025..1181876	+	852	ACA37434.1	-	SPH_1273	-	-	GTP-binding protein
+1181863..1182642	+	780	ACA36311.1	-	SPH_1274	-	-	ribonuclease HII (RNase HII)
+1182658..1184208	+	1551	ACA36162.1	-	SPH_1275	-	-	voltage-gated chloride channel family protein
+1184794..1185864	+	1071	ACA37133.1	-	SPH_1277	-	-	tyrosine recombinase XerC
+1185959..1186492	+	534	ACA36061.1	-	SPH_1278	-	-	transposase
+1186654..1187322	+	669	ACA35597.1	-	SPH_1279	-	-	integrase core domain, putative
+1187504..1188856	-	1353	ACA37615.1	-	SPH_1280	-	-	mate efflux family protein
+1189141..1190409	-	1269	ACA36873.1	-	SPH_1281	-	-	dihydroorotase (DHOase)
+1190422..1190886	-	465	ACA36687.1	-	SPH_1282	-	-	mutator MutT protein
+1190896..1191549	-	654	ACA36187.1	ung	SPH_1283	-	-	uracil-DNA glycosylase
+1191611..1192303	-	693	ACA35740.1	-	SPH_1284	-	-	HAD superfamily (subfamily IA) hydrolase
+1192428..1192646	-	219	ACA36177.1	-	SPH_1285	-	-	hypothetical protein
+1192997..1194679	-	1683	ACA35706.1	-	SPH_1286	-	-	ABC-type multidrug/protein/lipid transport system, ATPase component
+1194701..1195420	-	720	ACA36855.1	-	SPH_1287	-	-	bacitracin transport ATP-binding protein BcrA
+1195555..1196295	-	741	ACA36365.1	-	SPH_1288	-	-	membrane protein, putative
+1196467..1197102	-	636	ACA35916.1	-	SPH_1289	-	-	transcriptional regulator, TetR family protein
+1197684..1198058	-	375	ACA37602.1	-	SPH_1290	-	-	dihydroxyacetone kinase, phosphotransfer subunit
+1198058..1198633	-	576	ACA36612.1	-	SPH_1291	-	-	dihydroxyacetone kinase, L subunit
+1198655..1199644	-	990	ACA36015.1	dhaK1	SPH_1292	-	-	dihydroxyacetone kinase, DhaK subunit
+1199771..1200328	+	558	ACA36587.1	-	SPH_1293	-	-	probable dihydroxyacetone kinase regulator
+1200325..1201314	+	990	ACA36098.1	dhaK2	SPH_1294	-	-	probable dihydroxyacetone kinase DhaK1b subunit
+1201412..1201951	-	540	ACA37438.1	-	SPH_1295	-	-	conserved hypothetical protein
+1202009..1202503	-	495	ACA36947.1	-	SPH_1296	-	-	conserved hypothetical protein
+1202637..1204361	-	1725	ACA36478.1	ptsP	SPH_1297	-	-	phosphoenolpyruvate-protein phosphotransferase
+1204376..1204639	-	264	ACA35974.1	-	SPH_1298	-	-	phosphocarrier protein HPr (Histidine-containing protein)
+1204989..1205207	+	219	ACA37178.1	-	SPH_1299	-	-	glutaredoxin
+1205288..1207447	+	2160	ACA37533.1	-	SPH_1300	-	-	ribonucleoside-diphosphate reductase, alpha subunit
+1207635..1208597	+	963	ACA36224.1	-	SPH_1301	-	-	ribonucleoside-diphosphate reductase, beta subunit
+1208779..1209540	+	762	ACA35719.1	-	SPH_1302	-	-	lactose phosphotransferase system repressor
+1209819..1210076	-	258	ACA36099.1	-	SPH_1303	-	-	conserved hypothetical protein
+1210119..1211525	-	1407	ACA37023.1	lacG2	SPH_1304	-	-	6-phospho-beta-galactosidase
+1211740..1213431	-	1692	ACA37597.1	-	SPH_1305	-	-	PTS system, lactose-specific IIC component
+1213431..1213748	-	318	ACA35851.1	-	SPH_1306	-	-	lactose-specific phosphotransferase enzyme iia component
+1213784..1214620	-	837	ACA36381.1	-	SPH_1307	-	-	transcription antiterminator LacT
+1214854..1215834	-	981	ACA36277.1	lacD	SPH_1308	-	-	tagatose 1,6-diphosphate aldolase
+1215836..1216765	-	930	ACA36637.1	lacC	SPH_1309	-	-	tagatose-6-phosphate kinase
+1216776..1217291	-	516	ACA37220.1	lacB	SPH_1310	-	-	galactose-6-phosphate isomerase, LacB subunit
+1217322..1217747	-	426	ACA36024.1	lacA	SPH_1311	-	-	galactose-6-phosphate isomerase, LacA subunit
+1217904..1218248	-	345	ACA35569.1	-	SPH_1312	-	-	hypothetical protein
+1218417..1218806	-	390	ACA36090.1	-	SPH_1313	-	-	mobile genetic element
+1219228..1219530	-	303	ACA37256.1	-	SPH_1315	-	-	PTS system, galactose-specific IIB component
+1220224..1220421	+	198	ACA36338.1	-	SPH_1317	-	-	chlorohydrolase
+1220502..1222325	-	1824	ACA37042.1	lepA	SPH_1318	-	-	GTP-binding protein LepA
+1222404..1223132	-	729	ACA37549.1	-	SPH_1319	-	-	serine/threonine protein phosphatase
+1223134..1224801	-	1668	ACA36156.1	recN	SPH_1320	-	-	DNA repair protein RecN
+1224808..1225239	-	432	ACA36787.1	-	SPH_1321	-	-	transcriptional regulator of arginine metabolism expression
+1225232..1226047	-	816	ACA36739.1	tylA	SPH_1322	-	-	hemolysin A
+1226040..1226915	-	876	ACA37097.1	-	SPH_1323	-	-	geranyltranstransferase (Farnesyl-diphosphate synthase)(FPP synthase)
+1226912..1227124	-	213	ACA37386.1	xseB	SPH_1324	-	-	exodeoxyribonuclease VII, small subunit
+1227102..1228442	-	1341	ACA36104.1	xseA	SPH_1325	-	-	exodeoxyribonuclease VII, large subunit
+1228570..1229208	-	639	ACA36975.1	udk	SPH_1326	-	-	uridine kinase
+1229316..1229618	-	303	ACA37296.1	-	SPH_1327	-	-	conserved hypothetical protein
+1229859..1230737	-	879	ACA35636.1	truB	SPH_1328	-	-	tRNA pseudouridine synthase B
+1230747..1232021	-	1275	ACA36843.1	-	SPH_1329	-	-	conserved hypothetical protein
+1233524..1234321	-	798	ACA37223.1	-	SPH_1332	-	-	formate-nitrate transporter
+1234565..1235308	-	744	ACA36327.1	-	SPH_1333	-	-	sortase
+1235308..1237776	-	2469	ACA37043.1	gyrA	SPH_1334	-	-	DNA gyrase, A subunit
+1237970..1238956	+	987	ACA37368.1	-	SPH_1335	-	-	L-lactate dehydrogenase
+1239204..1239977	-	774	ACA35797.1	-	SPH_1336	-	-	potassium/ion channel protein
+1240024..1240278	-	255	ACA36034.1	-	SPH_1337	-	-	cytotoxic translational repressor of toxin-antitoxin stability system
+1240280..1240522	-	243	ACA36775.1	-	SPH_1338	-	-	conserved hypothetical protein
+1240613..1241422	-	810	ACA36011.1	-	SPH_1339	-	-	VicX protein
+1241424..1242773	-	1350	ACA36402.1	-	SPH_1340	-	-	sensor protein YycG
+1242766..1243470	-	705	ACA36109.1	-	SPH_1341	-	-	alkaline phosphatase synthesis transcriptional regulatory proteinphoP
+1243525..1244700	-	1176	ACA35861.1	mutY	SPH_1342	-	-	A/G-specific adenine glycosylase
+1244784..1245017	-	234	ACA37559.1	-	SPH_1343	-	-	hypothetical protein
+1245028..1246698	-	1671	ACA36998.1	fhs	SPH_1344	-	-	formate--tetrahydrofolate ligase
+1246928..1247617	+	690	ACA36999.1	coaB	SPH_1345	-	-	phosphopantothenate--cysteine ligase
+1247629..1248180	+	552	ACA36112.1	coaC	SPH_1346	-	-	phosphopantothenoylcysteine decarboxylase
+1248164..1248727	+	564	ACA35696.1	-	SPH_1347	-	-	integral membrane protein
+1248991..1249518	+	528	ACA37227.1	-	SPH_1348	-	-	conserved hypothetical protein
+1249530..1250045	+	516	ACA36799.1	-	SPH_1350	-	-	transcriptional regulator, biotin repressor family
+1250042..1250509	-	468	ACA37268.1	-	SPH_1349	-	-	NTP pyrophosphohydrolase
+1250583..1251071	-	489	ACA35798.1	-	SPH_1351	-	-	acetyltransferase, gnat family
+1251037..1251600	-	564	ACA36374.1	-	SPH_1352	-	-	acetyltransferase, gnat family
+1251610..1253598	-	1989	ACA36828.1	uvrB	SPH_1353	-	-	excinuclease ABC, B subunit
+1254799..1256964	+	2166	ACA37529.1	-	SPH_1356	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+1256964..1257704	+	741	ACA35961.1	-	SPH_1357	-	-	glutamine transport ATP-binding protein GlnQ
+1257853..1259340	+	1488	ACA36925.1	zwf	SPH_1358	-	-	glucose-6-phosphate dehydrogenase
+1259386..1260663	-	1278	ACA36939.1	-	SPH_1359	-	-	cell division protein FtsY
+1260667..1261485	-	819	ACA37409.1	-	SPH_1360	-	-	Cof family protein
+1261485..1262279	-	795	ACA35955.1	-	SPH_1361	-	-	Cof family protein
+1262276..1265815	-	3540	ACA37488.1	smc	SPH_1362	-	-	chromosome segregation protein SMC
+1265806..1266504	-	699	ACA36658.1	rnc	SPH_1363	-	-	ribonuclease III
+1266822..1267808	-	987	ACA36443.1	guaC	SPH_1365	-	-	guanosine monophosphate reductase
+1267911..1269299	-	1389	ACA35554.1	-	SPH_1366	-	-	conserved hypothetical protein
+1269286..1271217	-	1932	ACA37242.1	-	SPH_1367	-	-	conserved hypothetical protein
+1272168..1272527	-	360	ACA37088.1	-	SPH_1371	-	-	3-isopropylmalate dehydratase small subunit
+1272531..1272800	-	270	ACA36060.1	-	SPH_1372	-	-	conserved hypothetical protein
+1272797..1273834	-	1038	ACA36347.1	leuB	SPH_1373	-	-	3-isopropylmalate dehydrogenase
+1273846..1274940	-	1095	ACA35748.1	-	SPH_1374	-	-	2-isopropylmalate synthase (Alpha-isopropylmalatesynthase) (Alpha-IPM synthetase)
+1274959..1275615	-	657	ACA37291.1	-	SPH_1375	-	-	conserved hypothetical protein
+1275659..1276291	-	633	ACA36067.1	-	SPH_1376	-	-	copper homeostasis protein CutC
+1276384..1276743	-	360	ACA36503.1	-	SPH_1377	-	-	conserved hypothetical protein
+1276849..1278936	-	2088	ACA37265.1	topA	SPH_1378	-	-	DNA topoisomerase I
+1279103..1279309	-	207	ACA36804.1	-	SPH_1379	-	-	hypothetical protein
+1280223..1280342	-	120	ACA35812.1	-	SPH_1381	-	-	hypothetical protein
+1280994..1281842	-	849	ACA37609.1	dprA	SPH_1382	-	-	DNA protecting protein DprA
+1281948..1282637	-	690	ACA36340.1	-	SPH_1383	-	-	LicC homolog
+1282649..1283527	-	879	ACA36380.1	-	SPH_1384	-	-	LicB homolog
+1283517..1284386	-	870	ACA35774.1	-	SPH_1385	-	-	choline kinase
+1284403..1285425	-	1023	ACA36837.1	-	SPH_1386	-	-	xylitol dehydrogenase
+1285430..1286137	-	708	ACA36207.1	-	SPH_1387	-	-	2-C-methyl-D-erythritol 4-phosphate cytidylyltransferase
+1286472..1287959	+	1488	ACA37458.1	-	SPH_1388	-	-	virulence factor mvin superfamily
+1287969..1288772	+	804	ACA36730.1	-	SPH_1389	-	-	required for phosphorylcholine incorporation in teichoic and lipoteichoic acids
+1289857..1293033	-	3177	ACA35773.1	carB	SPH_1391	-	-	carbamoyl-phosphate synthase, large subunit
+1293346..1294425	-	1080	ACA37373.1	carA	SPH_1392	-	-	carbamoyl-phosphate synthase, small subunit
+1294475..1295398	-	924	ACA36816.1	pyrB	SPH_1393	-	-	aspartate carbamoyltransferase
+1295417..1295938	-	522	ACA37644.1	-	SPH_1394	-	-	PyrR bifunctional protein
+1296149..1296778	-	630	ACA35844.1	nth	SPH_1395	-	-	endonuclease III
+1296778..1297320	-	543	ACA35621.1	-	SPH_1396	-	-	conserved hypothetical protein
+1297490..1297807	+	318	ACA36062.1	-	SPH_1397	-	-	BlpT protein, fusion
+1298046..1299605	+	1560	ACA36801.1	-	SPH_1398	-	-	ABC transporter, ATP-binding protein
+1299754..1300653	-	900	ACA37295.1	-	SPH_1399	-	-	putative Probable protease HtpX homolog
+1300655..1301215	-	561	ACA36771.1	-	SPH_1400	-	-	cytoplasmic membrane protein
+1301309..1302022	+	714	ACA37253.1	gidB	SPH_1401	-	-	methyltransferase GidB
+1302209..1303426	-	1218	ACA35967.1	-	SPH_1402	-	-	transposase from transposon (Integrase)
+1303508..1303711	-	204	ACA37419.1	-	SPH_1403	-	-	conserved domain protein
+1303695..1303946	+	252	ACA35758.1	-	SPH_1404	-	-	conserved hypothetical protein
+1304172..1304402	-	231	ACA36408.1	-	SPH_1405	-	-	conserved hypothetical protein
+1304399..1304821	-	423	ACA35641.1	-	SPH_1406	-	-	sigma-70, region 4 family
+1305050..1305196	-	147	ACA36714.1	-	SPH_1407	-	-	conserved hypothetical protein
+1305326..1305679	+	354	ACA37224.1	-	SPH_1408	-	-	transcriptional regulator, putative
+1306025..1307944	-	1920	ACA37605.1	-	SPH_1409	-	-	tetracycline resistance protein
+1307960..1308076	-	117	ACA37321.1	-	SPH_1410	-	-	Tetracycline resistance determinant leader peptide
+1308321..1309238	-	918	ACA37003.1	-	SPH_1411	-	-	conjugative transposon protein
+1309253..1310254	-	1002	ACA36364.1	-	SPH_1412	-	-	NLP/P60 family protein
+1310251..1312428	-	2178	ACA35787.1	-	SPH_1413	-	-	conjugative transposon membrane protein
+1312431..1314878	-	2448	ACA37348.1	-	SPH_1414	-	-	conjugative transposon protein
+1314862..1315368	-	507	ACA36762.1	-	SPH_1415	-	-	conjugative transposon membrane protein
+1315343..1315840	-	498	ACA37337.1	-	SPH_1416	-	-	conjugative transposon protein
+1315957..1316178	-	222	ACA36148.1	-	SPH_1417	-	-	conserved domain protein
+1316358..1317605	+	1248	ACA37581.1	-	SPH_1418	-	-	transposase
+1317726..1317917	-	192	ACA36129.1	-	SPH_1419	-	-	conserved hypothetical protein
+1317862..1318599	-	738	ACA36985.1	-	SPH_1420	-	-	rRNA adenine N-6-methyltransferase (Macrolide-lincosamide-streptogramin B resistance protein)
+1319046..1320275	-	1230	ACA37101.1	-	SPH_1422	-	-	transcriptional regulator, Cro/CI family
+1320453..1321838	-	1386	ACA36356.1	-	SPH_1423	-	-	ftsk/spoiiie family protein
+1321867..1322250	-	384	ACA35852.1	-	SPH_1424	-	-	conjugative transposon protein
+1322269..1322583	-	315	ACA37134.1	-	SPH_1425	-	-	conjugative transposon protein
+1322606..1322725	-	120	ACA36774.1	-	SPH_1426	-	-	conserved hypothetical protein
+1323215..1324498	+	1284	ACA36826.1	uraA	SPH_1427	-	-	uracil permease
+1324594..1326165	-	1572	ACA35896.1	ffh	SPH_1428	-	-	signal recognition particle protein
+1326177..1326509	-	333	ACA37645.1	-	SPH_1429	-	-	putative helix-turn-helix protein
+1326600..1326977	-	378	ACA35656.1	-	SPH_1430	-	-	conserved hypothetical protein
+1327049..1328353	+	1305	ACA36367.1	-	SPH_1431	-	-	HD superfamily phosphohydrolase
+1328366..1329172	+	807	ACA36606.1	-	SPH_1432	-	-	phosphatase YidA
+1329215..1330213	+	999	ACA37331.1	-	SPH_1433	-	-	SAP domain protein
+1330493..1330840	-	348	ACA36510.1	rplS	SPH_1435	-	-	ribosomal protein L19
+1330959..1331288	-	330	ACA36867.1	-	SPH_1436	-	-	putative Protein CrcB homolog 1
+1331282..1331656	-	375	ACA35547.1	-	SPH_1437	-	-	putative Protein CrcB homolog 2
+1331653..1331919	-	267	ACA35895.1	-	SPH_1438	-	-	chorismate mutase
+1332035..1332478	-	444	ACA36243.1	-	SPH_1439	-	-	flavodoxin
+1332582..1333517	+	936	ACA36262.1	-	SPH_1440	-	-	DHH subfamily 1 protein
+1333613..1333855	+	243	ACA37578.1	rpmE	SPH_1441	-	-	ribosomal protein L31
+1333912..1334400	-	489	ACA35825.1	-	SPH_1442	-	-	hypothetical protein
+1334479..1334781	-	303	ACA36005.1	-	SPH_1443	-	-	hypothetical protein
+1334772..1335056	-	285	ACA36477.1	-	SPH_1444	-	-	hypothetical protein
+1335193..1335459	-	267	ACA36723.1	-	SPH_1445	-	-	transposase
+1336233..1337579	+	1347	ACA37179.1	-	SPH_1446	-	-	NAD(p)-specific glutamate dehydrogenase
+1338075..1338245	-	171	ACA36916.1	-	SPH_1447	-	-	conserved hypothetical protein
+1338258..1338386	-	129	ACA37414.1	-	SPH_1448	-	-	hypothetical protein
+1339441..1340037	+	597	ACA36844.1	-	SPH_1450	-	-	transposase
+1340308..1340604	-	297	ACA36096.1	-	SPH_1451	-	-	hypothetical protein
+1340617..1340760	-	144	ACA35502.1	-	SPH_1452	-	-	hypothetical protein
+1340762..1341049	-	288	ACA37584.1	-	SPH_1453	-	-	conserved hypothetical protein
+1341619..1342137	+	519	ACA36512.1	-	SPH_1454	-	-	transposase subfamily, putative
+1342146..1342985	+	840	ACA35999.1	-	SPH_1455	-	-	integrase core domain protein
+1343571..1344182	-	612	ACA37344.1	-	SPH_1457	-	-	V-type ATPase, D subunit
+1344205..1345590	-	1386	ACA37361.1	-	SPH_1458	-	-	V-type ATP synthase beta chain (V-type ATPase subunitB)
+1345591..1347366	-	1776	ACA36749.1	-	SPH_1459	-	-	V-type ATP synthase alpha chain (V-type ATPase subunitA)
+1347429..1347749	-	321	ACA37330.1	-	SPH_1460	-	-	ATP synthase (F/14-kDa) subunit
+1347739..1348746	-	1008	ACA35507.1	-	SPH_1461	-	-	ATP synthase (C/AC39) subunit
+1348811..1349392	-	582	ACA37000.1	-	SPH_1462	-	-	V-type sodium ATP synthase, subunit E
+1349426..1349902	-	477	ACA36692.1	-	SPH_1463	-	-	V-type sodium ATP synthase subunit K (Na(+)-translocating ATPase subunit K) (Sodium ATPase proteolipid component)
+1349918..1351909	-	1992	ACA37612.1	-	SPH_1464	-	-	ATP synthase subunit I
+1351899..1352222	-	324	ACA35918.1	-	SPH_1465	-	-	conserved hypothetical protein
+1352247..1353137	-	891	ACA36214.1	-	SPH_1466	-	-	ROK family protein
+1353294..1354403	-	1110	ACA36960.1	-	SPH_1467	-	-	putative oxidoreductase YjhC
+1354443..1356665	-	2223	ACA36743.1	-	SPH_1468	-	-	sialidase B (Neuraminidase B)
+1356667..1357125	-	459	ACA37326.1	-	SPH_1469	-	-	conserved hypothetical protein
+1357144..1358685	-	1542	ACA36734.1	-	SPH_1470	-	-	sodium:solute symporter family protein
+1358713..1359630	-	918	ACA37136.1	-	SPH_1471	-	-	N-acetylneuraminate lyase
+1359655..1360356	-	702	ACA37512.1	-	SPH_1472	-	-	putative N-acetylmannosamine-6-phosphate 2-epimerase (ManNAc-6-P epimerase)
+1360361..1361170	-	810	ACA36227.1	-	SPH_1473	-	-	transcriptional regulator, RpiR family
+1361573..1362160	-	588	ACA36424.1	-	SPH_1474	-	-	caax amino protease family
+1362163..1362396	-	234	ACA36893.1	-	SPH_1475	-	-	conserved hypothetical protein
+1362652..1362789	-	138	ACA37123.1	-	SPH_1476	-	-	conserved hypothetical protein
+1362922..1364241	-	1320	ACA35562.1	-	SPH_1477	-	-	membrane protein, putative
+1364244..1364984	-	741	ACA36271.1	-	SPH_1478	-	-	ABC transporter, ATP-binding protein
+1364999..1365619	-	621	ACA36659.1	-	SPH_1479	-	-	drug efflux ABC transporter, ATP-binding/permease protein
+1367501..1367638	-	138	ACA36650.1	-	SPH_1481	-	-	conserved hypothetical protein
+1367840..1368427	-	588	ACA35925.1	-	SPH_1482	-	-	caax amino protease family
+1368625..1369881	+	1257	ACA36874.1	-	SPH_1484	-	-	transposase
+1369878..1370018	-	141	ACA37621.1	-	SPH_1483	-	-	conserved hypothetical protein
+1370037..1370405	-	369	ACA36273.1	rplL	SPH_1485	-	-	ribosomal protein L7/L12
+1370481..1370981	-	501	ACA35702.1	-	SPH_1486	-	-	50S ribosomal protein L10
+1371231..1372787	-	1557	ACA37113.1	-	SPH_1487	-	-	chlorohydrolase
+1372882..1374630	-	1749	ACA36684.1	-	SPH_1488	-	-	ABC transporter, ATP-binding/permease protein
+1374632..1376356	-	1725	ACA35901.1	-	SPH_1489	-	-	ABC transporter, ATP-binding/permease protein
+1376414..1377352	-	939	ACA35912.1	-	SPH_1490	-	-	peptide methionine sulfoxide reductase MsrA/msrB
+1377419..1377571	-	153	ACA37561.1	-	SPH_1491	-	-	chlorohydrolase
+1377647..1378516	-	870	ACA37067.1	thrB	SPH_1492	-	-	homoserine kinase
+1378518..1379804	-	1287	ACA36394.1	-	SPH_1493	-	-	homoserine dehydrogenase (HDH)
+1379955..1380692	-	738	ACA37300.1	-	SPH_1494	-	-	adapter protein MecA
+1380892..1381926	-	1035	ACA36780.1	-	SPH_1495	-	-	conserved hypothetical protein
+1381955..1383388	-	1434	ACA36042.1	-	SPH_1496	-	-	membrane protein, putative
+1383404..1384390	-	987	ACA35583.1	-	SPH_1497	-	-	galactosyl transferase paralog
+1384392..1385492	-	1101	ACA37563.1	-	SPH_1498	-	-	glycosyl transferase, group 1 family protein
+1385485..1386330	-	846	ACA36931.1	-	SPH_1499	-	-	licD3 protein
+1386609..1387883	-	1275	ACA36577.1	-	SPH_1500	-	-	transcriptional regulator, LytR family
+1387880..1388728	-	849	ACA37327.1	-	SPH_1501	-	-	prephenate dehydratase (PDT)
+1388725..1389201	-	477	ACA35880.1	aroK	SPH_1502	-	-	shikimate kinase
+1389194..1390477	-	1284	ACA36348.1	aroA	SPH_1503	-	-	3-phosphoshikimate 1-carboxyvinyltransferase
+1390569..1390907	-	339	ACA37070.1	-	SPH_1504	-	-	conserved hypothetical protein
+1390918..1392021	-	1104	ACA36708.1	-	SPH_1505	-	-	prephenate dehydrogenase
+1392031..1393197	-	1167	ACA37188.1	aroC	SPH_1506	-	-	chorismate synthase
+1393207..1394274	-	1068	ACA35505.1	aroB	SPH_1507	-	-	3-dehydroquinate synthase
+1394293..1395147	-	855	ACA36233.1	aroE	SPH_1508	-	-	shikimate 5-dehydrogenase
+1395137..1395814	-	678	ACA36949.1	aroD	SPH_1509	-	-	3-dehydroquinate dehydratase, type I
+1395811..1396974	-	1164	ACA36483.1	-	SPH_1510	-	-	methyltransferase
+1397659..1399293	-	1635	ACA36835.1	-	SPH_1511	-	-	membrane protein, putative
+1399274..1400023	-	750	ACA37175.1	-	SPH_1512	-	-	ABC transporter, ATP-binding protein
+1400202..1401656	+	1455	ACA37514.1	-	SPH_1513	-	-	alpha-amylase (1,4-alpha-D-glucanglucanohydrolase)
+1401746..1404364	-	2619	ACA36164.1	alaS	SPH_1514	-	-	alanyl-tRNA synthetase
+1404386..1404871	-	486	ACA36509.1	-	SPH_1515	-	-	conserved hypothetical protein
+1405630..1406700	-	1071	ACA36848.1	-	SPH_1516	-	-	ABC transporter substrate-binding protein - spermidine/putrescine transport
+1406697..1407470	-	774	ACA37538.1	-	SPH_1517	-	-	spermidine/putrescine ABC transporter, permease protein
+1407467..1408273	-	807	ACA35566.1	-	SPH_1518	-	-	ABC transporter membrane-spanning permease - spermidine/putrescine transport
+1408254..1409411	-	1158	ACA36048.1	-	SPH_1519	-	-	spermidine/putrescine import ATP-binding protein PotA
+1409572..1410477	-	906	ACA35854.1	murB	SPH_1520	-	-	UDP-N-acetylenolpyruvoylglucosamine reductase
+1410589..1410981	-	393	ACA35546.1	-	SPH_1521	-	-	hypothetical protein
+1410959..1411348	-	390	ACA37350.1	-	SPH_1522	-	-	hypothetical protein
+1411358..1412089	-	732	ACA36499.1	budA	SPH_1523	-	-	alpha-acetolactate decarboxylase
+1412231..1413502	+	1272	ACA36102.1	-	SPH_1524	-	-	transcriptional regulator GntR family
+1413522..1414337	-	816	ACA35768.1	-	SPH_1525	-	-	amino acid ABC transporter, amino acid-binding protein
+1414494..1415147	-	654	ACA37565.1	phoU1	SPH_1526	-	-	phosphate transport system regulatory protein PhoU
+1415159..1415917	-	759	ACA36717.1	pstB1	SPH_1527	-	-	phosphate ABC transporter, ATP-binding protein
+1415930..1416733	-	804	ACA36321.1	pstB2	SPH_1528	-	-	phosphate ABC transporter, ATP-binding protein
+1416744..1417628	-	885	ACA36081.1	pstA1	SPH_1529	-	-	phosphate ABC transporter, permease protein PstA
+1417618..1418535	-	918	ACA36700.1	pstC1	SPH_1530	-	-	phosphate ABC transporter, permease protein PstC
+1418535..1419413	-	879	ACA35513.1	-	SPH_1531	-	-	phosphate-binding protein PstS 1 (PBP 1)
+1419643..1419756	+	114	ACA37626.1	-	SPH_1532	-	-	conserved hypothetical protein
+1419987..1421291	-	1305	ACA37009.1	-	SPH_1533	-	-	NOL1/NOP2/sun family protein
+1421292..1422065	-	774	ACA36398.1	-	SPH_1534	-	-	inositol monophosphatase family protein
+1422055..1422333	-	279	ACA35755.1	-	SPH_1535	-	-	conserved hypothetical protein
+1422333..1422734	-	402	ACA36892.1	-	SPH_1536	-	-	regulatory protein spx
+1422946..1423563	-	618	ACA36648.1	-	SPH_1537	-	-	integral membrane protein
+1423553..1424326	-	774	ACA36175.1	-	SPH_1538	-	-	HAD-superfamily subfamily IIA hydrolase
+1424337..1425074	-	738	ACA37604.1	-	SPH_1539	-	-	acyl-acyl-carrier protein thioesterase
+1425079..1426209	-	1131	ACA35900.1	-	SPH_1540	-	-	putative oxygen-independent coproporphyrinogen III oxidase
+1426293..1426682	-	390	ACA36023.1	-	SPH_1541	-	-	conserved hypothetical protein
+1426698..1427081	-	384	ACA36506.1	-	SPH_1542	-	-	conserved hypothetical protein
+1427082..1427870	-	789	ACA37109.1	lgt	SPH_1543	-	-	prolipoprotein diacylglyceryl transferase
+1427863..1428798	-	936	ACA35690.1	hprK	SPH_1544	-	-	HPr(Ser) kinase/phosphatase
+1428928..1429104	-	177	ACA36859.1	rpsU	SPH_1545	-	-	ribosomal protein S21
+1429244..1429951	-	708	ACA37234.1	-	SPH_1546	-	-	glucosamine-6-phosphate deaminase
+1430102..1431130	+	1029	ACA35559.1	queA	SPH_1547	-	-	S-adenosylmethionine:tRNA ribosyltransferase-isomerase
+1431791..1432180	-	390	ACA36029.1	-	SPH_1548	-	-	choline binding protein
+1433632..1434183	-	552	ACA37100.1	-	SPH_1549	-	-	acetyltransferase, gnat family
+1434581..1435405	-	825	ACA36829.1	nadE	SPH_1550	-	-	NAD+ synthetase
+1435402..1436862	-	1461	ACA36151.1	pncB	SPH_1551	-	-	putative nicotinate phosphoribosyltransferase
+1436978..1437466	-	489	ACA35686.1	-	SPH_1552	-	-	conserved hypothetical protein
+1437456..1437665	-	210	ACA37206.1	-	SPH_1553	-	-	conserved domain protein
+1438051..1438779	-	729	ACA36616.1	-	SPH_1554	-	-	membrane protein, putative
+1438795..1439514	-	720	ACA35602.1	-	SPH_1555	-	-	ABC transporter ATP-binding protein - multidrug efflux
+1440021..1440746	-	726	ACA36205.1	-	SPH_1556	-	-	peptidase, U32 family
+1440931..1441080	+	150	ACA36881.1	-	SPH_1557	-	-	conserved hypothetical protein
+1441335..1442621	-	1287	ACA37472.1	-	SPH_1558	-	-	peptidase, U32 family protein
+1443796..1444986	+	1191	ACA37230.1	-	SPH_1561	-	-	DNA modification methyltransferase M.XbaI
+1445062..1446624	-	1563	ACA36745.1	-	SPH_1562	-	-	GMP synthase [glutamine-hydrolyzing] (Glutamineamidotransferase) (GMP synthetase)
+1446766..1447464	+	699	ACA36419.1	-	SPH_1563	-	-	transcriptional regulator, GntR family protein
+1447507..1448403	-	897	ACA35593.1	-	SPH_1564	-	-	membrane protein
+1448412..1449347	-	936	ACA36405.1	-	SPH_1565	-	-	beta-lactamase
+1449344..1450069	-	726	ACA36213.1	-	SPH_1566	-	-	CppA protein
+1450153..1450788	-	636	ACA37543.1	-	SPH_1567	-	-	conserved hypothetical protein
+1450790..1451617	-	828	ACA37057.1	-	SPH_1568	-	-	HAD-superfamily hydrolase, subfamily IIB
+1452768..1452881	+	114	ACA36026.1	-	SPH_1571	-	-	conserved hypothetical protein
+1453205..1453816	+	612	ACA36496.1	def1	SPH_1572	-	-	peptide deformylase
+1453861..1454589	+	729	ACA36965.1	-	SPH_1573	-	-	RNA methyltransferase, TrmH family, group 3
+1454628..1455539	-	912	ACA37452.1	trxB	SPH_1574	-	-	thioredoxin-disulfide reductase
+1455605..1455829	-	225	ACA36961.1	-	SPH_1575	-	-	conserved hypothetical protein
+1455907..1456650	-	744	ACA37596.1	-	SPH_1576	-	-	L-cystine import ATP-binding protein TcyN
+1456650..1457450	-	801	ACA37108.1	-	SPH_1577	-	-	ABC transporter membrane-spanning permease - aspartate/glutamate transport
+1457608..1457964	-	357	ACA35564.1	-	SPH_1578	-	-	arsenate reductase
+1457977..1458489	-	513	ACA36429.1	-	SPH_1579	-	-	O6-methylguanine-DNA methyltransferase
+1458489..1458983	-	495	ACA37002.1	-	SPH_1580	-	-	acetyltransferase, gnat family
+1459118..1459564	+	447	ACA36125.1	-	SPH_1581	-	-	conserved hypothetical protein
+1459561..1460208	+	648	ACA37425.1	-	SPH_1582	-	-	hemolysin-3 (Hemolysin III) (Hly-III)
+1460229..1460810	-	582	ACA36170.1	-	SPH_1583	-	-	SNO glutamine amidotransferase family superfamily
+1460811..1461686	-	876	ACA35715.1	-	SPH_1584	-	-	pyridoxine biosynthesis protein
+1461838..1463217	-	1380	ACA36197.1	-	SPH_1585	-	-	NADH oxidase (noxase)
+1463511..1464434	+	924	ACA35714.1	-	SPH_1586	-	-	thiamine biosynthesis lipoprotein
+1464494..1465099	+	606	ACA37208.1	-	SPH_1587	-	-	NADPH-dependent fmn reductase domain protein
+1465118..1466362	+	1245	ACA36680.1	-	SPH_1588	-	-	NADPH-dependent fmn reductase domain protein
+1466478..1466735	-	258	ACA36551.1	-	SPH_1589	-	-	conserved hypothetical protein
+1466777..1468813	-	2037	ACA35991.1	glyS	SPH_1590	-	-	glycyl-tRNA synthetase, beta subunit
+1469025..1469942	-	918	ACA36665.1	glyQ	SPH_1591	-	-	glycyl-tRNA synthetase, alpha subunit
+1470136..1470897	-	762	ACA36190.1	-	SPH_1592	-	-	conserved hypothetical protein
+1471170..1472012	-	843	ACA37495.1	-	SPH_1593	-	-	2,5-diketo-d-gluconic acid reductase a
+1472126..1473463	-	1338	ACA36905.1	-	SPH_1594	-	-	peptidoglycan GlcNAc deacetylase
+1473752..1474105	-	354	ACA37069.1	-	SPH_1595	-	-	conserved hypothetical protein
+1474362..1475339	+	978	ACA36375.1	-	SPH_1596	-	-	oxidoreductase
+1475336..1476418	+	1083	ACA35606.1	-	SPH_1597	-	-	DEAD RNA helicase
+1476482..1477135	-	654	ACA37600.1	-	SPH_1598	-	-	transposase
+1477912..1479108	-	1197	ACA35953.1	tuf	SPH_1601	-	-	translation elongation factor Tu
+1479451..1479573	-	123	ACA37515.1	-	SPH_1602	-	-	conserved hypothetical protein
+1480019..1480888	-	870	ACA36857.1	-	SPH_1603	-	-	glycerol facilitator-aquaporin gla (Aquaglyceroporin)(Glyceroaquaporin)
+1481112..1481789	-	678	ACA35739.1	-	SPH_1604	-	-	MucBP domain family
+1481747..1482826	-	1080	ACA35727.1	-	SPH_1605	-	-	conserved hypothetical protein
+1482937..1483215	-	279	ACA37490.1	-	SPH_1606	-	-	conserved hypothetical protein
+1484611..1486329	+	1719	ACA36476.1	-	SPH_1610	-	-	phosphoglucomutase/phosphomannomutase alpha/beta/alpha domain I
+1486440..1486787	+	348	ACA37293.1	-	SPH_1611	-	-	bacterocin transport accessory protein
+1487065..1487901	-	837	ACA36814.1	-	SPH_1612	-	-	ABC transporter substrate-binding protein - glutamine transport
+1487914..1488543	-	630	ACA36087.1	-	SPH_1613	-	-	glutamine transport ATP-binding protein GlnQ
+1488553..1489194	-	642	ACA35612.1	-	SPH_1614	-	-	amino acid ABC transporter, permease protein
+1489340..1490569	-	1230	ACA36116.1	-	SPH_1615	-	-	TPR domain protein
+1490559..1491725	-	1167	ACA35495.1	-	SPH_1616	-	-	transport protein
+1491869..1492882	+	1014	ACA37638.1	-	SPH_1617	-	-	3-carboxymuconate cyclase
+1492927..1493346	-	420	ACA36976.1	atpC	SPH_1618	-	-	ATP synthase F1, epsilon subunit
+1493357..1494763	-	1407	ACA36397.1	atpD	SPH_1619	-	-	ATP synthase F1, beta subunit
+1494849..1495727	-	879	ACA37480.1	atpG	SPH_1620	-	-	ATP synthase F1, gamma subunit
+1495743..1497248	-	1506	ACA36533.1	atpA	SPH_1621	-	-	ATP synthase F1, alpha subunit
+1497263..1497799	-	537	ACA35952.1	atpH	SPH_1622	-	-	ATP synthase F1, delta subunit
+1497799..1498293	-	495	ACA35605.1	atpF	SPH_1623	-	-	ATP synthase F0, B subunit
+1498307..1499023	-	717	ACA37153.1	atpB	SPH_1624	-	-	ATP synthase F0, A subunit
+1499058..1499258	-	201	ACA37405.1	-	SPH_1625	-	-	conserved domain protein
+1499333..1500340	-	1008	ACA37051.1	-	SPH_1626	-	-	transposase
+1500761..1501159	-	399	ACA36353.1	-	SPH_1627	-	-	acetyltransferase, gnat family protein
+1501277..1501729	-	453	ACA35873.1	-	SPH_1628	-	-	hypothetical protein
+1501757..1502239	-	483	ACA37280.1	-	SPH_1629	-	-	transcription elongation factor GreA
+1502310..1503965	-	1656	ACA35497.1	-	SPH_1630	-	-	aminodeoxychorismate lyase
+1504046..1504540	-	495	ACA35993.1	-	SPH_1631	-	-	acetyltransferase, gnat family
+1504537..1505001	-	465	ACA36455.1	-	SPH_1632	-	-	acetyltransferase, gnat family
+1505011..1506345	-	1335	ACA37210.1	murC	SPH_1633	-	-	UDP-N-acetylmuramate--alanine ligase
+1506356..1506973	-	618	ACA35540.1	-	SPH_1634	-	-	conserved hypothetical protein
+1507021..1510119	-	3099	ACA36076.1	-	SPH_1635	-	-	Snf2 family protein
+1510212..1511378	-	1167	ACA36701.1	-	SPH_1636	-	-	putative aminotransferase B
+1511386..1512480	-	1095	ACA37598.1	-	SPH_1637	-	-	cystathionine gamma-synthase (CGS) (O-succinylhomoserine(thiol)-lyase)
+1514484..1516442	-	1959	ACA37084.1	-	SPH_1641	-	-	oligopeptide binding lipoprotein
+1516646..1518283	-	1638	ACA37479.1	-	SPH_1642	-	-	polysaccharide transporter
+1518374..1519819	+	1446	ACA35783.1	-	SPH_1643	-	-	UDP-N-acetylmuramoylalanyl-D-glutamate--2, 6-diaminopimelate ligase
+1519865..1520059	-	195	ACA36789.1	-	SPH_1644	-	-	conserved domain protein
+1520253..1520444	-	192	ACA37248.1	-	SPH_1645	-	-	hypothetical protein
+1520793..1521305	-	513	ACA36063.1	-	SPH_1647	-	-	conserved hypothetical protein
+1521391..1522326	-	936	ACA35782.1	-	SPH_1648	-	-	manganese-dependent inorganic pyrophosphatase (Pyrophosphate phospho-hydrolase) (PPase)
+1522397..1522696	-	300	ACA36386.1	-	SPH_1649	-	-	conserved hypothetical protein
+1522686..1523435	-	750	ACA37183.1	-	SPH_1650	-	-	methyltransferase
+1523489..1523875	-	387	ACA36858.1	-	SPH_1651	-	-	S1-type RNA-binding domain
+1523850..1525250	-	1401	ACA37454.1	-	SPH_1652	-	-	Cof family protein/peptidyl-prolyl cis-trans isomerase, cyclophilin type
+1525544..1525783	-	240	ACA35634.1	rpsR	SPH_1653	-	-	ribosomal protein S18
+1525815..1526285	-	471	ACA36256.1	-	SPH_1654	-	-	single-stranded DNA-binding protein (SSB) (Helix-destabilizingprotein)
+1526297..1526587	-	291	ACA36222.1	rpsF	SPH_1655	-	-	ribosomal protein S6
+1526740..1528083	-	1344	ACA35747.1	asnS	SPH_1656	-	-	asparaginyl-tRNA synthetase
+1528103..1528468	-	366	ACA37432.1	-	SPH_1657	-	-	glyoxalase family protein
+1528461..1529648	-	1188	ACA36955.1	-	SPH_1658	-	-	aspartate aminotransferase (transaminase a) (aspat)
+1529645..1530133	-	489	ACA35788.1	-	SPH_1659	-	-	peptidase propeptide and ypeb domain protein
+1530200..1530316	-	117	ACA35881.1	-	SPH_1660	-	-	hypothetical protein
+1530454..1531002	+	549	ACA37193.1	-	SPH_1661	-	-	oxidoreductase
+1531280..1532008	-	729	ACA37106.1	-	SPH_1662	-	-	conserved hypothetical protein
+1532087..1532251	-	165	ACA36246.1	-	SPH_1663	-	-	conserved hypothetical protein
+1532318..1533913	-	1596	ACA35639.1	-	SPH_1664	-	-	conserved hypothetical protein
+1533925..1534335	-	411	ACA37526.1	def2	SPH_1665	-	-	polypeptide deformylase
+1534451..1535242	-	792	ACA37092.1	-	SPH_1666	-	-	glutathione S-transferase family protein
+1535255..1537951	-	2697	ACA36355.1	-	SPH_1667	-	-	calcium-transporting ATPase 1 (Golgi Ca(2+)-ATPase)
+1538255..1539439	+	1185	ACA35871.1	-	SPH_1668	-	-	cation efflux family protein
+1539582..1541453	-	1872	ACA36733.1	-	SPH_1669	-	-	ABC transporter, ATP-binding protein
+1541450..1542634	-	1185	ACA37353.1	-	SPH_1670	-	-	tRNA nucleotidyltransferase/poly(A) polymerase family protein
+1542646..1543413	-	768	ACA37320.1	dapB	SPH_1671	-	-	dihydrodipicolinate reductase
+1543690..1544538	-	849	ACA36297.1	-	SPH_1672	-	-	conserved hypothetical protein
+1544540..1544914	-	375	ACA35786.1	-	SPH_1673	-	-	conserved hypothetical protein
+1544988..1546340	-	1353	ACA37552.1	glmM	SPH_1674	-	-	phosphoglucosamine mutase
+1546364..1547143	-	780	ACA37550.1	-	SPH_1675	-	-	lipoprotein, putative
+1547130..1547987	-	858	ACA37090.1	-	SPH_1676	-	-	conserved hypothetical protein
+1548123..1549091	+	969	ACA36036.1	-	SPH_1677	-	-	thioredoxin reductase
+1549125..1550036	-	912	ACA35599.1	-	SPH_1678	-	-	conserved hypothetical protein
+1550033..1551010	-	978	ACA36649.1	-	SPH_1679	-	-	transporter
+1551007..1551897	-	891	ACA36459.1	-	SPH_1680	-	-	putative P-loop ATPase protein
+1551949..1552329	-	381	ACA36310.1	-	SPH_1681	-	-	endoribonuclease L-PSP, putative
+1552340..1552927	-	588	ACA35721.1	-	SPH_1682	-	-	GTP-binding protein
+1552936..1554144	-	1209	ACA37278.1	clpX	SPH_1683	-	-	ATP-dependent Clp protease, ATP-binding subunit ClpX
+1554205..1554375	-	171	ACA36623.1	-	SPH_1684	-	-	conserved hypothetical protein
+1554375..1554881	-	507	ACA35527.1	folA	SPH_1685	-	-	dihydrofolate reductase
+1555011..1555529	-	519	ACA35915.1	-	SPH_1686	-	-	DNA protection during starvation protein
+1556026..1557498	-	1473	ACA37457.1	-	SPH_1687	-	-	hypothetical protein
+1557569..1558327	-	759	ACA36865.1	tpiA	SPH_1688	-	-	triose-phosphate isomerase
+1558425..1559102	-	678	ACA37034.1	-	SPH_1689	-	-	DNA replication protein DnaD
+1559111..1560055	-	945	ACA36122.1	metA	SPH_1690	-	-	homoserine O-succinyltransferase
+1560237..1560749	-	513	ACA36445.1	apt	SPH_1691	-	-	adenine phosphoribosyltransferase
+1560836..1561594	-	759	ACA37050.1	-	SPH_1692	-	-	SAM-dependent methyltransferase
+1561802..1561972	+	171	ACA37500.1	-	SPH_1693	-	-	conserved hypothetical protein
+1562095..1563225	-	1131	ACA36545.1	-	SPH_1694	-	-	multiple sugar-binding transport ATP-binding protein MsmK
+1563675..1564250	-	576	ACA37011.1	-	SPH_1696	-	-	isochorismatase
+1564250..1565038	-	789	ACA35574.1	codY	SPH_1697	-	-	GTP-sensing transcriptional pleiotropic repressor CodY
+1565303..1566877	-	1575	ACA36047.1	-	SPH_1698	-	-	DEAD/DEAH box helicase
+1567076..1568302	-	1227	ACA36054.1	-	SPH_1699	-	-	major facilitator:Oxalate:Formate Antiporter
+1568494..1569810	+	1317	ACA36806.1	-	SPH_1700	-	-	probable pyridine nucleotide-disulfide oxidoreductase YkgC
+1569909..1571252	+	1344	ACA37520.1	-	SPH_1701	-	-	Mur ligase family protein
+1571252..1572034	+	783	ACA37061.1	-	SPH_1702	-	-	cobyric acid synthase
+1572160..1573242	+	1083	ACA36073.1	-	SPH_1703	-	-	Xaa-Pro dipeptidase
+1575053..1575514	-	462	ACA36626.1	-	SPH_1709	-	-	conserved hypothetical protein
+1575492..1576265	-	774	ACA36554.1	-	SPH_1710	-	-	phosphomethylpyrimidine kinase
+1576255..1577004	-	750	ACA36497.1	truA	SPH_1711	-	-	tRNA pseudouridine synthase A
+1577184..1577345	+	162	ACA37140.1	-	SPH_1713	-	-	conserved hypothetical protein
+1577317..1578468	-	1152	ACA35998.1	-	SPH_1712	-	-	major facilitator superfamily transporter - efflux
+1578708..1579337	-	630	ACA36657.1	-	SPH_1714	-	-	membrane protein, putative
+1579340..1579678	-	339	ACA36942.1	phnA	SPH_1715	-	-	alkylphosphonate utilization operon protein PhnA
+1579809..1580480	-	672	ACA35730.1	cmk	SPH_1716	-	-	cytidylate kinase
+1580489..1580965	-	477	ACA37284.1	-	SPH_1717	-	-	conserved hypothetical protein
+1581107..1581223	+	117	ACA37507.1	-	SPH_1718	-	-	ferredoxin
+1581285..1582238	-	954	ACA36573.1	-	SPH_1719	-	-	bactoprenol glucosyl transferase
+1582240..1583259	-	1020	ACA36217.1	galE	SPH_1720	-	-	UDP-glucose 4-epimerase
+1583560..1584663	-	1104	ACA35970.1	-	SPH_1722	-	-	oxidoreductase, DadA family protein
+1584680..1585477	-	798	ACA37427.1	-	SPH_1723	-	-	conserved hypothetical protein
+1585464..1586141	-	678	ACA36962.1	-	SPH_1724	-	-	Bcl-2 family protein
+1587755..1588588	-	834	ACA37450.1	-	SPH_1726	-	-	integrase core domain protein
+1589477..1591447	-	1971	ACA37114.1	tkt1	SPH_1729	-	-	transketolase
+1591484..1592179	-	696	ACA37579.1	-	SPH_1730	-	-	D-allulose-6-phosphate 3-epimerase
+1592190..1593275	-	1086	ACA36574.1	-	SPH_1731	-	-	PTS system, IIC component
+1593640..1594089	-	450	ACA35669.1	-	SPH_1733	-	-	PTS system, IIA component
+1594067..1594495	-	429	ACA36344.1	-	SPH_1734	-	-	PTS system, nitrogen regulatory component IIA, putative
+1594488..1595951	-	1464	ACA36849.1	-	SPH_1735	-	-	putative transcription antiterminator BglG family protein
+1596480..1598816	-	2337	ACA37505.1	-	SPH_1736	-	-	cation transport ATPase
+1598949..1599698	+	750	ACA36200.1	-	SPH_1737	-	-	acyltransferase family protein
+1599990..1600604	-	615	ACA36822.1	-	SPH_1738	-	-	CadD
+1601420..1601689	-	270	ACA36457.1	rpsO	SPH_1739	-	-	ribosomal protein S15
+1601830..1602459	-	630	ACA36696.1	-	SPH_1740	-	-	YwnB
+1603318..1603641	+	324	ACA37040.1	-	SPH_1741	-	-	conserved hypothetical protein
+1603699..1605642	+	1944	ACA37586.1	thrS	SPH_1742	-	-	threonyl-tRNA synthetase
+1605691..1606665	-	975	ACA35910.1	-	SPH_1743	-	-	histidine kinase
+1606658..1607335	-	678	ACA36337.1	-	SPH_1744	-	-	response regulator
+1607491..1608564	+	1074	ACA36688.1	-	SPH_1745	-	-	conserved hypothetical protein
+1608655..1608957	-	303	ACA37168.1	-	SPH_1746	-	-	conserved hypothetical protein
+1609025..1609462	-	438	ACA35703.1	-	SPH_1747	-	-	Rrf2 family protein
+1610492..1611142	+	651	ACA36940.1	-	SPH_1749	-	-	iron-dependent transcriptional regulator
+1611759..1612202	-	444	ACA35763.1	dtd	SPH_1752	-	-	D-tyrosyl-tRNA(Tyr) deacylase
+1612232..1614454	-	2223	ACA36059.1	spoT	SPH_1753	-	-	guanosine-3,5-bis(diphosphate) 3-pyrophosphohydrolase
+1615470..1616099	+	630	ACA37540.1	-	SPH_1755	-	-	metallo-beta-lactamase superfamily protein
+1616222..1618114	-	1893	ACA37161.1	-	SPH_1756	-	-	endopeptidase O
+1618405..1619127	+	723	ACA36320.1	-	SPH_1757	-	-	manganese transport system ATP-binding protein MntA
+1619124..1619972	+	849	ACA37014.1	-	SPH_1758	-	-	manganese transport system membrane protein MntB
+1620004..1620933	+	930	ACA37031.1	-	SPH_1759	-	-	manganese ABC transporter substrate-binding lipoprotein (Adhesin B) (Saliva-binding protein)
+1621056..1621547	+	492	ACA37624.1	-	SPH_1760	-	-	thiol peroxidase (Scavengase P20)
+1621643..1624351	-	2709	ACA37582.1	-	SPH_1761	-	-	efflux ABC transporter, permease protein
+1624353..1625054	-	702	ACA35892.1	-	SPH_1762	-	-	macrolide export ATP-binding/permease protein MacB
+1627767..1628459	-	693	ACA36744.1	-	SPH_1765	-	-	2,3-bisphosphoglycerate-dependent phosphoglycerate mutase
+1629780..1632572	-	2793	ACA35572.1	ileS	SPH_1767	-	-	isoleucyl-tRNA synthetase
+1632825..1632941	-	117	ACA36046.1	-	SPH_1768	-	-	conserved hypothetical protein
+1632920..1633708	-	789	ACA37363.1	-	SPH_1769	-	-	cell-division initiation protein
+1633717..1634502	-	786	ACA36728.1	-	SPH_1770	-	-	YlmH protein
+1634499..1634762	-	264	ACA37455.1	-	SPH_1771	-	-	yggt family, putative
+1634762..1635301	-	540	ACA37102.1	-	SPH_1772	-	-	YlmF protein
+1635311..1635982	-	672	ACA36460.1	-	SPH_1773	-	-	pyridoxal phosphate enzyme, YggS family
+1635987..1637246	-	1260	ACA36144.1	ftsZ	SPH_1774	-	-	cell division protein FtsZ
+1637263..1638636	-	1374	ACA36041.1	ftsA	SPH_1775	-	-	cell division protein FtsA
+1638855..1639559	-	705	ACA35742.1	-	SPH_1776	-	-	conserved hypothetical integral membrane protein
+1639650..1640261	-	612	ACA37474.1	-	SPH_1777	-	-	MutT
+1640248..1641621	-	1374	ACA36879.1	-	SPH_1778	-	-	UDP-N-acetylmuramoylalanine-D-glutamyl-lysine-D- alanyl-D-alanine ligase
+1641706..1642749	-	1044	ACA35811.1	-	SPH_1779	-	-	D-alanine--D-alanine ligase (D-alanylalanine synthetase)(D-Ala-D-Ala ligase)
+1642926..1643522	-	597	ACA37642.1	recR	SPH_1780	-	-	recombination protein RecR
+1643533..1645575	-	2043	ACA35667.1	-	SPH_1781	-	-	penicillin-binding protein 2B
+1645790..1646641	+	852	ACA37200.1	-	SPH_1782	-	-	transcriptional regulator, RpiR family
+1646657..1647541	-	885	ACA36581.1	-	SPH_1783	-	-	glucokinase
+1647559..1648476	-	918	ACA36522.1	-	SPH_1784	-	-	N-acetylneuraminate lyase
+1648645..1649289	-	645	ACA36515.1	-	SPH_1785	-	-	protein of unknown function
+1649566..1649874	-	309	ACA35824.1	-	SPH_1786	-	-	conserved hypothetical protein
+1650007..1650459	-	453	ACA37394.1	-	SPH_1787	-	-	conserved hypothetical protein
+1650686..1651525	-	840	ACA36268.1	-	SPH_1788	-	-	ABC transporter membrane-spanning permease - sugar transport
+1651541..1652428	-	888	ACA36279.1	-	SPH_1789	-	-	sugar ABC transporter, permease protein
+1652659..1653987	-	1329	ACA35658.1	-	SPH_1790	-	-	ABC transporter substrate-binding protein - sugar transport
+1654102..1654800	-	699	ACA36760.1	-	SPH_1791	-	-	putative N-acetylmannosamine-6-P epimerase
+1654980..1656083	-	1104	ACA35840.1	-	SPH_1792	-	-	putative oxidoreductase YjhC
+1656125..1656958	-	834	ACA37635.1	-	SPH_1793	-	-	ABC transporter membrane-spanning permease - sugar transport
+1656958..1657842	-	885	ACA36193.1	-	SPH_1794	-	-	ABC transporter, permease protein
+1657921..1659258	-	1338	ACA35708.1	-	SPH_1795	-	-	ABC transporter substrate-binding protein - sugar transport
+1659277..1659729	-	453	ACA37120.1	-	SPH_1796	-	-	conserved hypothetical protein
+1660744..1663572	-	2829	ACA36706.1	-	SPH_1797	-	-	neuraminidase
+1663929..1664156	-	228	ACA36709.1	-	SPH_1798	-	-	conserved hypothetical protein
+1665141..1666121	-	981	ACA37413.1	-	SPH_1800	-	-	xylan esterase 1
+1666438..1668453	-	2016	ACA37499.1	recG	SPH_1801	-	-	ATP-dependent DNA helicase RecG
+1668472..1669575	-	1104	ACA35943.1	alr	SPH_1802	-	-	alanine racemase
+1669565..1669927	-	363	ACA36570.1	acpS	SPH_1803	-	-	holo-(acyl-carrier-protein) synthase
+1669972..1671003	-	1032	ACA36556.1	-	SPH_1804	-	-	3-deoxy-7-phosphoheptulonate synthase
+1671005..1672036	-	1032	ACA36636.1	-	SPH_1805	-	-	3-deoxy-7-phosphoheptulonate synthase
+1672117..1674630	-	2514	ACA37241.1	secA	SPH_1806	-	-	preprotein translocase, SecA subunit
+1674776..1675063	-	288	ACA35691.1	-	SPH_1807	-	-	conserved hypothetical protein
+1675074..1675724	-	651	ACA35646.1	-	SPH_1808	-	-	ABC transporter, ATP-binding protein
+1675728..1676369	-	642	ACA36238.1	-	SPH_1809	-	-	conserved hypothetical protein
+1676362..1677153	-	792	ACA37383.1	-	SPH_1810	-	-	membrane protein, putative
+1678985..1679335	-	351	ACA36720.1	-	SPH_1815	-	-	conserved hypothetical protein
+1679475..1679819	-	345	ACA37075.1	-	SPH_1816	-	-	hypothetical protein
+1679901..1681211	-	1311	ACA35937.1	-	SPH_1817	-	-	GTP-binding protein EngA
+1681225..1681938	-	714	ACA35519.1	-	SPH_1818	-	-	nitroreductase family protein
+1681935..1682831	-	897	ACA36379.1	-	SPH_1819	-	-	primosomal protein DnaI
+1682832..1684001	-	1170	ACA37064.1	-	SPH_1820	-	-	replication initiation and membrane attachment protein
+1684002..1684475	-	474	ACA37358.1	nrdR	SPH_1821	-	-	transcriptional regulator NrdR
+1684615..1684980	+	366	ACA35956.1	-	SPH_1822	-	-	transcriptional regulator, GntR family
+1684985..1685680	+	696	ACA37421.1	-	SPH_1823	-	-	ABC transporter, ATP-binding protein
+1685697..1686464	+	768	ACA36937.1	-	SPH_1824	-	-	ABC transporter, ATP-binding protein
+1686817..1688016	-	1200	ACA36755.1	-	SPH_1825	-	-	ABC transporter membrane-spanning permease - Na+ export
+1688013..1688906	-	894	ACA36292.1	-	SPH_1826	-	-	ABC transporter ATP-binding protein - Na+ export
+1689029..1689220	+	192	ACA35988.1	-	SPH_1827	-	-	chlorohydrolase
+1690216..1690833	+	618	ACA37121.1	-	SPH_1828	-	-	snare associated golgi protein
+1691153..1692040	-	888	ACA36956.1	-	SPH_1829	-	-	fructokinase
+1692189..1694072	-	1884	ACA36504.1	-	SPH_1830	-	-	pts system, sucrose-specific iibc component
+1694199..1694396	-	198	ACA36188.1	-	SPH_1831	-	-	conserved hypothetical protein
+1694449..1695903	+	1455	ACA36276.1	-	SPH_1832	-	-	sucrose-6-phosphate hydrolase (Sucrase) (Invertase)
+1696883..1698157	-	1275	ACA35779.1	-	SPH_1835	-	-	hydroxymethylglutaryl-CoA reductase, degradative
+1698157..1699353	-	1197	ACA37341.1	-	SPH_1836	-	-	hydroxymethylglutaryl-CoA synthase
+1699460..1699657	-	198	ACA37068.1	-	SPH_1837	-	-	conserved hypothetical protein
+1699776..1700165	-	390	ACA36464.1	-	SPH_1838	-	-	transposase (IS4 family)
+1700464..1700913	-	450	ACA36157.1	-	SPH_1839	-	-	conserved hypothetical protein
+1700915..1701673	-	759	ACA35553.1	-	SPH_1840	-	-	conserved hypothetical protein
+1701788..1703767	-	1980	ACA37377.1	-	SPH_1841	-	-	Stk1
+1703764..1704504	-	741	ACA37603.1	-	SPH_1842	-	-	protein phosphatase PrpC
+1704519..1705832	-	1314	ACA35917.1	sun	SPH_1843	-	-	ribosomal RNA small subunit methyltransferase B
+1705825..1706760	-	936	ACA36629.1	fmt	SPH_1844	-	-	methionyl-tRNA formyltransferase
+1706773..1709169	-	2397	ACA36286.1	-	SPH_1845	-	-	primosomal protein N' (ATP-dependent helicase PriA)(Replication factor Y)
+1709235..1709549	-	315	ACA36793.1	rpoZ	SPH_1846	-	-	DNA-directed RNA polymerase, omega subunit
+1709574..1710200	-	627	ACA36950.1	gmk	SPH_1847	-	-	guanylate kinase
+1710330..1711943	-	1614	ACA37436.1	-	SPH_1848	-	-	conserved hypothetical protein
+1712134..1712388	-	255	ACA36006.1	-	SPH_1849	-	-	addiction module toxin, Txe/YoeB family
+1712392..1712646	-	255	ACA36488.1	-	SPH_1850	-	-	prevent-host-death family protein
+1712884..1713981	-	1098	ACA36694.1	-	SPH_1851	-	-	conserved hypothetical protein
+1713991..1714731	-	741	ACA37212.1	-	SPH_1852	-	-	SAM-dependent methyltransferase
+1715051..1715404	-	354	ACA35635.1	-	SPH_1853	-	-	putative iojap homolog
+1715417..1715917	-	501	ACA36079.1	-	SPH_1854	-	-	isochorismatase family protein
+1715918..1716511	-	594	ACA36229.1	-	SPH_1855	-	-	conserved hypothetical protein
+1716511..1717140	-	630	ACA37513.1	nadD	SPH_1856	-	-	nicotinate (nicotinamide) nucleotide adenylyltransferase
+1717192..1717503	-	312	ACA35781.1	-	SPH_1857	-	-	conserved hypothetical protein
+1717703..1718809	-	1107	ACA36537.1	-	SPH_1858	-	-	GTP-binding protein
+1718812..1719339	-	528	ACA36632.1	yqeG	SPH_1859	-	-	had superfamily (subfamily iiia) phosphatase
+1719354..1720262	-	909	ACA37238.1	-	SPH_1860	-	-	CorA - magnesium and cobalt transporter
+1720319..1720879	-	561	ACA35807.1	-	SPH_1861	-	-	small conductance mechanosensitive ion channel
+1722294..1723247	+	954	ACA36693.1	-	SPH_1864	-	-	integral membrane protein
+1723270..1723467	-	198	ACA36128.1	-	SPH_1865	-	-	chlorohydrolase
+1723528..1723752	-	225	ACA36360.1	-	SPH_1866	-	-	conserved hypothetical protein
+1723757..1723936	-	180	ACA37211.1	-	SPH_1867	-	-	conserved domain protein
+1723938..1725275	-	1338	ACA37545.1	-	SPH_1868	-	-	conserved hypothetical protein
+1725268..1726779	-	1512	ACA35633.1	-	SPH_1869	-	-	conserved hypothetical protein
+1726791..1729163	-	2373	ACA37157.1	-	SPH_1870	-	-	preprotein translocase subunit SecA
+1729156..1729596	-	441	ACA36880.1	-	SPH_1871	-	-	accessory secretory protein Asp3
+1729593..1731128	-	1536	ACA37342.1	-	SPH_1872	-	-	accessory secretory protein Asp2
+1731112..1732692	-	1581	ACA35542.1	-	SPH_1873	-	-	accessory secretory protein Asp1
+1732702..1733919	-	1218	ACA36131.1	-	SPH_1874	-	-	translocase, putative
+1733976..1734881	-	906	ACA35968.1	-	SPH_1875	-	-	glycosyl transferase, family 2
+1734881..1736077	-	1197	ACA36319.1	-	SPH_1876	-	-	glycosyl transferase, family 8
+1736086..1737306	-	1221	ACA36830.1	-	SPH_1877	-	-	glycosyl transferase, family 8
+1737331..1738215	-	885	ACA37307.1	-	SPH_1878	-	-	glycosyl transferase, family 2/glycosyl transferase family 8
+1738212..1740665	-	2454	ACA37207.1	-	SPH_1879	-	-	glycosyl transferase, family 8
+1740675..1741685	-	1011	ACA35712.1	-	SPH_1880	-	-	Nss
+1742630..1743508	-	879	ACA37094.1	-	SPH_1882	-	-	exopolysaccharide biosynthesis protein, acetyltransferase
+1745650..1759947	-	14298	ACA36642.1	-	SPH_1885	-	-	cell wall surface anchor family protein
+1760348..1760608	-	261	ACA37379.1	-	SPH_1886	-	-	Spn1, transposase Orf2
+1761668..1761889	+	222	ACA37351.1	-	SPH_1890	-	-	conserved hypothetical protein
+1761906..1762220	+	315	ACA35538.1	trx	SPH_1891	-	-	thioredoxin
+1762526..1763059	+	534	ACA36997.1	-	SPH_1892	-	-	NADPH-dependent 7-cyano-7-deazaguanine reductase
+1763071..1763514	+	444	ACA36467.1	-	SPH_1893	-	-	conserved hypothetical protein
+1763539..1764207	-	669	ACA35804.1	-	SPH_1894	-	-	aquaporin Z - water channel protein
+1764318..1764872	-	555	ACA36842.1	-	SPH_1895	-	-	conserved hypothetical protein
+1764940..1765095	-	156	ACA36228.1	-	SPH_1896	-	-	hypothetical protein
+1765118..1766914	-	1797	ACA35537.1	pepF2	SPH_1897	-	-	oligoendopeptidase F
+1766925..1767668	-	744	ACA37629.1	-	SPH_1898	-	-	conserved hypothetical protein
+1767670..1768620	-	951	ACA36996.1	prmA	SPH_1899	-	-	ribosomal protein L11 methyltransferase
+1768758..1769186	-	429	ACA36383.1	-	SPH_1900	-	-	7,8-dihydro-8-oxoguanine-triphosphatase
+1769188..1770255	-	1068	ACA35810.1	-	SPH_1901	-	-	peptidase, M50 family protein
+1770274..1770744	-	471	ACA37074.1	-	SPH_1902	-	-	conserved hypothetical protein
+1771035..1771487	-	453	ACA36638.1	-	SPH_1903	-	-	conserved hypothetical protein
+1771524..1771703	-	180	ACA37181.1	-	SPH_1904	-	-	conserved hypothetical protein
+1771840..1772019	-	180	ACA35684.1	-	SPH_1905	-	-	conserved hypothetical protein
+1772697..1773968	+	1272	ACA36852.1	-	SPH_1907	-	-	chromosome segregation helicase
+1774513..1775832	-	1320	ACA37491.1	-	SPH_1909	-	-	sucrose-6-phosphate hydrolase
+1775842..1776687	-	846	ACA35936.1	-	SPH_1910	-	-	ABC transporter membrane-spanning permease - sugar transport
+1776689..1777591	-	903	ACA36568.1	-	SPH_1911	-	-	ABC transporter, permease protein
+1777687..1778997	-	1311	ACA36077.1	-	SPH_1912	-	-	ABC transporter substrate-binding protein - sugar transport
+1779124..1780119	-	996	ACA37107.1	-	SPH_1913	-	-	sugar-binding transcriptional regulator, LacI family protein
+1780481..1781962	-	1482	ACA36378.1	-	SPH_1914	-	-	M protein trans-acting positive transcriptional regulator
+1782653..1783219	+	567	ACA36368.1	-	SPH_1916	-	-	conserved hypothetical protein
+1783231..1783401	+	171	ACA36153.1	-	SPH_1917	-	-	lipoprotein, putative
+1783440..1784048	+	609	ACA37594.1	-	SPH_1918	-	-	Gls24 protein
+1784079..1784282	+	204	ACA37352.1	-	SPH_1919	-	-	conserved hypothetical protein
+1784392..1784631	-	240	ACA36668.1	-	SPH_1920	-	-	conserved hypothetical protein
+1785095..1785214	-	120	ACA36407.1	-	SPH_1921	-	-	hypothetical protein
+1785415..1786185	-	771	ACA35806.1	-	SPH_1922	-	-	domain of unknown function, putative
+1786200..1787048	-	849	ACA36225.1	-	SPH_1923	-	-	sulfatase-modifying factor 1 (C-alpha-formyglycine-generating enzyme 1)
+1787045..1788520	-	1476	ACA35728.1	-	SPH_1924	-	-	sulfatase
+1788843..1790198	-	1356	ACA37243.1	-	SPH_1925	-	-	phosphotransferase system
+1790208..1790525	-	318	ACA36919.1	-	SPH_1926	-	-	lichenan-specific phosphotransferase enzyme iia component
+1790542..1790859	-	318	ACA36309.1	-	SPH_1927	-	-	lichenan-specific phosphotransferase enzyme iib component
+1790874..1791770	-	897	ACA35833.1	-	SPH_1928	-	-	conserved hypothetical protein
+1791773..1793035	-	1263	ACA37567.1	-	SPH_1929	-	-	lichenan permease iic component
+1793315..1794493	+	1179	ACA36800.1	-	SPH_1930	-	-	ROK family protein, putative
+1794721..1795167	-	447	ACA36323.1	-	SPH_1931	-	-	acetyltransferase, gnat family
+1795237..1795896	+	660	ACA36511.1	-	SPH_1933	-	-	type 4 prepilin peptidase
+1795868..1796644	-	777	ACA35528.1	trpA	SPH_1932	-	-	tryptophan synthase, alpha subunit
+1796637..1797860	-	1224	ACA36208.1	trpB	SPH_1934	-	-	tryptophan synthase, beta subunit
+1797838..1798437	-	600	ACA37622.1	trpF	SPH_1935	-	-	N-(5'phosphoribosyl)anthranilate isomerase
+1798424..1799191	-	768	ACA36507.1	trpC	SPH_1936	-	-	indole-3-glycerol phosphate synthase
+1799188..1800192	-	1005	ACA36850.1	trpD	SPH_1937	-	-	anthranilate phosphoribosyltransferase
+1800203..1800769	-	567	ACA37216.1	-	SPH_1938	-	-	para-aminobenzoate/anthranilate synthase glutamine amidotransferasecomponent II
+1800766..1802127	-	1362	ACA35888.1	trpE	SPH_1939	-	-	anthranilate synthase component I
+1802499..1802750	-	252	ACA35536.1	-	SPH_1940	-	-	chlorohydrolase
+1803358..1804359	-	1002	ACA36142.1	-	SPH_1941	-	-	catabolite control protein
+1804644..1804835	-	192	ACA37475.1	-	SPH_1942	-	-	conserved hypothetical protein
+1804931..1805641	-	711	ACA36664.1	-	SPH_1943	-	-	putative Mg2+ transporter-C (MgtC) family protein
+1805644..1807335	-	1692	ACA36888.1	-	SPH_1944	-	-	binding-protein-dependent transport systems inner membrane component
+1807347..1808357	-	1011	ACA36566.1	-	SPH_1945	-	-	spermidine/putrescine import ATP-binding protein PotA
+1808460..1809527	-	1068	ACA37285.1	-	SPH_1946	-	-	ABC transporter, substrate-binding protein
+1809552..1810211	-	660	ACA36846.1	-	SPH_1947	-	-	conserved hypothetical protein
+1810339..1810452	-	114	ACA36423.1	-	SPH_1948	-	-	conserved hypothetical protein
+1810955..1811251	-	297	ACA37189.1	-	SPH_1949	-	-	conserved hypothetical protein
+1811235..1813361	-	2127	ACA36576.1	-	SPH_1950	-	-	cell wall surface anchor family protein
+1814115..1814240	-	126	ACA36295.1	-	SPH_1951	-	-	conserved hypothetical protein
+1814524..1815750	-	1227	ACA36270.1	-	SPH_1952	-	-	Cps7G
+1815793..1816485	-	693	ACA37595.1	-	SPH_1953	-	-	bacterial sugar transferase family protein
+1816658..1818409	-	1752	ACA36990.1	-	SPH_1954	-	-	ABC transporter, ATP-binding protein
+1818399..1820144	-	1746	ACA36410.1	-	SPH_1955	-	-	ABC transporter, ATP-binding protein
+1820350..1820802	-	453	ACA36416.1	-	SPH_1956	-	-	conserved hypothetical protein
+1821389..1822216	+	828	ACA36677.1	xth	SPH_1959	-	-	exodeoxyribonuclease III
+1823492..1824073	+	582	ACA36836.1	xpt	SPH_1962	-	-	xanthine phosphoribosyltransferase
+1824073..1825335	+	1263	ACA37541.1	-	SPH_1963	-	-	xanthine permease
+1825422..1826288	-	867	ACA36447.1	-	SPH_1964	-	-	type II restriction enzyme DpnII
+1826275..1827045	-	771	ACA35972.1	-	SPH_1965	-	-	DNA methylase
+1827071..1827925	-	855	ACA35630.1	-	SPH_1966	-	-	modification methylase DpnIIA
+1828082..1828486	-	405	ACA37298.1	-	SPH_1967	-	-	thioesterase family protein
+1828556..1830037	-	1482	ACA37395.1	galT	SPH_1968	-	-	galactose-1-phosphate uridylyltransferase
+1830056..1831234	-	1179	ACA36779.1	galK	SPH_1969	-	-	galactokinase
+1831399..1832406	+	1008	ACA36550.1	-	SPH_1970	-	-	GalR
+1832452..1833489	-	1038	ACA35857.1	-	SPH_1971	-	-	alcohol dehydrogenase, zinc-containing
+1833490..1833843	-	354	ACA37116.1	-	SPH_1972	-	-	transcriptional regulator, MerR family
+1834087..1834977	-	891	ACA37467.1	-	SPH_1973	-	-	cation diffusion facilitator transporter - heavy metal transport
+1835110..1835646	+	537	ACA35601.1	-	SPH_1974	-	-	transcriptional regulator, TetR family
+1835813..1836619	-	807	ACA36480.1	-	SPH_1975	-	-	nicotinamide mononucleotide transporter
+1836790..1836906	-	117	ACA37301.1	-	SPH_1976	-	-	hypothetical protein
+1836964..1838484	-	1521	ACA35707.1	-	SPH_1977	-	-	choline transporter
+1838477..1839205	-	729	ACA36872.1	-	SPH_1978	-	-	choline transport ATP-binding protein opuBA
+1839220..1839984	-	765	ACA36811.1	-	SPH_1979	-	-	conserved hypothetical protein
+1839988..1840431	-	444	ACA37553.1	-	SPH_1980	-	-	transcriptional regulator, MarR family
+1841108..1841404	-	297	ACA35580.1	-	SPH_1981	-	-	conserved hypothetical protein
+1841426..1842490	-	1065	ACA36362.1	pepA	SPH_1982	-	-	glutamyl aminopeptidase
+1842610..1842732	+	123	ACA36607.1	-	SPH_1983	-	-	conserved hypothetical protein
+1844015..1844974	+	960	ACA37548.1	-	SPH_1985	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1844964..1845920	+	957	ACA35672.1	-	SPH_1986	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1845917..1846669	+	753	ACA36269.1	-	SPH_1987	-	-	ferrichrome transport ATP-binding protein FhuC
+1846765..1847730	+	966	ACA35654.1	-	SPH_1988	-	-	iron-compound ABC transporter, iron-compound-binding protein
+1847955..1848197	-	243	ACA36259.1	-	SPH_1989	-	-	conserved hypothetical protein
+1848197..1848919	-	723	ACA36583.1	rluB	SPH_1990	-	-	ribosomal large subunit pseudouridine synthase B
+1848906..1849475	-	570	ACA37045.1	scpB	SPH_1991	-	-	segregation and condensation protein B
+1849494..1850222	-	729	ACA37534.1	-	SPH_1992	-	-	ScpA/B protein
+1850222..1850962	-	741	ACA35610.1	-	SPH_1993	-	-	tyrosine recombinase
+1850953..1851414	-	462	ACA37547.1	-	SPH_1994	-	-	CBS domain protein
+1851411..1851932	-	522	ACA36578.1	-	SPH_1995	-	-	phosphodiesterase, family
+1851908..1852879	-	972	ACA36254.1	-	SPH_1996	-	-	non-canonical purine NTP pyrophosphatase, RdgB/HAM1 family protein
+1852876..1853670	-	795	ACA36239.1	murI	SPH_1997	-	-	glutamate racemase
+1853877..1854125	-	249	ACA35638.1	-	SPH_1998	-	-	conserved hypothetical protein
+1854381..1856006	-	1626	ACA36971.1	treC	SPH_1999	-	-	alpha,alpha-phosphotrehalase
+1856184..1858151	-	1968	ACA36339.1	treP	SPH_2000	-	-	pts system, trehalose-specific iibc component
+1858336..1859046	+	711	ACA36261.1	treR	SPH_2001	-	-	trehalose operon repressor
+1860602..1861528	-	927	ACA37314.1	-	SPH_2005	-	-	oligopeptide transport ATP-binding protein AmiF
+1861539..1862606	-	1068	ACA36742.1	-	SPH_2006	-	-	oligopeptide transport ATP-binding protein OppD
+1862615..1863541	-	927	ACA36391.1	-	SPH_2007	-	-	oligopeptide transport system permease protein AmiD
+1863541..1865037	-	1497	ACA35770.1	-	SPH_2008	-	-	oligopeptide transport system permease protein AmiC
+1865104..1866942	-	1839	ACA37610.1	-	SPH_2009	-	-	AmiA protein
+1867771..1868964	-	1194	ACA37016.1	-	SPH_2010	-	-	O-antigen polymerase family
+1869102..1870544	-	1443	ACA36341.1	-	SPH_2011	-	-	sucrose phosphorylase (Sucrose glucosyltransferase)(Glucosyltransferase-A) (GTF-A)
+1870855..1871688	-	834	ACA35829.1	-	SPH_2012	-	-	sugar ABC transporter, permease protein
+1871702..1872568	-	867	ACA35818.1	-	SPH_2013	-	-	sugar ABC transporter, permease protein
+1872582..1873841	-	1260	ACA37592.1	-	SPH_2014	-	-	sugar ABC transporter, sugar-binding protein
+1873933..1876095	-	2163	ACA37007.1	-	SPH_2015	-	-	alpha-galactosidase AgaN
+1876203..1877063	+	861	ACA36673.1	-	SPH_2016	-	-	Msm operon regulatory protein
+1877060..1877995	+	936	ACA36049.1	-	SPH_2017	-	-	biotin-[acetyl-CoA-carboxylase] ligase
+1887828..1888604	+	777	ACA37415.1	-	SPH_2044	-	-	RecA regulator RecX
+1888693..1889226	+	534	ACA36908.1	-	SPH_2045	-	-	conserved hypothetical protein
+1889581..1889787	-	207	ACA36746.1	-	SPH_2046	-	-	conserved hypothetical protein
+1891363..1892985	-	1623	ACA36891.1	groL	SPH_2050	-	-	chaperonin GroL
+1893001..1893285	-	285	ACA36527.1	groS	SPH_2051	-	-	chaperonin GroS
+1893555..1893950	-	396	ACA36529.1	-	SPH_2052	-	-	single-strand binding protein family
+1894027..1894788	-	762	ACA36847.1	-	SPH_2053	-	-	oxidoreductase, short chain dehydrogenase/reductase family
+1894821..1895450	-	630	ACA36115.1	-	SPH_2054	-	-	conserved hypothetical protein
+1895466..1895783	-	318	ACA35532.1	-	SPH_2055	-	-	thioredoxin family protein
+1895780..1896079	-	300	ACA37339.1	-	SPH_2056	-	-	conserved hypothetical protein
+1896761..1897435	-	675	ACA36758.1	-	SPH_2057	-	-	conserved hypothetical protein
+1897441..1897887	-	447	ACA36963.1	-	SPH_2058	-	-	response regulator of the LytR/AlgR family
+1898001..1898504	-	504	ACA36209.1	-	SPH_2059	-	-	PAP2 family protein
+1898501..1898863	-	363	ACA36004.1	-	SPH_2060	-	-	conserved hypothetical protein
+1900805..1901275	-	471	ACA35828.1	-	SPH_2063	-	-	transcriptional regulator, MarR family
+1901399..1902115	-	717	ACA35551.1	-	SPH_2064	-	-	conserved hypothetical protein
+1902996..1904411	-	1416	ACA36152.1	-	SPH_2065	-	-	pneumolysin (Thiol-activated cytolysin)
+1904422..1904754	-	333	ACA37032.1	-	SPH_2066	-	-	conserved hypothetical protein
+1904825..1905433	-	609	ACA37607.1	-	SPH_2067	-	-	conserved hypothetical protein
+1906029..1906160	+	132	ACA35800.1	-	SPH_2069	-	-	mobile genetic element
+1906165..1906428	+	264	ACA36376.1	-	SPH_2070	-	-	mobile genetic element
+1906905..1907738	+	834	ACA37261.1	-	SPH_2071	-	-	hypothetical protein
+1907765..1908826	+	1062	ACA35805.1	-	SPH_2072	-	-	ABC transporter, substrate-binding protein
+1908843..1909847	+	1005	ACA36404.1	-	SPH_2073	-	-	spermidine/putrescine ABC transporter ATP-binding subunit
+1909859..1911553	+	1695	ACA36322.1	-	SPH_2074	-	-	binding-protein-dependent transport systems inner membrane component
+1911555..1912256	+	702	ACA35976.1	-	SPH_2075	-	-	MgtC/SapB transporter
+1912303..1912902	+	600	ACA37546.1	-	SPH_2076	-	-	hydrolase
+1912912..1914939	+	2028	ACA37180.1	-	SPH_2077	-	-	transcriptional regulator, LacI family protein
+1915513..1915902	+	390	ACA35548.1	-	SPH_2079	-	-	transposase (IS4 family)
+1916640..1916900	-	261	ACA37369.1	-	SPH_2080	-	-	conserved hypothetical protein
+1916959..1917510	-	552	ACA36913.1	-	SPH_2081	-	-	conserved hypothetical protein
+1917500..1918495	-	996	ACA36037.1	-	SPH_2082	-	-	conserved hypothetical protein
+1918903..1919328	-	426	ACA35627.1	-	SPH_2083	-	-	conserved hypothetical protein
+1919457..1919816	-	360	ACA37103.1	-	SPH_2084	-	-	conserved hypothetical protein
+1920055..1920216	-	162	ACA35775.1	-	SPH_2086	-	-	type II restriction-modification system regulatory protein, putative
+1920562..1921335	-	774	ACA36385.1	-	SPH_2087	-	-	autolysin
+1921894..1923264	-	1371	ACA36731.1	-	SPH_2088	-	-	DNA-damage-inducible protein
+1923571..1924737	-	1167	ACA36924.1	recA	SPH_2089	-	-	protein RecA
+1924792..1926048	-	1257	ACA35620.1	-	SPH_2090	-	-	competence/damage-inducible protein CinA N- domain, putative
+1926133..1927149	-	1017	ACA36085.1	-	SPH_2091	-	-	regulator of lytrabc operon
+1927157..1927675	-	519	ACA35790.1	-	SPH_2092	-	-	acetyltransferase, gnat family
+1927665..1928108	-	444	ACA36552.1	-	SPH_2093	-	-	conserved hypothetical protein
+1928194..1928814	-	621	ACA35718.1	-	SPH_2094	-	-	lipoprotein, putative
+1929197..1930060	-	864	ACA36186.1	-	SPH_2095	-	-	transcriptional activator
+1930732..1931028	+	297	ACA36926.1	-	SPH_2096	-	-	conserved hypothetical protein
+1931131..1933146	+	2016	ACA37403.1	-	SPH_2097	-	-	bacteriocin-associated integral membrane protein
+1933148..1933780	+	633	ACA35951.1	-	SPH_2098	-	-	ABC-type antimicrobial peptide transport system, ATPase component
+1933921..1934082	+	162	ACA36564.1	-	SPH_2099	-	-	conserved hypothetical protein
+1934708..1935121	-	414	ACA36245.1	-	SPH_2100	-	-	nucleoside diphosphate kinase
+1935232..1938909	-	3678	ACA36707.1	rpoC	SPH_2101	-	-	DNA-directed RNA polymerase, beta' subunit
+1938942..1942553	-	3612	ACA36291.1	rpoB	SPH_2102	-	-	DNA-directed RNA polymerase, beta subunit
+1943056..1943175	-	120	ACA36621.1	-	SPH_2104	-	-	hypothetical protein
+1943237..1944568	-	1332	ACA36747.1	-	SPH_2105	-	-	CBS domain protein
+1944859..1945683	-	825	ACA37354.1	-	SPH_2106	-	-	DNA-entry nuclease (Competence-specific nuclease)
+1945722..1945910	-	189	ACA35524.1	-	SPH_2107	-	-	conserved domain protein
+1945903..1947186	-	1284	ACA36135.1	murA2	SPH_2108	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1947210..1947407	-	198	ACA36462.1	-	SPH_2109	-	-	conserved hypothetical integral membrane protein
+1947498..1948535	-	1038	ACA37071.1	-	SPH_2110	-	-	ATP-dependent protease La
+1948519..1949007	-	489	ACA37423.1	coaD	SPH_2111	-	-	pantetheine-phosphate adenylyltransferase
+1948997..1949536	-	540	ACA35868.1	-	SPH_2112	-	-	N6-adenine-specific methylase
+1949601..1950593	-	993	ACA37577.1	asnA	SPH_2113	-	-	aspartate--ammonia ligase
+1950706..1951389	-	684	ACA35897.1	-	SPH_2114	-	-	membrane protein
+1951445..1952185	-	741	ACA36260.1	-	SPH_2115	-	-	possible rRNA/tRNA methylase
+1952219..1952497	+	279	ACA35959.1	-	SPH_2116	-	-	acylphosphatase
+1952575..1953501	+	927	ACA36697.1	-	SPH_2117	-	-	membrane protein OxaA 2
+1953576..1954370	-	795	ACA36935.1	pflA	SPH_2118	-	-	pyruvate formate-lyase 1-activating enzyme
+1954496..1955746	-	1251	ACA36434.1	-	SPH_2119	-	-	diaminopimelate decarboxylase
+1955813..1956640	-	828	ACA37389.1	purR	SPH_2120	-	-	pur operon repressor
+1956907..1957848	-	942	ACA36936.1	-	SPH_2121	-	-	3'-5' exoribonuclease YhaM
+1957838..1959094	-	1257	ACA36218.1	-	SPH_2122	-	-	competence-induced protein Ccs50
+1959096..1959758	-	663	ACA35698.1	-	SPH_2123	-	-	thiamine pyrophosphokinase
+1959721..1960377	-	657	ACA37628.1	rpe	SPH_2124	-	-	ribulose-phosphate 3-epimerase
+1960388..1961266	-	879	ACA36242.1	rsgA	SPH_2125	-	-	ribosome small subunit-dependent GTPase A
+1961268..1962140	-	873	ACA37478.1	ksgA	SPH_2126	-	-	dimethyladenosine transferase
+1962271..1962579	-	309	ACA35765.1	-	SPH_2127	-	-	conserved hypothetical protein
+1962572..1963213	-	642	ACA36845.1	-	SPH_2128	-	-	ABC-type antimicrobial peptide transport system, ATPase component
+1963215..1965245	-	2031	ACA37299.1	-	SPH_2129	-	-	immunity protein, putative
+1965322..1965618	-	297	ACA37170.1	-	SPH_2130	-	-	lactococcin 972
+1965932..1966831	-	900	ACA35509.1	-	SPH_2131	-	-	transcriptional activator
+1966903..1967463	-	561	ACA36530.1	-	SPH_2132	-	-	putative primase homolog
+1967463..1968236	-	774	ACA36653.1	-	SPH_2133	-	-	deoxyribonuclease, TatD family
+1968541..1969440	-	900	ACA35832.1	-	SPH_2134	-	-	cell wall surface anchor family protein
+1969724..1969858	-	135	ACA36660.1	rpmH	SPH_2135	-	-	ribosomal protein L34
+1970003..1971217	-	1215	ACA37148.1	-	SPH_2136	-	-	aminotransferase, class I and II
+1971373..1971666	-	294	ACA36676.1	-	SPH_2137	-	-	conserved hypothetical protein
+1971828..1972280	+	453	ACA36265.1	-	SPH_2138	-	-	universal stress protein family
+1972315..1973664	-	1350	ACA35662.1	-	SPH_2139	-	-	Cof family protein
+1973768..1974730	+	963	ACA36698.1	-	SPH_2141	-	-	L-asparaginase
+1974727..1975008	-	282	ACA37483.1	-	SPH_2140	-	-	chlorohydrolase
+1975072..1976082	-	1011	ACA36485.1	ccpA	SPH_2142	-	-	catabolite control protein A
+1976507..1977106	-	600	ACA36318.1	-	SPH_2143	-	-	response regulator
+1977108..1978205	-	1098	ACA37033.1	-	SPH_2144	-	-	histidine kinase
+1978205..1978942	-	738	ACA36106.1	-	SPH_2145	-	-	ABC-type multidrug transport system, permease component
+1978944..1979828	-	885	ACA35492.1	-	SPH_2146	-	-	ABC transporter, ATP-binding protein
+1979815..1980009	-	195	ACA35965.1	-	SPH_2147	-	-	conserved hypothetical protein
+1980006..1980212	-	207	ACA37503.1	-	SPH_2148	-	-	conserved hypothetical protein
+1986892..1987371	-	480	ACA36314.1	-	SPH_2163	-	-	competence-specific global transcription modulator
+1987493..1988029	-	537	ACA37294.1	nusG	SPH_2164	-	-	transcription termination/antitermination factor NusG
+1988084..1988260	-	177	ACA36691.1	secE	SPH_2165	-	-	preprotein translocase, SecE subunit
+1988475..1990670	-	2196	ACA35622.1	-	SPH_2166	-	-	penicillin-binding protein 2A
+1990796..1991632	+	837	ACA36624.1	-	SPH_2167	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1991699..1992706	-	1008	ACA35931.1	gap	SPH_2168	-	-	glyceraldehyde-3-phosphate dehydrogenase, type I
+1992883..1993716	-	834	ACA36540.1	-	SPH_2169	-	-	efflux ABC transporter, permease protein
+1994436..1994765	-	330	ACA36957.1	-	SPH_2170	-	-	transposase
+1994896..1995768	-	873	ACA37444.1	nadC	SPH_2171	-	-	nicotinate-nucleotide diphosphorylase (carboxylating)
+1996005..1997315	+	1311	ACA37508.1	-	SPH_2172	-	-	membrane protein
+1997681..1997812	-	132	ACA36236.1	-	SPH_2173	-	-	conserved domain protein
+1998334..1999062	-	729	ACA36815.1	-	SPH_2174	-	-	transcriptional regulator, GntR family
+1999220..2000629	+	1410	ACA37143.1	-	SPH_2175	-	-	beta-glucosidase
+2000647..2001942	+	1296	ACA35530.1	-	SPH_2176	-	-	phosphotransferase system system, cellobiose-specific IIC component
+2001947..2002255	+	309	ACA35584.1	-	SPH_2177	-	-	lichenan-specific phosphotransferase enzyme iib component
+2002252..2002560	+	309	ACA36058.1	-	SPH_2178	-	-	lichenan-specific phosphotransferase enzyme iia component
+2003546..2006197	-	2652	ACA35673.1	-	SPH_2179	-	-	aldehyde-alcohol dehydrogenase 2
+2006498..2006908	-	411	ACA37528.1	-	SPH_2180	-	-	morn motif family protein
+2006910..2007338	-	429	ACA36588.1	-	SPH_2181	-	-	phosphotyrosine protein phosphatase
+2007385..2007684	-	300	ACA36567.1	yajC2	SPH_2182	-	-	preprotein translocase, YajC subunit
+2007801..2009777	-	1977	ACA35934.1	tkt2	SPH_2183	-	-	transketolase
+2009891..2010982	-	1092	ACA37492.1	-	SPH_2184	-	-	probable L-ascorbate-6-phosphate lactonase UlaG (L-ascorbate utilization protein G)
+2011094..2012767	-	1674	ACA36912.1	-	SPH_2185	-	-	transcriptional regulator, BglG family
+2012944..2013648	-	705	ACA35905.1	-	SPH_2186	-	-	L-ribulose-5-phosphate 4-epimerase (Phosphoribuloseisomerase)
+2013650..2014513	-	864	ACA37086.1	-	SPH_2187	-	-	hexulose-6-phosphate isomerase, putative
+2014517..2015182	-	666	ACA37336.1	-	SPH_2188	-	-	orotidine 5'-phosphate decarboxylase / humps family, putative
+2015199..2015684	-	486	ACA36580.1	-	SPH_2189	-	-	ascorbate-specific phosphotransferase enzyme iia component (pts system ascorbate-specific eiia component)
+2015761..2016042	-	282	ACA36342.1	-	SPH_2190	-	-	ascorbate-specific phosphotransferase enzyme iib component (ascorbate-specific pts system eiib component)
+2016065..2017522	-	1458	ACA35872.1	-	SPH_2191	-	-	ascorbate-specific PTS system enzyme IIC
+2017653..2018276	-	624	ACA35928.1	-	SPH_2192	-	-	conserved hypothetical protein
+2018327..2019313	-	987	ACA37634.1	-	SPH_2193	-	-	jag protein
+2019332..2020162	-	831	ACA36066.1	-	SPH_2194	-	-	membrane protein OxaA 1
+2020131..2020502	-	372	ACA36438.1	rnpA	SPH_2195	-	-	ribonuclease P protein component
+2020519..2020650	-	132	ACA36656.1	-	SPH_2196	-	-	conserved hypothetical protein
+2020651..2021841	-	1191	ACA36993.1	ackA	SPH_2197	-	-	acetate kinase
+2021892..2022845	-	954	ACA37536.1	-	SPH_2198	-	-	adenine-specific DNA methylase
+2023318..2023500	-	183	ACA36095.1	-	SPH_2200	-	-	conserved hypothetical protein
+2023637..2024050	-	414	ACA35643.1	-	SPH_2201	-	-	conserved hypothetical protein
+2024028..2024489	-	462	ACA37376.1	-	SPH_2202	-	-	competence protein ComGF
+2024452..2024712	-	261	ACA36361.1	-	SPH_2203	-	-	conserved hypothetical protein
+2024717..2025103	-	387	ACA35876.1	-	SPH_2204	-	-	competence protein CglD
+2025114..2025437	-	324	ACA37519.1	-	SPH_2205	-	-	competence protein
+2025439..2026287	-	849	ACA35862.1	-	SPH_2206	-	-	competence protein CglB
+2026403..2027344	-	942	ACA37228.1	-	SPH_2207	-	-	putative ABC transporter subunit ComYA
+2027420..2027785	-	366	ACA36602.1	-	SPH_2208	-	-	conserved hypothetical protein
+2029356..2030414	-	1059	ACA37566.1	-	SPH_2210	-	-	alcohol dehydrogenase, zinc-containing
+2030577..2031728	-	1152	ACA36027.1	nagA	SPH_2211	-	-	N-acetylglucosamine-6-phosphate deacetylase
+2031880..2033697	-	1818	ACA36343.1	-	SPH_2212	-	-	acyltransferase
+2033798..2034940	-	1143	ACA36738.1	tgt	SPH_2213	-	-	queuine tRNA-ribosyltransferase
+2037564..2037677	-	114	ACA36180.1	-	SPH_2218	-	-	conserved hypothetical protein
+2037887..2039029	-	1143	ACA35726.1	-	SPH_2219	-	-	LysM domain-containing protein
+2039195..2039815	-	621	ACA36863.1	-	SPH_2220	-	-	putative phosphoglycolate phosphatase
+2039819..2041099	-	1281	ACA36352.1	-	SPH_2221	-	-	multi antimicrobial extrusion
+2041160..2042644	-	1485	ACA36436.1	thrC	SPH_2222	-	-	threonine synthase
+2042720..2043997	-	1278	ACA35996.1	-	SPH_2223	-	-	conserved hypothetical protein
+2044289..2044468	-	180	ACA37119.1	-	SPH_2224	-	-	hypothetical protein
+2044718..2044831	+	114	ACA36986.1	-	SPH_2225	-	-	hypothetical protein
+2044812..2045267	+	456	ACA35866.1	-	SPH_2226	-	-	hypothetical protein
+2045325..2046179	+	855	ACA35921.1	-	SPH_2227	-	-	endonuclease/exonuclease/phosphatase family
+2046445..2047764	+	1320	ACA36075.1	-	SPH_2228	-	-	putative otitis media-associated H10
+2047854..2048168	+	315	ACA35535.1	-	SPH_2229	-	-	conserved hypothetical protein
+2048202..2048591	+	390	ACA36669.1	-	SPH_2230	-	-	conserved hypothetical protein
+2048758..2049504	+	747	ACA37246.1	-	SPH_2231	-	-	Ser/Thr protein phosphatase family protein
+2049714..2050493	+	780	ACA35746.1	-	SPH_2232	-	-	Rep protein
+2050510..2050713	+	204	ACA35795.1	-	SPH_2233	-	-	conserved hypothetical protein
+2050717..2051850	+	1134	ACA37641.1	-	SPH_2234	-	-	site-specific recombinase, phage integrase family
+2051891..2052328	+	438	ACA35576.1	-	SPH_2235	-	-	metal dependent phosphohydrolase, HD region
+2052543..2052779	+	237	ACA36219.1	-	SPH_2236	-	-	ribbon-helix-helix protein, CopG family
+2052772..2053503	+	732	ACA36666.1	-	SPH_2237	-	-	serine/threonine protein phosphatase
+2053542..2054798	-	1257	ACA37024.1	-	SPH_2238	-	-	transposase
+2061397..2061831	-	435	ACA37124.1	-	SPH_2255	-	-	cytidine/deoxycytidylate deaminase family protein
+2061845..2063305	-	1461	ACA36518.1	gltX	SPH_2256	-	-	glutamyl-tRNA synthetase
+2063429..2064778	-	1350	ACA36198.1	pgi	SPH_2257	-	-	glucose-6-phosphate isomerase
+2064765..2064944	-	180	ACA36711.1	-	SPH_2258	-	-	conserved hypothetical protein
+2064948..2065637	-	690	ACA36444.1	-	SPH_2259	-	-	glutamine amidotransferase
+2065776..2067542	-	1767	ACA36149.1	-	SPH_2260	-	-	ABC transporter, ATP-binding/permease protein
+2067629..2067748	-	120	ACA37406.1	-	SPH_2261	-	-	hypothetical protein
+2067794..2068003	+	210	ACA35969.1	-	SPH_2262	-	-	transposase
+2068332..2070026	-	1695	ACA35581.1	-	SPH_2263	-	-	ABC transporter, ATP-binding/permease protein
+2070173..2072707	-	2535	ACA36032.1	mutS	SPH_2264	-	-	DNA mismatch repair protein MutS
+2072758..2073204	-	447	ACA36427.1	argR	SPH_2265	-	-	arginine repressor
+2073340..2075031	+	1692	ACA36681.1	argS	SPH_2266	-	-	arginyl-tRNA synthetase
+2075222..2075611	-	390	ACA37449.1	-	SPH_2267	-	-	mobile genetic element
+2075765..2076250	+	486	ACA35966.1	-	SPH_2268	-	-	conserved hypothetical protein
+2076334..2077041	+	708	ACA37104.1	-	SPH_2269	-	-	alkaline phosphatase synthesis transcriptional regulatory proteinphoP
+2077042..2078373	+	1332	ACA37385.1	-	SPH_2270	-	-	histidine kinase PnpS
+2078540..2079415	+	876	ACA35863.1	-	SPH_2271	-	-	ABC transporter substrate-binding protein - phosphate transport
+2079533..2080396	+	864	ACA36750.1	pstC2	SPH_2272	-	-	phosphate ABC transporter, permease protein PstC
+2080389..2081204	+	816	ACA37225.1	pstA2	SPH_2273	-	-	phosphate ABC transporter, permease protein PstA
+2081206..2081958	+	753	ACA36640.1	pstB3	SPH_2274	-	-	phosphate ABC transporter, ATP-binding protein
+2081973..2082623	+	651	ACA36514.1	phoU2	SPH_2275	-	-	phosphate transport system regulatory protein PhoU
+2082699..2083124	+	426	ACA36055.1	-	SPH_2276	-	-	transposase, IS1380-Spn1 related, truncation
+2083890..2084906	+	1017	ACA37417.1	-	SPH_2278	-	-	glycerol-3-phosphate dehydrogenase (NAD(P)+)
+2084928..2085827	+	900	ACA37060.1	galU	SPH_2279	-	-	UTP-glucose-1-phosphate uridylyltransferase
+2087484..2088161	-	678	ACA36825.1	-	SPH_2282	-	-	peptidase, S54
+2088145..2088684	-	540	ACA37322.1	-	SPH_2283	-	-	5-formyltetrahydrofolate cyclo-ligase
+2088696..2089826	-	1131	ACA35504.1	-	SPH_2284	-	-	peptidase, M20/M25/M40 family
+2089894..2090592	-	699	ACA35510.1	-	SPH_2285	-	-	galactoside O-acetyltransferase
+2090822..2091733	-	912	ACA36103.1	-	SPH_2286	-	-	membrane protein
+2091798..2094263	-	2466	ACA37059.1	-	SPH_2287	-	-	penicillin-binding protein 1B
+2094405..2095661	+	1257	ACA37557.1	tyrS	SPH_2288	-	-	tyrosyl-tRNA synthetase
+2095739..2097802	-	2064	ACA35908.1	-	SPH_2289	-	-	P-type ATPase-metal/cation transport
+2097804..2098082	-	279	ACA36384.1	-	SPH_2290	-	-	conserved hypothetical protein
+2098234..2099082	+	849	ACA36695.1	-	SPH_2291	-	-	rRNA
+2100671..2100826	-	156	ACA36827.1	-	SPH_2294	-	-	hypothetical protein
+2101543..2103801	-	2259	ACA36161.1	-	SPH_2295	-	-	glycogen phosphorylase
+2103827..2105344	-	1518	ACA35518.1	malQ	SPH_2296	-	-	4-alpha-glucanotransferase
+2106011..2107282	+	1272	ACA37362.1	-	SPH_2297	-	-	maltose/maltodextrin-binding protein
+2107393..2108685	+	1293	ACA36769.1	-	SPH_2298	-	-	maltodextrin transport system permease protein MalC
+2108687..2109529	+	843	ACA36927.1	-	SPH_2299	-	-	ABC transporter membrane-spanning permease - maltose/maltodextrin
+2109791..2110591	+	801	ACA37623.1	-	SPH_2300	-	-	maltodextrose utilization protein MalA
+2110601..2111587	+	987	ACA35695.1	-	SPH_2301	-	-	HTH-type transcriptional regulator MalR (Maltose operontranscriptional repressor)
+2111694..2112635	-	942	ACA36308.1	-	SPH_2302	-	-	YitT family protein
+2112613..2114376	-	1764	ACA36831.1	aspS	SPH_2303	-	-	aspartyl-tRNA synthetase
+2114817..2115047	-	231	ACA35567.1	-	SPH_2305	-	-	conserved hypothetical protein
+2115065..2115706	-	642	ACA37162.1	-	SPH_2306	-	-	caax amino protease family
+2115718..2116452	-	735	ACA37633.1	-	SPH_2307	-	-	membrane protein, putative
+2116455..2116652	-	198	ACA37013.1	-	SPH_2308	-	-	conserved hypothetical protein
+2116652..2116858	-	207	ACA35860.1	-	SPH_2309	-	-	conserved domain protein
+2116868..2117182	-	315	ACA36354.1	-	SPH_2310	-	-	conserved hypothetical protein
+2117335..2117463	-	129	ACA37251.1	-	SPH_2311	-	-	chlorohydrolase
+2117523..2118812	-	1290	ACA35571.1	hisS	SPH_2312	-	-	histidyl-tRNA synthetase
+2118890..2120137	-	1248	ACA35920.1	-	SPH_2313	-	-	membrane protein, putative
+2120328..2121179	-	852	ACA37020.1	-	SPH_2314	-	-	positive transcriptional regulator of glucosyltransferase and Spp phenotype
+2121154..2121288	-	135	ACA36579.1	-	SPH_2315	-	-	conserved hypothetical protein
+2121303..2121644	+	342	ACA37035.1	-	SPH_2316	-	-	domain of unknown function protein
+2121943..2123646	-	1704	ACA35823.1	ilvD	SPH_2318	-	-	dihydroxy-acid dehydratase
+2123879..2124811	-	933	ACA36633.1	-	SPH_2319	-	-	transketolase, C- subunit
+2124808..2125665	-	858	ACA37219.1	-	SPH_2320	-	-	transketolase
+2125669..2127015	-	1347	ACA35671.1	-	SPH_2321	-	-	ascorbate-specific PTS system enzyme IIC
+2127028..2127312	-	285	ACA36357.1	-	SPH_2322	-	-	phosphotransferase system, galactitol-specific IIB component
+2127316..2129346	-	2031	ACA36168.1	-	SPH_2323	-	-	transcriptional regulator, BglG family protein
+2129537..2130544	+	1008	ACA36807.1	-	SPH_2324	-	-	integral membrane protein
+2130547..2130747	+	201	ACA37164.1	-	SPH_2325	-	-	conserved hypothetical protein
+2130899..2131081	+	183	ACA35600.1	rpmF	SPH_2326	-	-	ribosomal protein L32
+2131097..2131246	+	150	ACA35902.1	rpmG2	SPH_2327	-	-	ribosomal protein L33
+2131738..2133663	-	1926	ACA36559.1	-	SPH_2328	-	-	choline binding protein PcpA
+2134835..2135110	-	276	ACA37482.1	-	SPH_2332	-	-	conserved hypothetical protein
+2135487..2137367	-	1881	ACA36609.1	-	SPH_2334	-	-	N-acetyl-beta-D-glucosaminidase
+2137361..2138230	-	870	ACA36435.1	-	SPH_2335	-	-	ROK family protein
+2138314..2140950	-	2637	ACA37184.1	-	SPH_2336	-	-	sugar hydrolase
+2141168..2142448	-	1281	ACA35780.1	-	SPH_2337	-	-	twin-arginine translocation pathway signal
+2142619..2144703	+	2085	ACA36250.1	-	SPH_2338	-	-	antigen, cell wall surface anchor family
+2144743..2146422	-	1680	ACA36463.1	-	SPH_2339	-	-	FucA
+2147177..2148406	+	1230	ACA36080.1	arcA	SPH_2340	-	-	arginine deiminase
+2148464..2149480	+	1017	ACA37384.1	argF	SPH_2341	-	-	ornithine carbamoyltransferase
+2149645..2150592	+	948	ACA37036.1	arcC	SPH_2342	-	-	carbamate kinase
+2150801..2152312	+	1512	ACA36359.1	-	SPH_2343	-	-	arginine-ornithine antiporter
+2152334..2153665	+	1332	ACA36287.1	-	SPH_2344	-	-	putative dipeptidase
+2154349..2154615	-	267	ACA37054.1	-	SPH_2348	-	-	gram-positive signal peptide, ysirk family protein
+2155044..2155943	-	900	ACA36366.1	-	SPH_2350	-	-	spfh domain/band 7 family
+2156073..2157224	-	1152	ACA36861.1	-	SPH_2351	-	-	NAD-dependent methanol dehydrogenase (medh)
+2157370..2159136	-	1767	ACA36785.1	fucI	SPH_2352	-	-	L-fucose isomerase
+2159193..2162309	-	3117	ACA36133.1	-	SPH_2353	-	-	glycosyl hydrolase family 98
+2162319..2164613	-	2295	ACA37632.1	-	SPH_2354	-	-	large secreted protein
+2164672..2165472	-	801	ACA36415.1	-	SPH_2355	-	-	mannose permease iid component
+2165469..2166242	-	774	ACA35803.1	-	SPH_2356	-	-	phosphotransferase system sugar-specific EII component
+2166256..2166735	-	480	ACA37345.1	-	SPH_2357	-	-	PTS system, IIB component
+2166726..2167169	-	444	ACA36763.1	-	SPH_2358	-	-	PTS system, IIA component
+2167150..2167590	-	441	ACA36757.1	-	SPH_2359	-	-	fucose operon FucU protein
+2167602..2168240	-	639	ACA36134.1	-	SPH_2360	-	-	L-fuculose-1-phosphate aldolase
+2168355..2169758	-	1404	ACA35531.1	-	SPH_2361	-	-	rhamnulokinase (Rhamnulose kinase)
+2169934..2170707	+	774	ACA37062.1	-	SPH_2362	-	-	regulator of fucose operon
+2170852..2170980	-	129	ACA37147.1	-	SPH_2363	-	-	hypothetical protein
+2171826..2173331	-	1506	ACA35995.1	-	SPH_2364	-	-	zinc-binding lipoprotein AdcA
+2173341..2174147	-	807	ACA35558.1	-	SPH_2365	-	-	ABC transporter membrane-spanning permease - Zinc
+2174140..2174844	-	705	ACA36150.1	-	SPH_2366	-	-	zinc transport system ATP-binding protein AdcC
+2174844..2175284	-	441	ACA36761.1	-	SPH_2367	-	-	putative transcriptional repressor
+2175269..2175406	+	138	ACA37346.1	-	SPH_2368	-	-	conserved hypothetical protein
+2175439..2176707	-	1269	ACA37004.1	-	SPH_2369	-	-	D-alanine transfer from undecaprenol-phosphate to the poly
+2176700..2176939	-	240	ACA37435.1	dltC	SPH_2370	-	-	D-alanyl carrier protein
+2176953..2178197	-	1245	ACA35503.1	-	SPH_2371	-	-	protein DltB
+2178194..2179744	-	1551	ACA36494.1	dltA	SPH_2372	-	-	D-alanine-activating enzyme
+2179765..2179896	-	132	ACA36266.1	-	SPH_2373	-	-	conserved hypothetical protein
+2180210..2181115	-	906	ACA36889.1	-	SPH_2374	-	-	permease of the major facilitator superfamily
+2181841..2183118	-	1278	ACA37239.1	-	SPH_2375	-	-	GBSi1, group II intron, maturase
+2184227..2184814	+	588	ACA35697.1	-	SPH_2376	-	-	conserved hypothetical protein
+2185206..2185322	+	117	ACA36469.1	-	SPH_2378	-	-	hypothetical protein
+2185401..2186105	-	705	ACA35980.1	-	SPH_2379	-	-	glycerol uptake facilitator protein
+2186180..2188006	-	1827	ACA36428.1	-	SPH_2380	-	-	alpha-glycerophosphate oxidase (Glycerol-3-phosphateoxidase) (Exported protein 6)
+2188048..2189556	-	1509	ACA36764.1	glpK	SPH_2381	-	-	glycerol kinase
+2189715..2191124	-	1410	ACA37516.1	-	SPH_2382	-	-	M protein trans-acting positive regulator (MGA)
+2191307..2192179	+	873	ACA36086.1	hslO	SPH_2383	-	-	chaperonin HslO
+2192166..2193146	+	981	ACA36699.1	-	SPH_2384	-	-	tRNA-dihydrouridine synthase B
+2193365..2194708	-	1344	ACA36326.1	-	SPH_2385	-	-	surface protein PspC
+2195549..2196805	+	1257	ACA35675.1	-	SPH_2387	-	-	transposase
+2197008..2199110	-	2103	ACA36136.1	-	SPH_2388	-	-	surface protein PspC
+2199189..2199716	-	528	ACA37028.1	-	SPH_2389	-	-	membrane protein, putative
+2199799..2201130	-	1332	ACA37616.1	-	SPH_2390	-	-	histidine kinase
+2201127..2201780	-	654	ACA35799.1	-	SPH_2391	-	-	response regulator
+2201833..2202030	+	198	ACA36382.1	-	SPH_2392	-	-	hypothetical protein
+2202101..2204533	-	2433	ACA37318.1	-	SPH_2393	-	-	chaperone ClpB 1
+2204535..2204993	-	459	ACA35761.1	-	SPH_2394	-	-	transcriptional regulator CtsR
+2205112..2205840	-	729	ACA37310.1	-	SPH_2395	-	-	ABC transporter ATP-binding protein - anion transport
+2205840..2206847	-	1008	ACA35764.1	-	SPH_2396	-	-	ABC transporter substrate-binding protein
+2206886..2207647	-	762	ACA36502.1	-	SPH_2397	-	-	ABC transporter, permease protein
+2207607..2207897	-	291	ACA37099.1	-	SPH_2398	-	-	conserved hypothetical protein
+2208153..2209499	-	1347	ACA36651.1	-	SPH_2399	-	-	choline binding protein D
+2209588..2209854	-	267	ACA37110.1	-	SPH_2400	-	-	conserved hypothetical protein
+2209856..2211208	-	1353	ACA35720.1	dnaB	SPH_2401	-	-	replicative DNA helicase
+2211252..2211704	-	453	ACA36176.1	rplI	SPH_2402	-	-	ribosomal protein L9
+2213810..2214358	-	549	ACA37446.1	-	SPH_2404	-	-	ribosome-associated protein Y
+2214438..2215100	-	663	ACA36679.1	-	SPH_2405	-	-	involved in transformation
+2215097..2216395	-	1299	ACA36465.1	-	SPH_2406	-	-	superfamily II ATP-dependent DNA/RNA helicase required for DNA uptake
+2216451..2217086	+	636	ACA35711.1	-	SPH_2407	-	-	conserved hypothetical protein
+2217371..2218297	+	927	ACA37146.1	cysK	SPH_2408	-	-	cysteine synthase A
+2218418..2219458	-	1041	ACA35741.1	tsf	SPH_2409	-	-	translation elongation factor Ts
+2219537..2220316	-	780	ACA37191.1	rpsB	SPH_2410	-	-	ribosomal protein S2
+2220540..2221718	-	1179	ACA37398.1	-	SPH_2411	-	-	general stress protein GSP-781
+2221799..2222305	-	507	ACA36249.1	mreD	SPH_2412	-	-	rod shape-determining protein MreD
+2222305..2223123	-	819	ACA37606.1	mreC	SPH_2413	-	-	rod shape-determining protein MreC
+2223182..2223976	-	795	ACA36183.1	-	SPH_2414	-	-	ABC transporter permease protein
+2224792..2225619	-	828	ACA37429.1	-	SPH_2416	-	-	cobalt import ATP-binding protein CbiO 2
+2225616..2226161	-	546	ACA36796.1	pgsA	SPH_2417	-	-	CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase
+2226172..2226993	-	822	ACA36526.1	-	SPH_2418	-	-	conserved hypothetical protein
+2227035..2228318	-	1284	ACA35914.1	-	SPH_2419	-	-	peptidase, M16 family
+2228315..2229565	-	1251	ACA36686.1	-	SPH_2420	-	-	peptidase, M16 family
+2229724..2230092	+	369	ACA37155.1	-	SPH_2421	-	-	S4 domain protein YaaA, putative
+2230095..2231192	+	1098	ACA35760.1	-	SPH_2422	-	-	DNA replication and repair protein RecF
+2231243..2232721	-	1479	ACA35753.1	guaB	SPH_2423	-	-	inosine-5'-monophosphate dehydrogenase
+2232873..2233898	-	1026	ACA36412.1	trpS	SPH_2424	-	-	tryptophanyl-tRNA synthetase
+2234104..2235726	+	1623	ACA36091.1	-	SPH_2425	-	-	ATPase component of ABC transporters with duplicated ATPase domains
+2235788..2238340	+	2553	ACA37396.1	-	SPH_2426	-	-	ABC transporter, permease component
+2239654..2240196	+	543	ACA36535.1	-	SPH_2429	-	-	transcriptional regulator, TetR family
+2240439..2241191	-	753	ACA36585.1	-	SPH_2432	-	-	response regulator
+2241188..2242513	-	1326	ACA37195.1	-	SPH_2433	-	-	ComD
+2242534..2242659	-	126	ACA37355.1	-	SPH_2434	-	-	conserved domain protein
+2243602..2244783	+	1182	ACA35689.1	-	SPH_2438	-	-	trypsin domain protein
+2244841..2245599	+	759	ACA36741.1	-	SPH_2439	-	-	stage 0 sporulation protein J

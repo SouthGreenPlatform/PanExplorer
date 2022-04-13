@@ -1,0 +1,73 @@
+Streptococcus pneumoniae R6, complete genome.
+70 RNAs
+Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
+14827..14898	+	72	sprt01	-	sprt01	-	-	tRNA-Glu
+15161..16674	+	1514	sprr01	-	sprr01	-	-	16S ribosomal RNA
+16748..16820	+	73	sprt02	-	sprt02	-	-	tRNA-Ala
+16945..19846	+	2902	sprr02	-	sprr02	-	-	23S ribosomal RNA
+19924..20038	+	115	sprr03	-	sprr03	-	-	5S ribosomal RNA
+20044..20117	+	74	sprt03	-	sprt03	-	-	tRNA-Asn
+759414..759494	+	81	sprt04	-	sprt04	-	-	tRNA-Tyr
+759504..759575	+	72	sprt05	-	sprt05	-	-	tRNA-Gln
+774137..774224	+	88	sprt06	-	sprt06	-	-	tRNA-Ser
+904864..904936	+	73	sprt07	-	sprt07	-	-	tRNA-Thr
+1131546..1131617	+	72	sprt08	-	sprt08	-	-	tRNA-Arg
+1173377..1173448	+	72	sprt09	-	sprt09	-	-	tRNA-Arg
+1421994..1422079	+	86	sprt10	-	sprt10	-	-	tRNA-Leu
+1590539..1590611	+	73	sprt11	-	sprt11	-	-	tRNA-Lys
+1690783..1690870	+	88	sprt12	-	sprt12	-	-	tRNA-Ser
+1690877..1690950	+	74	sprt13	-	sprt13	-	-	tRNA-Ile
+1690986..1691056	+	71	sprt14	-	sprt14	-	-	tRNA-Gly
+1691076..1691148	+	73	sprt15	-	sprt15	-	-	tRNA-Phe
+1691152..1691225	+	74	sprt16	-	sprt16	-	-	tRNA-Met
+1691239..1691328	+	90	sprt17	-	sprt17	-	-	tRNA-Ser
+1691339..1691412	+	74	sprt18	-	sprt18	-	-	tRNA-Met
+1691426..1691499	+	74	sprt19	-	sprt19	-	-	tRNA-Met
+1691505..1691578	+	74	sprt20	-	sprt20	-	-	tRNA-Pro
+1691594..1691667	+	74	sprt21	-	sprt21	-	-	tRNA-Arg
+1691677..1691762	+	86	sprt22	-	sprt22	-	-	tRNA-Leu
+1691770..1691841	+	72	sprt23	-	sprt23	-	-	tRNA-Gly
+1691864..1691936	+	73	sprt24	-	sprt24	-	-	tRNA-Thr
+1691955..1692036	+	82	sprt25	-	sprt25	-	-	tRNA-Leu
+1692042..1692114	+	73	sprt26	-	sprt26	-	-	tRNA-Lys
+1692139..1692211	+	73	sprt27	-	sprt27	-	-	tRNA-Asp
+1692214..1692286	+	73	sprt28	-	sprt28	-	-	tRNA-Val
+1692291..1692405	+	115	sprr04	-	sprr04	-	-	5S ribosomal RNA
+1692483..1695384	+	2902	sprr05	-	sprr05	-	-	23S ribosomal RNA
+1695509..1695581	+	73	sprt29	-	sprt29	-	-	tRNA-Ala
+1695655..1697168	+	1514	sprr06	-	sprr06	-	-	16S ribosomal RNA
+1697431..1697502	+	72	sprt30	-	sprt30	-	-	tRNA-Glu
+1752048..1752118	+	71	sprt31	-	sprt31	-	-	tRNA-Cys
+1789055..1789128	+	74	sprt32	-	sprt32	-	-	tRNA-Pro
+1789144..1789217	+	74	sprt33	-	sprt33	-	-	tRNA-Arg
+1789227..1789312	+	86	sprt34	-	sprt34	-	-	tRNA-Leu
+1789320..1789391	+	72	sprt35	-	sprt35	-	-	tRNA-Gly
+1789414..1789486	+	73	sprt36	-	sprt36	-	-	tRNA-Thr
+1789505..1789586	+	82	sprt37	-	sprt37	-	-	tRNA-Leu
+1789592..1789664	+	73	sprt38	-	sprt38	-	-	tRNA-Lys
+1789689..1789761	+	73	sprt39	-	sprt39	-	-	tRNA-Asp
+1789764..1789836	+	73	sprt40	-	sprt40	-	-	tRNA-Val
+1789841..1789955	+	115	sprr07	-	sprr07	-	-	5S ribosomal RNA
+1790033..1792934	+	2902	sprr08	-	sprr08	-	-	23S ribosomal RNA
+1793059..1793131	+	73	sprt41	-	sprt41	-	-	tRNA-Ala
+1793205..1794718	+	1514	sprr09	-	sprr09	-	-	16S ribosomal RNA
+1794981..1795052	+	72	sprt42	-	sprt42	-	-	tRNA-Glu
+1850742..1850825	+	84	sprt43	-	sprt43	-	-	tRNA-Leu
+1850835..1850906	+	72	sprt44	-	sprt44	-	-	tRNA-Gln
+1850917..1850989	+	73	sprt45	-	sprt45	-	-	tRNA-His
+1851004..1851074	+	71	sprt46	-	sprt46	-	-	tRNA-Trp
+1851079..1851159	+	81	sprt47	-	sprt47	-	-	tRNA-Tyr
+1851172..1851244	+	73	sprt48	-	sprt48	-	-	tRNA-Phe
+1851248..1851321	+	74	sprt49	-	sprt49	-	-	tRNA-Met
+1851332..1851421	+	90	sprt50	-	sprt50	-	-	tRNA-Ser
+1851505..1851578	+	74	sprt51	-	sprt51	-	-	tRNA-Ile
+1851613..1851683	+	71	sprt52	-	sprt52	-	-	tRNA-Gly
+1851689..1851761	+	73	sprt53	-	sprt53	-	-	tRNA-Val
+1851766..1851880	+	115	sprr10	-	sprr10	-	-	5S ribosomal RNA
+1851958..1854859	+	2902	sprr11	-	sprr11	-	-	23S ribosomal RNA
+1854984..1855056	+	73	sprt54	-	sprt54	-	-	tRNA-Ala
+1855130..1856643	+	1514	sprr12	-	sprr12	-	-	16S ribosomal RNA
+1856906..1856977	+	72	sprt55	-	sprt55	-	-	tRNA-Glu
+2033040..2033113	+	74	sprt56	-	sprt56	-	-	tRNA-Asn
+2033119..2033190	+	72	sprt57	-	sprt57	-	-	tRNA-Glu
+2035627..2035700	+	74	sprt58	-	sprt58	-	-	tRNA-Arg

@@ -1,0 +1,2076 @@
+Streptococcus pneumoniae P1031, complete genome.
+2073 proteins
+Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
+197..1558	+	1362	ACO21605.1	dnaA	SPP_0001	-	-	chromosomal replication initiator protein DnaA
+1717..2853	+	1137	ACO21038.1	dnaN	SPP_0002	-	-	DNA polymerase III, beta subunit
+2918..3112	+	195	ACO20441.1	-	SPP_0003	-	-	conserved domain protein
+3196..4311	+	1116	ACO21755.1	ychF	SPP_0004	-	-	GTP-binding protein YchF
+4382..4951	+	570	ACO21419.1	pth	SPP_0005	-	-	peptidyl-tRNA hydrolase
+4952..8461	+	3510	ACO20596.1	mfd	SPP_0006	-	-	transcription-repair coupling factor
+8519..8785	+	267	ACO20271.1	-	SPP_0007	-	-	ribosome-associated heat shock protein implicated in the recycling of the 50S subunit
+8778..9146	+	369	ACO21562.1	-	SPP_0008	-	-	septum formation initiator
+9151..9273	+	123	ACO20982.1	-	SPP_0009	-	-	conserved hypothetical protein
+9266..10534	+	1269	ACO20487.1	-	SPP_0010	-	-	beta-lactamase class A
+10531..11808	+	1278	ACO21994.1	-	SPP_0011	-	-	tRNA(Ile)-lysidine synthase (tRNA(Ile)-lysidinesynthetase) (tRNA(Ile)-2-lysyl-cytidine synthase)
+11812..12354	+	543	ACO20898.1	hpt	SPP_0012	-	-	hypoxanthine phosphoribosyltransferase
+12370..14328	+	1959	ACO20292.1	hflB	SPP_0013	-	-	ATP-dependent metallopeptidase HflB
+14450..14929	+	480	ACO20162.1	-	SPP_0014	-	-	competence-specific global transcription modulator
+20422..20751	+	330	ACO21636.1	-	SPP_0022	-	-	transposase
+21178..21312	+	135	ACO20754.1	-	SPP_0023	-	-	hypothetical protein
+22365..22601	+	237	ACO21443.1	-	SPP_0026	-	-	conserved hypothetical protein
+22790..24118	+	1329	ACO21906.1	purA	SPP_0027	-	-	adenylosuccinate synthetase
+24350..25498	-	1149	ACO20479.1	-	SPP_0028	-	-	integrase
+25673..26485	-	813	ACO20991.1	-	SPP_0029	-	-	hypothetical protein
+26523..26669	-	147	ACO21700.1	-	SPP_0030	-	-	hypothetical protein
+26745..26903	-	159	ACO21282.1	-	SPP_0031	-	-	hypothetical protein
+26916..27179	-	264	ACO21728.1	-	SPP_0032	-	-	plasmid addiction system poison protein
+27179..27412	-	234	ACO20410.1	-	SPP_0033	-	-	conserved hypothetical protein
+27412..27780	-	369	ACO20854.1	-	SPP_0034	-	-	phage transcriptional regulator, Cro/CI family
+28065..28211	+	147	ACO21566.1	-	SPP_0035	-	-	conserved domain protein
+28622..28825	+	204	ACO20969.1	-	SPP_0036	-	-	conserved domain protein
+28842..29039	+	198	ACO21674.1	-	SPP_0037	-	-	conserved domain protein
+29206..29631	-	426	ACO22114.1	-	SPP_0038	-	-	phage protein, putative
+29685..30398	+	714	ACO20880.1	-	SPP_0039	-	-	gp15
+30411..30668	+	258	ACO21200.1	-	SPP_0040	-	-	phage protein
+30754..31074	+	321	ACO21840.1	-	SPP_0041	-	-	conserved hypothetical protein
+31090..31386	+	297	ACO20587.1	-	SPP_0042	-	-	gp18
+31370..32206	+	837	ACO21175.1	-	SPP_0043	-	-	gp19
+32194..32352	+	159	ACO21525.1	-	SPP_0044	-	-	conserved domain protein
+32475..33116	+	642	ACO20305.1	-	SPP_0045	-	-	gp21
+33131..33325	+	195	ACO20545.1	-	SPP_0046	-	-	hypothetical protein
+33325..33552	+	228	ACO22059.1	-	SPP_0047	-	-	conserved hypothetical protein
+33679..33846	+	168	ACO21460.1	-	SPP_0048	-	-	hypothetical protein
+34014..34343	+	330	ACO20797.1	-	SPP_0049	-	-	gp24
+34333..34758	+	426	ACO22062.1	-	SPP_0050	-	-	conserved hypothetical protein
+35314..35658	+	345	ACO20614.1	-	SPP_0053	-	-	conserved hypothetical protein
+35658..35894	+	237	ACO21845.1	-	SPP_0054	-	-	gp29
+35906..36049	+	144	ACO21541.1	-	SPP_0055	-	-	hypothetical protein
+36851..37393	+	543	ACO20379.1	-	SPP_0056	-	-	prophage LambdaSa2, site-specific recombinase, phage integrase family
+37557..37748	+	192	ACO20417.1	-	SPP_0057	-	-	hypothetical protein
+37868..38188	+	321	ACO22052.1	-	SPP_0058	-	-	conserved hypothetical protein
+38326..38718	+	393	ACO21611.1	-	SPP_0059	-	-	conserved hypothetical protein
+38711..40441	+	1731	ACO21140.1	-	SPP_0060	-	-	putative phage terminase, large subunit
+40449..40667	+	219	ACO20406.1	-	SPP_0061	-	-	hypothetical protein
+40685..41887	+	1203	ACO21789.1	-	SPP_0062	-	-	phage portal protein, HK97 family
+41871..42446	+	576	ACO22086.1	-	SPP_0063	-	-	phage prohead protease, HK97 family
+42443..43615	+	1173	ACO20866.1	-	SPP_0064	-	-	phage major capsid protein, HK97 family
+43627..43917	+	291	ACO21091.1	-	SPP_0065	-	-	conserved hypothetical protein
+43920..44201	+	282	ACO21545.1	-	SPP_0066	-	-	conserved hypothetical protein
+44188..44487	+	300	ACO22213.1	-	SPP_0067	-	-	phage head-tail adaptor, putative
+44484..44831	+	348	ACO20594.1	-	SPP_0068	-	-	prophage pi2 protein 37
+44828..45151	+	324	ACO21360.1	-	SPP_0069	-	-	conserved hypothetical protein
+45163..45741	+	579	ACO20156.1	-	SPP_0070	-	-	prophage pi2 protein 39
+45753..46172	+	420	ACO20726.1	-	SPP_0071	-	-	prophage pi2 protein 40
+46450..49209	+	2760	ACO21310.1	-	SPP_0072	-	-	prophage LambdaSa04, tail tape measure protein, family
+49206..49928	+	723	ACO22198.1	-	SPP_0073	-	-	conserved hypothetical protein
+49929..53150	+	3222	ACO22172.1	-	SPP_0074	-	-	host specificity protein
+53196..55844	+	2649	ACO20432.1	-	SPP_0075	-	-	PblB
+55993..56415	+	423	ACO20474.1	-	SPP_0076	-	-	hypothetical protein
+56412..56528	+	117	ACO21875.1	-	SPP_0077	-	-	hypothetical protein
+56509..56712	+	204	ACO21703.1	-	SPP_0078	-	-	conserved hypothetical protein
+56715..56975	+	261	ACO20957.1	-	SPP_0079	-	-	hypothetical protein
+56927..57067	+	141	ACO21484.1	-	SPP_0080	-	-	hypothetical protein
+57077..57493	+	417	ACO21150.1	-	SPP_0081	-	-	putative holin 1
+57497..57832	+	336	ACO20561.1	-	SPP_0082	-	-	phage holin, LL-H family
+57832..58788	+	957	ACO20216.1	-	SPP_0083	-	-	lytic amidase (N-acetylmuramoyl-L-alanine amidase)
+59058..59237	-	180	ACO21954.1	-	SPP_0084	-	-	conserved hypothetical protein
+59810..60277	+	468	ACO21257.1	-	SPP_0085	-	-	tRNA-specific adenosine deaminase
+60464..60907	+	444	ACO20839.1	-	SPP_0086	-	-	deoxyuridine 5'-triphosphate nucleotidohydrolase (dUTPase) (dUTP pyrophosphatase)
+60867..61424	+	558	ACO20387.1	-	SPP_0087	-	-	phosphoglycerate mutase family protein
+61537..62799	+	1263	ACO21772.1	radA	SPP_0088	-	-	DNA repair protein RadA
+62872..63369	+	498	ACO20778.1	-	SPP_0089	-	-	carbonate dehydratase
+63394..63588	+	195	ACO20766.1	-	SPP_0090	-	-	hypothetical protein
+63570..64193	+	624	ACO20205.1	-	SPP_0091	-	-	membrane protein, putative
+64338..65306	+	969	ACO21969.1	-	SPP_0092	-	-	ribose-Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p-rib-pp synthetase) (prpp synthetase)
+65848..66081	-	234	ACO21026.1	-	SPP_0093	-	-	conserved hypothetical protein
+66405..66719	-	315	ACO22178.1	-	SPP_0094	-	-	conserved hypothetical protein
+67011..69644	+	2634	ACO21644.1	-	SPP_0095	-	-	DNA polymerase I (POL I)
+69729..70166	+	438	ACO20997.1	-	SPP_0096	-	-	CoA binding protein
+70207..70500	+	294	ACO21339.1	-	SPP_0097	-	-	hypothetical protein
+70529..71539	-	1011	ACO21768.1	-	SPP_0098	-	-	membrane protein Spr0034
+71688..72857	+	1170	ACO20375.1	-	SPP_0099	-	-	putative aminotransferase A
+72854..73624	+	771	ACO20279.1	recO	SPP_0100	-	-	DNA repair protein RecO
+73621..74613	+	993	ACO20900.1	plsX	SPP_0101	-	-	fatty acid/phospholipid synthesis protein PlsX
+74619..74852	+	234	ACO22210.1	-	SPP_0102	-	-	conserved domain protein
+74895..75188	+	294	ACO20607.1	-	SPP_0103	-	-	mobile genetic element
+75391..75621	+	231	ACO21452.1	-	SPP_0104	-	-	conserved domain protein
+75624..75749	+	126	ACO21857.1	-	SPP_0105	-	-	putative membrane protein
+76196..76309	-	114	ACO20576.1	-	SPP_0106	-	-	hypothetical protein
+76336..78489	+	2154	ACO21962.1	-	SPP_0107	-	-	transport/processing ATP-binding protein ComA
+78502..79851	+	1350	ACO21486.1	-	SPP_0108	-	-	transport protein ComB
+80021..80728	+	708	ACO21168.1	purC	SPP_0109	-	-	phosphoribosylaminoimidazole-succinocarboxamide synthase
+80930..84655	+	3726	ACO20709.1	-	SPP_0110	-	-	phosphoribosylformylglycinamidine synthase
+84748..86190	+	1443	ACO22104.1	purF	SPP_0111	-	-	amidophosphoribosyltransferase
+86227..87249	+	1023	ACO21666.1	purM	SPP_0112	-	-	phosphoribosylformylglycinamidine cyclo-ligase
+87246..87791	+	546	ACO21388.1	purN	SPP_0113	-	-	phosphoribosylglycinamide formyltransferase
+87875..88384	+	510	ACO21043.1	-	SPP_0114	-	-	teicoplanin resistance protein
+88409..89956	+	1548	ACO20149.1	purH	SPP_0115	-	-	bifunctional purine biosynthesis protein PurH
+90078..91340	+	1263	ACO21061.1	purD	SPP_0116	-	-	phosphoribosylamine--glycine ligase
+91597..91713	+	117	ACO21289.1	-	SPP_0117	-	-	conserved hypothetical protein
+91743..92231	+	489	ACO21753.1	purE	SPP_0118	-	-	phosphoribosylaminoimidazole carboxylase, catalytic subunit
+92218..93309	+	1092	ACO20801.1	purK	SPP_0119	-	-	phosphoribosylaminoimidazole carboxylase, ATPase subunit
+93319..93546	+	228	ACO20462.1	-	SPP_0120	-	-	conserved hypothetical protein
+93609..94907	+	1299	ACO21743.1	purB	SPP_0121	-	-	adenylosuccinate lyase
+94962..98897	-	3936	ACO21413.1	-	SPP_0122	-	-	beta-N-acetylhexosaminidase
+99213..99956	-	744	ACO20560.1	-	SPP_0123	-	-	transcriptional regulator, GntR family protein
+100277..102064	+	1788	ACO20238.1	-	SPP_0124	-	-	beta-galactosidase (Lactase)
+102061..102537	+	477	ACO21516.1	-	SPP_0125	-	-	phosphotransferase system sugar-specific eiib component
+102565..103470	+	906	ACO21872.1	-	SPP_0126	-	-	PTS system, IIC component
+103457..104272	+	816	ACO20222.1	-	SPP_0127	-	-	PTS system, IID component
+104279..104683	+	405	ACO20604.1	-	SPP_0128	-	-	phosphotransferase system sugar-specific EII component
+104982..106148	+	1167	ACO21660.1	-	SPP_0129	-	-	putative tagatose-6-phosphate ketose/aldose isomerase
+106264..107301	+	1038	ACO22102.1	-	SPP_0130	-	-	aldose 1-epimerase
+107508..108362	+	855	ACO20452.1	-	SPP_0131	-	-	glyoxalase family protein
+108594..108752	+	159	ACO20937.1	-	SPP_0132	-	-	hypothetical protein
+108794..109201	-	408	ACO20755.1	-	SPP_0133	-	-	chlorohydrolase
+109255..109551	-	297	ACO21197.1	-	SPP_0134	-	-	rhodanese family protein
+109541..109660	-	120	ACO21658.1	-	SPP_0135	-	-	coenzyme A disulfide reductase
+109773..110537	+	765	ACO20283.1	-	SPP_0136	-	-	phosphorylase, Pnp/Udp family
+110793..110933	+	141	ACO20845.1	-	SPP_0137	-	-	hypothetical protein
+111102..112481	+	1380	ACO21997.1	-	SPP_0138	-	-	Trk transporter membrane-spanning protein - K+ transport
+112495..113160	+	666	ACO21989.1	-	SPP_0139	-	-	potassium uptake protein, Trk family
+113295..113498	+	204	ACO20608.1	-	SPP_0140	-	-	hypothetical protein
+114691..117720	+	3030	ACO21750.1	-	SPP_0144	-	-	cell wall surface anchor family protein
+117887..118585	+	699	ACO21009.1	-	SPP_0145	-	-	response regulator SaeR
+118582..119634	+	1053	ACO21943.1	-	SPP_0146	-	-	histidine kinase
+119829..120440	+	612	ACO20207.1	rpsD	SPP_0147	-	-	ribosomal protein S4
+120625..120783	+	159	ACO20769.1	-	SPP_0148	-	-	transposase
+121252..121467	+	216	ACO21212.1	-	SPP_0149	-	-	conserved hypothetical protein
+121421..121594	+	174	ACO21905.1	-	SPP_0150	-	-	hypothetical protein
+121930..122889	+	960	ACO20556.1	-	SPP_0151	-	-	ABC transporter membrane-spanning permease - sugar transport
+122903..123826	+	924	ACO20700.1	-	SPP_0152	-	-	protein LplC
+123910..125385	+	1476	ACO21471.1	-	SPP_0153	-	-	ABC transporter, substrate-binding protein
+125657..126643	+	987	ACO22141.1	-	SPP_0154	-	-	rhodanese-like domain protein
+126765..127625	+	861	ACO21877.1	-	SPP_0155	-	-	conserved hypothetical protein
+127802..128866	-	1065	ACO21122.1	-	SPP_0156	-	-	conserved hypothetical protein
+128929..129840	-	912	ACO21817.1	-	SPP_0157	-	-	conserved hypothetical protein
+129833..130426	-	594	ACO20190.1	-	SPP_0158	-	-	conserved hypothetical protein
+130413..130739	-	327	ACO21473.1	-	SPP_0159	-	-	transcription regulator
+130878..132044	-	1167	ACO21130.1	-	SPP_0160	-	-	cyanate permease
+132195..133241	+	1047	ACO20920.1	-	SPP_0161	-	-	glycosyl transferase
+133309..135159	+	1851	ACO20337.1	-	SPP_0162	-	-	CapD protein, required for the biosynthesis of type 1 capsular polysaccharide
+135462..136094	-	633	ACO20883.1	-	SPP_0164	-	-	phosphoglycolate phosphatase
+136116..136988	-	873	ACO20650.1	sdaAA	SPP_0165	-	-	L-serine dehydratase, iron-sulfur-dependent, alpha subunit
+136997..137668	-	672	ACO20549.1	sdaAB	SPP_0166	-	-	L-serine dehydratase, iron-sulfur-dependent, beta subunit
+137910..138482	+	573	ACO22051.1	-	SPP_0167	-	-	LysM domain protein
+139279..139563	+	285	ACO21491.1	-	SPP_0168	-	-	bacteriocin, lactococcin 972 family
+139618..141726	+	2109	ACO20910.1	-	SPP_0169	-	-	ABC transporter membrane-spanning permease - amino acid transport
+141723..142364	+	642	ACO20290.1	-	SPP_0170	-	-	macrolide export ATP-binding/permease protein MacB
+142571..143377	+	807	ACO21792.1	-	SPP_0171	-	-	ABC transporter solute-binding protein - amino acid transport
+143394..143813	+	420	ACO21144.1	argG	SPP_0172	-	-	argininosuccinate synthase
+144103..144423	-	321	ACO20567.1	-	SPP_0173	-	-	conserved hypothetical protein
+145187..145567	+	381	ACO22000.1	-	SPP_0174	-	-	conserved hypothetical protein
+145941..146999	+	1059	ACO21442.1	-	SPP_0175	-	-	conserved hypothetical protein
+147314..148129	+	816	ACO21291.1	-	SPP_0176	-	-	hypothetical protein
+148123..148290	+	168	ACO20767.1	-	SPP_0177	-	-	hypothetical protein
+148667..149041	+	375	ACO20360.1	-	SPP_0178	-	-	conserved hypothetical protein
+149048..149230	+	183	ACO21853.1	-	SPP_0179	-	-	conserved hypothetical protein
+149249..150151	+	903	ACO22070.1	-	SPP_0180	-	-	conserved hypothetical protein
+150207..150560	+	354	ACO21464.1	-	SPP_0181	-	-	conserved hypothetical protein
+150527..151285	+	759	ACO21136.1	-	SPP_0182	-	-	membrane protein, putative
+152513..152656	+	144	ACO20584.1	-	SPP_0183	-	-	conserved hypothetical protein
+152753..152920	+	168	ACO21808.1	-	SPP_0184	-	-	hypothetical protein
+153206..155041	+	1836	ACO21249.1	-	SPP_0185	-	-	surface protein PspA
+155442..156563	+	1122	ACO21766.1	trmU	SPP_0186	-	-	tRNA (5-methylaminomethyl-2-thiouridylate)-methyltransferase
+156704..157159	+	456	ACO21466.1	-	SPP_0187	-	-	MutT/nudix family protein
+157169..159082	+	1914	ACO20899.1	gidA	SPP_0188	-	-	tRNA uridine 5-carboxymethylaminomethyl modification enzyme GidA
+159286..159444	+	159	ACO20784.1	-	SPP_0189	-	-	hypothetical protein
+159461..161140	-	1680	ACO20256.1	-	SPP_0190	-	-	metallo-beta-lactamase superfamily protein domain protein
+161142..161375	-	234	ACO21935.1	-	SPP_0191	-	-	conserved domain protein
+161759..161968	+	210	ACO21352.1	-	SPP_0192	-	-	hypothetical protein
+162181..162333	-	153	ACO21002.1	-	SPP_0193	-	-	bacteriocin-type signal sequence domain protein
+162335..162520	-	186	ACO20444.1	-	SPP_0194	-	-	conserved hypothetical protein
+162698..163381	+	684	ACO22220.1	-	SPP_0195	-	-	glycoprotein endopeptidase
+163378..163815	+	438	ACO21816.1	rimI	SPP_0196	-	-	ribosomal-protein-alanine acetyltransferase
+163805..164815	+	1011	ACO21064.1	-	SPP_0197	-	-	O-sialoglycoprotein endopeptidase (Glycoprotease)
+166869..167072	-	204	ACO21225.1	-	SPP_0200	-	-	degenerative transposase
+169592..171208	+	1617	ACO20199.1	-	SPP_0205	-	-	ABC transporter, ATP-binding protein
+172139..172426	+	288	ACO20316.1	-	SPP_0206	-	-	conserved hypothetical protein
+172404..172949	+	546	ACO22080.1	-	SPP_0207	-	-	hypothetical protein
+172987..173640	+	654	ACO21488.1	-	SPP_0208	-	-	conserved hypothetical protein
+173652..174401	+	750	ACO21085.1	-	SPP_0209	-	-	GlcNAc-PI de-N-acetylase family
+174414..175586	+	1173	ACO20540.1	-	SPP_0210	-	-	UDP-glucose 6-dehydrogenase
+175981..176844	+	864	ACO21265.1	-	SPP_0211	-	-	MutR
+177130..177363	+	234	ACO20681.1	-	SPP_0212	-	-	conserved hypothetical protein
+177385..178062	+	678	ACO20363.1	-	SPP_0213	-	-	caax amino protease family
+178074..178739	+	666	ACO22081.1	-	SPP_0214	-	-	caax amino protease family
+178811..180037	+	1227	ACO21497.1	-	SPP_0215	-	-	transporter, major facilitator family protein
+180491..181105	+	615	ACO21298.1	-	SPP_0216	-	-	AzlC family protein
+181209..182039	+	831	ACO20927.1	-	SPP_0217	-	-	ABC transporter substrate-binding protein - amino acid transport
+182193..183047	+	855	ACO21239.1	-	SPP_0218	-	-	lipoprotein
+183147..184520	+	1374	ACO22067.1	-	SPP_0219	-	-	acetylornithine deacetylase/succinyl-diaminopimelate desuccinylase
+184513..185574	+	1062	ACO20453.1	-	SPP_0220	-	-	methionine import ATP-binding protein MetN
+185576..186268	+	693	ACO21132.1	-	SPP_0221	-	-	ABC transporter permease protein
+186298..186867	-	570	ACO21600.1	-	SPP_0222	-	-	membrane-bound protein
+187002..187616	+	615	ACO20220.1	-	SPP_0223	-	-	protein of unknown function
+187666..189264	+	1599	ACO20674.1	-	SPP_0224	-	-	sensor histidine kinase, putative
+189276..190562	+	1287	ACO20224.1	-	SPP_0225	-	-	response regulator
+190614..191147	+	534	ACO20875.1	-	SPP_0226	-	-	conserved hypothetical protein
+191225..191695	+	471	ACO21346.1	-	SPP_0227	-	-	ribonucleotide reductase
+191988..193250	-	1263	ACO21841.1	-	SPP_0228	-	-	mn2+ and fe2+ transporter of the nramp family
+193560..194018	-	459	ACO20779.1	-	SPP_0229	-	-	conserved hypothetical protein
+194015..194455	-	441	ACO21371.1	-	SPP_0230	-	-	response regulator of the LytR/AlgR family
+194661..196610	+	1950	ACO21959.1	-	SPP_0231	-	-	DNA mismatch repair protein MutL
+196935..197402	-	468	ACO20967.1	ribH	SPP_0232	-	-	6,7-dimethyl-8-ribityllumazine synthase
+197403..198608	-	1206	ACO20428.1	-	SPP_0233	-	-	riboflavin biosynthesis protein ribAB
+198628..199263	-	636	ACO21053.1	ribE	SPP_0234	-	-	riboflavin synthase, alpha subunit
+199248..200348	-	1101	ACO21650.1	ribD	SPP_0235	-	-	riboflavin biosynthesis protein RibD
+200753..201346	+	594	ACO22204.1	ruvA	SPP_0236	-	-	holliday junction DNA helicase RuvA
+201356..201919	+	564	ACO20673.1	-	SPP_0237	-	-	DNA-3-methyladenine glycosylase 1
+201916..202593	+	678	ACO21183.1	-	SPP_0238	-	-	caax amino protease family
+202730..203761	-	1032	ACO21940.1	-	SPP_0239	-	-	MccC family protein
+204016..204699	-	684	ACO21280.1	-	SPP_0240	-	-	conserved hypothetical protein
+204711..205655	-	945	ACO21942.1	-	SPP_0241	-	-	magnesium and cobalt transporter
+205787..208618	+	2832	ACO21345.1	uvrA	SPP_0242	-	-	excinuclease ABC, A subunit
+208611..209672	+	1062	ACO21037.1	-	SPP_0243	-	-	Xaa-Pro dipeptidase
+209804..210202	+	399	ACO20464.1	-	SPP_0244	-	-	regulatory protein spx
+210268..210837	+	570	ACO22211.1	-	SPP_0245	-	-	lipoprotein, putative
+210924..211190	+	267	ACO21509.1	-	SPP_0246	-	-	conserved hypothetical protein
+211194..211613	+	420	ACO21158.1	-	SPP_0247	-	-	conserved hypothetical protein
+211629..211934	+	306	ACO20419.1	-	SPP_0248	-	-	conserved hypothetical protein
+212240..213490	+	1251	ACO20718.1	-	SPP_0249	-	-	dihydrofolate:folylpolyglutamate synthetase
+213487..214029	+	543	ACO20270.1	-	SPP_0250	-	-	conserved hypothetical protein
+214175..215707	+	1533	ACO21910.1	-	SPP_0251	-	-	cardiolipin synthase
+215785..215928	+	144	ACO21403.1	-	SPP_0252	-	-	conserved hypothetical protein
+215965..217503	+	1539	ACO20493.1	-	SPP_0253	-	-	competence-induced protein Ccs4
+217617..219830	+	2214	ACO21869.1	nrdD	SPP_0254	-	-	anaerobic ribonucleoside-triphosphate reductase
+219842..219982	+	141	ACO21679.1	-	SPP_0255	-	-	conserved hypothetical protein
+220026..220532	+	507	ACO21278.1	-	SPP_0256	-	-	acetyltransferase, gnat family
+220525..221115	+	591	ACO21247.1	nrdG	SPP_0257	-	-	anaerobic ribonucleoside-triphosphate reductase activating protein
+221112..221729	+	618	ACO21738.1	-	SPP_0258	-	-	phosphoribulokinase / Uridine kinase family
+221984..222292	+	309	ACO22069.1	rpsJ	SPP_0259	-	-	ribosomal protein S10
+222509..223135	+	627	ACO20933.1	rplC	SPP_0260	-	-	ribosomal protein L3
+223160..223783	+	624	ACO21483.1	rplD	SPP_0261	-	-	ribosomal protein L4/L1 family
+223783..224079	+	297	ACO22048.1	rplW	SPP_0262	-	-	ribosomal protein L23
+224097..224930	+	834	ACO20572.1	rplB	SPP_0263	-	-	ribosomal protein L2
+225034..225315	+	282	ACO20759.1	rpsS	SPP_0264	-	-	ribosomal protein S19
+225327..225671	+	345	ACO20878.1	rplV	SPP_0265	-	-	ribosomal protein L22
+225684..226337	+	654	ACO21763.1	rpsC	SPP_0266	-	-	ribosomal protein S3
+226341..226754	+	414	ACO21601.1	rplP	SPP_0267	-	-	ribosomal protein L16
+226764..226970	+	207	ACO21016.1	rpmC	SPP_0268	-	-	ribosomal protein L29
+226995..227255	+	261	ACO21045.1	rpsQ	SPP_0269	-	-	ribosomal protein S17
+227281..227649	+	369	ACO20446.1	rplN	SPP_0270	-	-	ribosomal protein L14
+227727..228032	+	306	ACO21454.1	rplX	SPP_0271	-	-	ribosomal protein L24
+228056..228598	+	543	ACO20800.1	-	SPP_0272	-	-	50S ribosomal protein L5 (BL6)
+228616..228885	+	270	ACO21796.1	-	SPP_0273	-	-	30S ribosomal protein S14
+229170..229568	+	399	ACO21294.1	rpsH	SPP_0274	-	-	ribosomal protein S8
+229760..230296	+	537	ACO20837.1	-	SPP_0275	-	-	50S ribosomal protein L6
+230380..230736	+	357	ACO20879.1	rplR	SPP_0276	-	-	ribosomal protein L18
+230754..231248	+	495	ACO21971.1	rpsE	SPP_0277	-	-	ribosomal protein S5
+231262..231444	+	183	ACO20485.1	rpmD	SPP_0278	-	-	ribosomal protein L30
+231589..232029	+	441	ACO21109.1	rplO	SPP_0279	-	-	ribosomal protein L15
+232042..233352	+	1311	ACO21676.1	-	SPP_0280	-	-	preprotein translocase, SecY subunit
+233503..234141	+	639	ACO20606.1	-	SPP_0281	-	-	adenylate kinase (ATP-AMP transphosphorylase) (AK)(Superoxide-inducible protein 16) (SOI16)
+234258..234476	+	219	ACO21127.1	infA	SPP_0282	-	-	translation initiation factor IF-1
+234501..234617	+	117	ACO20827.1	rpmJ	SPP_0283	-	-	ribosomal protein L36
+234635..235000	+	366	ACO21226.1	rpsM	SPP_0284	-	-	ribosomal protein S13p/S18e
+235018..235401	+	384	ACO20344.1	rpsK	SPP_0285	-	-	ribosomal protein S11
+235444..236379	+	936	ACO21111.1	rpoA	SPP_0286	-	-	DNA-directed RNA polymerase, alpha subunit
+236391..236777	+	387	ACO20804.1	rplQ	SPP_0287	-	-	ribosomal protein L17
+237042..237308	+	267	ACO20377.1	-	SPP_0288	-	-	ACT domain protein
+237318..238655	+	1338	ACO21303.1	-	SPP_0289	-	-	conserved hypothetical protein
+238899..239591	+	693	ACO20816.1	-	SPP_0290	-	-	phosphoglycerate mutase family protein
+244127..244903	-	777	ACO20760.1	-	SPP_0297	-	-	pyruvate formate-lyase 3
+245025..245771	+	747	ACO20177.1	-	SPP_0298	-	-	putative HTH-type transcriptional regulator YciT
+245784..246764	+	981	ACO22023.1	-	SPP_0299	-	-	transcriptional regulator
+246959..247279	+	321	ACO21331.1	-	SPP_0300	-	-	phosphotransferase system sugar-specific eiia component
+247325..247633	+	309	ACO21117.1	-	SPP_0301	-	-	phosphotransferase system sugar-specific eiib component
+247650..248948	+	1299	ACO20430.1	-	SPP_0302	-	-	lichenan permease iic component (pts system lichenan-specific eiiccomponent) (eiic-lic)
+249099..251537	+	2439	ACO21250.1	-	SPP_0303	-	-	pyruvate formate-lyase
+251556..252224	+	669	ACO21625.1	-	SPP_0304	-	-	fructose-6-phosphate aldolase
+252242..253330	+	1089	ACO20317.1	-	SPP_0305	-	-	glycerol dehydrogenase (gldh)
+253785..256286	+	2502	ACO22017.1	leuS	SPP_0306	-	-	leucyl-tRNA synthetase
+256480..257175	+	696	ACO20979.1	-	SPP_0307	-	-	acetyltransferase, gnat family
+257187..257603	+	417	ACO21396.1	-	SPP_0308	-	-	acetyltransferase, gnat family
+258644..259642	+	999	ACO21898.1	ruvB	SPP_0309	-	-	holliday junction DNA helicase RuvB
+259623..260195	+	573	ACO20254.1	-	SPP_0310	-	-	conserved hypothetical protein
+260426..261184	+	759	ACO21269.1	uppS	SPP_0311	-	-	di-trans,poly-cis-decaprenylcistransferase
+261193..261996	+	804	ACO21690.1	cdsA	SPP_0312	-	-	phosphatidate cytidylyltransferase
+262018..263277	+	1260	ACO22132.1	rseP	SPP_0313	-	-	RIP metalloprotease RseP
+263290..265143	+	1854	ACO20486.1	proS	SPP_0314	-	-	prolyl-tRNA synthetase
+265242..266621	+	1380	ACO21553.1	-	SPP_0315	-	-	6-phospho-beta-glucosidase
+266814..268622	+	1809	ACO21682.1	glmS	SPP_0316	-	-	glutamine-fructose-6-phosphate transaminase (isomerizing)
+268634..268837	-	204	ACO21672.1	-	SPP_0317	-	-	chlorohydrolase
+268894..269943	+	1050	ACO22122.1	-	SPP_0318	-	-	oxidoreductase
+270043..273813	-	3771	ACO20185.1	-	SPP_0319	-	-	pullulanase, extracellular
+274230..274643	+	414	ACO20924.1	rpsL	SPP_0320	-	-	ribosomal protein S12
+274663..275133	+	471	ACO21911.1	rpsG	SPP_0321	-	-	ribosomal protein S7
+275558..277639	+	2082	ACO21050.1	fusA	SPP_0322	-	-	translation elongation factor G
+277743..282134	+	4392	ACO21657.1	polC	SPP_0323	-	-	DNA polymerase III, alpha subunit, Gram-positive type
+282236..282499	+	264	ACO22133.1	-	SPP_0324	-	-	addiction module antitoxin, RelB/DinJ family
+282492..282770	+	279	ACO22126.1	-	SPP_0325	-	-	DNA damage inducible protein
+282791..282943	+	153	ACO21986.1	-	SPP_0326	-	-	conserved hypothetical protein
+282965..284206	+	1242	ACO21820.1	-	SPP_0327	-	-	aminopeptidase PepS
+284216..284446	+	231	ACO20647.1	-	SPP_0328	-	-	integral membrane protein
+284669..285391	+	723	ACO20905.1	-	SPP_0329	-	-	ribosomal small subunit pseudouridine synthase A, putative
+285608..286942	+	1335	ACO21384.1	-	SPP_0330	-	-	aminopeptidase C (Bleomycin hydrolase)
+286998..287909	-	912	ACO21968.1	-	SPP_0331	-	-	PTS system, mannose/fructose/sorbose family, IID component
+287933..288736	-	804	ACO20978.1	-	SPP_0332	-	-	PTS system sorbose-specific IIC component
+288764..289753	-	990	ACO21596.1	-	SPP_0333	-	-	mannose-specific phosphotransferase system component iiab
+289986..291005	-	1020	ACO22183.1	-	SPP_0334	-	-	alcohol dehydrogenase, propanol-preferring
+291114..291260	-	147	ACO21604.1	-	SPP_0335	-	-	hypothetical protein
+291344..292156	-	813	ACO21171.1	-	SPP_0336	-	-	Cof family protein
+292346..293764	+	1419	ACO20963.1	-	SPP_0337	-	-	xanthine/uracil permease family protein
+293817..294524	+	708	ACO21522.1	-	SPP_0338	-	-	caax amino protease family protein
+294620..295600	+	981	ACO22020.1	folP	SPP_0339	-	-	dihydropteroate synthase
+295602..296924	+	1323	ACO20393.1	-	SPP_0340	-	-	dihydrofolate synthetase
+296905..297459	+	555	ACO21099.1	folE	SPP_0341	-	-	GTP cyclohydrolase I
+297502..298314	+	813	ACO21564.1	-	SPP_0342	-	-	bifunctional folate synthesis protein
+298359..298676	-	318	ACO20229.1	-	SPP_0343	-	-	conserved hypothetical protein
+299033..299479	+	447	ACO20687.1	rplM	SPP_0344	-	-	ribosomal protein L13
+299498..299890	+	393	ACO20275.1	rpsI	SPP_0345	-	-	ribosomal protein S9
+300152..300574	-	423	ACO21004.1	-	SPP_0346	-	-	integrase/recombinase, phage integrase family
+300721..300897	+	177	ACO20416.1	-	SPP_0347	-	-	conserved hypothetical protein
+301299..303512	+	2214	ACO22216.1	-	SPP_0348	-	-	glycosyl hydrolase, family 31
+303734..304210	-	477	ACO21745.1	-	SPP_0349	-	-	peroxiredoxin Hyr1 (hydrogen peroxide resistanceprotein 1) (oxidant receptor peroxidase 1) (glutathione peroxidase 3)(phospholipid hydroperoxide glutathione peroxidase 3) (phgpx3)
+304433..307636	+	3204	ACO21275.1	-	SPP_0350	-	-	hyaluronate lyase
+308779..309408	-	630	ACO21300.1	-	SPP_0352	-	-	keto-hydroxyglutarate-aldolase/keto-deoxy- phosphogluconate aldolase
+309418..310419	-	1002	ACO21006.1	-	SPP_0353	-	-	carbohydrate kinase, PfkB family
+310450..311091	-	642	ACO20405.1	-	SPP_0354	-	-	ribose 5-phosphate isomerase RpiB
+311110..311925	-	816	ACO22174.1	-	SPP_0355	-	-	gluconate 5-dehydrogenase (5-keto-D-gluconate 5-reductase)
+312196..312630	+	435	ACO21438.1	-	SPP_0356	-	-	phosphotransferase system sugar-specific EII component
+312642..313832	+	1191	ACO22103.1	-	SPP_0357	-	-	unsaturated glucuronyl hydrolase (UGL) (Glycuronidase)(Unsaturated uronic acid hydrolase) (Glycosaminoglycan hydrolase)
+313843..314334	+	492	ACO21472.1	-	SPP_0358	-	-	N-acetylgalactosamine-specific phosphotransferase enzyme iib component2 (pts system n-acetylgalactosamine-specific eiibcomponent 2) (eiib-aga')
+314349..315128	+	780	ACO21145.1	-	SPP_0359	-	-	phosphotransferase system sugar-specific EII component
+315115..315933	+	819	ACO20554.1	-	SPP_0360	-	-	PTS system, IID component
+315969..316226	+	258	ACO21174.1	-	SPP_0361	-	-	preprotein translocase, YajC subunit
+316248..318149	+	1902	ACO20582.1	-	SPP_0362	-	-	oligohyaluronate lyase
+318209..319210	+	1002	ACO21844.1	-	SPP_0363	-	-	sugar binding transcriptional regulator RegR
+319320..319655	-	336	ACO21400.1	-	SPP_0364	-	-	hypothetical protein
+319666..319908	-	243	ACO20918.1	-	SPP_0365	-	-	hypothetical protein
+319919..320461	-	543	ACO20448.1	-	SPP_0366	-	-	conserved hypothetical protein
+320477..320671	-	195	ACO22199.1	-	SPP_0367	-	-	conserved domain protein
+320837..321787	+	951	ACO20723.1	mraW	SPP_0368	-	-	S-adenosyl-methyltransferase MraW
+321799..322116	+	318	ACO21032.1	ftsL	SPP_0369	-	-	cell division protein FtsL
+322120..324372	+	2253	ACO21626.1	-	SPP_0370	-	-	penicillin-binding protein 2X
+324374..325354	+	981	ACO20384.1	mraY	SPP_0371	-	-	phospho-N-acetylmuramoyl-pentapeptide- transferase
+325566..325682	+	117	ACO20971.1	-	SPP_0372	-	-	hypothetical protein
+325963..328068	+	2106	ACO21316.1	-	SPP_0373	-	-	ATP-dependent Clp protease ATP-binding subunit ClpL
+328506..328856	+	351	ACO21859.1	-	SPP_0374	-	-	GBSi1, group II intron, maturase
+328923..329405	-	483	ACO20637.1	luxS	SPP_0375	-	-	S-ribosylhomocysteinase LuxS
+329500..330984	-	1485	ACO20936.1	-	SPP_0376	-	-	conserved hypothetical protein
+331137..332744	+	1608	ACO21465.1	-	SPP_0377	-	-	trehalose-6-phosphate hydrolase (Alpha,alpha-phosphotrehalase)
+332903..333076	+	174	ACO21393.1	-	SPP_0378	-	-	lipoprotein, putative
+334773..334898	+	126	ACO21245.1	-	SPP_0381	-	-	hypothetical protein
+334994..335392	-	399	ACO22219.1	-	SPP_0382	-	-	Spn1, transposase Orf1
+335645..337090	+	1446	ACO20155.1	-	SPP_0383	-	-	integral membrane regulatory protein Wzg
+337092..337823	+	732	ACO20791.1	-	SPP_0384	-	-	tyrosine-protein phosphatase CpsB
+337832..338524	+	693	ACO20859.1	-	SPP_0385	-	-	capsular polysaccharide biosynthesis protein Wzd
+338534..339199	+	666	ACO21747.1	-	SPP_0386	-	-	tyrosine-protein kinase CpsD
+339340..340476	+	1137	ACO21787.1	-	SPP_0387	-	-	galacturonosyl transferase
+340469..341020	+	552	ACO20413.1	-	SPP_0388	-	-	galacturonic acid acetylase
+341017..342171	+	1155	ACO20863.1	-	SPP_0389	-	-	glycosyl transferase, group 1 family protein
+342288..343592	+	1305	ACO21593.1	-	SPP_0390	-	-	membrane protein, putative
+343778..344947	+	1170	ACO21577.1	-	SPP_0391	-	-	flippase Wzx
+345015..346085	+	1071	ACO22027.1	-	SPP_0392	-	-	UDP-glucuronate 5'-epimerase (UDP-glucuronic acidepimerase)
+346114..347346	+	1233	ACO20794.1	-	SPP_0393	-	-	UDP-glucose 6-dehydrogenase
+347562..347744	+	183	ACO21096.1	-	SPP_0394	-	-	hypothetical protein
+348032..348382	-	351	ACO21240.1	-	SPP_0395	-	-	transposase
+349552..350409	+	858	ACO22002.1	rfbA	SPP_0398	-	-	glucose-1-phosphate thymidylyltransferase
+350410..351006	+	597	ACO20477.1	-	SPP_0399	-	-	dTDP-4-dehydrorhamnose 3,5-epimerase
+351016..352065	+	1050	ACO20281.1	rfbB	SPP_0400	-	-	dTDP-glucose 4,6-dehydratase
+353057..353491	+	435	ACO22013.1	-	SPP_0403	-	-	transposase
+354409..356391	+	1983	ACO20638.1	-	SPP_0405	-	-	oligopeptide binding protein
+356692..361995	+	5304	ACO21668.1	-	SPP_0406	-	-	endo-alpha-N-acetylgalactosaminidase
+362162..364321	-	2160	ACO20315.1	-	SPP_0407	-	-	penicillin-binding protein 1A
+364318..364914	-	597	ACO21818.1	recU	SPP_0408	-	-	recombination protein U
+364980..365507	+	528	ACO21482.1	-	SPP_0409	-	-	conserved hypothetical protein
+365577..365906	+	330	ACO22085.1	-	SPP_0410	-	-	cell division initiation protein
+366392..367549	+	1158	ACO20294.1	-	SPP_0411	-	-	methyltransferase
+367562..368956	+	1395	ACO20440.1	-	SPP_0412	-	-	conserved hypothetical protein
+369032..370456	+	1425	ACO20562.1	gnd	SPP_0413	-	-	6-phosphogluconate dehydrogenase, decarboxylating
+370468..371157	+	690	ACO22109.1	-	SPP_0414	-	-	DNA-binding response regulator
+371255..372274	+	1020	ACO20704.1	-	SPP_0415	-	-	choline-binding protein F
+372392..373624	-	1233	ACO21390.1	-	SPP_0416	-	-	transporter, major facilitator family protein
+375305..375484	+	180	ACO20429.1	-	SPP_0418	-	-	choline binding protein J
+375606..376484	+	879	ACO20202.1	mvk	SPP_0419	-	-	mevalonate kinase
+376466..377419	+	954	ACO20786.1	mvaD	SPP_0420	-	-	diphosphomevalonate decarboxylase
+377406..378413	+	1008	ACO21355.1	-	SPP_0421	-	-	phosphomevalonate kinase
+378397..379407	+	1011	ACO21933.1	fni	SPP_0422	-	-	isopentenyl-diphosphate delta-isomerase, type 2
+379484..380182	+	699	ACO20625.1	-	SPP_0423	-	-	conserved hypothetical protein
+380179..381174	+	996	ACO21100.1	-	SPP_0424	-	-	histidine kinase
+381188..381820	+	633	ACO20806.1	-	SPP_0425	-	-	response regulator
+382414..382590	+	177	ACO20322.1	-	SPP_0428	-	-	DNA alkylation repair enzyme, truncation
+382740..382979	+	240	ACO21825.1	-	SPP_0429	-	-	conserved hypothetical protein
+382976..383653	+	678	ACO20558.1	-	SPP_0430	-	-	choline binding protein G
+383952..384344	+	393	ACO21173.1	-	SPP_0431	-	-	integrase
+384505..385788	+	1284	ACO20618.1	tig	SPP_0432	-	-	trigger factor
+385836..388202	-	2367	ACO20250.1	-	SPP_0433	-	-	helicase, RecD/TraA family
+388330..388944	-	615	ACO22117.1	lepB	SPP_0434	-	-	signal peptidase I
+388956..389828	-	873	ACO21548.1	rnhC	SPP_0435	-	-	ribonuclease hiii
+389993..390217	+	225	ACO20424.1	-	SPP_0436	-	-	conserved hypothetical protein
+390214..390762	+	549	ACO21008.1	cvpA	SPP_0437	-	-	CvpA family protein
+390866..393202	+	2337	ACO20777.1	-	SPP_0438	-	-	MutS2 family protein
+393545..394867	+	1323	ACO21368.1	-	SPP_0439	-	-	D-alanine glycine permease
+395085..395633	+	549	ACO22175.1	-	SPP_0440	-	-	macrophage infectivity potentiator protein
+395743..396642	+	900	ACO20150.1	-	SPP_0441	-	-	exfoliative toxin A
+396667..397941	-	1275	ACO21139.1	serS	SPP_0442	-	-	seryl-tRNA synthetase
+398155..398526	-	372	ACO21573.1	-	SPP_0443	-	-	ManO
+398529..399893	-	1365	ACO21938.1	-	SPP_0444	-	-	aspartate kinase
+400071..400226	-	156	ACO22007.1	-	SPP_0445	-	-	conserved hypothetical protein
+400218..401003	+	786	ACO21977.1	-	SPP_0446	-	-	enoyl-CoA hydratase
+401097..401531	+	435	ACO21244.1	-	SPP_0447	-	-	transcriptional regulator
+401531..402505	+	975	ACO20732.1	-	SPP_0448	-	-	beta-ketoacyl-acyl carrier protein synthase III
+402565..402789	+	225	ACO21095.1	-	SPP_0449	-	-	conserved domain protein
+402908..403882	+	975	ACO22205.1	-	SPP_0450	-	-	putative enoyl-(acyl-carrier-protein) reductase II
+403875..404795	+	921	ACO21496.1	fabD	SPP_0451	-	-	malonyl CoA-acyl carrier protein transacylase
+404829..405560	+	732	ACO20886.1	fabG	SPP_0452	-	-	3-oxoacyl-(acyl-carrier-protein) reductase
+405582..406817	+	1236	ACO20289.1	fabF	SPP_0453	-	-	3-oxoacyl-[acyl-carrier-protein] synthase 2
+406820..407305	+	486	ACO20299.1	accB	SPP_0454	-	-	acetyl-CoA carboxylase, biotin carboxyl carrier protein
+407302..407724	+	423	ACO22075.1	fabZ	SPP_0455	-	-	beta-hydroxyacyl-(acyl-carrier-protein) dehydratase FabZ
+407736..409103	+	1368	ACO21889.1	accC	SPP_0456	-	-	acetyl-CoA carboxylase, biotin carboxylase
+409140..410006	+	867	ACO21295.1	accD	SPP_0457	-	-	acetyl-CoA carboxylase, carboxyl transferase, beta subunit
+410003..410770	+	768	ACO21155.1	accA	SPP_0458	-	-	acetyl-CoA carboxylase, carboxyl transferase, alpha subunit
+410929..411114	+	186	ACO20557.1	-	SPP_0459	-	-	conserved hypothetical protein
+411171..411605	+	435	ACO20575.1	-	SPP_0460	-	-	conserved hypothetical protein
+411756..411890	-	135	ACO22091.1	-	SPP_0461	-	-	hypothetical protein
+411904..412326	-	423	ACO21502.1	nusB	SPP_0462	-	-	transcription antitermination factor NusB
+412319..412708	-	390	ACO20397.1	-	SPP_0463	-	-	general stress protein, Gls24 family
+412730..413290	-	561	ACO20255.1	efp	SPP_0464	-	-	translation elongation factor P
+413458..413643	+	186	ACO21871.1	-	SPP_0465	-	-	chlorohydrolase
+413668..414711	-	1044	ACO21379.1	-	SPP_0466	-	-	L-iditol 2-dehydrogenase
+414835..416277	-	1443	ACO21018.1	-	SPP_0467	-	-	aspartyl/glutamyl-tRNA(Asn/Gln) amidotransferase subunit B (Asp/Glu-ADT subunit B)
+416277..417743	-	1467	ACO20212.1	-	SPP_0468	-	-	glutamyl-tRNA(Gln) amidotransferase subunit A (Glu-ADTsubunit A)
+417743..418045	-	303	ACO21966.1	gatC	SPP_0469	-	-	glutamyl-tRNA(Gln) amidotransferase, C subunit
+418258..419802	+	1545	ACO22146.1	prfC	SPP_0470	-	-	peptide chain release factor 3
+420071..420556	+	486	ACO20787.1	-	SPP_0471	-	-	glycosyl transferase, family 8
+420672..420860	+	189	ACO20974.1	rpmB	SPP_0472	-	-	ribosomal protein L28
+421017..421382	+	366	ACO20639.1	-	SPP_0473	-	-	alkaline shock protein
+421385..423052	+	1668	ACO20715.1	-	SPP_0474	-	-	dihydroxyacetone kinase family protein
+423253..424953	+	1701	ACO20386.1	ilvB	SPP_0475	-	-	acetolactate synthase, large subunit, biosynthetic type
+424946..425422	+	477	ACO20836.1	ilvN	SPP_0476	-	-	acetolactate synthase, small subunit
+425488..426510	+	1023	ACO20408.1	ilvC	SPP_0477	-	-	ketol-acid reductoisomerase
+426617..426853	+	237	ACO21901.1	-	SPP_0478	-	-	conserved hypothetical protein
+427091..427447	+	357	ACO21206.1	-	SPP_0479	-	-	conserved hypothetical protein
+427497..428747	+	1251	ACO21205.1	ilvA	SPP_0480	-	-	threonine dehydratase
+428889..429077	+	189	ACO20626.1	-	SPP_0481	-	-	conserved hypothetical protein
+429618..429833	+	216	ACO22192.1	-	SPP_0482	-	-	conserved hypothetical protein
+429942..430682	-	741	ACO21461.1	gltL	SPP_0483	-	-	glutamate/aspartate ABC transporter, ATP-binding protein
+430682..432247	-	1566	ACO21655.1	-	SPP_0484	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+432385..434274	+	1890	ACO21267.1	-	SPP_0486	-	-	conserved hypothetical protein
+434271..434441	-	171	ACO22088.1	-	SPP_0485	-	-	conserved domain protein
+434575..435123	-	549	ACO21734.1	-	SPP_0487	-	-	transposase
+435321..435443	-	123	ACO21142.1	-	SPP_0488	-	-	transposase
+435699..436544	+	846	ACO21479.1	-	SPP_0489	-	-	undecaprenyl-diphosphatase (Undecaprenyl pyrophosphatephosphatase) (Bacitracin resistance protein)
+436537..436665	+	129	ACO22078.1	-	SPP_0490	-	-	conserved hypothetical protein
+436691..437752	-	1062	ACO20313.1	-	SPP_0491	-	-	DNA polymerase IV (Pol IV)
+437797..437919	-	123	ACO20892.1	-	SPP_0492	-	-	hypothetical protein
+438147..440471	+	2325	ACO21227.1	pflB	SPP_0493	-	-	formate acetyltransferase
+440843..441061	-	219	ACO20678.1	-	SPP_0494	-	-	conserved hypothetical protein
+441388..441672	-	285	ACO21414.1	-	SPP_0495	-	-	conserved hypothetical protein
+442064..442237	+	174	ACO20842.1	-	SPP_0496	-	-	hypothetical protein
+442876..442989	-	114	ACO20391.1	-	SPP_0497	-	-	hypothetical protein
+443277..444500	-	1224	ACO21797.1	-	SPP_0498	-	-	ROK family protein
+444668..445990	+	1323	ACO21304.1	-	SPP_0499	-	-	lichenan permease iic component (pts system lichenan-specific eiiccomponent) (eiic-lic)
+445992..447878	+	1887	ACO21481.1	-	SPP_0500	-	-	conserved hypothetical protein
+448046..448390	+	345	ACO21189.1	-	SPP_0501	-	-	lactose-specific phosphotransferase enzyme iia component (pts system lactose-specific eiia component) (eiia-lac) (eiii-lac)
+448400..449812	+	1413	ACO20284.1	lacG1	SPP_0502	-	-	6-phospho-beta-galactosidase
+449882..451561	+	1680	ACO22093.1	-	SPP_0503	-	-	pts system lactose-specific eiicb component (eiicb-lac) (eii-lac)
+451687..453126	-	1440	ACO20383.1	-	SPP_0504	-	-	potassium uptake protein, Trk family
+453130..454479	-	1350	ACO22044.1	-	SPP_0505	-	-	potassium uptake protein, Trk family
+454667..455515	+	849	ACO22189.1	-	SPP_0506	-	-	protein of unknown function
+455530..456078	+	549	ACO21407.1	-	SPP_0507	-	-	protein YdcD
+456085..456342	+	258	ACO20693.1	-	SPP_0508	-	-	conserved hypothetical protein
+456444..458126	+	1683	ACO20987.1	-	SPP_0509	-	-	putative ABC transporter ATP-binding protein
+458111..458941	+	831	ACO20516.1	-	SPP_0510	-	-	cobalt transport family protein
+459134..459637	+	504	ACO22147.1	cspR	SPP_0511	-	-	CspR
+460090..460653	+	564	ACO21681.1	-	SPP_0512	-	-	conserved hypothetical protein
+460667..461293	+	627	ACO20729.1	-	SPP_0513	-	-	PAP2 family protein
+461321..461710	+	390	ACO20269.1	-	SPP_0514	-	-	conserved hypothetical protein
+461715..462164	+	450	ACO21076.1	-	SPP_0515	-	-	conserved hypothetical protein
+462292..462879	+	588	ACO21779.1	rpoE	SPP_0516	-	-	DNA-directed RNA polymerase, delta subunit
+463015..463140	+	126	ACO20798.1	-	SPP_0517	-	-	hypothetical protein
+463269..464876	+	1608	ACO21243.1	pyrG	SPP_0518	-	-	CTP synthase
+465435..467066	-	1632	ACO22004.1	-	SPP_0519	-	-	sodium-dependent phosphate transporter
+467431..472299	+	4869	ACO20310.1	-	SPP_0520	-	-	endo-beta-N-acetylglucosaminidase D
+472389..473585	+	1197	ACO21550.1	pgk	SPP_0521	-	-	phosphoglycerate kinase
+473721..474248	+	528	ACO22035.1	-	SPP_0522	-	-	conserved hypothetical protein
+474325..474681	+	357	ACO20633.1	-	SPP_0523	-	-	HTH-type transcriptional regulator GlnR
+474718..476064	+	1347	ACO21126.1	glnA	SPP_0524	-	-	glutamine synthetase, type I
+476507..477853	-	1347	ACO21569.1	-	SPP_0525	-	-	Spn1 transposase
+478239..478376	+	138	ACO20585.1	-	SPP_0526	-	-	conserved hypothetical protein
+478547..479827	+	1281	ACO21172.1	-	SPP_0527	-	-	type I site-specific deoxyribonuclease chain S
+479884..480681	+	798	ACO21487.1	-	SPP_0528	-	-	integrase/recombinase, phage integrase family
+480692..481297	+	606	ACO20897.1	-	SPP_0530	-	-	type I restriction-modification system, S subunit, putative
+481245..482795	-	1551	ACO22107.1	-	SPP_0529	-	-	type I restriction enzyme
+482795..484258	-	1464	ACO20846.1	-	SPP_0531	-	-	type I restriction enzyme
+486955..487083	-	129	ACO20227.1	-	SPP_0534	-	-	conserved hypothetical protein
+487212..487721	+	510	ACO21176.1	-	SPP_0535	-	-	conserved hypothetical protein
+487885..488919	+	1035	ACO21229.1	hrcA	SPP_0536	-	-	heat-inducible transcription repressor HrcA
+488946..489470	+	525	ACO21885.1	grpE	SPP_0537	-	-	co-chaperone GrpE
+489950..491773	+	1824	ACO21214.1	dnaK	SPP_0538	-	-	chaperone protein DnaK
+491786..492139	+	354	ACO21664.1	-	SPP_0539	-	-	hypothetical protein
+492344..493480	+	1137	ACO21074.1	dnaJ	SPP_0540	-	-	chaperone protein DnaJ
+493802..494176	-	375	ACO20439.1	-	SPP_0541	-	-	chlorohydrolase
+494338..494625	-	288	ACO21926.1	-	SPP_0542	-	-	conserved hypothetical protein
+494635..495045	-	411	ACO21372.1	-	SPP_0543	-	-	histidine triad domain protein
+495113..495844	+	732	ACO20796.1	-	SPP_0544	-	-	ABC-type transporter ATP-binding protein EcsA
+495841..496890	+	1050	ACO20168.1	-	SPP_0545	-	-	ABC transporter, permease protein
+497058..497387	-	330	ACO21490.1	-	SPP_0546	-	-	BlpT protein, fusion
+497664..498002	+	339	ACO20351.1	-	SPP_0547	-	-	regulatory protein
+498007..498744	+	738	ACO21744.1	-	SPP_0548	-	-	response regulator
+498758..500098	+	1341	ACO21285.1	-	SPP_0549	-	-	histidine kinase
+500142..500297	-	156	ACO20802.1	-	SPP_0550	-	-	double glycine cleavage site bacteriolysin superfamily
+500354..501715	-	1362	ACO20342.1	-	SPP_0551	-	-	BlpC ABC transporter
+501726..503879	-	2154	ACO21512.1	-	SPP_0552	-	-	transport/processing ATP-binding protein ComA
+504161..504415	+	255	ACO21148.1	-	SPP_0553	-	-	BlpM
+504431..504634	+	204	ACO20553.1	-	SPP_0554	-	-	conserved domain protein
+504878..505027	+	150	ACO21813.1	-	SPP_0555	-	-	conserved domain protein
+505009..505128	+	120	ACO21202.1	-	SPP_0556	-	-	conserved hypothetical protein
+505131..505250	+	120	ACO21195.1	-	SPP_0557	-	-	conserved hypothetical protein
+505363..505479	+	117	ACO20705.1	-	SPP_0558	-	-	conserved hypothetical protein
+505547..505708	+	162	ACO21263.1	-	SPP_0559	-	-	conserved hypothetical protein
+506267..506446	+	180	ACO21665.1	-	SPP_0561	-	-	conserved hypothetical protein
+506478..506618	+	141	ACO22177.1	-	SPP_0562	-	-	immunity protein BlpL
+506718..507101	+	384	ACO21034.1	-	SPP_0563	-	-	immunity protein BlpX
+507153..507842	+	690	ACO21447.1	-	SPP_0564	-	-	BlpY protein
+508268..508879	+	612	ACO20489.1	-	SPP_0566	-	-	ABC transporter ATP binding protein - unknown substrate
+509040..509834	+	795	ACO21307.1	-	SPP_0567	-	-	phosphotransferase enzyme family
+509831..510466	+	636	ACO22033.1	trmB	SPP_0568	-	-	tRNA (guanine-N(7)-)-methyltransferase
+510592..511071	+	480	ACO21790.1	-	SPP_0569	-	-	conserved hypothetical protein
+511115..512251	+	1137	ACO21329.1	nusA	SPP_0570	-	-	transcription termination factor NusA
+512273..512566	+	294	ACO20832.1	-	SPP_0571	-	-	putative chain a, hypothetical cytosolic protein coded by gene from nusainfb, ylxr homologue
+512559..512858	+	300	ACO20371.1	-	SPP_0572	-	-	ribosomal protein HS6-type
+512875..515667	+	2793	ACO20362.1	-	SPP_0573	-	-	translation initiation factor IF-2
+515918..516268	+	351	ACO21478.1	rbfA	SPP_0574	-	-	ribosome-binding factor A
+516547..517326	+	780	ACO21067.1	-	SPP_0575	-	-	conserved hypothetical protein
+517328..517510	+	183	ACO20532.1	-	SPP_0576	-	-	conserved hypothetical protein
+517777..517929	-	153	ACO20653.1	-	SPP_0577	-	-	hypothetical protein
+517960..518193	+	234	ACO21010.1	-	SPP_0578	-	-	conserved hypothetical protein
+518193..519527	+	1335	ACO21332.1	-	SPP_0579	-	-	hemerythrin HHE cation binding domain subfamily, putative
+519537..519791	+	255	ACO21518.1	-	SPP_0580	-	-	conserved hypothetical protein
+519887..520282	+	396	ACO22100.1	-	SPP_0581	-	-	conserved hypothetical protein
+520695..521144	+	450	ACO20590.1	-	SPP_0582	-	-	hypothetical protein
+521131..521691	+	561	ACO21651.1	-	SPP_0583	-	-	acetyltransferase, gnat family
+521691..522269	+	579	ACO22203.1	-	SPP_0584	-	-	shikimate kinase
+522262..524913	+	2652	ACO20234.1	valS	SPP_0585	-	-	valyl-tRNA synthetase
+524983..525738	+	756	ACO20824.1	-	SPP_0586	-	-	conserved hypothetical protein
+526013..526816	+	804	ACO20833.1	-	SPP_0587	-	-	Fic protein family
+527482..528261	-	780	ACO20683.1	-	SPP_0589	-	-	transposase
+531431..532270	+	840	ACO21706.1	-	SPP_0592	-	-	transcription antiterminator LicT
+532288..534126	+	1839	ACO20660.1	-	SPP_0593	-	-	pts system beta-glucoside-specific eiibca component (eiibca-bgl) (eii-bgl)
+534139..535554	+	1416	ACO22019.1	-	SPP_0594	-	-	beta-glucosidase (Gentiobiase) (Cellobiase) (Beta-D-glucoside glucohydrolase) (Amygdalase)
+536104..537192	+	1089	ACO21874.1	pheS	SPP_0595	-	-	phenylalanyl-tRNA synthetase, alpha subunit
+537192..537701	+	510	ACO21405.1	-	SPP_0596	-	-	acetyltransferase, gnat family
+537778..540180	+	2403	ACO21105.1	pheT	SPP_0597	-	-	phenylalanyl-tRNA synthetase, beta subunit
+540248..541249	-	1002	ACO20301.1	-	SPP_0598	-	-	endonuclease/exonuclease/phosphatase family
+541978..542244	+	267	ACO21908.1	-	SPP_0601	-	-	helix-turn-helix domain protein
+542504..544753	+	2250	ACO21448.1	metE	SPP_0602	-	-	5-methyltetrahydropteroyltriglutamate-- homocysteine S-methyltransferase
+544817..545683	+	867	ACO20960.1	metF	SPP_0603	-	-	5,10-methylenetetrahydrofolate reductase
+548471..549088	+	618	ACO21678.1	cysE	SPP_0606	-	-	serine O-acetyltransferase
+549100..549984	+	885	ACO21610.1	-	SPP_0607	-	-	acetyltransferase, gnat family
+550066..551409	+	1344	ACO21215.1	cysS	SPP_0608	-	-	cysteinyl-tRNA synthetase
+551402..551788	+	387	ACO21112.1	-	SPP_0609	-	-	ribonuclease III family protein
+551792..552676	+	885	ACO20985.1	-	SPP_0610	-	-	leucine-rich protein
+552724..552840	+	117	ACO20909.1	-	SPP_0611	-	-	hypothetical protein
+553047..553412	+	366	ACO20499.1	-	SPP_0612	-	-	hypothetical protein
+553558..553731	+	174	ACO22162.1	-	SPP_0613	-	-	GBSi1, group II intron, maturase
+554081..555358	+	1278	ACO20746.1	-	SPP_0614	-	-	ABC transporter membrane-spanning permease - Pep export
+555371..556018	+	648	ACO20259.1	-	SPP_0615	-	-	ABC transporter, ATP-binding protein Vexp2
+556070..557449	+	1380	ACO22137.1	-	SPP_0616	-	-	ABC transporter membrane-spanning permease - Pep export
+557762..558418	+	657	ACO21692.1	-	SPP_0617	-	-	VncR, response regulator
+558415..559743	+	1329	ACO20829.1	-	SPP_0618	-	-	VncS, histidine kinase
+559884..560765	+	882	ACO20235.1	fba	SPP_0619	-	-	fructose-1,6-bisphosphate aldolase, class II
+562524..563183	-	660	ACO20813.1	-	SPP_0622	-	-	ABC transporter membrane-spanning permease - glutamine transport
+563193..563870	-	678	ACO20398.1	-	SPP_0623	-	-	ABC transporter membrane-spanning permease - glutamine transport
+563883..564677	-	795	ACO20498.1	-	SPP_0624	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor
+564688..565446	-	759	ACO22135.1	-	SPP_0625	-	-	glutamine transport ATP-binding protein GlnQ
+565711..567945	+	2235	ACO21760.1	recJ	SPP_0626	-	-	single-stranded-DNA-specific exonuclease RecJ
+568120..569781	+	1662	ACO21328.1	-	SPP_0627	-	-	metallo-beta-lactamase family protein
+569850..570629	+	780	ACO21133.1	-	SPP_0628	-	-	tributyrin esterase
+570741..571961	+	1221	ACO21606.1	-	SPP_0629	-	-	serine/alanine-adding enzyme MurM
+571966..573198	+	1233	ACO20671.1	-	SPP_0630	-	-	alanine adding enzyme
+573277..573978	+	702	ACO21012.1	-	SPP_0631	-	-	matrixin family
+574018..575862	+	1845	ACO21480.1	uvrC	SPP_0632	-	-	excinuclease ABC, C subunit
+575852..576649	+	798	ACO21920.1	-	SPP_0633	-	-	Ser/Thr protein phosphatase family protein
+576831..577631	-	801	ACO21762.1	-	SPP_0634	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor
+577675..577815	+	141	ACO20265.1	-	SPP_0635	-	-	conserved hypothetical protein
+577802..578407	+	606	ACO20544.1	-	SPP_0636	-	-	oxidoreductase
+578420..579820	+	1401	ACO21193.1	pepV	SPP_0637	-	-	dipeptidase PepV
+579874..580452	+	579	ACO22127.1	-	SPP_0638	-	-	uracil DNA glycosylase family protein
+580612..580764	+	153	ACO20488.1	-	SPP_0639	-	-	hypothetical protein
+580780..580899	+	120	ACO21783.1	-	SPP_0640	-	-	hypothetical protein
+581070..582395	+	1326	ACO20404.1	brnQ	SPP_0641	-	-	branched-chain amino acid transport system II carrier protein
+582493..583530	+	1038	ACO20890.1	-	SPP_0642	-	-	peptidase, M42
+583532..583972	+	441	ACO21216.1	-	SPP_0643	-	-	HIT family protein
+583980..584378	+	399	ACO20517.1	-	SPP_0644	-	-	mobile genetic element
+584395..584784	+	390	ACO20861.1	-	SPP_0645	-	-	transposase (IS4 family)
+584865..585581	+	717	ACO21462.1	-	SPP_0646	-	-	D-alanyl-D-alanine carboxypeptidase
+585621..585758	-	138	ACO22158.1	-	SPP_0647	-	-	hypothetical protein
+585890..586315	+	426	ACO21152.1	rplK	SPP_0648	-	-	ribosomal protein L11
+586523..587212	+	690	ACO21735.1	rplA	SPP_0649	-	-	ribosomal protein L1
+587858..588049	-	192	ACO20333.1	-	SPP_0650	-	-	chlorohydrolase
+589469..590461	+	993	ACO21863.1	-	SPP_0651	-	-	ABC transporter ATP-binding protein - role in polysaccharide efflux
+590463..591281	+	819	ACO21622.1	-	SPP_0652	-	-	membrane protein
+591283..592068	+	786	ACO20949.1	-	SPP_0653	-	-	ABC transporter permease protein
+592885..593067	-	183	ACO20912.1	-	SPP_0656	-	-	chlorohydrolase
+593300..599731	+	6432	ACO20330.1	-	SPP_0657	-	-	serine protease
+602119..602595	+	477	ACO21749.1	-	SPP_0661	-	-	phosphotransferase system sugar-specific EII component
+602633..602938	+	306	ACO21166.1	-	SPP_0662	-	-	PTS system, galactose-specific IIB component
+602986..604461	+	1476	ACO20574.1	-	SPP_0663	-	-	phosphotransferase system sugar-specific EII component
+604487..604633	+	147	ACO21115.1	-	SPP_0664	-	-	chlorohydrolase
+604721..611422	+	6702	ACO20620.1	-	SPP_0665	-	-	beta-galactosidase
+611670..612293	-	624	ACO21991.1	-	SPP_0666	-	-	hypothetical protein
+612281..612526	-	246	ACO21551.1	-	SPP_0667	-	-	hypothetical protein
+612737..613096	-	360	ACO21719.1	-	SPP_0668	-	-	integral membrane protein
+614677..614931	+	255	ACO21093.1	-	SPP_0674	-	-	conserved hypothetical protein
+614943..616997	+	2055	ACO21528.1	-	SPP_0675	-	-	sodium/hydrogen exchanger family protein
+617030..617143	-	114	ACO21221.1	-	SPP_0676	-	-	hypothetical protein
+617176..618036	+	861	ACO20628.1	-	SPP_0677	-	-	ribonuclease BN
+618255..618965	+	711	ACO20867.1	-	SPP_0678	-	-	cytoChrome c-type biogenesis protein
+618985..619551	+	567	ACO21432.1	-	SPP_0679	-	-	thioredoxin family protein
+619562..620674	+	1113	ACO20157.1	-	SPP_0680	-	-	peptide methionine sulfoxide reductase MsrA/msrB
+620987..621724	+	738	ACO20872.1	-	SPP_0681	-	-	response regulator
+621721..623412	+	1692	ACO21698.1	-	SPP_0682	-	-	histidine kinase
+623528..624091	+	564	ACO21812.1	-	SPP_0683	-	-	conserved hypothetical protein
+624113..629755	+	5643	ACO20994.1	zmpB1	SPP_0684	-	-	zinc metalloprotease ZmpB
+629816..631537	+	1722	ACO21717.1	-	SPP_0685	-	-	chorismate binding enzyme
+631538..632155	+	618	ACO21431.1	-	SPP_0686	-	-	conserved hypothetical protein
+633329..634288	+	960	ACO20546.1	-	SPP_0689	-	-	glucokinase (Glucose kinase)
+634385..635224	+	840	ACO22050.1	thyA	SPP_0690	-	-	thymidylate synthase
+635272..635442	-	171	ACO21337.1	-	SPP_0691	-	-	conserved hypothetical protein
+635563..636447	+	885	ACO20902.1	miaA	SPP_0692	-	-	tRNA delta(2)-isopentenylpyrophosphate transferase
+636440..637678	+	1239	ACO20161.1	hflX	SPP_0693	-	-	GTP-binding proten HflX
+637671..638294	+	624	ACO21323.1	-	SPP_0694	-	-	cystathionine beta-lyase
+638309..639238	+	930	ACO21712.1	rnz	SPP_0695	-	-	ribonuclease Z
+639259..640014	+	756	ACO20995.1	-	SPP_0696	-	-	oxidoreductase
+640068..641036	-	969	ACO20504.1	-	SPP_0697	-	-	regulatory function on capsule expression
+641040..641309	+	270	ACO20586.1	-	SPP_0698	-	-	conserved hypothetical protein
+641309..641689	+	381	ACO22108.1	-	SPP_0699	-	-	rhodanese family protein
+641778..642005	+	228	ACO22041.1	-	SPP_0700	-	-	conserved hypothetical protein
+642045..642770	-	726	ACO21594.1	-	SPP_0701	-	-	ribosomal small subunit pseudouridine synthase A, putative
+642911..644773	+	1863	ACO20304.1	typA	SPP_0702	-	-	GTP-binding protein TypA/BipA
+644793..645047	+	255	ACO21939.1	-	SPP_0703	-	-	conserved hypothetical protein
+645413..645712	+	300	ACO20708.1	-	SPP_0704	-	-	bacteriocin, lactococcin 972 family
+645950..647803	+	1854	ACO20646.1	-	SPP_0705	-	-	bacteriocin-associated integral membrane protein
+647805..648446	+	642	ACO22058.1	-	SPP_0706	-	-	ABC transporter ATP-binding protein - sodium transport
+648550..649902	+	1353	ACO21455.1	murD	SPP_0707	-	-	UDP-N-acetylmuramoylalanine--D-glutamate ligase
+649904..650962	+	1059	ACO22012.1	-	SPP_0708	-	-	UDP-N-acetylglucosamine--N-acetylmuramyl- (pentapeptide)pyrophosphoryl-undecaprenol N-acetylglucosamine transferase
+650972..652171	+	1200	ACO20668.1	-	SPP_0709	-	-	cell division protein DivIB
+652404..653105	+	702	ACO21097.1	pyrF	SPP_0710	-	-	orotidine 5'-phosphate decarboxylase
+653139..653771	+	633	ACO21262.1	pyrE	SPP_0711	-	-	orotate phosphoribosyltransferase
+654232..654354	+	123	ACO21952.1	-	SPP_0712	-	-	hypothetical protein
+654450..655214	+	765	ACO20368.1	-	SPP_0713	-	-	membrane protein, putative
+655214..655966	+	753	ACO20502.1	-	SPP_0714	-	-	lipoprotein, putative
+655970..656674	+	705	ACO22047.1	-	SPP_0715	-	-	membrane protein, putative
+656671..657318	+	648	ACO21693.1	-	SPP_0716	-	-	ABC transporter, ATP-binding protein
+657405..658271	-	867	ACO22140.1	-	SPP_0717	-	-	ABC-type amino acid transport/signal transduction system, periplasmic component/domain protein
+659689..660309	-	621	ACO20272.1	-	SPP_0722	-	-	ABC transporter membrane-spanning permease - glutamine transport
+660584..660730	+	147	ACO21656.1	-	SPP_0723	-	-	conserved domain protein
+660858..662348	+	1491	ACO20951.1	lysS	SPP_0724	-	-	lysyl-tRNA synthetase
+662973..664109	+	1137	ACO20472.1	lctO	SPP_0725	-	-	L-lactate oxidase
+665389..665520	-	132	ACO21362.1	-	SPP_0727	-	-	hypothetical protein
+665616..666398	+	783	ACO20231.1	thiM	SPP_0728	-	-	hydroxyethylthiazole kinase
+666400..667029	+	630	ACO20903.1	thiE1	SPP_0729	-	-	thiamine-phosphate pyrophosphorylase
+667588..668148	+	561	ACO22218.1	-	SPP_0730	-	-	ABC-type cobalt transport system, permease component
+668149..669534	+	1386	ACO21791.1	-	SPP_0731	-	-	ABC transporter ATP-binding protein - cobalt or other cation transport
+669536..670186	+	651	ACO21930.1	-	SPP_0732	-	-	conserved hypothetical protein
+670197..670889	+	693	ACO21344.1	-	SPP_0733	-	-	tena/thi-4 family
+670894..671418	+	525	ACO21044.1	thiW	SPP_0734	-	-	ThiW protein
+671418..672221	+	804	ACO20450.1	-	SPP_0735	-	-	hydroxyethylthiazole kinase
+672214..672846	+	633	ACO20599.1	thiE2	SPP_0736	-	-	thiamine-phosphate pyrophosphorylase
+673055..673846	-	792	ACO22056.1	thiD	SPP_0737	-	-	phosphomethylpyrimidine kinase
+674212..674607	+	396	ACO20308.1	-	SPP_0738	-	-	copper transport repressor, CopY/TcrY family
+674618..674989	+	372	ACO21801.1	-	SPP_0739	-	-	conserved hypothetical protein
+674999..677242	+	2244	ACO22072.1	-	SPP_0740	-	-	copper-translocating P-type ATPase
+677449..679224	+	1776	ACO21470.1	spxB	SPP_0741	-	-	pyruvate oxidase
+679335..679682	+	348	ACO20336.1	-	SPP_0742	-	-	glyoxalase family protein
+679799..679960	-	162	ACO22121.1	-	SPP_0743	-	-	transposase
+679954..680388	-	435	ACO20679.1	-	SPP_0744	-	-	transposase
+680339..680845	-	507	ACO20264.1	-	SPP_0745	-	-	transposase
+680910..681191	+	282	ACO21897.1	-	SPP_0746	-	-	6-phospho-beta-glucosidase AscB, truncation
+681323..682267	+	945	ACO20449.1	manA	SPP_0748	-	-	mannose-6-phosphate isomerase, class I
+683867..684607	+	741	ACO20757.1	-	SPP_0750	-	-	transcriptional regulator, MerR family
+684636..685058	-	423	ACO20699.1	-	SPP_0751	-	-	MutT/nudix family protein
+685111..686286	-	1176	ACO21759.1	-	SPP_0752	-	-	conserved hypothetical protein
+686345..687190	-	846	ACO21284.1	-	SPP_0753	-	-	conserved hypothetical protein
+687315..687872	+	558	ACO21627.1	-	SPP_0754	-	-	transcriptional regulator, TetR family
+687891..688358	+	468	ACO21179.1	-	SPP_0755	-	-	ComE operon protein 2
+688424..689074	+	651	ACO21056.1	upp	SPP_0756	-	-	uracil phosphoribosyltransferase
+689248..689838	+	591	ACO20312.1	clpP	SPP_0757	-	-	Clp protease
+689917..690165	+	249	ACO21970.1	-	SPP_0758	-	-	conserved hypothetical protein
+690266..691426	+	1161	ACO21392.1	-	SPP_0759	-	-	ABC transporter substrate-binding protein - branched chain amino acid transport
+691513..691626	-	114	ACO21444.1	-	SPP_0760	-	-	hypothetical protein
+691694..692563	+	870	ACO20719.1	-	SPP_0761	-	-	high-affinity branched-chain amino acid transport system permeaseprotein LivH (LIV-I protein H)
+692567..693523	+	957	ACO20565.1	-	SPP_0762	-	-	ABC transporter membrane-spanning permease - branched chain amino acid transport
+693523..694287	+	765	ACO21831.1	-	SPP_0763	-	-	high-affinity branched-chain amino acid transport ATP-binding proteinlivG (LIV-I protein G)
+694287..694997	+	711	ACO21156.1	-	SPP_0764	-	-	high-affinity branched-chain amino acid transport ATP-binding proteinlivF (LIV-I protein F)
+695305..695961	+	657	ACO20573.1	-	SPP_0765	-	-	AcuB family protein
+696175..697164	+	990	ACO22089.1	prfB	SPP_0766	-	-	peptide chain release factor 2
+697182..697874	+	693	ACO21489.1	ftsE	SPP_0767	-	-	cell division ATP-binding protein FtsE
+697867..698793	+	927	ACO20329.1	-	SPP_0768	-	-	cell division ABC transporter, permease protein FtsX
+699079..701259	+	2181	ACO20893.1	-	SPP_0769	-	-	pts system, iibc component
+701311..702126	+	816	ACO21198.1	-	SPP_0770	-	-	metal-dependent hydrolase
+702266..703609	+	1344	ACO21800.1	-	SPP_0771	-	-	ATP-dependent RNA helicase
+703986..705176	+	1191	ACO21467.1	metK	SPP_0772	-	-	methionine adenosyltransferase
+705729..706664	+	936	ACO22015.1	-	SPP_0773	-	-	dihydroorotate dehydrogenase (dihydroorotate oxidase)(dhodehase) (dhodase) (dhod)
+706698..707735	+	1038	ACO20323.1	holA	SPP_0774	-	-	DNA polymerase III, delta subunit
+707908..708513	+	606	ACO20810.1	-	SPP_0775	-	-	superoxide dismutase [Mn] (General stress protein 24)(GSP24)
+708669..709199	+	531	ACO21730.1	-	SPP_0776	-	-	transcriptional regulator
+709220..710305	+	1086	ACO20318.1	-	SPP_0777	-	-	radical SAM enzyme, Cfr family
+710305..710787	+	483	ACO21579.1	-	SPP_0778	-	-	VanZ family protein
+710789..712330	+	1542	ACO20367.1	-	SPP_0779	-	-	ABC transporter, ATP-binding protein
+712386..713189	-	804	ACO20655.1	-	SPP_0780	-	-	peptidyl-prolyl cis-trans isomerase, cyclophilin-type
+713272..713493	-	222	ACO21123.1	-	SPP_0781	-	-	conserved hypothetical protein
+713972..714181	-	210	ACO21283.1	-	SPP_0782	-	-	hypothetical protein
+714351..714623	+	273	ACO21740.1	rpsP	SPP_0783	-	-	ribosomal protein S16
+714643..714882	+	240	ACO21314.1	-	SPP_0784	-	-	conserved domain protein
+715459..716247	+	789	ACO21773.1	-	SPP_0785	-	-	hydrolase, alpha/beta fold family, putative
+716278..716796	+	519	ACO20382.1	rimM	SPP_0786	-	-	16S rRNA processing protein RimM
+716786..717505	+	720	ACO20838.1	trmD	SPP_0787	-	-	tRNA (guanine-N1)-methyltransferase
+717517..717855	+	339	ACO20324.1	-	SPP_0788	-	-	oxygen-sensitive ribonucleoside-triphosphate reductase
+717886..718206	-	321	ACO21823.1	-	SPP_0789	-	-	conserved hypothetical protein
+718304..718519	+	216	ACO21188.1	-	SPP_0791	-	-	conserved domain protein
+718516..718662	-	147	ACO21237.1	-	SPP_0790	-	-	chlorohydrolase
+718725..719261	-	537	ACO20570.1	-	SPP_0792	-	-	biotin synthase
+719457..720803	-	1347	ACO22090.1	gor	SPP_0793	-	-	glutathione-disulfide reductase
+721068..722267	+	1200	ACO20896.1	-	SPP_0794	-	-	membrane-fusion protein
+722251..722952	+	702	ACO20341.1	-	SPP_0795	-	-	macrolide export ATP-binding/permease protein MacB
+722954..724213	+	1260	ACO21847.1	-	SPP_0796	-	-	ABC-type antimicrobial peptide transport system, permease component
+724337..726334	+	1998	ACO21638.1	metG	SPP_0797	-	-	methionyl-tRNA synthetase
+726755..727075	+	321	ACO21335.1	-	SPP_0798	-	-	transcriptional regulator, PadR family
+727079..727894	+	816	ACO20998.1	-	SPP_0799	-	-	membrane protein, putative
+727969..728895	+	927	ACO20630.1	-	SPP_0800	-	-	oxidoreductase, aldo/keto reductase family protein
+728995..729231	+	237	ACO22125.1	-	SPP_0801	-	-	conserved hypothetical protein
+729224..729922	+	699	ACO21849.1	-	SPP_0802	-	-	3-ketoacyl-(acyl-carrier-protein) reductase
+729933..730433	+	501	ACO21251.1	-	SPP_0803	-	-	MutT/nudix family protein
+730411..731280	+	870	ACO20884.1	-	SPP_0804	-	-	PEP-utilizing enzyme family protein
+731255..731695	+	441	ACO20278.1	-	SPP_0805	-	-	conserved hypothetical protein
+731818..734364	+	2547	ACO22128.1	-	SPP_0806	-	-	aminopeptidase N
+734473..735147	+	675	ACO21701.1	-	SPP_0807	-	-	transcriptional regulatory protein CiaR
+735137..736471	+	1335	ACO21103.1	-	SPP_0808	-	-	sensor protein CiaH
+736505..736792	-	288	ACO21499.1	-	SPP_0809	-	-	conserved hypothetical protein
+736932..737861	+	930	ACO21213.1	-	SPP_0810	-	-	protease
+738061..740511	+	2451	ACO20566.1	-	SPP_0811	-	-	DnaQ family exonuclease/DinG family helicase, putative
+740521..741771	+	1251	ACO20338.1	-	SPP_0812	-	-	RodA
+741782..742336	+	555	ACO20834.1	-	SPP_0813	-	-	4-methyl-5(b-hydroxyethyl)-thiazole monophosphate biosynthesis protein
+742412..742984	+	573	ACO21589.1	-	SPP_0814	-	-	phosphoglycolate phosphatase
+742999..744945	+	1947	ACO22025.1	gyrB	SPP_0815	-	-	DNA gyrase, B subunit
+745027..746754	+	1728	ACO21574.1	ezrA	SPP_0816	-	-	septation ring formation regulator EzrA
+749207..749473	+	267	ACO21631.1	-	SPP_0819	-	-	transposase
+750027..750377	-	351	ACO20716.1	-	SPP_0821	-	-	transposase
+751057..751329	+	273	ACO22195.1	-	SPP_0823	-	-	transposase
+751391..751879	+	489	ACO20932.1	-	SPP_0824	-	-	integrase core domain, putative
+751991..752290	-	300	ACO20975.1	-	SPP_0825	-	-	conserved hypothetical protein
+752988..753317	+	330	ACO21758.1	-	SPP_0827	-	-	transposase
+754044..756302	-	2259	ACO22197.1	-	SPP_0828	-	-	negative regulator of genetic competence ClpC/mecB
+756531..756761	-	231	ACO20551.1	-	SPP_0829	-	-	conserved hypothetical protein
+756951..757634	+	684	ACO21013.1	-	SPP_0830	-	-	amino acid ABC transporter, permease protein
+757634..758368	+	735	ACO21425.1	-	SPP_0831	-	-	glutamine transport ATP-binding protein GlnQ
+758501..759379	+	879	ACO21702.1	-	SPP_0832	-	-	bifunctional protein FolD
+759521..760393	+	873	ACO21238.1	-	SPP_0833	-	-	putative YjeF homolog, C-terminus
+760675..761358	+	684	ACO20750.1	rpiA	SPP_0834	-	-	ribose 5-phosphate isomerase A
+761372..762583	+	1212	ACO20221.1	deoB	SPP_0835	-	-	phosphopentomutase
+762585..762995	+	411	ACO22096.1	-	SPP_0836	-	-	conserved hypothetical protein
+763143..763952	+	810	ACO21498.1	-	SPP_0837	-	-	purine nucleoside phosphorylase I, inosine and guanosine-specific
+764428..765159	+	732	ACO21417.1	-	SPP_0838	-	-	conserved hypothetical protein
+765205..765408	+	204	ACO20941.1	-	SPP_0839	-	-	hypothetical protein
+765433..765945	+	513	ACO20194.1	-	SPP_0840	-	-	conserved hypothetical protein
+766051..766164	+	114	ACO20539.1	-	SPP_0841	-	-	hypothetical protein
+766603..767313	+	711	ACO22057.1	deoD	SPP_0842	-	-	purine nucleoside phosphorylase
+767336..767860	-	525	ACO21582.1	-	SPP_0843	-	-	topology modulation protein
+767913..768149	-	237	ACO20919.1	rpsT	SPP_0844	-	-	ribosomal protein S20
+768217..769137	-	921	ACO20339.1	coaA	SPP_0845	-	-	pantothenate kinase
+769335..769739	+	405	ACO20811.1	-	SPP_0846	-	-	hypothetical protein
+769955..770536	+	582	ACO20197.1	-	SPP_0847	-	-	methyltransferase small domain superfamily
+770533..771810	+	1278	ACO20634.1	-	SPP_0848	-	-	pyrimidine-nucleoside phosphorylase (pynp)
+771828..772490	+	663	ACO21981.1	deoC	SPP_0849	-	-	deoxyribose-phosphate aldolase
+772477..772866	+	390	ACO21654.1	cdd1	SPP_0850	-	-	cytidine deaminase
+772957..774009	+	1053	ACO20763.1	-	SPP_0851	-	-	lipoprotein
+774153..775688	+	1536	ACO20828.1	-	SPP_0852	-	-	ribose import ATP-binding protein RbsA
+775681..776739	+	1059	ACO20370.1	-	SPP_0853	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+776742..777698	+	957	ACO21752.1	-	SPP_0854	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+777783..777995	+	213	ACO21313.1	-	SPP_0855	-	-	transposase
+778131..778280	+	150	ACO22217.1	-	SPP_0856	-	-	hypothetical protein
+778298..778570	+	273	ACO21587.1	-	SPP_0857	-	-	conserved hypothetical protein
+778632..779120	+	489	ACO21803.1	-	SPP_0858	-	-	integrase core domain, putative
+779165..779806	-	642	ACO20669.1	-	SPP_0859	-	-	membrane protein, putative
+779942..781885	+	1944	ACO20873.1	parE	SPP_0860	-	-	DNA topoisomerase IV, B subunit
+782006..782131	+	126	ACO21196.1	-	SPP_0861	-	-	hypothetical protein
+782296..784776	+	2481	ACO20988.1	parC	SPP_0862	-	-	DNA topoisomerase IV, A subunit
+784908..785930	+	1023	ACO21349.1	ilvE	SPP_0863	-	-	branched-chain amino acid aminotransferase
+785986..786690	+	705	ACO22145.1	-	SPP_0864	-	-	conserved hypothetical protein
+786755..787444	+	690	ACO20526.1	-	SPP_0865	-	-	permease
+787441..788364	+	924	ACO20649.1	-	SPP_0866	-	-	permease
+788379..789023	+	645	ACO21135.1	pcp1	SPP_0867	-	-	pyroglutamyl-peptidase I
+789191..789421	+	231	ACO21904.1	-	SPP_0868	-	-	conserved hypothetical protein
+789794..790996	+	1203	ACO21436.1	-	SPP_0871	-	-	putative 30S ribosomal protein S1 homolog
+791082..791579	+	498	ACO20980.1	-	SPP_0872	-	-	GAF domain-containing protein
+791579..793234	+	1656	ACO20508.1	-	SPP_0873	-	-	DNA polymerase III subunit gamma/tau
+793286..793456	+	171	ACO20692.1	-	SPP_0874	-	-	conserved hypothetical protein
+793606..794376	+	771	ACO21302.1	sufC	SPP_0875	-	-	FeS assembly ATPase SufC
+794404..795666	+	1263	ACO20548.1	sufD	SPP_0876	-	-	FeS assembly protein SufD
+795677..796903	+	1227	ACO21161.1	-	SPP_0877	-	-	cysteine desulfurase (Selenocysteine lyase) (Selenocysteine reductase) (Selenocysteine beta-lyase) (SCL)
+796890..797330	+	441	ACO20327.1	-	SPP_0878	-	-	SUF system FeS assembly protein, NifU family
+797384..798796	+	1413	ACO21822.1	sufB	SPP_0879	-	-	FeS assembly protein SufB
+798995..800236	-	1242	ACO21867.1	-	SPP_0880	-	-	D-alanyl-D-alanine carboxypeptidase
+800417..801448	+	1032	ACO21406.1	-	SPP_0881	-	-	membrane protein
+802873..803613	+	741	ACO21558.1	-	SPP_0883	-	-	transcriptional repressor of the fructose operon
+803610..804521	+	912	ACO21102.1	pfkB	SPP_0884	-	-	1-phosphofructokinase
+804518..806470	+	1953	ACO22170.1	-	SPP_0885	-	-	PTS system, Fru family, IIABC
+806556..808859	+	2304	ACO21722.1	-	SPP_0886	-	-	DNA translocase ftsk
+809012..809440	-	429	ACO20695.1	-	SPP_0887	-	-	conserved hypothetical protein
+809578..810720	+	1143	ACO20309.1	-	SPP_0888	-	-	cysteine desulphurase
+810729..811943	+	1215	ACO20940.1	thiI	SPP_0889	-	-	thiamine biosynthesis/tRNA modification protein ThiI
+812078..812902	+	825	ACO20476.1	-	SPP_0890	-	-	putative esterase superfamily
+812915..814081	+	1167	ACO21070.1	-	SPP_0891	-	-	carbamoylphosphate synthase large subunit
+814341..814466	+	126	ACO20611.1	-	SPP_0892	-	-	hypothetical protein
+814589..816082	+	1494	ACO22026.1	-	SPP_0893	-	-	type I restriction modification enzyme methylase subunit
+816095..817216	+	1122	ACO21538.1	-	SPP_0894	-	-	type I restriction-modification system, S subunit, putative
+817276..817512	+	237	ACO20758.1	-	SPP_0895	-	-	conserved hypothetical protein
+817509..817922	+	414	ACO20306.1	-	SPP_0896	-	-	prophage maintenance system killer protein
+818040..819005	+	966	ACO21713.1	-	SPP_0897	-	-	integrase/recombinase, phage integrase family
+818971..819609	+	639	ACO21255.1	-	SPP_0898	-	-	type I restriction-modification enzyme S subunit
+819639..822989	+	3351	ACO20521.1	-	SPP_0899	-	-	type I restriction-modification system R subunit
+823260..823460	+	201	ACO22153.1	-	SPP_0900	-	-	chlorohydrolase
+823575..824045	-	471	ACO21533.1	-	SPP_0901	-	-	arginine repressor
+824062..826335	-	2274	ACO21976.1	-	SPP_0902	-	-	Xaa-pro dipeptidyl-peptidase (x-pro dipeptidyl-peptidase) (x-prolyl-dipeptidyl aminopeptidase) (x-pdap)
+826681..829782	+	3102	ACO20571.1	-	SPP_0903	-	-	DNA polymerase III subunit alpha
+829865..830872	+	1008	ACO21062.1	pfkA	SPP_0904	-	-	6-phosphofructokinase
+830931..832436	+	1506	ACO21080.1	pyk	SPP_0905	-	-	pyruvate kinase
+834187..835059	+	873	ACO20182.1	-	SPP_0907	-	-	lipoprotein, putative
+835166..835366	-	201	ACO20751.1	-	SPP_0908	-	-	mobile genetic element
+835367..835549	-	183	ACO20929.1	-	SPP_0909	-	-	mobile genetic element
+835692..835973	+	282	ACO21207.1	-	SPP_0910	-	-	hypothetical protein
+836008..836724	+	717	ACO20483.1	-	SPP_0911	-	-	conserved hypothetical protein
+836854..837669	-	816	ACO20788.1	-	SPP_0912	-	-	ABC transporter, substrate-binding protein
+837666..838571	-	906	ACO21410.1	-	SPP_0913	-	-	membrane protein, puative
+838572..838703	-	132	ACO21260.1	-	SPP_0914	-	-	hypothetical protein
+839028..841157	+	2130	ACO21839.1	-	SPP_0915	-	-	S1 RNA binding domain protein
+841099..841593	+	495	ACO22053.1	-	SPP_0916	-	-	Metallopeptidase (SprT family), putative
+841652..841924	+	273	ACO21081.1	-	SPP_0917	-	-	PspC domain family
+842897..843655	+	759	ACO21716.1	-	SPP_0918	-	-	bacitracin export ATP-binding protein BceA
+843657..845645	+	1989	ACO21104.1	-	SPP_0919	-	-	ABC-type antimicrobial peptide transport system, permease component
+845687..846277	-	591	ACO20662.1	-	SPP_0920	-	-	integral membrane protein
+846303..847352	-	1050	ACO21422.1	-	SPP_0921	-	-	transposase
+847585..847698	-	114	ACO20593.1	-	SPP_0922	-	-	conserved hypothetical protein
+848059..849534	+	1476	ACO21397.1	-	SPP_0924	-	-	arginine decarboxylase
+849500..849736	-	237	ACO20803.1	-	SPP_0923	-	-	conserved domain protein
+849688..850215	-	528	ACO21504.1	-	SPP_0925	-	-	transposase
+850471..851331	+	861	ACO22068.1	speE	SPP_0926	-	-	spermidine synthase
+851328..852587	+	1260	ACO20445.1	lys	SPP_0927	-	-	saccharopine dehydrogenase
+852587..853714	+	1128	ACO21088.1	nspC	SPP_0928	-	-	carboxynorspermidine decarboxylase
+853711..854796	+	1086	ACO20603.1	aguA	SPP_0929	-	-	agmatine deiminase
+854806..855681	+	876	ACO21083.1	aguB	SPP_0930	-	-	N-carbamoylputrescine amidase
+855862..856671	-	810	ACO21296.1	-	SPP_0931	-	-	Cof family protein
+857218..857889	+	672	ACO20752.1	-	SPP_0932	-	-	caax amino protease family
+857941..858138	-	198	ACO21699.1	-	SPP_0933	-	-	conserved hypothetical protein
+858131..859039	+	909	ACO22029.1	-	SPP_0934	-	-	regulatory function on capsule expression in group B streptococci
+859036..859497	+	462	ACO20189.1	lspA	SPP_0935	-	-	signal peptidase II
+859487..860374	+	888	ACO20743.1	-	SPP_0936	-	-	ribosomal large subunit pseudouridine synthase D (rRNA-uridine isomerase D) (rRNA pseudouridylate synthase D)
+860377..862260	+	1884	ACO21618.1	-	SPP_0937	-	-	choline binding protein E
+862361..863470	+	1110	ACO22187.1	proB	SPP_0938	-	-	glutamate 5-kinase
+863480..864742	+	1263	ACO22200.1	proA	SPP_0939	-	-	glutamate-5-semialdehyde dehydrogenase
+864746..865543	+	798	ACO20765.1	proC	SPP_0940	-	-	pyrroline-5-carboxylate reductase
+865763..866401	+	639	ACO21241.1	tmk	SPP_0941	-	-	thymidylate kinase
+866398..867288	+	891	ACO22116.1	-	SPP_0942	-	-	DNA polymerase III subunit delta
+867328..867645	+	318	ACO21669.1	-	SPP_0943	-	-	initiation-control protein YabA
+867648..868517	+	870	ACO20959.1	-	SPP_0944	-	-	conserved hypothetical protein
+868744..869262	+	519	ACO21005.1	-	SPP_0945	-	-	conserved hypothetical protein
+869371..870018	+	648	ACO22194.1	-	SPP_0947	-	-	phage protein
+870007..870396	-	390	ACO20422.1	-	SPP_0946	-	-	transposase (IS4 family)
+871454..872788	+	1335	ACO20241.1	trmFO	SPP_0950	-	-	tRNA:M(5)U-54 methyltransferase
+872872..873609	+	738	ACO22098.1	pyrH	SPP_0951	-	-	UMP kinase
+873618..874175	+	558	ACO21537.1	frr	SPP_0952	-	-	ribosome recycling factor
+874196..875089	+	894	ACO21209.1	-	SPP_0953	-	-	s1 RNA binding domain protein
+875098..875313	+	216	ACO21929.1	-	SPP_0954	-	-	conserved domain protein
+875399..876367	+	969	ACO20447.1	-	SPP_0955	-	-	PhoH family protein
+876547..877047	+	501	ACO21058.1	-	SPP_0956	-	-	acetyltransferase, gnat family
+877050..877277	+	228	ACO21615.1	-	SPP_0957	-	-	hypothetical protein
+878965..879534	+	570	ACO21415.1	-	SPP_0960	-	-	acetyltransferase, gnat family
+879602..880252	+	651	ACO20461.1	-	SPP_0961	-	-	competence protein CelA
+880236..882476	+	2241	ACO20492.1	-	SPP_0962	-	-	DNA internalization-related competence protein ComEC/Rec2
+882876..883463	+	588	ACO21336.1	-	SPP_0963	-	-	ABC transporter, ATP-binding protein
+883467..884651	+	1185	ACO20874.1	-	SPP_0964	-	-	membrane protein, putative
+884937..885494	+	558	ACO20730.1	infC	SPP_0965	-	-	translation initiation factor IF-3
+885527..885727	+	201	ACO20245.1	rpmI	SPP_0966	-	-	ribosomal protein L35
+885779..886138	+	360	ACO22131.1	rplT	SPP_0967	-	-	ribosomal protein L20
+886196..886576	+	381	ACO21686.1	-	SPP_0968	-	-	lactoylglutathione lyase
+886826..887626	+	801	ACO21888.1	-	SPP_0969	-	-	dihydroorotate dehydrogenase electron transfer subunit
+887637..888575	+	939	ACO21433.1	-	SPP_0970	-	-	dihydroorotate dehydrogenase B, catalytic subunit (dihydroorotate oxidase b) (dhodehase b) (dhodase b) (dhod b)
+888674..890782	+	2109	ACO20721.1	-	SPP_0971	-	-	endo-beta-N-acetylglucosaminidase
+890843..892498	-	1656	ACO20345.1	-	SPP_0972	-	-	fibronectin/fibrinogen binding protein
+892603..893100	+	498	ACO20825.1	-	SPP_0973	-	-	conserved hypothetical protein
+893081..893476	+	396	ACO21292.1	-	SPP_0974	-	-	diacylglycerol kinase (dagk) (diglyceride kinase)(dgk)
+893493..894392	+	900	ACO21089.1	era	SPP_0975	-	-	GTP-binding protein Era
+894441..895265	+	825	ACO21287.1	mutM	SPP_0976	-	-	formamidopyrimidine-DNA glycosylase
+895265..895870	+	606	ACO21861.1	coaE	SPP_0977	-	-	dephospho-CoA kinase
+895857..897056	+	1200	ACO20365.1	-	SPP_0978	-	-	multidrug resistance protein MdtG
+897056..897205	+	150	ACO20542.1	rpmG1	SPP_0979	-	-	ribosomal protein L33
+897245..897478	+	234	ACO21513.1	secG	SPP_0980	-	-	preprotein translocase, SecG subunit
+897580..899934	+	2355	ACO22106.1	rnr	SPP_0981	-	-	ribonuclease R
+899897..900364	+	468	ACO20536.1	smpB	SPP_0982	-	-	SsrA-binding protein
+900380..901240	+	861	ACO20263.1	tehB	SPP_0983	-	-	tellurite resistance protein TehB
+901313..902266	+	954	ACO21539.1	-	SPP_0984	-	-	competence protein
+902285..904087	+	1803	ACO21192.1	pepF1	SPP_0985	-	-	oligoendopeptidase F
+904125..904802	+	678	ACO21598.1	-	SPP_0986	-	-	O-methyltransferase family protein
+904869..905810	+	942	ACO21134.1	-	SPP_0987	-	-	foldase protein PrsA
+905927..906268	-	342	ACO20159.1	-	SPP_0988	-	-	transposase, IS3 family
+906268..906459	-	192	ACO21804.1	-	SPP_0989	-	-	transposase
+907029..907649	-	621	ACO21358.1	-	SPP_0990	-	-	phosphoglycerate mutase
+907649..908131	-	483	ACO20871.1	-	SPP_0991	-	-	regulatory protein
+908131..908973	-	843	ACO21999.1	-	SPP_0992	-	-	integral membrane protein
+909068..909868	-	801	ACO21982.1	-	SPP_0993	-	-	lyzozyme M1
+909964..911391	+	1428	ACO20237.1	glmU	SPP_0994	-	-	UDP-N-acetylglucosamine diphosphorylase/glucosamine-1-phosphate N-acetyltransferase
+911401..911946	+	546	ACO20774.1	-	SPP_0995	-	-	ADP-ribose pyrophosphatase
+911958..912272	+	315	ACO21661.1	-	SPP_0996	-	-	conserved hypothetical protein
+912289..912981	+	693	ACO20153.1	mtnN	SPP_0997	-	-	MTA/SAH nucleosidase
+913058..913549	+	492	ACO20523.1	-	SPP_0998	-	-	protein of unknown function
+913623..914213	+	591	ACO21031.1	-	SPP_0999	-	-	DNA polymerase III subunit epsilon
+914222..915985	+	1764	ACO21958.1	-	SPP_1000	-	-	glycerophosphoryl diester phosphodiesterase family protein
+916199..916528	+	330	ACO20458.1	-	SPP_1001	-	-	transposase
+916707..916847	+	141	ACO20772.1	-	SPP_1002	-	-	conserved domain protein
+917008..917208	+	201	ACO22180.1	-	SPP_1003	-	-	conserved hypothetical protein
+917250..917654	+	405	ACO21858.1	-	SPP_1004	-	-	conserved hypothetical protein
+917885..918592	+	708	ACO20203.1	-	SPP_1005	-	-	cytochrome c-type biogenesis protein CcdA
+918603..919160	+	558	ACO20968.1	-	SPP_1006	-	-	thioredoxin family protein
+919535..920926	+	1392	ACO21408.1	-	SPP_1007	-	-	amino acid permease family protein
+921069..921986	+	918	ACO22124.1	-	SPP_1008	-	-	zinc-binding lipoprotein AdcA
+921994..924525	+	2532	ACO20857.1	-	SPP_1009	-	-	pneumococcal histidine triad protein B
+924736..927855	+	3120	ACO20201.1	-	SPP_1010	-	-	pneumococcal histidine triad protein B
+928685..929254	+	570	ACO21723.1	-	SPP_1011	-	-	pneumococcal histidine triad protein E
+929549..930106	+	558	ACO21342.1	-	SPP_1012	-	-	conserved hypothetical protein
+930142..931365	-	1224	ACO21279.1	pepT	SPP_1013	-	-	peptidase T
+932535..932912	-	378	ACO20389.1	mscL	SPP_1016	-	-	large conductance mechanosensitive channel protein
+932994..933425	-	432	ACO21494.1	-	SPP_1017	-	-	MesH protein
+933548..934057	+	510	ACO20601.1	-	SPP_1018	-	-	citrulline cluster-linked protein
+934571..935647	+	1077	ACO21725.1	asd	SPP_1020	-	-	aspartate-semialdehyde dehydrogenase
+935703..936638	+	936	ACO21492.1	dapA	SPP_1021	-	-	dihydrodipicolinate synthase
+936685..938058	-	1374	ACO21027.1	trmE	SPP_1022	-	-	tRNA modification GTPase TrmE
+938195..938377	-	183	ACO20856.1	-	SPP_1023	-	-	conserved domain protein
+938500..939099	+	600	ACO20986.1	tdk	SPP_1024	-	-	thymidine kinase
+939089..939568	+	480	ACO21973.1	-	SPP_1025	-	-	acetyltransferase, gnat family
+939578..940657	+	1080	ACO20219.1	prfA	SPP_1026	-	-	peptide chain release factor 1
+940657..941496	+	840	ACO20230.1	hemK	SPP_1027	-	-	protein-(glutamine-N5) methyltransferase, release factor-specific
+941480..942082	+	603	ACO20731.1	-	SPP_1028	-	-	Sua5/YciO/YrdC/YwlC family protein
+942084..942515	+	432	ACO21691.1	-	SPP_1029	-	-	acetyltransferase, gnat family protein
+942577..943833	+	1257	ACO22167.1	glyA	SPP_1030	-	-	serine hydroxymethyltransferase
+943841..944815	+	975	ACO20522.1	-	SPP_1031	-	-	conserved hypothetical protein
+944815..945429	+	615	ACO21167.1	-	SPP_1032	-	-	pneumococcal vaccine antigen A
+945503..946477	+	975	ACO21685.1	-	SPP_1033	-	-	conserved hypothetical protein
+946551..948182	+	1632	ACO20945.1	rumA1	SPP_1034	-	-	23S rRNA (uracil-5-)-methyltransferase RumA
+948920..949138	+	219	ACO21995.1	-	SPP_1035	-	-	conserved hypothetical protein
+949531..950556	+	1026	ACO20358.1	-	SPP_1036	-	-	ABC transporter substrate-binding protein - iron transport
+950546..951553	+	1008	ACO20770.1	-	SPP_1037	-	-	iron-compound ABC transporter, permease protein
+951553..952560	+	1008	ACO21224.1	-	SPP_1038	-	-	ABC transporter membrane-spanning permease - iron transport
+952560..953354	+	795	ACO21395.1	-	SPP_1039	-	-	ferric enterobactin transport ATP-binding protein FepC
+954280..954411	+	132	ACO21855.1	-	SPP_1040	-	-	conserved hypothetical protein
+955095..955256	+	162	ACO22179.1	-	SPP_1041	-	-	conserved hypothetical protein
+957295..957861	+	567	ACO21835.1	-	SPP_1044	-	-	conserved hypothetical protein
+958184..958372	+	189	ACO21347.1	-	SPP_1045	-	-	conserved hypothetical protein
+958434..959192	+	759	ACO21178.1	-	SPP_1046	-	-	hypothetical protein
+959250..960104	+	855	ACO20181.1	-	SPP_1047	-	-	ADP-ribosylation/Crystallin J1
+960216..961100	+	885	ACO21983.1	-	SPP_1048	-	-	conserved hypothetical protein
+963275..963730	+	456	ACO21048.1	-	SPP_1051	-	-	hypothetical protein
+963870..963983	+	114	ACO21270.1	-	SPP_1052	-	-	conserved hypothetical protein
+964173..964649	+	477	ACO22123.1	-	SPP_1053	-	-	helix-turn-helix domain protein
+964649..965410	+	762	ACO20694.1	-	SPP_1054	-	-	signal recognition particle GTPase
+965438..966595	+	1158	ACO20223.1	-	SPP_1055	-	-	conserved hypothetical protein
+967414..967773	+	360	ACO21557.1	-	SPP_1056	-	-	conserved hypothetical protein
+971152..972021	+	870	ACO21252.1	-	SPP_1062	-	-	NAD binding domain of 6-phosphogluconate dehydrogenase family
+972008..972730	+	723	ACO20930.1	-	SPP_1063	-	-	hypothetical protein
+972727..973257	+	531	ACO20621.1	-	SPP_1064	-	-	conserved hypothetical protein
+973261..974355	+	1095	ACO21106.1	-	SPP_1065	-	-	hypothetical protein
+974358..975029	+	672	ACO21463.1	-	SPP_1066	-	-	hypothetical protein
+975031..976059	+	1029	ACO21389.1	galE1	SPP_1067	-	-	UDP-glucose 4-epimerase
+976083..977327	+	1245	ACO21956.1	-	SPP_1068	-	-	biotin carboxylase
+979220..979441	+	222	ACO21704.1	-	SPP_1071	-	-	conserved domain protein
+979889..980083	+	195	ACO22071.1	-	SPP_1072	-	-	mobile genetic element
+980347..981576	+	1230	ACO20436.1	-	SPP_1073	-	-	cell division protein FtsW
+981596..984292	+	2697	ACO22115.1	ppc	SPP_1074	-	-	phosphoenolpyruvate carboxylase
+984705..985709	+	1005	ACO21503.1	-	SPP_1075	-	-	ABC transporter substrate binding protein
+985778..986644	+	867	ACO20915.1	-	SPP_1076	-	-	ABC-type transporter
+986641..987399	+	759	ACO22082.1	-	SPP_1077	-	-	ABC transporter, ATP-binding protein
+987489..989249	+	1761	ACO20547.1	dnaG	SPP_1078	-	-	DNA primase
+989252..990361	+	1110	ACO21157.1	-	SPP_1079	-	-	RNA polymerase sigma factor RpoD (Sigma-A) (Sigma-43)
+990375..990704	+	330	ACO21826.1	-	SPP_1080	-	-	N-6 Adenine-specific DNA methylase YitW
+990819..991862	+	1044	ACO20334.1	-	SPP_1081	-	-	glycosyl transferase CpoA
+991878..993203	+	1326	ACO20895.1	-	SPP_1082	-	-	glycosyl transferase, group 1
+993234..993410	+	177	ACO21353.1	-	SPP_1083	-	-	conserved domain protein
+993469..993603	+	135	ACO20847.1	-	SPP_1084	-	-	conserved hypothetical protein
+993673..994977	+	1305	ACO21191.1	-	SPP_1085	-	-	Spo0B-associated GTP-binding protein
+994987..995145	+	159	ACO21776.1	-	SPP_1086	-	-	conserved hypothetical protein
+996195..997454	+	1260	ACO20535.1	murA1	SPP_1087	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+997470..998021	+	552	ACO21138.1	-	SPP_1088	-	-	acetyltransferase, gnat family protein
+998014..999291	+	1278	ACO21507.1	-	SPP_1089	-	-	cytosolic protein containing multiple CBS domains
+999307..1000167	+	861	ACO22060.1	map	SPP_1090	-	-	methionine aminopeptidase, type I
+1000547..1000966	+	420	ACO21756.1	-	SPP_1091	-	-	mobile genetic element
+1000963..1001352	+	390	ACO21677.1	-	SPP_1092	-	-	transposase (IS4 family)
+1001543..1003834	+	2292	ACO20817.1	pcrA	SPP_1093	-	-	ATP-dependent DNA helicase PcrA
+1003877..1004557	+	681	ACO20491.1	-	SPP_1095	-	-	DNA repair protein RadC
+1004554..1005243	-	690	ACO21928.1	-	SPP_1094	-	-	glutamine amidotransferase, class I
+1005261..1005902	-	642	ACO20950.1	-	SPP_1096	-	-	redox-sensing transcriptional repressor rex
+1005985..1006200	-	216	ACO21694.1	-	SPP_1097	-	-	conserved hypothetical protein
+1006208..1006555	-	348	ACO21827.1	-	SPP_1098	-	-	conserved hypothetical protein
+1006560..1007675	-	1116	ACO22021.1	-	SPP_1099	-	-	cysteine desulfurase
+1007685..1008644	-	960	ACO21424.1	-	SPP_1100	-	-	ribose-Phosphate pyrophosphokinase (rppk) (phosphoribosylpyrophosphate synthetase) (p-rib-pp synthetase) (prpp synthetase)
+1008757..1009326	-	570	ACO20983.1	-	SPP_1101	-	-	adenylate cyclase
+1009454..1010125	+	672	ACO20511.1	-	SPP_1102	-	-	GTP pyrophosphokinase
+1010109..1010927	+	819	ACO21856.1	-	SPP_1103	-	-	probable inorganic polyphosphate/ATP-NAD kinase (Poly(P)/ATP NAD kinase)
+1010924..1011820	+	897	ACO20228.1	-	SPP_1104	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1011864..1012838	+	975	ACO20691.1	pta	SPP_1105	-	-	phosphate acetyltransferase
+1014450..1014749	-	300	ACO20831.1	-	SPP_1108	-	-	conserved hypothetical protein
+1016036..1016350	+	315	ACO22006.1	rplU	SPP_1110	-	-	ribosomal protein L21
+1016366..1016710	+	345	ACO21001.1	-	SPP_1111	-	-	conserved hypothetical protein
+1016727..1017020	+	294	ACO21652.1	rpmA	SPP_1112	-	-	ribosomal protein L27
+1017366..1017536	-	171	ACO21312.1	-	SPP_1113	-	-	hypothetical protein
+1017508..1017636	-	129	ACO21934.1	-	SPP_1114	-	-	conserved hypothetical protein
+1017973..1018890	+	918	ACO20303.1	ribF	SPP_1115	-	-	riboflavin biosynthesis protein RibF
+1018983..1019831	-	849	ACO20712.1	-	SPP_1116	-	-	conserved hypothetical protein
+1019973..1020812	+	840	ACO21446.1	-	SPP_1117	-	-	conserved hypothetical protein
+1020919..1021194	+	276	ACO20623.1	-	SPP_1118	-	-	DNA-binding protein HU 1 (DNA-binding protein II) (HB)
+1021621..1023522	+	1902	ACO21092.1	-	SPP_1119	-	-	ATPase component of ABC transporter with duplicated ATPase domains
+1023525..1024388	+	864	ACO22003.1	-	SPP_1120	-	-	transcriptional regulator
+1024468..1025646	+	1179	ACO21531.1	-	SPP_1121	-	-	ABC transporter membrane-spanning permease - macrolide efflux
+1025739..1027697	+	1959	ACO21382.1	ligA	SPP_1122	-	-	DNA ligase, NAD-dependent
+1027809..1030088	+	2280	ACO20888.1	pulA	SPP_1123	-	-	pullulanase, type I
+1030440..1030613	-	174	ACO21094.1	-	SPP_1124	-	-	conserved hypothetical protein
+1030632..1032056	+	1425	ACO20609.1	-	SPP_1125	-	-	NADP-dependent glyceraldehyde-3-phosphate dehydrogenase
+1032539..1034467	+	1929	ACO21746.1	glgB	SPP_1126	-	-	1,4-alpha-glucan branching enzyme
+1034457..1035599	+	1143	ACO21308.1	glgC	SPP_1127	-	-	glucose-1-phosphate adenylyltransferase
+1035589..1036728	+	1140	ACO21445.1	glgD	SPP_1128	-	-	glucose-1-phosphate adenylyltransferase, GlgD subunit
+1036725..1038158	+	1434	ACO21805.1	-	SPP_1129	-	-	glycogen synthase (Starch [bacterial glycogen]synthase)
+1038871..1039986	+	1116	ACO21143.1	-	SPP_1132	-	-	glycerate kinase
+1039983..1040429	-	447	ACO20826.1	-	SPP_1131	-	-	conserved hypothetical protein
+1040593..1041897	+	1305	ACO21837.1	eno	SPP_1133	-	-	phosphopyruvate hydratase
+1042035..1042415	-	381	ACO21456.1	-	SPP_1134	-	-	integrase/recombinase, phage integrase family protein
+1042717..1042845	+	129	ACO21033.1	-	SPP_1135	-	-	hypothetical protein
+1042864..1043214	-	351	ACO20808.1	-	SPP_1136	-	-	transposase
+1043740..1047015	+	3276	ACO20407.1	rexB	SPP_1137	-	-	ATP-dependent nuclease subunit B
+1047012..1050662	+	3651	ACO21794.1	addA	SPP_1138	-	-	recombination helicase AddA
+1050877..1052055	+	1179	ACO21268.1	-	SPP_1139	-	-	conserved hypothetical protein
+1052264..1058743	+	6480	ACO21055.1	-	SPP_1140	-	-	IgA1 protease
+1058787..1064000	+	5214	ACO20469.1	zmpB2	SPP_1141	-	-	zinc metalloprotease ZmpB
+1064005..1064190	-	186	ACO22149.1	-	SPP_1142	-	-	hypothetical protein
+1064530..1064703	+	174	ACO21714.1	-	SPP_1143	-	-	conserved hypothetical protein
+1064700..1065479	+	780	ACO21883.1	-	SPP_1144	-	-	replication initiator protein A (RepA) N-terminus
+1065578..1066936	+	1359	ACO20297.1	-	SPP_1145	-	-	methyl transferase
+1066920..1067369	+	450	ACO20907.1	-	SPP_1146	-	-	conserved hypothetical protein
+1067362..1067742	+	381	ACO21572.1	-	SPP_1147	-	-	conserved hypothetical protein
+1067755..1067988	+	234	ACO20785.1	-	SPP_1148	-	-	conserved hypothetical protein
+1068132..1068593	+	462	ACO21348.1	-	SPP_1149	-	-	caax amino protease family
+1068755..1069972	-	1218	ACO21540.1	-	SPP_1150	-	-	transposase from transposon (Integrase)
+1070054..1070257	-	204	ACO22031.1	-	SPP_1151	-	-	conserved domain protein
+1070945..1071367	-	423	ACO20943.1	-	SPP_1152	-	-	sigma-70, region 4 family
+1071400..1071516	+	117	ACO21620.1	-	SPP_1153	-	-	hypothetical protein
+1071872..1072225	+	354	ACO21567.1	-	SPP_1154	-	-	transcriptional regulator, putative
+1072571..1074490	-	1920	ACO22036.1	-	SPP_1155	-	-	tetracycline resistance protein TetM
+1074506..1074622	-	117	ACO21110.1	-	SPP_1156	-	-	Tetracycline resistance determinant leader peptide
+1074867..1075784	-	918	ACO20340.1	-	SPP_1157	-	-	conjugative transposon protein
+1075799..1076800	-	1002	ACO20860.1	-	SPP_1158	-	-	NLP/P60 family protein
+1076797..1078974	-	2178	ACO21330.1	-	SPP_1159	-	-	conjugative transposon membrane protein
+1078977..1081424	-	2448	ACO21795.1	-	SPP_1160	-	-	conjugative transposon protein
+1081408..1081914	-	507	ACO20347.1	-	SPP_1161	-	-	conjugative transposon membrane protein
+1081889..1082386	-	498	ACO20815.1	-	SPP_1162	-	-	conjugative transposon protein
+1082503..1082724	-	222	ACO21324.1	-	SPP_1163	-	-	conserved domain protein
+1082767..1083972	-	1206	ACO21742.1	-	SPP_1164	-	-	transcriptional regulator, Cro/CI family
+1084150..1085535	-	1386	ACO22165.1	-	SPP_1165	-	-	ftsk/spoiiie family protein
+1085564..1085947	-	384	ACO20643.1	-	SPP_1166	-	-	conjugative transposon protein
+1085966..1086280	-	315	ACO20990.1	-	SPP_1167	-	-	conjugative transposon protein
+1086303..1086422	-	120	ACO21220.1	-	SPP_1168	-	-	conserved hypothetical protein
+1086953..1087252	+	300	ACO21559.1	-	SPP_1169	-	-	conserved hypothetical protein
+1087242..1087730	+	489	ACO20790.1	-	SPP_1170	-	-	conserved hypothetical protein
+1087730..1089607	+	1878	ACO21231.1	-	SPP_1171	-	-	TraG/TraD family protein
+1089628..1089870	+	243	ACO22011.1	-	SPP_1172	-	-	conserved hypothetical protein
+1089887..1090741	+	855	ACO20364.1	-	SPP_1173	-	-	membrane protein, putative
+1090795..1091154	+	360	ACO20530.1	-	SPP_1174	-	-	conserved hypothetical protein
+1091147..1093462	+	2316	ACO20939.1	-	SPP_1175	-	-	conserved hypothetical protein
+1093474..1096287	+	2814	ACO22206.1	-	SPP_1176	-	-	M23 peptidase domain protein
+1096525..1097091	+	567	ACO21609.1	-	SPP_1177	-	-	conserved hypothetical protein
+1097243..1097653	+	411	ACO21580.1	-	SPP_1178	-	-	Ig domain protein, group 2 domain protein
+1097701..1103931	+	6231	ACO20977.1	-	SPP_1179	-	-	SNF2 family protein
+1104006..1104290	+	285	ACO20529.1	-	SPP_1180	-	-	conserved hypothetical protein
+1104304..1104600	+	297	ACO21385.1	-	SPP_1181	-	-	conserved hypothetical protein
+1104614..1104811	-	198	ACO20276.1	-	SPP_1182	-	-	hypothetical protein
+1104971..1105612	+	642	ACO21767.1	-	SPP_1183	-	-	conserved hypothetical protein
+1105622..1106707	+	1086	ACO21629.1	-	SPP_1184	-	-	DNA primase
+1106758..1106991	+	234	ACO21022.1	-	SPP_1185	-	-	conserved hypothetical protein
+1106988..1107371	+	384	ACO21673.1	-	SPP_1186	-	-	methyl-accepting chemotaxis protein
+1107409..1107681	+	273	ACO21534.1	-	SPP_1187	-	-	ATPases with chaperone activity, ATP-binding subunit
+1107751..1108227	+	477	ACO20956.1	-	SPP_1188	-	-	helix-turn-helix domain protein
+1108227..1108997	+	771	ACO21923.1	-	SPP_1189	-	-	signal recognition particle GTPase
+1109225..1109908	+	684	ACO22113.1	-	SPP_1190	-	-	transcriptional regulator
+1109911..1111326	+	1416	ACO21798.1	-	SPP_1191	-	-	SOS responce UmuC protein
+1111326..1111688	+	363	ACO20400.1	-	SPP_1192	-	-	conserved hypothetical protein
+1111678..1111968	+	291	ACO20889.1	-	SPP_1193	-	-	conserved hypothetical protein
+1112264..1112620	+	357	ACO21592.1	-	SPP_1194	-	-	hypothetical protein
+1112763..1112990	+	228	ACO22028.1	-	SPP_1195	-	-	putative bacterial mobilization protein (MobC)
+1112977..1114806	+	1830	ACO21051.1	-	SPP_1196	-	-	relaxase
+1114910..1115134	+	225	ACO21514.1	-	SPP_1197	-	-	conserved domain protein
+1115722..1117230	+	1509	ACO21843.1	-	SPP_1198	-	-	integrase
+1117312..1118163	+	852	ACO20597.1	-	SPP_1199	-	-	GTP-binding protein
+1118150..1118929	+	780	ACO20926.1	-	SPP_1200	-	-	ribonuclease HII (RNase HII)
+1118945..1120495	+	1551	ACO21258.1	-	SPP_1201	-	-	voltage-gated chloride channel family protein
+1120989..1122059	+	1071	ACO20799.1	-	SPP_1202	-	-	tyrosine recombinase XerC
+1122132..1123121	-	990	ACO21293.1	-	SPP_1203	-	-	lipoate protein ligase A
+1123185..1124888	-	1704	ACO21474.1	lpdA	SPP_1204	-	-	dihydrolipoyl dehydrogenase
+1124934..1125977	-	1044	ACO20361.1	-	SPP_1205	-	-	dihydrolipoamide acetyltransferase
+1126195..1127187	-	993	ACO20403.1	-	SPP_1206	-	-	pyruvate dehydrogenase E1 component subunit beta
+1127203..1128171	-	969	ACO20882.1	-	SPP_1207	-	-	pyruvate dehydrogenase E1 component subunit alpha
+1128325..1129686	-	1362	ACO21211.1	-	SPP_1208	-	-	mate efflux family protein
+1129971..1131239	-	1269	ACO21914.1	-	SPP_1209	-	-	dihydroorotase (DHOase)
+1131252..1131716	-	465	ACO20776.1	-	SPP_1210	-	-	mutator MutT protein (7,8-dihydro-8-oxoguanine-triphosphatase) (8-oxo-dGTPase) (dGTP pyrophosphohydrolase)
+1131726..1132379	-	654	ACO21383.1	ung	SPP_1211	-	-	uracil-DNA glycosylase
+1132517..1133164	-	648	ACO22215.1	-	SPP_1212	-	-	conserved hypothetical protein
+1133178..1133891	-	714	ACO20183.1	-	SPP_1213	-	-	HAD superfamily (subfamily IA) hydrolase
+1134144..1135490	-	1347	ACO20534.1	-	SPP_1214	-	-	Spn1 transposase
+1136859..1139393	-	2535	ACO21394.1	-	SPP_1217	-	-	pneumococcal histidine triad protein B
+1139551..1142001	-	2451	ACO20355.1	-	SPP_1218	-	-	pneumococcal histidine triad protein B
+1142122..1142259	+	138	ACO21000.1	-	SPP_1220	-	-	hypothetical protein
+1142256..1143989	-	1734	ACO20520.1	ptsP	SPP_1219	-	-	phosphoenolpyruvate-protein phosphotransferase
+1143995..1144258	-	264	ACO21724.1	-	SPP_1221	-	-	phosphocarrier protein HPr (Histidine-containing protein)
+1144609..1144827	+	219	ACO20470.1	-	SPP_1222	-	-	glutaredoxin
+1144908..1147067	+	2160	ACO21035.1	-	SPP_1223	-	-	ribonucleoside-diphosphate reductase, alpha subunit
+1147255..1148217	+	963	ACO21367.1	-	SPP_1224	-	-	ribonucleoside-diphosphate reductase, beta subunit
+1148399..1149160	+	762	ACO21907.1	-	SPP_1225	-	-	lactose phosphotransferase system repressor
+1149439..1149618	-	180	ACO20877.1	-	SPP_1226	-	-	hypothetical protein
+1149741..1151147	-	1407	ACO21988.1	lacG2	SPP_1227	-	-	6-phospho-beta-galactosidase
+1151362..1153053	-	1692	ACO21306.1	-	SPP_1228	-	-	PTS system, lactose-specific IIC component
+1153053..1153370	-	318	ACO20818.1	-	SPP_1229	-	-	lactose-specific phosphotransferase enzyme iia component (pts system lactose-specific eiia component) (eiia-lac) (eiii-lac)
+1153406..1154242	-	837	ACO20632.1	-	SPP_1230	-	-	transcription antiterminator LacT
+1154476..1155456	-	981	ACO21770.1	lacD	SPP_1231	-	-	tagatose 1,6-diphosphate aldolase
+1155458..1156387	-	930	ACO21125.1	lacC	SPP_1232	-	-	tagatose-6-phosphate kinase
+1156398..1156913	-	516	ACO20644.1	lacB	SPP_1233	-	-	galactose-6-phosphate isomerase, LacB subunit
+1156944..1157369	-	426	ACO20352.1	lacA	SPP_1234	-	-	galactose-6-phosphate isomerase, LacA subunit
+1157527..1157871	-	345	ACO21586.1	-	SPP_1235	-	-	hypothetical protein
+1158040..1158429	-	390	ACO21411.1	-	SPP_1236	-	-	transposase (IS4 family)
+1158446..1158844	-	399	ACO20938.1	-	SPP_1237	-	-	mobile genetic element
+1158852..1159154	-	303	ACO21882.1	-	SPP_1238	-	-	PTS system, galactose-specific IIB component
+1159192..1159668	-	477	ACO21430.1	-	SPP_1239	-	-	phosphotransferase system sugar-specific EII component
+1159848..1160045	+	198	ACO21689.1	-	SPP_1240	-	-	chlorohydrolase
+1160126..1161949	-	1824	ACO20233.1	lepA	SPP_1241	-	-	GTP-binding protein LepA
+1162028..1162756	-	729	ACO22148.1	-	SPP_1242	-	-	serine/threonine protein phosphatase
+1162758..1164425	-	1668	ACO21506.1	recN	SPP_1243	-	-	DNA repair protein RecN
+1164432..1164863	-	432	ACO21223.1	-	SPP_1244	-	-	transcriptional regulator of arginine metabolism expression
+1164856..1165671	-	816	ACO20627.1	tylA	SPP_1245	-	-	hemolysin A
+1165664..1166539	-	876	ACO20519.1	-	SPP_1246	-	-	geranyltranstransferase (Farnesyl-diphosphate synthase)(FPP synthase)
+1166536..1166748	-	213	ACO20992.1	xseB	SPP_1247	-	-	exodeoxyribonuclease VII, small subunit
+1166726..1168066	-	1341	ACO20528.1	xseA	SPP_1248	-	-	exodeoxyribonuclease VII, large subunit
+1168194..1168832	-	639	ACO22143.1	udk	SPP_1249	-	-	uridine kinase
+1168940..1169242	-	303	ACO21670.1	-	SPP_1250	-	-	conserved hypothetical protein
+1169483..1170361	-	879	ACO20793.1	truB	SPP_1251	-	-	tRNA pseudouridine synthase B
+1170371..1171645	-	1275	ACO20215.1	-	SPP_1252	-	-	conserved hypothetical protein
+1173148..1173945	-	798	ACO20204.1	-	SPP_1255	-	-	formate-nitrate transporter
+1174189..1174932	-	744	ACO20661.1	-	SPP_1256	-	-	sortase
+1174932..1177400	-	2469	ACO22159.1	gyrA	SPP_1257	-	-	DNA gyrase, A subunit
+1177594..1178580	+	987	ACO21318.1	-	SPP_1258	-	-	L-lactate dehydrogenase
+1178870..1179613	-	744	ACO20727.1	-	SPP_1259	-	-	potassium/ion channel protein
+1179660..1179914	-	255	ACO20380.1	-	SPP_1260	-	-	cytotoxic translational repressor of toxin-antitoxin stability system
+1179916..1180158	-	243	ACO21680.1	-	SPP_1261	-	-	conserved hypothetical protein
+1180249..1181058	-	810	ACO20972.1	-	SPP_1262	-	-	VicX protein
+1181060..1182409	-	1350	ACO21305.1	-	SPP_1263	-	-	sensor protein YycG
+1182402..1183106	-	705	ACO20850.1	-	SPP_1264	-	-	alkaline phosphatase synthesis transcriptional regulatory proteinphoP
+1183162..1184337	-	1176	ACO20421.1	mutY	SPP_1265	-	-	A/G-specific adenine glycosylase
+1184665..1186335	-	1671	ACO20531.1	fhs	SPP_1267	-	-	formate--tetrahydrofolate ligase
+1186565..1187254	+	690	ACO20970.1	coaB	SPP_1268	-	-	phosphopantothenate--cysteine ligase
+1187266..1187817	+	552	ACO21718.1	coaC	SPP_1269	-	-	phosphopantothenoylcysteine decarboxylase
+1187801..1188364	+	564	ACO22154.1	-	SPP_1270	-	-	integral membrane protein
+1188646..1189173	+	528	ACO20717.1	-	SPP_1271	-	-	conserved hypothetical protein
+1189185..1189700	+	516	ACO21832.1	-	SPP_1273	-	-	transcriptional regulator, biotin repressor family
+1189697..1190164	-	468	ACO21235.1	-	SPP_1272	-	-	NTP pyrophosphohydrolase including oxidative damage repair enzymes
+1190238..1190726	-	489	ACO20331.1	-	SPP_1274	-	-	acetyltransferase, gnat family
+1190692..1191255	-	564	ACO20266.1	-	SPP_1275	-	-	acetyltransferase, gnat family
+1191265..1193253	-	1989	ACO21946.1	uvrB	SPP_1276	-	-	excinuclease ABC, B subunit
+1193330..1194283	-	954	ACO20648.1	-	SPP_1277	-	-	caax amino protease family
+1194456..1196621	+	2166	ACO21101.1	-	SPP_1278	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+1196621..1197361	+	741	ACO20901.1	-	SPP_1279	-	-	glutamine transport ATP-binding protein GlnQ
+1197510..1198997	+	1488	ACO21242.1	zwf	SPP_1280	-	-	glucose-6-phosphate dehydrogenase
+1199041..1200330	-	1290	ACO20475.1	-	SPP_1281	-	-	cell division protein FtsY
+1200334..1201152	-	819	ACO20307.1	-	SPP_1282	-	-	Cof family protein
+1201152..1201946	-	795	ACO21120.1	-	SPP_1283	-	-	Cof family protein
+1201943..1205482	-	3540	ACO20631.1	smc	SPP_1284	-	-	chromosome segregation protein SMC
+1205473..1206171	-	699	ACO20348.1	rnc	SPP_1285	-	-	ribonuclease III
+1206489..1207475	-	987	ACO21164.1	guaC	SPP_1287	-	-	guanosine monophosphate reductase
+1207650..1208966	-	1317	ACO21799.1	-	SPP_1288	-	-	conserved hypothetical protein
+1208953..1210866	-	1914	ACO20412.1	-	SPP_1289	-	-	conserved hypothetical protein
+1211815..1212174	-	360	ACO20456.1	-	SPP_1293	-	-	3-isopropylmalate dehydratase small subunit (isopropylmalate isomerase) (alpha-ipm isomerase) (ipmi)
+1212178..1212447	-	270	ACO20676.1	-	SPP_1294	-	-	conserved hypothetical protein
+1212444..1213481	-	1038	ACO21273.1	leuB	SPP_1295	-	-	3-isopropylmalate dehydrogenase
+1214606..1215262	-	657	ACO20437.1	-	SPP_1298	-	-	conserved hypothetical protein
+1215306..1215938	-	633	ACO21025.1	-	SPP_1299	-	-	copper homeostasis protein CutC
+1216031..1216390	-	360	ACO21057.1	-	SPP_1300	-	-	conserved hypothetical protein
+1216496..1218583	-	2088	ACO21912.1	topA	SPP_1301	-	-	DNA topoisomerase I
+1218750..1219793	-	1044	ACO20151.1	-	SPP_1302	-	-	membrane protein, putative
+1220371..1220493	+	123	ACO20735.1	-	SPP_1303	-	-	chlorohydrolase
+1220677..1221525	-	849	ACO21565.1	dprA	SPP_1304	-	-	DNA protecting protein DprA
+1221623..1222312	-	690	ACO22139.1	-	SPP_1305	-	-	homologous to LicC, which regulates expression of LPS epitopes in H. influenzae
+1222324..1223202	-	879	ACO20580.1	-	SPP_1306	-	-	homologous to LicB, which regulates expression of LPS epitopes in H. influenzae
+1223192..1224061	-	870	ACO20840.1	-	SPP_1307	-	-	choline kinase
+1224078..1225100	-	1023	ACO20343.1	-	SPP_1308	-	-	xylitol dehydrogenase
+1225105..1225812	-	708	ACO20908.1	-	SPP_1309	-	-	2-C-methyl-D-erythritol 4-phosphate cytidylyltransferase (4-diphosphocytidyl-2C-methyl-D-erythritol synthase) (MEPcytidylyltransferase) (MCT)
+1226148..1227635	+	1488	ACO21458.1	-	SPP_1310	-	-	virulence factor mvin superfamily
+1227645..1228448	+	804	ACO22077.1	-	SPP_1311	-	-	phosphotransferase
+1228450..1229259	+	810	ACO20550.1	-	SPP_1312	-	-	LicD Protein
+1229534..1232710	-	3177	ACO21160.1	carB	SPP_1313	-	-	carbamoyl-phosphate synthase, large subunit
+1233023..1234102	-	1080	ACO21829.1	carA	SPP_1314	-	-	carbamoyl-phosphate synthase, small subunit
+1234152..1235075	-	924	ACO20232.1	pyrB	SPP_1315	-	-	aspartate carbamoyltransferase
+1235094..1235615	-	522	ACO21764.1	-	SPP_1316	-	-	PyrR bifunctional protein
+1235826..1236455	-	630	ACO21873.1	nth	SPP_1317	-	-	endonuclease III
+1236455..1236997	-	543	ACO21434.1	-	SPP_1318	-	-	conserved hypothetical protein
+1237119..1237307	+	189	ACO21204.1	-	SPP_1319	-	-	hypothetical protein
+1237358..1237483	+	126	ACO20906.1	-	SPP_1320	-	-	hypothetical protein
+1237722..1239281	+	1560	ACO20293.1	-	SPP_1321	-	-	ABC transporter, ATP-binding protein
+1239325..1240224	-	900	ACO21521.1	-	SPP_1322	-	-	putative protease HtpX homolog
+1240226..1240786	-	561	ACO20707.1	-	SPP_1323	-	-	cytoplasmic membrane protein
+1240880..1241593	+	714	ACO20248.1	gidB	SPP_1324	-	-	methyltransferase GidB
+1241847..1243130	+	1284	ACO21633.1	-	SPP_1325	-	-	uracil permease (Uracil transporter)
+1243325..1244896	-	1572	ACO20966.1	ffh	SPP_1326	-	-	signal recognition particle protein
+1244908..1245240	-	333	ACO22066.1	-	SPP_1327	-	-	HTH DNA binding domain protein
+1245331..1245696	-	366	ACO20581.1	-	SPP_1328	-	-	conserved hypothetical protein
+1245780..1247084	+	1305	ACO20914.1	-	SPP_1329	-	-	HD superfamily phosphohydrolase
+1247097..1247903	+	807	ACO21543.1	-	SPP_1330	-	-	phosphatase YidA
+1247946..1248944	+	999	ACO21350.1	-	SPP_1331	-	-	SAP domain protein
+1249223..1249570	-	348	ACO21949.1	rplS	SPP_1333	-	-	ribosomal protein L19
+1249689..1250018	-	330	ACO20170.1	-	SPP_1334	-	-	putative Protein CrcB homolog 1
+1250012..1250386	-	375	ACO20747.1	-	SPP_1335	-	-	putative Protein CrcB homolog 2
+1250383..1250649	-	267	ACO21435.1	-	SPP_1336	-	-	chorismate mutase
+1250765..1251208	-	444	ACO22054.1	-	SPP_1337	-	-	flavodoxin
+1251312..1252247	+	936	ACO21429.1	-	SPP_1338	-	-	DHH subfamily 1 protein
+1252343..1252585	+	243	ACO21931.1	rpmE	SPP_1339	-	-	ribosomal protein L31
+1252642..1253187	-	546	ACO20198.1	-	SPP_1340	-	-	high-affinity Fe2+/Pb2+ permease
+1254250..1254654	-	405	ACO22171.1	-	SPP_1343	-	-	transposase
+1255198..1256544	+	1347	ACO21129.1	-	SPP_1344	-	-	NAD(p)-specific glutamate dehydrogenase
+1257040..1257210	-	171	ACO20636.1	-	SPP_1345	-	-	conserved hypothetical protein
+1257223..1257864	-	642	ACO21917.1	-	SPP_1346	-	-	multidrug resistance protein 1 (ATP-binding cassettesub-family B member 1) (P-glycoprotein 1) (antigen)
+1258463..1259809	-	1347	ACO21628.1	-	SPP_1347	-	-	Spn1 transposase
+1259986..1260441	+	456	ACO20505.1	-	SPP_1348	-	-	transposase
+1260591..1260794	-	204	ACO20680.1	-	SPP_1349	-	-	glucokinase
+1260812..1261729	-	918	ACO21450.1	-	SPP_1350	-	-	N-acetylneuraminate lyase
+1261761..1262168	-	408	ACO22164.1	cdd2	SPP_1351	-	-	cytidine deaminase
+1262456..1262944	-	489	ACO20686.1	pgpA	SPP_1352	-	-	phosphatidylglycerophosphatase A
+1262949..1264358	-	1410	ACO20976.1	-	SPP_1353	-	-	conserved hypothetical protein
+1264368..1266350	-	1983	ACO21715.1	gsiA	SPP_1354	-	-	glutathione ABC transporter, ATP-binding protein
+1266363..1267214	-	852	ACO21838.1	-	SPP_1355	-	-	oligopeptide transport system permease protein AppC
+1267231..1268181	-	951	ACO21149.1	-	SPP_1356	-	-	oligopeptide transport system permease protein AppB
+1268290..1269918	-	1629	ACO20921.1	-	SPP_1357	-	-	ABC transporter substrate-binding protein - oligopeptide transport
+1270000..1270923	-	924	ACO20287.1	-	SPP_1358	-	-	conserved hypothetical protein
+1270947..1271645	-	699	ACO20616.1	-	SPP_1359	-	-	putative N-acetylmannosamine-6-phosphate 2-epimerase (ManNAc-6-P epimerase)
+1271692..1271955	-	264	ACO20947.1	-	SPP_1360	-	-	mobile genetic element
+1272538..1272759	-	222	ACO21217.1	-	SPP_1361	-	-	conserved hypothetical protein
+1273042..1273878	-	837	ACO22152.1	-	SPP_1362	-	-	conserved hypothetical protein
+1273878..1274468	-	591	ACO20300.1	-	SPP_1363	-	-	conserved hypothetical protein
+1274598..1275185	-	588	ACO20702.1	-	SPP_1364	-	-	caax amino protease family
+1275188..1275343	-	156	ACO21233.1	-	SPP_1365	-	-	hypothetical protein
+1275434..1275814	-	381	ACO21957.1	-	SPP_1366	-	-	conserved hypothetical protein
+1275807..1276256	-	450	ACO20335.1	-	SPP_1367	-	-	conserved hypothetical protein
+1278505..1278678	-	174	ACO20600.1	-	SPP_1372	-	-	conserved hypothetical protein
+1278865..1279233	-	369	ACO20805.1	rplL	SPP_1373	-	-	ribosomal protein L7/L12
+1279309..1279809	-	501	ACO21544.1	-	SPP_1374	-	-	50S ribosomal protein L10
+1280059..1281480	-	1422	ACO21077.1	-	SPP_1375	-	-	chlorohydrolase
+1281575..1283323	-	1749	ACO21266.1	-	SPP_1376	-	-	ABC transporter, ATP-binding/permease protein
+1283325..1285049	-	1725	ACO21793.1	-	SPP_1377	-	-	ABC transporter, ATP-binding/permease protein
+1285107..1286045	-	939	ACO21866.1	-	SPP_1378	-	-	peptide methionine sulfoxide reductase MsrA/msrB
+1286074..1286415	-	342	ACO20468.1	-	SPP_1379	-	-	conserved hypothetical protein
+1286431..1287300	-	870	ACO21187.1	thrB	SPP_1380	-	-	homoserine kinase
+1287302..1288588	-	1287	ACO21648.1	-	SPP_1381	-	-	homoserine dehydrogenase (HDH)
+1288739..1289476	-	738	ACO21309.1	-	SPP_1382	-	-	adapter protein MecA
+1289676..1290710	-	1035	ACO21782.1	-	SPP_1383	-	-	conserved hypothetical protein
+1290739..1292172	-	1434	ACO20180.1	-	SPP_1384	-	-	membrane protein, putative
+1292188..1293174	-	987	ACO21974.1	-	SPP_1385	-	-	glycosyl transferase, family 2
+1293176..1294276	-	1101	ACO20154.1	-	SPP_1386	-	-	glycosyl transferase, group 1 family protein
+1294269..1295114	-	846	ACO21011.1	-	SPP_1387	-	-	licD3 protein
+1295393..1296667	-	1275	ACO20781.1	-	SPP_1388	-	-	transcriptional regulator, LytR family
+1296664..1297512	-	849	ACO21386.1	-	SPP_1389	-	-	prephenate dehydratase (PDT)
+1297509..1297985	-	477	ACO21963.1	aroK	SPP_1390	-	-	shikimate kinase
+1297978..1299261	-	1284	ACO20656.1	aroA	SPP_1391	-	-	3-phosphoshikimate 1-carboxyvinyltransferase
+1299353..1299691	-	339	ACO20188.1	-	SPP_1392	-	-	conserved hypothetical protein
+1299702..1300805	-	1104	ACO21585.1	-	SPP_1393	-	-	prephenate dehydrogenase
+1300815..1301981	-	1167	ACO22043.1	aroC	SPP_1394	-	-	chorismate synthase
+1301991..1303058	-	1068	ACO21118.1	aroB	SPP_1395	-	-	3-dehydroquinate synthase
+1303077..1303931	-	855	ACO20473.1	aroE	SPP_1396	-	-	shikimate 5-dehydrogenase
+1303921..1304598	-	678	ACO21246.1	aroD	SPP_1397	-	-	3-dehydroquinate dehydratase, type I
+1304595..1305758	-	1164	ACO21846.1	-	SPP_1398	-	-	methyltransferase
+1306445..1308079	-	1635	ACO20853.1	-	SPP_1399	-	-	membrane protein, putative
+1308060..1308809	-	750	ACO20395.1	-	SPP_1400	-	-	ABC transporter, ATP-binding protein
+1308988..1310442	+	1455	ACO20564.1	-	SPP_1401	-	-	alpha-amylase (1,4-alpha-D-glucanglucanohydrolase)
+1310531..1313149	-	2619	ACO22169.1	alaS	SPP_1402	-	-	alanyl-tRNA synthetase
+1313171..1313656	-	486	ACO21721.1	-	SPP_1403	-	-	conserved hypothetical protein
+1313931..1314170	-	240	ACO20740.1	-	SPP_1404	-	-	conserved hypothetical protein
+1314431..1315501	-	1071	ACO21916.1	-	SPP_1405	-	-	spermidine/putrescine ABC transporter, spermidine/putrescine-binding protein
+1315498..1316271	-	774	ACO20989.1	-	SPP_1406	-	-	ABC transporter membrane-spanning permease - spermidine/putrescine transport
+1316268..1317074	-	807	ACO20503.1	-	SPP_1407	-	-	ABC transporter membrane-spanning permease - spermidine/putrescine transport
+1317055..1318212	-	1158	ACO22016.1	-	SPP_1408	-	-	spermidine/putrescine import ATP-binding protein PotA
+1318372..1319277	-	906	ACO20173.1	murB	SPP_1409	-	-	UDP-N-acetylenolpyruvoylglucosamine reductase
+1319389..1320141	-	753	ACO20756.1	-	SPP_1410	-	-	membrane protein, putative
+1320151..1320882	-	732	ACO21836.1	budA	SPP_1411	-	-	alpha-acetolactate decarboxylase
+1321024..1322295	+	1272	ACO20285.1	-	SPP_1412	-	-	transcriptional regulator GntR family
+1322315..1323001	-	687	ACO20931.1	-	SPP_1413	-	-	amino acid ABC transporter, amino acid-binding protein
+1323298..1323951	-	654	ACO20999.1	phoU1	SPP_1414	-	-	phosphate transport system regulatory protein PhoU
+1323963..1324721	-	759	ACO20928.1	pstB1	SPP_1415	-	-	phosphate ABC transporter, ATP-binding protein
+1324734..1325537	-	804	ACO20321.1	pstB2	SPP_1416	-	-	phosphate ABC transporter, ATP-binding protein
+1325548..1326432	-	885	ACO21468.1	pstA1	SPP_1417	-	-	phosphate ABC transporter, permease protein PstA
+1326422..1327339	-	918	ACO20689.1	pstC1	SPP_1418	-	-	phosphate ABC transporter, permease protein PstC
+1327339..1328217	-	879	ACO21630.1	-	SPP_1419	-	-	phosphate-binding protein PstS 1 (PBP 1)
+1328447..1328560	+	114	ACO22208.1	-	SPP_1420	-	-	conserved hypothetical protein
+1328791..1330095	-	1305	ACO20465.1	-	SPP_1421	-	-	NOL1/NOP2/sun family protein
+1330096..1330869	-	774	ACO21880.1	-	SPP_1422	-	-	inositol monophosphatase family protein
+1330859..1331137	-	279	ACO22061.1	-	SPP_1423	-	-	conserved hypothetical protein
+1331137..1331538	-	402	ACO20427.1	-	SPP_1424	-	-	regulatory protein spx
+1331748..1332365	-	618	ACO21128.1	-	SPP_1425	-	-	integral membrane protein
+1332355..1333128	-	774	ACO21299.1	-	SPP_1426	-	-	HAD-superfamily subfamily IIA hydrolase
+1333139..1333876	-	738	ACO21748.1	-	SPP_1427	-	-	acyl-acyl-carrier protein thioesterase
+1333881..1335011	-	1131	ACO21741.1	-	SPP_1428	-	-	putative oxygen-independent coproporphyrinogen III oxidase
+1335095..1335484	-	390	ACO22196.1	-	SPP_1429	-	-	conserved hypothetical protein
+1335500..1335883	-	384	ACO21646.1	-	SPP_1430	-	-	conserved hypothetical protein
+1335884..1336672	-	789	ACO21073.1	lgt	SPP_1431	-	-	prolipoprotein diacylglyceryl transferase
+1336665..1337600	-	936	ACO20314.1	hprK	SPP_1432	-	-	HPr(Ser) kinase/phosphatase
+1337730..1337906	-	177	ACO22009.1	rpsU	SPP_1433	-	-	ribosomal protein S21
+1338046..1338753	-	708	ACO21253.1	-	SPP_1434	-	-	glucosamine-6-phosphate deaminase (glucosamine-6-phosphate isomerase) (gnpda) (glcn6p deaminase)
+1338904..1339932	+	1029	ACO20742.1	queA	SPP_1435	-	-	S-adenosylmethionine:tRNA ribosyltransferase-isomerase
+1340593..1340982	-	390	ACO21108.1	-	SPP_1436	-	-	choline binding protein
+1342442..1342993	-	552	ACO20657.1	-	SPP_1437	-	-	acetyltransferase, gnat family
+1343343..1344167	-	825	ACO21751.1	nadE	SPP_1438	-	-	NAD+ synthetase
+1344164..1345624	-	1461	ACO21311.1	pncB	SPP_1439	-	-	putative nicotinate phosphoribosyltransferase
+1345740..1346228	-	489	ACO20762.1	-	SPP_1440	-	-	conserved hypothetical protein
+1346218..1346427	-	210	ACO20171.1	-	SPP_1441	-	-	conserved domain protein
+1346892..1347293	-	402	ACO20783.1	-	SPP_1442	-	-	hypothetical protein
+1348343..1348456	-	114	ACO21599.1	-	SPP_1445	-	-	hypothetical protein
+1349501..1349812	-	312	ACO21830.1	-	SPP_1448	-	-	hypothetical protein
+1349827..1351113	-	1287	ACO20955.1	-	SPP_1449	-	-	peptidase, U32 family protein
+1352286..1353476	+	1191	ACO21711.1	-	SPP_1452	-	-	DNA modification methyltransferase M.XbaI
+1353723..1353869	+	147	ACO22160.1	-	SPP_1453	-	-	conserved hypothetical protein
+1353991..1354983	-	993	ACO20247.1	-	SPP_1454	-	-	transcriptional regulator, AraC family
+1355143..1356897	+	1755	ACO20720.1	-	SPP_1455	-	-	ABC transporter, ATP-binding/permease protein
+1356881..1358602	+	1722	ACO21427.1	-	SPP_1456	-	-	ABC transporter, ATP-binding protein
+1358613..1359197	+	585	ACO20514.1	-	SPP_1457	-	-	conserved hypothetical integral membrane protein
+1359197..1359892	+	696	ACO21828.1	-	SPP_1458	-	-	cobalt transport protein
+1359880..1361244	+	1365	ACO21259.1	-	SPP_1459	-	-	cobalt ABC transporter, ATPase component, CbiO
+1362544..1362855	-	312	ACO20484.1	-	SPP_1461	-	-	transposase
+1362874..1363341	-	468	ACO21637.1	-	SPP_1462	-	-	transposase
+1363244..1363438	-	195	ACO21177.1	-	SPP_1463	-	-	hypothetical protein
+1363722..1363958	-	237	ACO21736.1	-	SPP_1464	-	-	transposase
+1363939..1364124	-	186	ACO21271.1	-	SPP_1465	-	-	conserved domain protein
+1364428..1365990	-	1563	ACO21322.1	-	SPP_1466	-	-	GMP synthase [glutamine-hydrolyzing] (Glutamineamidotransferase) (GMP synthetase)
+1366132..1366830	+	699	ACO20858.1	-	SPP_1467	-	-	transcriptional regulator, GntR family protein
+1366873..1367769	-	897	ACO20401.1	-	SPP_1468	-	-	membrane protein
+1367778..1368713	-	936	ACO22024.1	-	SPP_1469	-	-	beta-lactamase
+1368710..1369435	-	726	ACO20948.1	-	SPP_1470	-	-	CppA protein
+1369519..1370154	-	636	ACO20481.1	-	SPP_1471	-	-	conserved hypothetical protein, putative
+1370156..1370983	-	828	ACO22119.1	-	SPP_1472	-	-	conserved hypothetical protein, putative
+1372503..1373114	+	612	ACO21978.1	def1	SPP_1476	-	-	peptide deformylase
+1373159..1373887	+	729	ACO21515.1	-	SPP_1477	-	-	RNA methyltransferase, TrmH family, group 3
+1373926..1374837	-	912	ACO20243.1	trxB	SPP_1478	-	-	thioredoxin-disulfide reductase
+1374903..1375127	-	225	ACO20690.1	-	SPP_1479	-	-	conserved hypothetical protein
+1375205..1375948	-	744	ACO21707.1	-	SPP_1480	-	-	L-cystine import ATP-binding protein TcyN
+1375948..1376748	-	801	ACO22130.1	-	SPP_1481	-	-	ABC transporter membrane-spanning permease - aspartate/glutamate transport
+1376906..1377262	-	357	ACO21365.1	-	SPP_1482	-	-	arsenate reductase
+1377275..1377787	-	513	ACO20482.1	-	SPP_1483	-	-	O6-methylguanine-DNA methyltransferase
+1377787..1378281	-	495	ACO20236.1	-	SPP_1484	-	-	acetyltransferase, gnat family
+1378416..1378862	+	447	ACO20675.1	-	SPP_1485	-	-	conserved hypothetical protein
+1378859..1379506	+	648	ACO22184.1	-	SPP_1486	-	-	hemolysin-3 (Hemolysin III) (Hly-III)
+1379527..1380108	-	582	ACO20552.1	-	SPP_1487	-	-	SNO glutamine amidotransferase family superfamily
+1380109..1380984	-	876	ACO20703.1	-	SPP_1488	-	-	pyridoxine biosynthesis protein
+1381136..1382515	-	1380	ACO20253.1	-	SPP_1489	-	-	NADH oxidase (noxase)
+1382657..1382812	+	156	ACO21107.1	-	SPP_1490	-	-	conserved hypothetical protein
+1382809..1383732	+	924	ACO20165.1	-	SPP_1491	-	-	thiamine biosynthesis lipoprotein
+1383792..1384397	+	606	ACO22039.1	-	SPP_1492	-	-	NADPH-dependent fmn reductase domain protein
+1384416..1385660	+	1245	ACO21641.1	-	SPP_1493	-	-	NADPH-dependent fmn reductase domain protein
+1385883..1386140	-	258	ACO21024.1	-	SPP_1494	-	-	conserved hypothetical protein
+1386182..1388218	-	2037	ACO20431.1	glyS	SPP_1495	-	-	glycyl-tRNA synthetase, beta subunit
+1388478..1389395	-	918	ACO20350.1	glyQ	SPP_1496	-	-	glycyl-tRNA synthetase, alpha subunit
+1389764..1390090	-	327	ACO21972.1	-	SPP_1497	-	-	hypothetical protein
+1390057..1390341	-	285	ACO22181.1	-	SPP_1498	-	-	hypothetical protein
+1390614..1391456	-	843	ACO20569.1	-	SPP_1499	-	-	2,5-diketo-d-gluconic acid reductase a (2,5-dkgreductase a) (2,5-dkgr a) (25dkgr-a) (akr5c)
+1391570..1392907	-	1338	ACO20258.1	-	SPP_1500	-	-	peptidoglycan GlcNAc deacetylase
+1393196..1393573	-	378	ACO20706.1	-	SPP_1501	-	-	conserved hypothetical protein
+1393788..1394765	+	978	ACO20210.1	-	SPP_1502	-	-	oxidoreductase
+1394762..1395844	+	1083	ACO20764.1	-	SPP_1503	-	-	DEAD RNA helicase
+1396003..1396560	-	558	ACO21374.1	-	SPP_1504	-	-	transposase
+1396448..1396714	-	267	ACO21948.1	-	SPP_1505	-	-	transposase
+1396835..1396954	-	120	ACO20418.1	-	SPP_1506	-	-	hypothetical protein
+1397338..1398534	-	1197	ACO21124.1	tuf	SPP_1507	-	-	translation elongation factor Tu
+1398877..1398999	-	123	ACO21511.1	-	SPP_1508	-	-	conserved hypothetical protein
+1399410..1400279	-	870	ACO21985.1	-	SPP_1509	-	-	glycerol facilitator-aquaporin gla (Aquaglyceroporin)(Glyceroaquaporin)
+1400304..1400426	-	123	ACO21555.1	-	SPP_1510	-	-	hypothetical protein
+1400502..1401182	-	681	ACO22185.1	-	SPP_1511	-	-	MucBP domain family
+1401140..1402054	-	915	ACO20538.1	-	SPP_1512	-	-	conserved hypothetical protein
+1402182..1402379	-	198	ACO20738.1	-	SPP_1513	-	-	hypothetical protein
+1402357..1402611	-	255	ACO21208.1	-	SPP_1514	-	-	conserved hypothetical protein
+1402969..1403502	-	534	ACO21925.1	-	SPP_1515	-	-	transposase
+1403489..1403623	-	135	ACO20326.1	-	SPP_1516	-	-	transposase
+1403671..1403814	-	144	ACO21578.1	-	SPP_1517	-	-	transposase
+1404048..1405766	+	1719	ACO21184.1	-	SPP_1518	-	-	phosphomannomutase
+1405877..1406224	+	348	ACO21542.1	-	SPP_1519	-	-	bacterocin transport accessory protein
+1406502..1407338	-	837	ACO21992.1	-	SPP_1520	-	-	ABC transporter substrate-binding protein - glutamine transport
+1407351..1407980	-	630	ACO21535.1	-	SPP_1521	-	-	glutamine transport ATP-binding protein GlnQ
+1407990..1408631	-	642	ACO22045.1	-	SPP_1522	-	-	amino acid ABC transporter, permease protein
+1408777..1410006	-	1230	ACO20904.1	-	SPP_1523	-	-	TPR domain protein
+1409996..1411162	-	1167	ACO21315.1	-	SPP_1524	-	-	transport protein
+1411306..1412319	+	1014	ACO21777.1	-	SPP_1525	-	-	3-carboxymuconate cyclase
+1412364..1412783	-	420	ACO20667.1	atpC	SPP_1526	-	-	ATP synthase F1, epsilon subunit
+1412794..1414200	-	1407	ACO21068.1	atpD	SPP_1527	-	-	ATP synthase F1, beta subunit
+1414286..1415164	-	879	ACO20353.1	atpG	SPP_1528	-	-	ATP synthase F1, gamma subunit
+1415180..1416685	-	1506	ACO20819.1	atpA	SPP_1529	-	-	ATP synthase F1, alpha subunit
+1416700..1417236	-	537	ACO20392.1	atpH	SPP_1530	-	-	ATP synthase F1, delta subunit
+1417236..1417730	-	495	ACO22018.1	atpF	SPP_1531	-	-	ATP synthase F0, B subunit
+1417744..1418460	-	717	ACO21581.1	atpB	SPP_1532	-	-	ATP synthase F0, A subunit
+1418495..1418695	-	201	ACO21154.1	-	SPP_1533	-	-	conserved domain protein
+1418770..1419777	-	1008	ACO20641.1	-	SPP_1534	-	-	transposase
+1420741..1421109	+	369	ACO21870.1	-	SPP_1536	-	-	chlorohydrolase
+1421166..1421648	-	483	ACO20152.1	-	SPP_1537	-	-	transcription elongation factor GreA (Transcript cleavage factor greA)(General stress protein 20M) (GSP20M)
+1421719..1423374	-	1656	ACO21563.1	-	SPP_1538	-	-	aminodeoxychorismate lyase
+1423455..1423949	-	495	ACO20225.1	-	SPP_1539	-	-	acetyltransferase, gnat family
+1423946..1424410	-	465	ACO20537.1	-	SPP_1540	-	-	acetyltransferase, gnat family
+1424420..1425754	-	1335	ACO20934.1	murC	SPP_1541	-	-	UDP-N-acetylmuramate--alanine ligase
+1425765..1426382	-	618	ACO20200.1	-	SPP_1542	-	-	conserved hypothetical protein
+1426430..1429528	-	3099	ACO22079.1	-	SPP_1543	-	-	Snf2 family protein
+1429621..1430787	-	1167	ACO21505.1	-	SPP_1544	-	-	putative aminotransferase B
+1430795..1431889	-	1095	ACO21632.1	-	SPP_1545	-	-	cystathionine gamma-synthase (CGS) (O-succinylhomoserine(thiol)-lyase)
+1432047..1432769	-	723	ACO21063.1	-	SPP_1546	-	-	ABC transporter
+1432929..1434275	+	1347	ACO21754.1	-	SPP_1547	-	-	Spn1 transposase
+1435609..1437567	-	1959	ACO21354.1	-	SPP_1550	-	-	oligopeptide binding lipoprotein
+1437770..1439407	-	1638	ACO21146.1	-	SPP_1551	-	-	polysaccharide transporter
+1439498..1440943	+	1446	ACO20267.1	-	SPP_1552	-	-	UDP-N-acetylmuramoylalanyl-D-glutamate--2, 6-diaminopimelate ligase (UDP-N-acetylmuramyl-tripeptide synthetase) (Meso-diaminopimelate-adding enzyme) (UDP-MurNAc-tripeptide synthetase)
+1440989..1441183	-	195	ACO22074.1	-	SPP_1553	-	-	conserved domain protein
+1441284..1441568	-	285	ACO21623.1	-	SPP_1554	-	-	hypothetical protein
+1441565..1441879	-	315	ACO21437.1	-	SPP_1555	-	-	hypothetical protein
+1441916..1442428	-	513	ACO20451.1	-	SPP_1556	-	-	conserved hypothetical protein
+1442514..1443449	-	936	ACO21671.1	-	SPP_1557	-	-	manganese-dependent inorganic pyrophosphatase (Pyrophosphate phospho-hydrolase) (PPase)
+1443520..1443819	-	300	ACO22193.1	-	SPP_1558	-	-	conserved hypothetical protein
+1443809..1444558	-	750	ACO21254.1	-	SPP_1559	-	-	methyltransferase
+1444612..1444998	-	387	ACO20792.1	-	SPP_1560	-	-	S1-type RNA-binding domain protein
+1444973..1446373	-	1401	ACO20682.1	-	SPP_1561	-	-	Cof family protein/peptidyl-prolyl cis-trans isomerase, cyclophilin type
+1446668..1446907	-	240	ACO20346.1	rpsR	SPP_1562	-	-	ribosomal protein S18
+1446939..1447409	-	471	ACO21903.1	-	SPP_1563	-	-	single-stranded DNA-binding protein (SSB) (Helix-destabilizingprotein)
+1447421..1447711	-	291	ACO21052.1	rpsF	SPP_1564	-	-	ribosomal protein S6
+1447864..1449207	-	1344	ACO21054.1	asnS	SPP_1565	-	-	asparaginyl-tRNA synthetase
+1449226..1449591	-	366	ACO20455.1	-	SPP_1566	-	-	glyoxalase family protein
+1449584..1450771	-	1188	ACO22150.1	-	SPP_1567	-	-	aspartate aminotransferase (transaminase a) (aspat)
+1450768..1451256	-	489	ACO20622.1	-	SPP_1568	-	-	peptidase propeptide and ypeb domain protein
+1451323..1451439	-	117	ACO21286.1	-	SPP_1569	-	-	hypothetical protein
+1451577..1452125	+	549	ACO20925.1	-	SPP_1570	-	-	oxidoreductase
+1452402..1453130	-	729	ACO21998.1	-	SPP_1571	-	-	conserved hypothetical protein
+1453209..1453373	-	165	ACO21556.1	-	SPP_1572	-	-	conserved hypothetical protein
+1453440..1455035	-	1596	ACO21552.1	-	SPP_1573	-	-	conserved hypothetical protein
+1455047..1455457	-	411	ACO21069.1	def2	SPP_1574	-	-	polypeptide deformylase
+1455573..1456364	-	792	ACO20610.1	-	SPP_1575	-	-	glutathione S-transferase family protein
+1456377..1459073	-	2697	ACO21862.1	-	SPP_1576	-	-	calcium-transporting ATPase 1 (Golgi Ca(2+)-ATPase)
+1459377..1460561	+	1185	ACO20457.1	-	SPP_1577	-	-	cation efflux family protein
+1460704..1462575	-	1872	ACO21964.1	-	SPP_1578	-	-	ABC transporter, ATP-binding protein
+1462572..1463756	-	1185	ACO22173.1	-	SPP_1579	-	-	tRNA nucleotidyltransferase/poly(A) polymerase family protein
+1463768..1464535	-	768	ACO20415.1	dapB	SPP_1580	-	-	dihydrodipicolinate reductase
+1464812..1465660	-	849	ACO20737.1	-	SPP_1581	-	-	conserved hypothetical protein
+1465662..1466036	-	375	ACO21612.1	-	SPP_1582	-	-	conserved hypothetical protein
+1466110..1467462	-	1353	ACO21953.1	glmM	SPP_1583	-	-	phosphoglucosamine mutase
+1467486..1468265	-	780	ACO20187.1	-	SPP_1584	-	-	lipoprotein, putative
+1468252..1469109	-	858	ACO20442.1	-	SPP_1585	-	-	conserved hypothetical protein
+1469245..1470213	+	969	ACO21030.1	-	SPP_1586	-	-	thioredoxin reductase
+1470247..1471158	-	912	ACO21708.1	-	SPP_1587	-	-	conserved hypothetical protein
+1471155..1472132	-	978	ACO20809.1	-	SPP_1588	-	-	transporter
+1472129..1473019	-	891	ACO20652.1	-	SPP_1589	-	-	P-loop ATPase protein family
+1473071..1473451	-	381	ACO22202.1	-	SPP_1590	-	-	endoribonuclease L-PSP, putative
+1473462..1474049	-	588	ACO21536.1	-	SPP_1591	-	-	GTP-binding protein
+1474058..1475290	-	1233	ACO21086.1	clpX	SPP_1592	-	-	ATP-dependent Clp protease, ATP-binding subunit ClpX
+1475322..1475492	-	171	ACO21439.1	-	SPP_1593	-	-	conserved hypothetical protein
+1475492..1475998	-	507	ACO22094.1	folA	SPP_1594	-	-	dihydrofolate reductase
+1476128..1476646	-	519	ACO20286.1	-	SPP_1595	-	-	DNA protection during starvation protein
+1477143..1478615	-	1473	ACO20881.1	-	SPP_1596	-	-	1,4-beta-N-acetylmuramidase
+1478686..1479444	-	759	ACO20996.1	tpiA	SPP_1597	-	-	triose-phosphate isomerase
+1479542..1480219	-	678	ACO20435.1	-	SPP_1598	-	-	DNA replication protein DnaD
+1480228..1481172	-	945	ACO21042.1	metA	SPP_1599	-	-	homoserine O-succinyltransferase
+1481354..1481866	-	513	ACO21624.1	apt	SPP_1600	-	-	adenine phosphoribosyltransferase
+1481953..1482711	-	759	ACO22138.1	-	SPP_1601	-	-	SAM-dependent methyltransferase
+1482919..1483065	+	147	ACO20277.1	-	SPP_1602	-	-	chlorohydrolase
+1483212..1484342	-	1131	ACO20923.1	-	SPP_1603	-	-	multiple sugar-binding transport ATP-binding protein MsmK
+1484792..1485367	-	576	ACO21228.1	-	SPP_1605	-	-	isochorismatase
+1485367..1486155	-	789	ACO21476.1	codY	SPP_1606	-	-	GTP-sensing transcriptional pleiotropic repressor CodY
+1486420..1487994	-	1575	ACO20325.1	-	SPP_1607	-	-	cold-shock DEAD box protein A
+1488193..1489419	-	1227	ACO20659.1	-	SPP_1608	-	-	major facilitator:Oxalate:Formate Antiporter
+1489613..1490929	+	1317	ACO21186.1	-	SPP_1609	-	-	probable pyridine nucleotide-disulfide oxidoreductase YkgC
+1491028..1492371	+	1344	ACO20588.1	-	SPP_1610	-	-	Mur ligase family protein
+1492371..1493153	+	783	ACO22087.1	-	SPP_1611	-	-	cobyric acid synthase
+1493279..1494361	+	1083	ACO21950.1	-	SPP_1612	-	-	Xaa-Pro dipeptidase (X-Pro dipeptidase) (Prolinedipeptidase) (Prolidase) (Imidodipeptidase)
+1494354..1494557	+	204	ACO22191.1	-	SPP_1613	-	-	conserved hypothetical protein
+1494682..1494900	-	219	ACO20795.1	-	SPP_1614	-	-	transposase OrfB
+1495576..1495764	+	189	ACO21517.1	-	SPP_1617	-	-	hypothetical protein
+1495757..1496218	-	462	ACO21993.1	-	SPP_1616	-	-	conserved hypothetical protein
+1496196..1496969	-	774	ACO20378.1	-	SPP_1618	-	-	phosphomethylpyrimidine kinase
+1496959..1497708	-	750	ACO21274.1	truA	SPP_1619	-	-	tRNA pseudouridine synthase A
+1498026..1499177	-	1152	ACO20841.1	-	SPP_1620	-	-	major facilitator superfamily transporter
+1499149..1499265	+	117	ACO20354.1	-	SPP_1621	-	-	hypothetical protein
+1499417..1500046	-	630	ACO20876.1	-	SPP_1622	-	-	membrane protein, putative
+1500049..1500387	-	339	ACO20302.1	phnA	SPP_1623	-	-	alkylphosphonate utilization operon protein PhnA
+1500518..1501189	-	672	ACO22161.1	cmk	SPP_1624	-	-	cytidylate kinase
+1501198..1501674	-	477	ACO21477.1	-	SPP_1625	-	-	conserved hypothetical protein
+1501816..1501932	+	117	ACO20214.1	-	SPP_1626	-	-	ferredoxin
+1501994..1502947	-	954	ACO20665.1	-	SPP_1627	-	-	bactoprenol glucosyl transferase
+1502949..1503968	-	1020	ACO21404.1	galE2	SPP_1628	-	-	UDP-glucose 4-epimerase
+1504071..1504262	-	192	ACO21961.1	-	SPP_1629	-	-	hypothetical protein
+1504269..1505372	-	1104	ACO22212.1	-	SPP_1630	-	-	FAD dependent oxidoreductase
+1505389..1506186	-	798	ACO20568.1	-	SPP_1631	-	-	conserved hypothetical protein
+1506173..1506850	-	678	ACO20359.1	-	SPP_1632	-	-	Bcl-2 family protein
+1507400..1508392	+	993	ACO21040.1	-	SPP_1633	-	-	conserved hypothetical protein
+1509071..1509727	-	657	ACO20577.1	-	SPP_1636	-	-	transposase
+1510100..1512070	-	1971	ACO21327.1	tkt1	SPP_1637	-	-	transketolase
+1512107..1512802	-	696	ACO21519.1	-	SPP_1638	-	-	D-allulose-6-phosphate 3-epimerase
+1512813..1513898	-	1086	ACO20467.1	-	SPP_1639	-	-	PTS system, IIC component
+1514263..1514712	-	450	ACO21687.1	-	SPP_1641	-	-	PTS system, IIA component
+1514690..1515118	-	429	ACO21639.1	-	SPP_1642	-	-	PTS system, nitrogen regulatory component IIA, putative
+1515111..1516574	-	1464	ACO22176.1	-	SPP_1643	-	-	putative transcription antiterminator BglG family protein
+1517103..1519439	-	2337	ACO20158.1	-	SPP_1644	-	-	P-type ATPase - metal cation transport
+1519572..1520321	+	750	ACO20864.1	-	SPP_1645	-	-	acyltransferase family protein
+1520614..1521228	-	615	ACO20495.1	-	SPP_1646	-	-	CadD
+1522044..1522313	-	270	ACO20981.1	rpsO	SPP_1647	-	-	ribosomal protein S15
+1522454..1523083	-	630	ACO21720.1	-	SPP_1648	-	-	YwnB
+1523942..1524265	+	324	ACO21621.1	-	SPP_1649	-	-	conserved hypothetical protein
+1524323..1526266	+	1944	ACO21023.1	thrS	SPP_1650	-	-	threonyl-tRNA synthetase
+1526315..1527289	-	975	ACO20500.1	-	SPP_1651	-	-	histidine kinase
+1527282..1527959	-	678	ACO21475.1	-	SPP_1652	-	-	response regulator
+1528115..1529188	+	1074	ACO20922.1	-	SPP_1653	-	-	conserved hypothetical protein
+1529279..1529581	-	303	ACO20320.1	-	SPP_1654	-	-	conserved hypothetical protein
+1529649..1530086	-	438	ACO21833.1	-	SPP_1655	-	-	Rrf2 family protein
+1530162..1531004	-	843	ACO20696.1	-	SPP_1656	-	-	metallophosphoesterase
+1531116..1531766	+	651	ACO20213.1	-	SPP_1657	-	-	iron-dependent transcriptional regulator
+1531747..1531938	+	192	ACO20555.1	-	SPP_1658	-	-	conserved hypothetical protein
+1531964..1532611	+	648	ACO22186.1	-	SPP_1659	-	-	membrane protein, putative
+1532742..1533155	+	414	ACO21338.1	-	SPP_1660	-	-	conserved hypothetical protein
+1533174..1533359	+	186	ACO21021.1	-	SPP_1661	-	-	conserved hypothetical protein
+1533426..1533587	+	162	ACO21761.1	-	SPP_1662	-	-	hypothetical protein
+1533626..1534069	-	444	ACO21356.1	dtd	SPP_1663	-	-	D-tyrosyl-tRNA(Tyr) deacylase
+1534099..1536321	-	2223	ACO21619.1	spoT	SPP_1664	-	-	guanosine-3,5-bis(diphosphate) 3-pyrophosphohydrolase
+1537317..1537946	+	630	ACO20179.1	-	SPP_1665	-	-	metallo-beta-lactamase superfamily protein
+1538069..1539961	-	1893	ACO22214.1	-	SPP_1666	-	-	endopeptidase O
+1540252..1540974	+	723	ACO21635.1	-	SPP_1667	-	-	manganese transport system ATP-binding protein MntA
+1540971..1541819	+	849	ACO21065.1	-	SPP_1668	-	-	manganese transport system membrane protein MntB
+1541851..1542780	+	930	ACO21614.1	-	SPP_1669	-	-	manganese ABC transporter substrate-binding lipoprotein (Adhesin B) (Saliva-binding protein)
+1542903..1543394	+	492	ACO21428.1	-	SPP_1670	-	-	thiol peroxidase (Scavengase P20)
+1543490..1546198	-	2709	ACO20434.1	-	SPP_1671	-	-	efflux ABC transporter, permease protein
+1546200..1546901	-	702	ACO20242.1	-	SPP_1672	-	-	macrolide export ATP-binding/permease protein MacB
+1547151..1549562	-	2412	ACO21884.1	-	SPP_1673	-	-	alpha-fucosidase
+1549615..1550307	-	693	ACO21602.1	-	SPP_1674	-	-	2,3-bisphosphoglycerate-dependent phosphoglycerate mutase (phosphoglyceromutase) (pgam) (bpg-dependent pgam) (dpgm)
+1550358..1550648	-	291	ACO21163.1	-	SPP_1675	-	-	conserved hypothetical protein
+1550842..1551222	-	381	ACO20423.1	-	SPP_1676	-	-	prophage Lp1 protein 6
+1551625..1554417	-	2793	ACO22101.1	ileS	SPP_1677	-	-	isoleucyl-tRNA synthetase
+1554670..1554786	-	117	ACO21493.1	-	SPP_1678	-	-	conserved hypothetical protein
+1554765..1555553	-	789	ACO21886.1	-	SPP_1679	-	-	cell-division initiation protein
+1555562..1556347	-	786	ACO20513.1	-	SPP_1680	-	-	YlmH protein
+1556344..1556607	-	264	ACO21159.1	-	SPP_1681	-	-	yggt family, putative
+1556607..1557146	-	540	ACO21647.1	-	SPP_1682	-	-	YlmF protein
+1557156..1557827	-	672	ACO21325.1	-	SPP_1683	-	-	pyridoxal phosphate enzyme, YggS family
+1557832..1559091	-	1260	ACO21781.1	ftsZ	SPP_1684	-	-	cell division protein FtsZ
+1559108..1560481	-	1374	ACO20381.1	ftsA	SPP_1685	-	-	cell division protein FtsA
+1560700..1561404	-	705	ACO21047.1	-	SPP_1686	-	-	conserved hypothetical integral membrane protein
+1561495..1562106	-	612	ACO20885.1	-	SPP_1687	-	-	MutT/nudix family protein
+1562093..1563466	-	1374	ACO21194.1	-	SPP_1688	-	-	UDP-N-acetylmuramoylalanyl-D-glutamyl-2, 6-diaminopimelate--D-alanyl-D-alanyl ligase
+1563550..1564593	-	1044	ACO20433.1	-	SPP_1689	-	-	D-alanine--D-alanine ligase (D-alanylalanine synthetase)(D-Ala-D-Ala ligase)
+1564788..1565384	-	597	ACO21373.1	recR	SPP_1690	-	-	recombination protein RecR
+1565395..1567437	-	2043	ACO21932.1	-	SPP_1691	-	-	penicillin-binding protein 2B
+1567652..1568503	+	852	ACO20211.1	-	SPP_1692	-	-	transcriptional regulator, RpiR family
+1568519..1569403	-	885	ACO20745.1	-	SPP_1693	-	-	glucokinase
+1569421..1570338	-	918	ACO21616.1	-	SPP_1694	-	-	N-acetylneuraminate lyase
+1570507..1571151	-	645	ACO22001.1	-	SPP_1695	-	-	protein of unknown function
+1571499..1571651	+	153	ACO20619.1	-	SPP_1696	-	-	hypothetical protein
+1571876..1572328	-	453	ACO21343.1	-	SPP_1697	-	-	conserved hypothetical protein
+1572600..1573439	-	840	ACO21524.1	-	SPP_1698	-	-	ABC transporter membrane-spanning permease - sugar transport
+1573455..1574342	-	888	ACO21079.1	-	SPP_1699	-	-	sugar ABC transporter, permease protein
+1574574..1575902	-	1329	ACO21546.1	-	SPP_1700	-	-	ABC transporter substrate-binding protein - sugar transport
+1576027..1577544	-	1518	ACO20172.1	-	SPP_1701	-	-	pts system maltose- and glucose-specific eiicb component
+1577563..1578261	-	699	ACO20617.1	-	SPP_1702	-	-	putative N-acetylmannosamine-6-P epimerase
+1578434..1579537	-	1104	ACO21449.1	-	SPP_1703	-	-	putative oxidoreductase YjhC
+1579549..1581642	-	2094	ACO21913.1	-	SPP_1704	-	-	sialidase B (Neuraminidase B)
+1581660..1582493	-	834	ACO20512.1	-	SPP_1705	-	-	ABC transporter, permease protein
+1582493..1583377	-	885	ACO21090.1	-	SPP_1706	-	-	ABC transporter, permease protein
+1583456..1584793	-	1338	ACO21398.1	-	SPP_1707	-	-	ABC transporter substrate-binding protein - sugar transport
+1584812..1585264	-	453	ACO21996.1	-	SPP_1708	-	-	conserved hypothetical protein
+1586277..1589345	-	3069	ACO21301.1	-	SPP_1709	-	-	neuraminidase
+1589702..1589929	-	228	ACO21894.1	-	SPP_1710	-	-	conserved hypothetical protein
+1591049..1592029	-	981	ACO20260.1	-	SPP_1712	-	-	xylan esterase 1
+1592345..1594360	-	2016	ACO21114.1	recG	SPP_1713	-	-	ATP-dependent DNA helicase RecG
+1594379..1595482	-	1104	ACO21570.1	alr	SPP_1714	-	-	alanine racemase
+1595472..1595834	-	363	ACO21485.1	acpS	SPP_1715	-	-	holo-(acyl-carrier-protein) synthase
+1595879..1596910	-	1032	ACO20385.1	-	SPP_1716	-	-	3-deoxy-7-phosphoheptulonate synthase
+1596912..1597943	-	1032	ACO20821.1	-	SPP_1717	-	-	3-deoxy-7-phosphoheptulonate synthase
+1598024..1600537	-	2514	ACO21281.1	secA	SPP_1718	-	-	preprotein translocase, SecA subunit
+1600683..1600796	-	114	ACO21732.1	-	SPP_1719	-	-	hypothetical protein
+1601000..1601632	-	633	ACO22155.1	-	SPP_1720	-	-	ABC transporter, ATP-binding protein
+1601636..1602211	-	576	ACO20178.1	-	SPP_1721	-	-	conserved hypothetical protein
+1602270..1603061	-	792	ACO21955.1	-	SPP_1722	-	-	membrane protein, putative
+1603246..1603581	-	336	ACO21380.1	-	SPP_1723	-	-	conserved hypothetical protein
+1603721..1604059	-	339	ACO21029.1	-	SPP_1724	-	-	conserved hypothetical protein
+1604147..1605457	-	1311	ACO20629.1	engA	SPP_1725	-	-	ribosome-associated GTPase EngA
+1605471..1606184	-	714	ACO22157.1	-	SPP_1726	-	-	nitroreductase family protein
+1606181..1607077	-	897	ACO20739.1	-	SPP_1727	-	-	primosomal protein DnaI
+1607078..1608247	-	1170	ACO20195.1	-	SPP_1728	-	-	replication initiation and membrane attachment protein
+1608248..1608721	-	474	ACO20807.1	nrdR	SPP_1729	-	-	transcriptional regulator NrdR
+1608861..1609226	+	366	ACO20369.1	-	SPP_1730	-	-	transcriptional regulator, GntR family
+1609231..1609926	+	696	ACO21865.1	-	SPP_1731	-	-	ABC transporter, ATP-binding protein
+1609943..1610710	+	768	ACO21341.1	-	SPP_1732	-	-	membrane protein, putative
+1611063..1612262	-	1200	ACO20741.1	-	SPP_1733	-	-	ABC transporter membrane-spanning permease - Na+ export
+1612259..1613152	-	894	ACO20666.1	-	SPP_1734	-	-	ABC transporter ATP-binding protein - Na+ export
+1613275..1613646	+	372	ACO21815.1	-	SPP_1735	-	-	conserved hypothetical protein
+1614642..1615259	+	618	ACO21554.1	-	SPP_1736	-	-	snare associated golgi protein
+1615302..1616189	-	888	ACO20953.1	-	SPP_1737	-	-	fructokinase
+1616338..1618221	-	1884	ACO20870.1	-	SPP_1738	-	-	pts system, sucrose-specific iibc component
+1618347..1618544	-	198	ACO21028.1	-	SPP_1739	-	-	conserved hypothetical protein
+1618597..1620051	+	1455	ACO20425.1	-	SPP_1740	-	-	sucrose-6-phosphate hydrolase (Sucrase) (Invertase)
+1620032..1620997	+	966	ACO21769.1	-	SPP_1741	-	-	sucrose operon repressor (Scr operon regulatory protein)
+1622307..1623503	-	1197	ACO20645.1	-	SPP_1744	-	-	hydroxymethylglutaryl-CoA synthase
+1623610..1623858	-	249	ACO20332.1	-	SPP_1745	-	-	conserved hypothetical protein
+1623926..1624315	-	390	ACO21850.1	-	SPP_1746	-	-	transposase (IS4 family)
+1624332..1624547	-	216	ACO21571.1	-	SPP_1747	-	-	mobile genetic element
+1624612..1625061	-	450	ACO20823.1	-	SPP_1748	-	-	conserved hypothetical protein
+1625063..1625821	-	759	ACO21387.1	-	SPP_1749	-	-	conserved hypothetical protein
+1625936..1627915	-	1980	ACO21588.1	-	SPP_1750	-	-	Stk1
+1627912..1628652	-	741	ACO21469.1	-	SPP_1751	-	-	protein phosphatase PrpC
+1628667..1629980	-	1314	ACO22073.1	sun	SPP_1752	-	-	ribosomal RNA small subunit methyltransferase B
+1629973..1630908	-	936	ACO20559.1	fmt	SPP_1753	-	-	methionyl-tRNA formyltransferase
+1630921..1633317	-	2397	ACO21071.1	-	SPP_1754	-	-	primosomal protein N' (ATP-dependent helicase PriA)(Replication factor Y)
+1633383..1633694	-	312	ACO21165.1	-	SPP_1755	-	-	DNA-directed RNA polymerase omega chain
+1633722..1634348	-	627	ACO21234.1	gmk	SPP_1756	-	-	guanylate kinase
+1634478..1636091	-	1614	ACO21892.1	-	SPP_1757	-	-	conserved hypothetical protein
+1636434..1639181	-	2748	ACO20240.1	-	SPP_1758	-	-	conserved hypothetical protein
+1639528..1640625	-	1098	ACO21501.1	-	SPP_1759	-	-	conserved hypothetical protein
+1640635..1641381	-	747	ACO21180.1	-	SPP_1760	-	-	SAM-dependent methyltransferase
+1641484..1641837	-	354	ACO20507.1	-	SPP_1761	-	-	putative iojap homolog
+1641850..1642350	-	501	ACO21895.1	-	SPP_1762	-	-	isochorismatase family protein
+1642351..1642944	-	594	ACO20848.1	-	SPP_1763	-	-	conserved hypothetical protein
+1642944..1643573	-	630	ACO22095.1	nadD	SPP_1764	-	-	nicotinate (nicotinamide) nucleotide adenylyltransferase
+1643625..1643936	-	312	ACO22120.1	-	SPP_1765	-	-	conserved hypothetical protein
+1644150..1645256	-	1107	ACO21683.1	-	SPP_1766	-	-	GTP-binding protein
+1645259..1645786	-	528	ACO20602.1	yqeG	SPP_1767	-	-	had superfamily (subfamily iiia) phosphatase
+1645801..1646709	-	909	ACO21990.1	-	SPP_1768	-	-	CorA - magnesium and cobalt transporter
+1646766..1647326	-	561	ACO21075.1	-	SPP_1769	-	-	small conductance mechanosensitive ion channel
+1648741..1649694	+	954	ACO20713.1	-	SPP_1772	-	-	integral membrane protein
+1649837..1650217	+	381	ACO21979.1	-	SPP_1773	-	-	transcriptional regulator, putative
+1650316..1650537	+	222	ACO21523.1	-	SPP_1774	-	-	conserved hypothetical protein
+1650554..1650868	+	315	ACO21696.1	trx	SPP_1775	-	-	thioredoxin
+1651173..1651706	+	534	ACO21185.1	-	SPP_1776	-	-	NADPH-dependent 7-cyano-7-deazaguanine reductase
+1651960..1652628	-	669	ACO20595.1	-	SPP_1777	-	-	aquaporin Z - water channel protein
+1652739..1653530	-	792	ACO21737.1	-	SPP_1778	-	-	conserved hypothetical protein
+1653954..1654718	-	765	ACO20282.1	-	SPP_1779	-	-	ABC-2 type transporter
+1654711..1655481	-	771	ACO21919.1	-	SPP_1780	-	-	Nod factor export ATP-binding protein I (Nodulation ATP-binding protein I)
+1655728..1656405	+	678	ACO22032.1	-	SPP_1781	-	-	transcriptional regulator, ArsR family
+1656465..1658261	-	1797	ACO21590.1	pepF2	SPP_1782	-	-	oligoendopeptidase F
+1658272..1659015	-	744	ACO22005.1	-	SPP_1783	-	-	protein YqeU
+1659017..1659967	-	951	ACO21549.1	prmA	SPP_1784	-	-	ribosomal protein L11 methyltransferase
+1660105..1660533	-	429	ACO21082.1	-	SPP_1785	-	-	MutT/nudix family protein
+1660514..1661602	-	1089	ACO20624.1	-	SPP_1786	-	-	peptidase, M50 family protein
+1661621..1662091	-	471	ACO21915.1	-	SPP_1787	-	-	conserved hypothetical protein
+1662382..1662834	-	453	ACO22083.1	-	SPP_1788	-	-	conserved hypothetical protein
+1663186..1663365	-	180	ACO21416.1	-	SPP_1789	-	-	conserved hypothetical protein
+1663530..1663769	-	240	ACO21810.1	-	SPP_1790	-	-	conserved hypothetical protein
+1664039..1665310	+	1272	ACO21319.1	-	SPP_1791	-	-	ATPase, AAA family
+1665857..1667176	-	1320	ACO21806.1	-	SPP_1793	-	-	sucrose-6-phosphate hydrolase
+1667186..1668031	-	846	ACO20664.1	-	SPP_1794	-	-	ABC transporter membrane-spanning permease - sugar transport
+1668033..1668935	-	903	ACO20984.1	-	SPP_1795	-	-	ABC transporter, permease protein
+1669031..1670341	-	1311	ACO21584.1	-	SPP_1796	-	-	ABC transporter substrate-binding protein - sugar transport
+1670468..1671463	-	996	ACO21378.1	-	SPP_1797	-	-	sugar-binding transcriptional regulator, LacI family protein
+1671825..1673306	-	1482	ACO21947.1	-	SPP_1798	-	-	M protein trans-acting positive transcriptional regulator
+1673749..1673913	+	165	ACO20409.1	-	SPP_1799	-	-	conserved hypothetical protein
+1673997..1674563	+	567	ACO20993.1	-	SPP_1800	-	-	conserved hypothetical protein
+1674575..1674745	+	171	ACO20480.1	-	SPP_1801	-	-	lipoprotein, putative
+1674784..1675392	+	609	ACO22063.1	-	SPP_1802	-	-	Gls24 protein
+1675423..1675626	+	204	ACO21695.1	-	SPP_1803	-	-	conserved hypothetical protein
+1676440..1676559	-	120	ACO22142.1	-	SPP_1804	-	-	hypothetical protein
+1676777..1677484	-	708	ACO21709.1	-	SPP_1805	-	-	domain of unknown function, putative
+1677562..1678008	-	447	ACO20677.1	-	SPP_1806	-	-	sulfatase-modifying factor 1 (C-alpha-formyglycine-generating enzyme 1)
+1678094..1678696	-	603	ACO20239.1	-	SPP_1807	-	-	phosphotransferase system
+1679039..1679356	-	318	ACO20844.1	-	SPP_1810	-	-	lichenan-specific phosphotransferase enzyme iib component (pts system lichenan-specific eiib component) (eiib-lic)
+1679371..1680267	-	897	ACO21321.1	-	SPP_1811	-	-	conserved hypothetical protein
+1680270..1681532	-	1263	ACO20789.1	-	SPP_1812	-	-	lichenan permease iic component (pts system lichenan-specific eiiccomponent) (eiic-lic)
+1681812..1682990	+	1179	ACO21440.1	-	SPP_1813	-	-	ROK family protein, putative
+1683218..1683664	-	447	ACO22209.1	-	SPP_1814	-	-	acetyltransferase, gnat family
+1683734..1684393	+	660	ACO20252.1	-	SPP_1815	-	-	type 4 prepilin peptidase
+1684445..1685596	-	1152	ACO20942.1	-	SPP_1816	-	-	transcriptional regulator
+1685611..1686165	-	555	ACO21675.1	-	SPP_1817	-	-	hypothetical protein
+1686202..1686342	-	141	ACO21421.1	-	SPP_1818	-	-	hypothetical protein
+1686644..1687420	-	777	ACO21902.1	trpA	SPP_1819	-	-	tryptophan synthase, alpha subunit
+1687413..1688636	-	1224	ACO20672.1	trpB	SPP_1820	-	-	tryptophan synthase, beta subunit
+1688614..1689213	-	600	ACO22151.1	trpF	SPP_1821	-	-	N-(5'phosphoribosyl)anthranilate isomerase
+1689200..1689967	-	768	ACO21684.1	trpC	SPP_1822	-	-	indole-3-glycerol phosphate synthase
+1689964..1690968	-	1005	ACO20685.1	trpD	SPP_1823	-	-	anthranilate phosphoribosyltransferase
+1690979..1691545	-	567	ACO20206.1	-	SPP_1824	-	-	para-aminobenzoate/anthranilate synthase glutamine amidotransferasecomponent II
+1691542..1692903	-	1362	ACO21868.1	trpE	SPP_1825	-	-	anthranilate synthase component I
+1693275..1693436	-	162	ACO21391.1	-	SPP_1826	-	-	conserved hypothetical protein
+1694044..1695045	-	1002	ACO20420.1	-	SPP_1827	-	-	catabolite control protein
+1695617..1696327	-	711	ACO22168.1	-	SPP_1828	-	-	putative Mg2+ transporter-C (MgtC) family protein
+1696330..1698021	-	1692	ACO21643.1	-	SPP_1829	-	-	binding-protein-dependent transport systems inner membrane component
+1698033..1699043	-	1011	ACO21264.1	-	SPP_1830	-	-	spermidine/putrescine import ATP-binding protein PotA
+1699146..1700213	-	1068	ACO20728.1	-	SPP_1831	-	-	ABC transporter, substrate-binding protein
+1700238..1700897	-	660	ACO20612.1	-	SPP_1832	-	-	conserved hypothetical protein
+1701022..1701135	-	114	ACO20598.1	-	SPP_1833	-	-	conserved hypothetical protein
+1701916..1704042	-	2127	ACO21219.1	-	SPP_1834	-	-	cell wall surface anchor family protein
+1705205..1706431	-	1227	ACO20761.1	-	SPP_1835	-	-	Cps7G
+1706474..1707166	-	693	ACO20396.1	-	SPP_1836	-	-	putative glycosyl transferase
+1707352..1709103	-	1752	ACO20357.1	-	SPP_1837	-	-	ABC transporter, ATP-binding protein
+1709093..1710838	-	1746	ACO22037.1	-	SPP_1838	-	-	ABC transporter, ATP-binding protein
+1710884..1710997	+	114	ACO21576.1	-	SPP_1839	-	-	hypothetical protein
+1711044..1711340	-	297	ACO21418.1	-	SPP_1840	-	-	hypothetical protein
+1711493..1711768	-	276	ACO20753.1	-	SPP_1841	-	-	hypothetical protein
+1711722..1711949	-	228	ACO21364.1	-	SPP_1842	-	-	hypothetical protein
+1712082..1712909	+	828	ACO20525.1	xth	SPP_1843	-	-	exodeoxyribonuclease III
+1714181..1714762	+	582	ACO21532.1	xpt	SPP_1846	-	-	xanthine phosphoribosyltransferase
+1714762..1716024	+	1263	ACO21848.1	-	SPP_1847	-	-	xanthine permease
+1716111..1716977	-	867	ACO20184.1	-	SPP_1848	-	-	type II restriction enzyme
+1716964..1717734	-	771	ACO20328.1	-	SPP_1849	-	-	DNA methylase
+1717760..1718614	-	855	ACO21357.1	-	SPP_1850	-	-	modification methylase
+1718771..1719175	-	405	ACO21039.1	-	SPP_1851	-	-	thioesterase family protein
+1719245..1720726	-	1482	ACO20459.1	galT	SPP_1852	-	-	galactose-1-phosphate uridylyltransferase
+1720745..1721923	-	1179	ACO22207.1	galK	SPP_1853	-	-	galactokinase
+1722087..1723094	+	1008	ACO21899.1	-	SPP_1854	-	-	GalR, member of GalR-LacI family of transcriptional regulators, binds DNA; regulator of gal operon
+1723140..1724177	-	1038	ACO21147.1	-	SPP_1855	-	-	alcohol dehydrogenase, zinc-containing
+1724178..1724531	-	354	ACO20688.1	-	SPP_1856	-	-	transcriptional regulator, MerR family
+1724775..1725665	-	891	ACO20376.1	-	SPP_1857	-	-	cation diffusion facilitator transporter - heavy metal transport
+1725798..1726334	+	537	ACO21595.1	-	SPP_1858	-	-	transcriptional regulator, TetR family
+1726500..1727306	-	807	ACO21366.1	-	SPP_1859	-	-	nicotinamide mononucleotide transporter
+1727830..1729176	-	1347	ACO21369.1	-	SPP_1860	-	-	Spn1 transposase
+1729359..1730879	-	1521	ACO21288.1	-	SPP_1861	-	-	ABC transporter membrane-spanning permease - choline transporter
+1730872..1731600	-	729	ACO21731.1	-	SPP_1862	-	-	choline transport ATP-binding protein opuBA
+1731615..1732379	-	765	ACO20411.1	-	SPP_1863	-	-	conserved hypothetical protein
+1732383..1732826	-	444	ACO20851.1	-	SPP_1864	-	-	transcriptional regulator, MarR family
+1733508..1733804	-	297	ACO21945.1	-	SPP_1865	-	-	conserved hypothetical protein
+1733826..1734890	-	1065	ACO20438.1	pepA	SPP_1866	-	-	glutamyl aminopeptidase
+1735046..1735204	-	159	ACO21060.1	-	SPP_1867	-	-	hypothetical protein
+1736416..1737375	+	960	ACO21510.1	-	SPP_1869	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1737365..1738321	+	957	ACO22097.1	-	SPP_1870	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1738318..1739070	+	753	ACO20443.1	-	SPP_1871	-	-	ferrichrome transport ATP-binding protein FhuC
+1739166..1740131	+	966	ACO20913.1	-	SPP_1872	-	-	iron-compound ABC transporter, iron-compound-binding protein
+1740356..1740598	-	243	ACO21381.1	-	SPP_1873	-	-	conserved hypothetical protein
+1740598..1741320	-	723	ACO21842.1	rluB	SPP_1874	-	-	ribosomal large subunit pseudouridine synthase B
+1741307..1741876	-	570	ACO20208.1	scpB	SPP_1875	-	-	segregation and condensation protein B
+1741895..1742623	-	729	ACO21653.1	-	SPP_1876	-	-	ScpA/B protein
+1742623..1743363	-	741	ACO20605.1	-	SPP_1877	-	-	tyrosine recombinase
+1743354..1743815	-	462	ACO22010.1	-	SPP_1878	-	-	CBS domain protein
+1743812..1744333	-	522	ACO21520.1	-	SPP_1879	-	-	phosphodiesterase, family
+1744309..1745280	-	972	ACO20506.1	-	SPP_1880	-	-	non-canonical purine NTP pyrophosphatase, RdgB/HAM1 family protein
+1745277..1746071	-	795	ACO20946.1	murI	SPP_1881	-	-	glutamate racemase
+1746278..1746526	-	249	ACO20471.1	-	SPP_1882	-	-	conserved hypothetical protein
+1746668..1748293	-	1626	ACO22163.1	treC	SPP_1883	-	-	alpha,alpha-phosphotrehalase
+1748471..1750438	-	1968	ACO21697.1	treP	SPP_1884	-	-	pts system, trehalose-specific iibc component
+1750623..1751333	+	711	ACO20701.1	treR	SPP_1885	-	-	trehalose operon repressor
+1751366..1752169	-	804	ACO20251.1	-	SPP_1886	-	-	ABC transporter ATP binding protein
+1753974..1754102	+	129	ACO21819.1	-	SPP_1891	-	-	hypothetical protein
+1754500..1755426	-	927	ACO20169.1	-	SPP_1892	-	-	oligopeptide transport ATP-binding protein AmiF
+1755437..1756504	-	1068	ACO20402.1	-	SPP_1893	-	-	oligopeptide transport ATP-binding protein OppD
+1756513..1757439	-	927	ACO20868.1	-	SPP_1894	-	-	oligopeptide transport system permease protein AmiD
+1757439..1758935	-	1497	ACO21527.1	-	SPP_1895	-	-	oligopeptide transport system permease protein AmiC
+1759002..1760981	-	1980	ACO21980.1	-	SPP_1896	-	-	AmiA protein
+1761109..1761276	+	168	ACO21276.1	-	SPP_1897	-	-	conserved hypothetical protein
+1761668..1762861	-	1194	ACO21960.1	-	SPP_1898	-	-	O-antigen polymerase family
+1762999..1764441	-	1443	ACO20167.1	-	SPP_1899	-	-	sucrose phosphorylase (Sucrose glucosyltransferase)(Glucosyltransferase-A) (GTF-A)
+1764625..1764792	-	168	ACO21041.1	-	SPP_1900	-	-	conserved hypothetical protein
+1764799..1765632	-	834	ACO20855.1	-	SPP_1901	-	-	sugar ABC transporter, permease protein
+1765646..1766512	-	867	ACO21987.1	-	SPP_1902	-	-	sugar ABC transporter, permease protein
+1766526..1767785	-	1260	ACO21775.1	-	SPP_1903	-	-	sugar ABC transporter, sugar-binding protein
+1767877..1770039	-	2163	ACO20261.1	-	SPP_1904	-	-	alpha-galactosidase AgaN
+1770147..1771007	+	861	ACO21634.1	-	SPP_1905	-	-	Msm operon regulatory protein
+1771004..1771939	+	936	ACO22201.1	-	SPP_1906	-	-	biotin-[acetyl-CoA-carboxylase] ligase
+1778843..1780198	-	1356	ACO21049.1	rumA2	SPP_1929	-	-	23S rRNA (uracil-5-)-methyltransferase RumA
+1780168..1781031	+	864	ACO20812.1	-	SPP_1930	-	-	aminoglycoside phosphotransferase
+1781041..1781817	+	777	ACO20775.1	-	SPP_1931	-	-	RecA regulator RecX
+1781906..1782439	+	534	ACO20192.1	-	SPP_1932	-	-	conserved hypothetical protein
+1783773..1785395	-	1623	ACO20952.1	groL	SPP_1935	-	-	chaperonin GroL
+1785411..1785695	-	285	ACO20372.1	groS	SPP_1936	-	-	chaperonin GroS
+1785965..1786360	-	396	ACO21878.1	-	SPP_1937	-	-	single-strand binding protein family
+1786438..1787199	-	762	ACO20835.1	-	SPP_1938	-	-	oxidoreductase, short chain dehydrogenase/reductase family
+1787232..1787858	-	627	ACO20273.1	-	SPP_1939	-	-	putative tRNA binding domain protein
+1787874..1788191	-	318	ACO21784.1	-	SPP_1940	-	-	thioredoxin family protein
+1788188..1788487	-	300	ACO21098.1	-	SPP_1941	-	-	conserved hypothetical protein
+1788772..1788963	-	192	ACO20670.1	-	SPP_1942	-	-	conserved hypothetical protein
+1789124..1789798	-	675	ACO21066.1	-	SPP_1943	-	-	conserved hypothetical protein
+1789803..1790249	-	447	ACO20615.1	-	SPP_1944	-	-	response regulator of the LytR/AlgR family
+1790363..1790866	-	504	ACO22038.1	-	SPP_1945	-	-	PAP2 family protein
+1790863..1791225	-	363	ACO21530.1	-	SPP_1946	-	-	conserved hypothetical protein
+1793760..1794476	-	717	ACO21119.1	-	SPP_1952	-	-	conserved hypothetical protein
+1795357..1796772	-	1416	ACO20274.1	-	SPP_1953	-	-	pneumolysin (Thiol-activated cytolysin)
+1796783..1797193	-	411	ACO21936.1	-	SPP_1954	-	-	conserved hypothetical protein
+1797186..1797794	-	609	ACO21937.1	-	SPP_1955	-	-	conserved hypothetical protein
+1797807..1798265	-	459	ACO21334.1	-	SPP_1956	-	-	conserved hypothetical protein
+1798390..1798521	+	132	ACO20490.1	-	SPP_1957	-	-	mobile genetic element
+1798526..1798789	+	264	ACO22030.1	-	SPP_1958	-	-	mobile genetic element
+1799554..1799814	-	261	ACO21162.1	-	SPP_1959	-	-	conserved hypothetical protein
+1799873..1800424	-	552	ACO20191.1	-	SPP_1960	-	-	conserved hypothetical protein
+1800414..1800611	-	198	ACO22188.1	-	SPP_1961	-	-	conserved hypothetical protein
+1800615..1801199	-	585	ACO21583.1	-	SPP_1962	-	-	conserved hypothetical protein
+1801597..1802022	-	426	ACO21003.1	-	SPP_1963	-	-	conserved hypothetical protein
+1802151..1802510	-	360	ACO20414.1	-	SPP_1964	-	-	conserved hypothetical protein
+1802749..1802910	-	162	ACO22182.1	-	SPP_1965	-	-	type II restriction-modification system regulatory protein, putative
+1803269..1804225	-	957	ACO21645.1	-	SPP_1966	-	-	autolysin (N-acetylmuramoyl-L-alanine amidase) (Mureinhydrolase) (Mucopeptide aminohydrolase) (Cell wall hydrolase)
+1804601..1805971	-	1371	ACO20744.1	-	SPP_1967	-	-	DNA-damage-inducible protein
+1806278..1807444	-	1167	ACO20176.1	recA	SPP_1968	-	-	protein RecA
+1807499..1808755	-	1257	ACO21922.1	-	SPP_1969	-	-	competence/damage-inducible protein CinA N- domain, putative
+1808840..1809856	-	1017	ACO21363.1	-	SPP_1970	-	-	regulator of lytrabc operon
+1809864..1810382	-	519	ACO22118.1	-	SPP_1971	-	-	acetyltransferase, gnat family
+1810372..1810815	-	444	ACO20527.1	-	SPP_1972	-	-	conserved hypothetical protein
+1810901..1811521	-	621	ACO20148.1	-	SPP_1973	-	-	lipoprotein, putative
+1811904..1812767	-	864	ACO20711.1	-	SPP_1974	-	-	transcriptional activator
+1812956..1813126	+	171	ACO21451.1	-	SPP_1975	-	-	conserved hypothetical protein
+1813271..1815286	+	2016	ACO21891.1	-	SPP_1976	-	-	bacteriocin-associated integral membrane protein
+1815288..1815920	+	633	ACO20478.1	-	SPP_1977	-	-	ABC-type antimicrobial peptide transport system, ATPase component
+1816061..1816339	+	279	ACO20954.1	-	SPP_1978	-	-	conserved hypothetical protein
+1816848..1817261	-	414	ACO20583.1	-	SPP_1979	-	-	nucleoside diphosphate kinase (NDK) (NDP kinase)(Abnormal wing disks protein) (Killer of prune protein)
+1817372..1821049	-	3678	ACO20944.1	rpoC	SPP_1980	-	-	DNA-directed RNA polymerase, beta' subunit
+1821082..1824693	-	3612	ACO21876.1	rpoB	SPP_1981	-	-	DNA-directed RNA polymerase, beta subunit
+1825377..1826708	-	1332	ACO21232.1	-	SPP_1983	-	-	CBS domain protein
+1826999..1827823	-	825	ACO20164.1	-	SPP_1984	-	-	DNA-entry nuclease (Competence-specific nuclease)
+1827862..1828050	-	189	ACO21921.1	-	SPP_1985	-	-	conserved domain protein
+1828043..1829326	-	1284	ACO21608.1	murA2	SPP_1986	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1829350..1829481	-	132	ACO20748.1	-	SPP_1987	-	-	conserved hypothetical protein
+1829638..1830675	-	1038	ACO21182.1	-	SPP_1988	-	-	ATP-dependent protease La
+1830659..1831147	-	489	ACO20543.1	coaD	SPP_1989	-	-	pantetheine-phosphate adenylyltransferase
+1831137..1831676	-	540	ACO22064.1	rsmD	SPP_1990	-	-	RNA methyltransferase, RsmD family
+1831741..1832733	-	993	ACO21459.1	asnA	SPP_1991	-	-	aspartate--ammonia ligase
+1832707..1832838	+	132	ACO21788.1	-	SPP_1992	-	-	hypothetical protein
+1832844..1833527	-	684	ACO20175.1	-	SPP_1993	-	-	membrane protein
+1833583..1834323	-	741	ACO20734.1	-	SPP_1994	-	-	possible rRNA/tRNA methylase
+1834357..1834635	+	279	ACO21453.1	-	SPP_1995	-	-	acylphosphatase
+1834713..1835639	+	927	ACO20454.1	-	SPP_1996	-	-	membrane protein OxaA 2
+1835714..1836508	-	795	ACO21059.1	pflA	SPP_1997	-	-	pyruvate formate-lyase 1-activating enzyme
+1836634..1837884	-	1251	ACO21662.1	-	SPP_1998	-	-	diaminopimelate decarboxylase
+1837951..1838778	-	828	ACO22129.1	purR	SPP_1999	-	-	pur operon repressor
+1839045..1839986	-	942	ACO20466.1	-	SPP_2000	-	-	3'-5' exoribonuclease YhaM
+1839976..1841232	-	1257	ACO21046.1	-	SPP_2001	-	-	competence-induced protein Ccs50
+1841234..1841896	-	663	ACO21896.1	-	SPP_2002	-	-	thiamine pyrophosphokinase
+1841859..1842515	-	657	ACO22105.1	rpe	SPP_2003	-	-	ribulose-phosphate 3-epimerase
+1842526..1843404	-	879	ACO21663.1	rsgA	SPP_2004	-	-	ribosome small subunit-dependent GTPase A
+1843605..1844003	-	399	ACO21181.1	-	SPP_2005	-	-	hypothetical protein
+1843997..1844770	-	774	ACO20563.1	-	SPP_2006	-	-	hypothetical protein
+1845460..1846332	-	873	ACO21814.1	ksgA	SPP_2007	-	-	dimethyladenosine transferase
+1846583..1846801	-	219	ACO21423.1	-	SPP_2008	-	-	hypothetical protein
+1846869..1847510	-	642	ACO20814.1	-	SPP_2009	-	-	ABC-type antimicrobial peptide transport system, ATPase component
+1849810..1850709	-	900	ACO20894.1	-	SPP_2012	-	-	transcriptional activator
+1850781..1851341	-	561	ACO20280.1	-	SPP_2013	-	-	putative primase homolog
+1851341..1852114	-	774	ACO21821.1	-	SPP_2014	-	-	deoxyribonuclease TatD family
+1852419..1853312	-	894	ACO21320.1	-	SPP_2015	-	-	cell wall surface anchor family protein
+1853596..1853730	-	135	ACO21190.1	rpmH	SPP_2016	-	-	ribosomal protein L34
+1853875..1855089	-	1215	ACO20591.1	-	SPP_2017	-	-	aspartate aminotransferase
+1855245..1855538	-	294	ACO22099.1	-	SPP_2018	-	-	conserved hypothetical protein
+1855700..1856152	+	453	ACO21547.1	-	SPP_2019	-	-	universal stress protein family protein
+1856187..1857575	-	1389	ACO21170.1	-	SPP_2020	-	-	Cof family protein
+1857641..1858603	+	963	ACO21984.1	-	SPP_2022	-	-	L-asparaginase
+1858600..1858971	-	372	ACO20579.1	-	SPP_2021	-	-	conserved hypothetical protein
+1859035..1860045	-	1011	ACO21924.1	ccpA	SPP_2023	-	-	catabolite control protein A
+1860470..1861069	-	600	ACO21141.1	-	SPP_2024	-	-	response regulator
+1861071..1862168	-	1098	ACO21613.1	-	SPP_2025	-	-	histidine kinase
+1862168..1862905	-	738	ACO21778.1	-	SPP_2026	-	-	ABC-type multidrug transport system, permease component
+1862907..1863791	-	885	ACO20642.1	-	SPP_2027	-	-	ABC transporter, ATP-binding protein
+1863778..1863972	-	195	ACO20869.1	-	SPP_2028	-	-	conserved hypothetical protein
+1863969..1864175	-	207	ACO21340.1	-	SPP_2029	-	-	conserved hypothetical protein
+1870856..1871335	-	480	ACO20961.1	-	SPP_2044	-	-	competence-specific global transcription modulator
+1871457..1871993	-	537	ACO20217.1	nusG	SPP_2045	-	-	transcription termination/antitermination factor NusG
+1872048..1872224	-	177	ACO20768.1	secE	SPP_2046	-	-	preprotein translocase, SecE subunit
+1872234..1872386	-	153	ACO20298.1	-	SPP_2047	-	-	hypothetical protein
+1872439..1874634	-	2196	ACO21607.1	-	SPP_2048	-	-	penicillin-binding protein 2A
+1874760..1875596	+	837	ACO22190.1	-	SPP_2049	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1875663..1876670	-	1008	ACO21975.1	gap	SPP_2050	-	-	glyceraldehyde-3-phosphate dehydrogenase, type I
+1876848..1877810	-	963	ACO21017.1	-	SPP_2051	-	-	efflux ABC transporter, permease protein
+1877833..1877961	-	129	ACO20780.1	-	SPP_2052	-	-	hypothetical protein
+1878368..1878718	-	351	ACO21401.1	-	SPP_2053	-	-	transposase
+1878849..1879721	-	873	ACO21739.1	nadC	SPP_2054	-	-	nicotinate-nucleotide diphosphorylase (carboxylating)
+1879958..1881268	+	1311	ACO20640.1	-	SPP_2055	-	-	membrane protein
+1881633..1881764	-	132	ACO21688.1	-	SPP_2056	-	-	conserved domain protein
+1882286..1883014	-	729	ACO20917.1	-	SPP_2057	-	-	transcriptional regulator, GntR family
+1883172..1884581	+	1410	ACO20496.1	-	SPP_2058	-	-	glycosyl hydrolase, family protein 1
+1884599..1885894	+	1296	ACO21824.1	-	SPP_2059	-	-	phosphotransferase system system, cellobiose-specific IIC component
+1885899..1886207	+	309	ACO21222.1	-	SPP_2060	-	-	lichenan-specific phosphotransferase enzyme iib component (pts system lichenan-specific eiib component) (eiib-lic)
+1886204..1886512	+	309	ACO20862.1	-	SPP_2061	-	-	lichenan-specific phosphotransferase enzyme iia component (pts system lichenan-specific eiia component) (eiia-lic) (eiii-lic)
+1887420..1890071	-	2652	ACO20373.1	-	SPP_2062	-	-	aldehyde-alcohol dehydrogenase 2
+1890370..1890780	-	411	ACO21733.1	-	SPP_2063	-	-	morn motif family protein
+1890782..1891210	-	429	ACO21277.1	-	SPP_2064	-	-	phosphotyrosine protein phosphatase
+1891256..1891555	-	300	ACO21617.1	yajC	SPP_2065	-	-	preprotein translocase, YajC subunit
+1891672..1893648	-	1977	ACO21811.1	tkt2	SPP_2066	-	-	transketolase
+1893762..1894853	-	1092	ACO21072.1	-	SPP_2067	-	-	probable L-ascorbate-6-phosphate lactonase UlaG (L-ascorbate utilization protein G)
+1894965..1896638	-	1674	ACO20613.1	-	SPP_2068	-	-	transcriptional regulator, BglG family
+1896817..1897521	-	705	ACO21526.1	-	SPP_2069	-	-	L-ribulose-5-phosphate 4-epimerase (Phosphoribuloseisomerase)
+1897523..1898386	-	864	ACO22040.1	-	SPP_2070	-	-	hexulose-6-phosphate isomerase, putative
+1898390..1899055	-	666	ACO21927.1	-	SPP_2071	-	-	orotidine 5'-phosphate decarboxylase / humps family, putative
+1899072..1899557	-	486	ACO20288.1	-	SPP_2072	-	-	ascorbate-specific phosphotransferase enzyme iia component (pts system ascorbate-specific eiia component)
+1899634..1899915	-	282	ACO20749.1	-	SPP_2073	-	-	ascorbate-specific phosphotransferase enzyme iib component (ascorbate-specific pts system eiib component)
+1899938..1901395	-	1458	ACO21210.1	-	SPP_2074	-	-	ascorbate-specific PTS system enzyme IIC
+1901526..1902149	-	624	ACO22065.1	-	SPP_2075	-	-	conserved hypothetical protein
+1902200..1903186	-	987	ACO21019.1	-	SPP_2076	-	-	jag protein
+1903205..1904035	-	831	ACO21495.1	-	SPP_2077	-	-	membrane protein OxaA 1
+1904004..1904375	-	372	ACO21965.1	rnpA	SPP_2078	-	-	ribonuclease P protein component
+1904392..1904523	-	132	ACO20218.1	-	SPP_2079	-	-	conserved hypothetical protein
+1904524..1905714	-	1191	ACO20722.1	ackA	SPP_2080	-	-	acetate kinase
+1905765..1906718	-	954	ACO21375.1	-	SPP_2081	-	-	adenine-specific DNA methylase
+1906787..1906936	+	150	ACO21757.1	-	SPP_2082	-	-	hypothetical protein
+1906977..1907159	-	183	ACO20226.1	-	SPP_2083	-	-	hypothetical protein
+1907510..1907923	-	414	ACO21137.1	-	SPP_2085	-	-	conserved hypothetical protein
+1907901..1908362	-	462	ACO20843.1	-	SPP_2086	-	-	competence protein ComGF
+1908325..1908585	-	261	ACO21297.1	-	SPP_2087	-	-	conserved hypothetical protein
+1908590..1908994	-	405	ACO21780.1	-	SPP_2088	-	-	competence protein CglD
+1908987..1909313	-	327	ACO20651.1	-	SPP_2089	-	-	competence protein CglC
+1909315..1910163	-	849	ACO21116.1	-	SPP_2090	-	-	competence protein CglB
+1910279..1911220	-	942	ACO21568.1	-	SPP_2091	-	-	putative ABC transporter subunit ComYA
+1911296..1911661	-	366	ACO22042.1	-	SPP_2092	-	-	conserved hypothetical protein
+1911812..1912870	-	1059	ACO20388.1	-	SPP_2093	-	-	alcohol dehydrogenase, zinc-containing
+1913033..1914184	-	1152	ACO20865.1	nagA	SPP_2094	-	-	N-acetylglucosamine-6-phosphate deacetylase
+1914337..1916154	-	1818	ACO21272.1	-	SPP_2095	-	-	acyltransferase
+1916255..1917397	-	1143	ACO21236.1	tgt	SPP_2096	-	-	queuine tRNA-ribosyltransferase
+1917527..1918384	+	858	ACO21864.1	-	SPP_2097	-	-	conserved hypothetical protein
+1918412..1919056	-	645	ACO20494.1	pcp2	SPP_2098	-	-	pyroglutamyl-peptidase I
+1919163..1919531	-	369	ACO20962.1	-	SPP_2099	-	-	conserved hypothetical protein
+1920285..1920407	+	123	ACO20714.1	-	SPP_2102	-	-	hypothetical protein
+1920393..1921571	-	1179	ACO20964.1	-	SPP_2101	-	-	LysM domain-containing protein
+1921737..1922357	-	621	ACO22112.1	-	SPP_2103	-	-	HAD-superfamily hydrolase, subfamily IA, variant 1
+1922361..1923641	-	1281	ACO21893.1	-	SPP_2104	-	-	multi antimicrobial extrusion
+1923702..1925186	-	1485	ACO20244.1	thrC	SPP_2105	-	-	threonine synthase
+1925262..1926539	-	1278	ACO20246.1	-	SPP_2106	-	-	conserved hypothetical protein
+1933008..1933442	-	435	ACO21333.1	-	SPP_2123	-	-	cytidine/deoxycytidylate deaminase family protein
+1933456..1934916	-	1461	ACO21944.1	gltX	SPP_2124	-	-	glutamyl-tRNA synthetase
+1935040..1936389	-	1350	ACO21426.1	pgi	SPP_2125	-	-	glucose-6-phosphate isomerase
+1936376..1936555	-	180	ACO21890.1	-	SPP_2126	-	-	conserved hypothetical protein
+1936559..1937248	-	690	ACO20296.1	-	SPP_2127	-	-	glutamine amidotransferase
+1937387..1939153	-	1767	ACO20891.1	-	SPP_2128	-	-	ABC transporter, ATP-binding/permease protein
+1939291..1939614	+	324	ACO20771.1	-	SPP_2129	-	-	transposase
+1939944..1941638	-	1695	ACO21359.1	-	SPP_2130	-	-	ABC transporter, ATP-binding/permease protein
+1941785..1944319	-	2535	ACO20578.1	mutS	SPP_2131	-	-	DNA mismatch repair protein MutS
+1944370..1944816	-	447	ACO20262.1	argR	SPP_2132	-	-	arginine repressor
+1944952..1946643	+	1692	ACO21508.1	argS	SPP_2133	-	-	arginyl-tRNA synthetase
+1946958..1947422	-	465	ACO21078.1	-	SPP_2134	-	-	transposase (IS4 family)
+1947502..1947987	+	486	ACO21879.1	-	SPP_2135	-	-	conserved hypothetical protein
+1948071..1948778	+	708	ACO21412.1	-	SPP_2136	-	-	alkaline phosphatase synthesis transcriptional regulatory proteinphoP
+1948779..1950110	+	1332	ACO20697.1	-	SPP_2137	-	-	histidine kinase PnpS
+1950277..1951152	+	876	ACO20163.1	-	SPP_2139	-	-	ABC transporter substrate-binding protein - phosphate transport
+1951145..1951276	-	132	ACO20174.1	-	SPP_2138	-	-	hypothetical protein
+1951270..1952133	+	864	ACO21705.1	pstC2	SPP_2140	-	-	phosphate ABC transporter, permease protein PstC
+1952126..1952941	+	816	ACO21640.1	pstA2	SPP_2141	-	-	phosphate ABC transporter, permease protein PstA
+1952943..1953695	+	753	ACO21169.1	pstB3	SPP_2142	-	-	phosphate ABC transporter, ATP-binding protein
+1953710..1954360	+	651	ACO21765.1	phoU2	SPP_2143	-	-	phosphate transport system regulatory protein PhoU
+1954428..1954853	+	426	ACO21326.1	-	SPP_2144	-	-	transposase, IS1380-Spn1 related, truncation
+1955619..1956635	+	1017	ACO20820.1	-	SPP_2146	-	-	glycerol-3-phosphate dehydrogenase [NAD(P)+] (NAD(P)H-dependent glycerol-3-phosphate dehydrogenase) (NAD(P)H-dependentdihydroxyacetone-phosphate reductase)
+1956657..1957556	+	900	ACO20356.1	galU	SPP_2147	-	-	UTP-glucose-1-phosphate uridylyltransferase
+1957974..1958906	+	933	ACO22034.1	-	SPP_2148	-	-	hypothetical protein
+1959009..1959686	-	678	ACO21457.1	-	SPP_2149	-	-	peptidase, S54
+1959670..1960209	-	540	ACO20887.1	-	SPP_2150	-	-	5-formyltetrahydrofolate cyclo-ligase
+1960221..1961351	-	1131	ACO21561.1	-	SPP_2151	-	-	peptidase, M20/M25/M40 family
+1961419..1962117	-	699	ACO21020.1	-	SPP_2152	-	-	galactoside O-acetyltransferase
+1962347..1963309	-	963	ACO21729.1	-	SPP_2153	-	-	membrane protein
+1963323..1965788	-	2466	ACO21261.1	-	SPP_2154	-	-	penicillin-binding protein 1B
+1965930..1967186	+	1257	ACO20518.1	tyrS	SPP_2155	-	-	tyrosyl-tRNA synthetase
+1967264..1969327	-	2064	ACO21900.1	-	SPP_2156	-	-	P-type ATPase-metal/cation transport
+1969329..1969607	-	279	ACO21659.1	-	SPP_2157	-	-	conserved hypothetical protein
+1969759..1970607	+	849	ACO20965.1	-	SPP_2158	-	-	23S rRNA m1G745 methyltransferase
+1971229..1971801	+	573	ACO20268.1	-	SPP_2159	-	-	conserved hypothetical protein
+1972845..1975103	-	2259	ACO20658.1	-	SPP_2160	-	-	glycogen phosphorylase
+1975129..1976646	-	1518	ACO22008.1	malQ	SPP_2161	-	-	4-alpha-glucanotransferase
+1977196..1978467	+	1272	ACO21951.1	-	SPP_2162	-	-	maltose/maltodextrin-binding protein
+1978578..1979870	+	1293	ACO21409.1	-	SPP_2163	-	-	maltodextrin transport system permease protein MalC
+1979872..1980714	+	843	ACO20510.1	-	SPP_2164	-	-	ABC transporter membrane-spanning permease - maltose/maltodextrin
+1980967..1981767	+	801	ACO21809.1	-	SPP_2165	-	-	maltodextrose utilization protein MalA
+1981777..1982763	+	987	ACO21084.1	-	SPP_2166	-	-	HTH-type transcriptional regulator MalR (Maltose operontranscriptional repressor)
+1982830..1983501	+	672	ACO20916.1	-	SPP_2167	-	-	conserved hypothetical protein
+1983505..1984446	-	942	ACO20186.1	-	SPP_2168	-	-	YitT family protein
+1984424..1986187	-	1764	ACO22084.1	aspS	SPP_2169	-	-	aspartyl-tRNA synthetase
+1986539..1986769	-	231	ACO21377.1	-	SPP_2170	-	-	conserved hypothetical protein
+1986787..1987428	-	642	ACO21785.1	-	SPP_2171	-	-	caax amino protease family
+1987440..1988174	-	735	ACO20710.1	-	SPP_2172	-	-	membrane protein, putative
+1988177..1988374	-	198	ACO20257.1	-	SPP_2173	-	-	conserved hypothetical protein
+1988374..1988580	-	207	ACO21887.1	-	SPP_2174	-	-	conserved domain protein
+1988590..1988904	-	315	ACO21420.1	-	SPP_2175	-	-	conserved hypothetical protein
+1989057..1989203	-	147	ACO21529.1	-	SPP_2176	-	-	chlorohydrolase
+1989200..1990489	-	1290	ACO21852.1	hisS	SPP_2177	-	-	histidyl-tRNA synthetase
+1990586..1991815	-	1230	ACO20349.1	-	SPP_2178	-	-	transporter, major facilitator family
+1992008..1992859	-	852	ACO20684.1	-	SPP_2179	-	-	positive transcriptional regulator of glucosyltransferase and Spp phenotype
+1992983..1993324	+	342	ACO20773.1	-	SPP_2180	-	-	domain of unknown function protein
+1993388..1993732	+	345	ACO21087.1	-	SPP_2181	-	-	hypothetical protein
+1993758..1995461	-	1704	ACO21015.1	ilvD	SPP_2182	-	-	dihydroxy-acid dehydratase
+1995694..1996626	-	933	ACO20501.1	-	SPP_2183	-	-	transketolase, C- subunit
+1996623..1997480	-	858	ACO21402.1	-	SPP_2184	-	-	transketolase
+1997484..1998830	-	1347	ACO20822.1	-	SPP_2185	-	-	ascorbate-specific PTS system enzyme IIC
+1998843..1999127	-	285	ACO20736.1	-	SPP_2186	-	-	phosphotransferase system, galactitol-specific IIB component
+1999131..2001161	-	2031	ACO20291.1	-	SPP_2187	-	-	transcriptional regulator, BglG family protein
+2001352..2002359	+	1008	ACO22166.1	-	SPP_2188	-	-	integral membrane protein
+2002362..2002562	+	201	ACO21199.1	-	SPP_2189	-	-	conserved hypothetical protein
+2002714..2002896	+	183	ACO21597.1	rpmF	SPP_2190	-	-	ribosomal protein L32
+2002912..2003061	+	150	ACO22076.1	rpmG2	SPP_2191	-	-	ribosomal protein L33
+2003483..2005363	-	1881	ACO21727.1	-	SPP_2192	-	-	N-acetyl-beta-D-glucosaminidase
+2005357..2006226	-	870	ACO21131.1	-	SPP_2193	-	-	ROK family protein
+2006310..2008955	-	2646	ACO20830.1	-	SPP_2194	-	-	glycosyl hydrolase, family 38
+2009046..2010326	-	1281	ACO20374.1	-	SPP_2195	-	-	twin-arginine translocation pathway signal
+2010497..2012581	+	2085	ACO22046.1	-	SPP_2196	-	-	antigen, cell wall surface anchor family
+2012621..2014300	-	1680	ACO21591.1	-	SPP_2197	-	-	FucA
+2014344..2014457	-	114	ACO21290.1	-	SPP_2198	-	-	hypothetical protein
+2015056..2016285	+	1230	ACO20541.1	arcA	SPP_2199	-	-	arginine deiminase
+2016343..2017359	+	1017	ACO20399.1	argF	SPP_2200	-	-	ornithine carbamoyltransferase
+2017524..2018471	+	948	ACO20209.1	arcC	SPP_2201	-	-	carbamate kinase
+2018682..2020193	+	1512	ACO21834.1	-	SPP_2202	-	-	arginine-ornithine antiporter
+2020215..2021546	+	1332	ACO21642.1	-	SPP_2203	-	-	putative dipeptidase
+2022229..2022378	-	150	ACO20460.1	-	SPP_2205	-	-	conserved hypothetical protein
+2022880..2023779	-	900	ACO20589.1	-	SPP_2207	-	-	spfh domain/band 7 family
+2023909..2025060	-	1152	ACO20160.1	-	SPP_2208	-	-	NAD-dependent methanol dehydrogenase (medh)
+2025206..2026972	-	1767	ACO21786.1	fucI	SPP_2209	-	-	L-fucose isomerase
+2027029..2030145	-	3117	ACO21560.1	-	SPP_2210	-	-	glycosyl hydrolase family 98
+2030155..2032449	-	2295	ACO20782.1	-	SPP_2211	-	-	large secreted protein
+2032508..2033308	-	801	ACO21667.1	-	SPP_2212	-	-	mannose permease iid component (pts system mannose-specific eiidcomponent) (eiid-man) (eii-m-man)
+2033305..2034078	-	774	ACO22144.1	-	SPP_2213	-	-	phosphotransferase system sugar-specific EII component
+2034103..2034573	-	471	ACO20524.1	-	SPP_2214	-	-	PTS system, IIB component
+2034564..2035007	-	444	ACO21014.1	-	SPP_2215	-	-	PTS system, IIA component
+2034988..2035428	-	441	ACO20515.1	-	SPP_2216	-	-	fucose operon FucU protein
+2035440..2036078	-	639	ACO22156.1	-	SPP_2217	-	-	L-fuculose phosphate aldolase
+2036193..2037596	-	1404	ACO20635.1	-	SPP_2218	-	-	rhamnulokinase (Rhamnulose kinase)
+2037772..2038545	+	774	ACO20725.1	-	SPP_2219	-	-	regulator of fucose operon
+2039707..2041212	-	1506	ACO21317.1	-	SPP_2220	-	-	zinc-binding lipoprotein AdcA
+2041222..2042028	-	807	ACO21649.1	-	SPP_2221	-	-	ABC transporter membrane-spanning permease - Zinc
+2042021..2042725	-	705	ACO21201.1	-	SPP_2222	-	-	zinc transport system ATP-binding protein AdcC
+2042725..2043165	-	441	ACO21807.1	-	SPP_2223	-	-	putative transcriptional repressor
+2043150..2043287	+	138	ACO21036.1	-	SPP_2224	-	-	conserved hypothetical protein
+2043320..2044588	-	1269	ACO20852.1	-	SPP_2225	-	-	D-alanine transfer from undecaprenol-phosphate to the poly
+2044581..2044820	-	240	ACO20509.1	dltC	SPP_2226	-	-	D-alanyl carrier protein
+2044834..2046078	-	1245	ACO20973.1	-	SPP_2227	-	-	protein DltB
+2046075..2047625	-	1551	ACO21603.1	dltA	SPP_2228	-	-	D-alanine-activating enzyme
+2047646..2047777	-	132	ACO21909.1	-	SPP_2229	-	-	conserved hypothetical protein
+2048091..2049269	-	1179	ACO21941.1	-	SPP_2230	-	-	permease of the major facilitator superfamily
+2049725..2051002	-	1278	ACO20196.1	-	SPP_2231	-	-	GBSi1, group II intron, maturase
+2052192..2052383	+	192	ACO20426.1	-	SPP_2232	-	-	hypothetical protein
+2052785..2052988	-	204	ACO21121.1	-	SPP_2233	-	-	hypothetical protein
+2053081..2053206	+	126	ACO21361.1	-	SPP_2234	-	-	hypothetical protein
+2053285..2053989	-	705	ACO22022.1	-	SPP_2235	-	-	glycerol uptake facilitator protein
+2054059..2055885	-	1827	ACO21351.1	-	SPP_2236	-	-	alpha-glycerophosphate oxidase (Glycerol-3-phosphateoxidase) (Exported protein 6)
+2056032..2057540	-	1509	ACO21918.1	glpK	SPP_2237	-	-	glycerol kinase
+2057699..2059108	-	1410	ACO20166.1	-	SPP_2238	-	-	M protein trans-acting positive regulator (MGA)
+2059117..2059251	-	135	ACO20733.1	-	SPP_2239	-	-	hypothetical protein
+2059291..2060163	+	873	ACO21007.1	hslO	SPP_2240	-	-	chaperonin HslO
+2060150..2061130	+	981	ACO22049.1	-	SPP_2241	-	-	tRNA-dihydrouridine synthase B
+2061360..2063099	-	1740	ACO20193.1	-	SPP_2242	-	-	SigA binding protein
+2063178..2063705	-	528	ACO20533.1	-	SPP_2243	-	-	membrane protein, putative
+2063788..2065119	-	1332	ACO21376.1	-	SPP_2244	-	-	histidine kinase
+2065116..2065769	-	654	ACO21967.1	-	SPP_2245	-	-	response regulator
+2065822..2066019	+	198	ACO20698.1	-	SPP_2246	-	-	hypothetical protein
+2066209..2066340	+	132	ACO21441.1	-	SPP_2247	-	-	DNA alkylation repair enzyme
+2066411..2068843	-	2433	ACO22134.1	-	SPP_2248	-	-	chaperone ClpB 1
+2068845..2069303	-	459	ACO20249.1	-	SPP_2249	-	-	transcriptional regulator CtsR
+2069422..2070150	-	729	ACO20663.1	-	SPP_2250	-	-	ABC transporter ATP-binding protein - anion transport
+2070150..2071157	-	1008	ACO22110.1	-	SPP_2251	-	-	ABC transporter substrate-binding protein
+2071195..2071956	-	762	ACO22136.1	-	SPP_2252	-	-	ABC transporter, permease protein
+2071916..2072206	-	291	ACO20958.1	-	SPP_2253	-	-	conserved hypothetical protein
+2072462..2073808	-	1347	ACO20366.1	-	SPP_2254	-	-	choline binding protein D
+2073897..2074163	-	267	ACO21860.1	-	SPP_2255	-	-	conserved hypothetical protein
+2074165..2075517	-	1353	ACO22092.1	dnaB	SPP_2256	-	-	replicative DNA helicase
+2075561..2076013	-	453	ACO20311.1	rplI	SPP_2257	-	-	ribosomal protein L9
+2076010..2077983	-	1974	ACO20911.1	-	SPP_2258	-	-	DHH subfamily 1 protein
+2078119..2078667	-	549	ACO21218.1	-	SPP_2259	-	-	ribosome-associated protein Y
+2078747..2079409	-	663	ACO21203.1	-	SPP_2260	-	-	putative competence protein ComF
+2079406..2080704	-	1299	ACO21370.1	-	SPP_2261	-	-	superfamily II ATP-dependent DNA/RNA helicase required for DNA uptake
+2080760..2081395	+	636	ACO21500.1	-	SPP_2262	-	-	conserved hypothetical protein
+2081680..2082600	+	921	ACO21153.1	cysK	SPP_2263	-	-	cysteine synthase A
+2082797..2083066	-	270	ACO20463.1	-	SPP_2264	-	-	transposase
+2083651..2083938	-	288	ACO21851.1	-	SPP_2265	-	-	transposase
+2084184..2085224	-	1041	ACO20295.1	tsf	SPP_2266	-	-	translation elongation factor Ts
+2085303..2086082	-	780	ACO20497.1	rpsB	SPP_2267	-	-	ribosomal protein S2
+2086306..2087484	-	1179	ACO22014.1	-	SPP_2268	-	-	general stress protein GSP-781
+2087578..2088072	-	495	ACO21710.1	mreD	SPP_2269	-	-	rod shape-determining protein MreD
+2088072..2088890	-	819	ACO21113.1	mreC	SPP_2270	-	-	rod shape-determining protein MreC
+2088949..2089743	-	795	ACO21771.1	-	SPP_2271	-	-	ABC transporter permease protein
+2089736..2090575	-	840	ACO20394.1	-	SPP_2272	-	-	cobalt import ATP-binding protein CbiO 1
+2090560..2091387	-	828	ACO21774.1	-	SPP_2273	-	-	cobalt import ATP-binding protein CbiO 2
+2091384..2091929	-	546	ACO20390.1	pgsA	SPP_2274	-	-	CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase
+2091940..2092761	-	822	ACO20849.1	-	SPP_2275	-	-	conserved hypothetical protein
+2092803..2094086	-	1284	ACO21575.1	-	SPP_2276	-	-	peptidase, M16 family
+2094083..2095333	-	1251	ACO22055.1	-	SPP_2277	-	-	peptidase, M16 family
+2095492..2095860	+	369	ACO20654.1	-	SPP_2278	-	-	S4 domain protein YaaA, putative
+2095863..2096960	+	1098	ACO21256.1	-	SPP_2279	-	-	DNA replication and repair protein RecF
+2097011..2098489	-	1479	ACO21726.1	guaB	SPP_2280	-	-	inosine-5'-monophosphate dehydrogenase
+2098641..2099666	-	1026	ACO20724.1	trpS	SPP_2281	-	-	tryptophanyl-tRNA synthetase
+2099872..2101494	+	1623	ACO22111.1	-	SPP_2282	-	-	ATPase component of ABC transporters with duplicated ATPase domains
+2101556..2104108	+	2553	ACO20319.1	-	SPP_2283	-	-	ABC transporter, permease component
+2104551..2104889	-	339	ACO21230.1	-	SPP_2285	-	-	phage infection protein
+2104974..2105741	-	768	ACO20935.1	-	SPP_2286	-	-	conserved hypothetical protein
+2105920..2106462	+	543	ACO21802.1	-	SPP_2287	-	-	transcriptional regulator, TetR family
+2106705..2107457	-	753	ACO21248.1	-	SPP_2290	-	-	response regulator
+2107454..2108779	-	1326	ACO21151.1	-	SPP_2291	-	-	ComD
+2108800..2108925	-	126	ACO20592.1	-	SPP_2292	-	-	conserved domain protein
+2109207..2109686	-	480	ACO21881.1	-	SPP_2294	-	-	conserved hypothetical protein
+2109869..2111050	+	1182	ACO21399.1	-	SPP_2295	-	-	trypsin domain protein
+2111108..2111866	+	759	ACO21854.1	-	SPP_2296	-	-	stage 0 sporulation protein J

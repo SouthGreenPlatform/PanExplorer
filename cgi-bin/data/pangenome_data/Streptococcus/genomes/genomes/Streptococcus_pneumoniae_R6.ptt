@@ -1,0 +1,2046 @@
+Streptococcus pneumoniae R6, complete genome.
+2043 proteins
+Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
+1..1362	+	1362	AAK98805.1	dnaA	spr0001	-	-	DNA biosynthesis, initiation, binding protein
+1521..2657	+	1137	AAK98806.1	dnaN	spr0002	-	-	DNA biosynthesis; sliding clamp subunit, required for high processivity; DNA polymerase III beta-subunit
+2722..2916	+	195	AAK98807.1	-	spr0003	-	-	Hypothetical protein
+3000..4115	+	1116	AAK98808.1	-	spr0004	-	-	Conserved hypothetical protein
+4186..4755	+	570	AAK98809.1	pth	spr0005	-	-	Peptidyl-tRNA hydrolase
+4756..8265	+	3510	AAK98810.1	mfd	spr0006	-	-	Transcription-repair coupling factor
+8323..8589	+	267	AAK98811.1	-	spr0007	-	-	Conserved hypothetical protein
+8582..8950	+	369	AAK98812.1	-	spr0008	-	-	Hypothetical protein
+9001..10338	+	1338	AAK98813.1	-	spr0009	-	-	Conserved hypothetical protein
+10335..11612	+	1278	AAK98814.1	-	spr0010	-	-	Conserved hypothetical protein
+11616..12158	+	543	AAK98815.1	hgt	spr0011	-	-	Hypoxanthine guanine phosphoribosyltransferase
+12174..14132	+	1959	AAK98816.1	ftsH	spr0012	-	-	Cell-division protein / general stress protein (class III heat-shock)
+14254..14733	+	480	AAK98817.1	comX1	spr0013	-	-	Competence-specific global transcription modulator
+20207..20554	+	348	AAK98818.1	-	spr0014	-	-	Transposase
+20593..20751	-	159	AAK98819.1	-	spr0015	-	-	Hypothetical protein
+20733..21071	+	339	AAK98820.1	-	spr0016	-	-	Transposase
+21106..21312	-	207	AAK98821.1	-	spr0017	-	-	Degenerate transposase (orf2)
+21455..21604	-	150	AAK98822.1	-	spr0018	-	-	Degenerate transposase (orf2)
+21645..21851	-	207	AAK98823.1	-	spr0019	-	-	Degenerate transposase (orf1)
+22162..22404	+	243	AAK98824.1	-	spr0020	-	-	Hypothetical protein
+22635..23921	+	1287	AAK98825.1	purA	spr0021	-	-	Adenylosuccinate synthetase
+24122..24589	+	468	AAK98826.1	-	spr0022	-	-	Conserved hypothetical protein
+24776..25219	+	444	AAK98827.1	dut	spr0023	-	-	Deoxyuridinetriphosphatase
+25158..25736	+	579	AAK98828.1	-	spr0024	-	-	Conserved hypothetical protein
+25849..27111	+	1263	AAK98829.1	radA	spr0025	-	-	DNA repair: sensitivity to gamma and UV radiation
+27115..27681	+	567	AAK98830.1	-	spr0026	-	-	Conserved hypothetical protein
+27706..28365	+	660	AAK98831.1	-	spr0027	-	-	Hypothetical protein
+28583..29602	+	1020	AAK98832.1	prsA	spr0028	-	-	Phosphoribosylpyrophosphate synthase
+29624..30016	-	393	AAK98833.1	-	spr0029	-	-	Degenerate transposase (orf1)
+30143..30481	-	339	AAK98834.1	-	spr0030	-	-	Hypothetical protein
+30700..31053	-	354	AAK98835.1	-	spr0031	-	-	Hypothetical protein
+31306..33939	+	2634	AAK98836.1	polA	spr0032	-	-	DNA polymerase I
+34024..34461	+	438	AAK98837.1	-	spr0033	-	-	Conserved hypothetical protein
+34652..35674	-	1023	AAK98838.1	-	spr0034	-	-	Conserved hypothetical protein
+35811..36980	+	1170	AAK98839.1	aspC	spr0035	-	-	Aspartate aminotransferase
+36977..37747	+	771	AAK98840.1	-	spr0036	-	-	Conserved hypothetical protein
+37744..38736	+	993	AAK98841.1	plsX	spr0037	-	-	Involved in fatty acid/phospholipid synthesis
+38742..38975	+	234	AAK98842.1	acpP	spr0038	-	-	Acyl carrier protein
+39018..39311	+	294	AAK98843.1	-	spr0039	-	-	Degenerate transposase (orf2)
+39514..39744	+	231	AAK98844.1	thmA	spr0040	-	-	Amphipathic pore-forming peptide precursor
+40224..40991	-	768	AAK98845.1	IS1167	spr0041	-	-	Transposase (orf2)
+40982..41500	-	519	AAK98846.1	IS1167	spr0042	-	-	Transposase (orf1)
+41902..44055	+	2154	AAK98847.1	comA	spr0043	-	-	Transport ATP-binding protein ComA
+44068..45417	+	1350	AAK98848.1	comB	spr0044	-	-	Transport protein ComB
+45545..46294	+	750	AAK98849.1	purC	spr0045	-	-	Phosphoribosylaminoimidazole-succinocarboxamide synthetase
+46493..50221	+	3729	AAK98850.1	purL	spr0046	-	-	Phosphoribosylformylglycinamide synthetase
+50314..51756	+	1443	AAK98851.1	purF	spr0047	-	-	Amidophosphoribosyl transferase
+51793..52815	+	1023	AAK98852.1	purM	spr0048	-	-	Phosphoribosylaminoimidazole synthetase
+52812..53357	+	546	AAK98853.1	purN	spr0049	-	-	5'-phosphoribosylglycinamide transformylase 1
+53441..53950	+	510	AAK98854.1	vanZ	spr0050	-	-	Teicoplanin resistance protein
+53954..55522	+	1569	AAK98855.1	purH	spr0051	-	-	Phosphoribosylaminoimidazolecarboxamide formyltransferase
+55644..56906	+	1263	AAK98856.1	purD	spr0052	-	-	Phosphoribosylglycinamide synthetase
+57276..57797	+	522	AAK98857.1	purE	spr0053	-	-	Phosphoribosylaminoimidazole carboxylase, catalytic subunit
+57724..58875	+	1152	AAK98858.1	purK	spr0054	-	-	Phosphoribosyl glucinamide formyltransferase
+58885..59112	+	228	AAK98859.1	-	spr0055	-	-	Hypothetical protein
+59175..60473	+	1299	AAK98860.1	purB	spr0056	-	-	Adenylosuccinate lyase
+60528..64466	-	3939	AAK98861.1	strH	spr0057	-	-	Beta-N-acetyl-hexosaminidase precursor
+64781..65539	-	759	AAK98862.1	-	spr0058	-	-	Conserved hypothetical protein
+65845..67632	+	1788	AAK98863.1	bgaC	spr0059	-	-	Beta-galactosidase 3
+67629..68105	+	477	AAK98864.1	PTS-EIIB	spr0060	-	-	Phosphotransferase system sugar-specific EIIB component
+68133..69038	+	906	AAK98865.1	PTS-EIIC	spr0061	-	-	Phosphotransferase system sugar-specific EIIC component
+69010..69840	+	831	AAK98866.1	PTS-EIID	spr0062	-	-	Phosphotransferase system sugar-specific EIID component
+69847..70251	+	405	AAK98867.1	PTS-EII	spr0063	-	-	Phosphotransferase system sugar-specific EII component
+70549..71715	+	1167	AAK98868.1	agaS	spr0064	-	-	Tagatose-6-phosphate ketose/aldose isomerase
+71831..72868	+	1038	AAK98869.1	galM	spr0065	-	-	Aldose-1-epimerase (mutarotase)
+73075..73929	+	855	AAK98870.1	-	spr0066	-	-	Conserved hypothetical protein
+74079..74336	+	258	AAK98871.1	-	spr0067	-	-	Conserved hypothetical protein
+75311..76075	+	765	AAK98872.1	-	spr0068	-	-	Conserved hypothetical protein
+76547..76705	+	159	AAK98873.1	-	spr0069	-	-	Hypothetical protein
+76686..78065	+	1380	AAK98874.1	trkH	spr0070	-	-	Trk transporter membrane-spanning protein - K+ transport
+78058..78744	+	687	AAK98875.1	trkA	spr0071	-	-	Trk transporter NAD+ binding protein - K+ transport
+79054..79593	+	540	AAK98876.1	-	spr0072	-	-	Conserved hypothetical protein
+79471..80040	-	570	AAK98877.1	-	spr0073	-	-	Hypothetical protein
+79660..80070	+	411	AAK98878.1	-	spr0074	-	-	Hypothetical protein
+80186..83671	+	3486	AAK98879.1	-	spr0075	-	-	Conserved hypothetical protein
+83838..84536	+	699	AAK98880.1	rr08	spr0076	-	-	Response regulator
+84533..85585	+	1053	AAK98881.1	hk08	spr0077	-	-	Histidine kinase
+85780..86391	+	612	AAK98882.1	rpsD	spr0078	-	-	30S Ribosomal protein S4
+86559..86735	+	177	AAK98883.1	-	spr0079	-	-	Degenerative transposase
+87044..87313	+	270	AAK98884.1	-	spr0080	-	-	Hypothetical protein
+87777..88736	+	960	AAK98885.1	ABC-MSP	spr0081	-	-	ABC transporter membrane-spanning permease - sugar transport
+88750..89673	+	924	AAK98886.1	ABC-MSP	spr0082	-	-	ABC transporter membrane spanning permease - sugar transport
+89862..91406	+	1545	AAK98887.1	ABC-SBP	spr0083	-	-	ABC transporter solute binding protein - sugar transport
+91678..92664	+	987	AAK98888.1	-	spr0084	-	-	Conserved hypothetical protein
+92633..93646	+	1014	AAK98889.1	-	spr0085	-	-	Hypothetical protein
+93718..94782	-	1065	AAK98890.1	-	spr0086	-	-	Hypothetical protein
+94845..95807	-	963	AAK98891.1	-	spr0087	-	-	Hypothetical protein
+95749..96342	-	594	AAK98892.1	-	spr0088	-	-	Hypothetical protein
+96329..96655	-	327	AAK98893.1	-	spr0089	-	-	Conserved hypothetical protein
+96794..97960	-	1167	AAK98894.1	-	spr0090	-	-	Conserved hypothetical protein
+98018..99175	+	1158	AAK98895.1	-	spr0091	-	-	Conserved hypothetical protein
+99217..101067	+	1851	AAK98896.1	capD	spr0092	-	-	CapD protein, required for the biosynthesis of type 1 capsular polysaccharide
+101463..102095	-	633	AAK98897.1	gph	spr0093	-	-	Phosphoglycolate phosphatase
+102117..102989	-	873	AAK98898.1	sdaA	spr0094	-	-	L-serine dehydratase alpha subunit
+102998..103669	-	672	AAK98899.1	sdaB	spr0095	-	-	L-serine dehydratase beta subunit
+103911..104414	+	504	AAK98900.1	-	spr0096	-	-	Hypothetical protein
+104537..104785	-	249	AAK98901.1	-	spr0097	-	-	Hypothetical protein
+105242..105490	+	249	AAK98902.1	-	spr0098	-	-	Hypothetical protein
+105545..107653	+	2109	AAK98903.1	ABC-MSP	spr0099	-	-	ABC transporter membrane-spanning permease - amino acid transport
+107650..108291	+	642	AAK98904.1	ABC-NBD	spr0100	-	-	ABC transporter ATP-binding protein - amino acid transport
+108506..109303	+	798	AAK98905.1	ABC-SBP	spr0101	-	-	ABC transporter solute-binding protein - amino acid transport
+109269..110516	+	1248	AAK98906.1	argG	spr0102	-	-	Argininosuccinate synthase
+110545..111936	+	1392	AAK98907.1	argH	spr0103	-	-	Arginine succinate lyase
+112225..113124	-	900	AAK98908.1	-	spr0104	-	-	Hypothetical protein
+113542..113775	+	234	AAK98909.1	-	spr0105	-	-	Transporter, truncation
+113839..115773	+	1935	AAK98910.1	-	spr0106	-	-	Transporter, truncation
+115766..116233	+	468	AAK98911.1	-	spr0107	-	-	Hypothetical protein
+116230..117582	+	1353	AAK98912.1	-	spr0108	-	-	Conserved hypothetical protein
+117728..118108	+	381	AAK98913.1	-	spr0109	-	-	Hypothetical protein
+118611..118931	-	321	AAK98914.1	-	spr0110	-	-	Hypothetical protein
+119688..120059	+	372	AAK98915.1	-	spr0111	-	-	Hypothetical protein
+120067..120279	+	213	AAK98916.1	-	spr0112	-	-	Hypothetical protein
+121084..122142	+	1059	AAK98917.1	-	spr0113	-	-	Hypothetical protein
+122441..123433	+	993	AAK98918.1	-	spr0114	-	-	Hypothetical protein
+123810..124184	+	375	AAK98919.1	-	spr0115	-	-	Hypothetical protein
+124191..124373	+	183	AAK98920.1	-	spr0116	-	-	Hypothetical protein
+124392..125294	+	903	AAK98921.1	-	spr0117	-	-	Hypothetical protein
+125317..125703	+	387	AAK98922.1	-	spr0118	-	-	Hypothetical protein
+125670..126428	+	759	AAK98923.1	-	spr0119	-	-	Hypothetical protein
+127503..127802	+	300	AAK98924.1	-	spr0120	-	-	Hypothetical protein
+128356..130215	+	1860	AAK98925.1	pspA	spr0121	-	-	Surface protein pspA precursor
+130562..131737	+	1176	AAK98926.1	trmU	spr0122	-	-	tRNA (5-methylaminomethyl-2-thiouridylate)-methyltransferase
+131851..132333	+	483	AAK98927.1	-	spr0123	-	-	Conserved hypothetical protein
+132343..134256	+	1914	AAK98928.1	gidA	spr0124	-	-	Glucose inhibited division protein A
+134636..136468	-	1833	AAK98929.1	-	spr0125	-	-	Conserved hypothetical protein
+136317..136550	-	234	AAK98930.1	-	spr0126	-	-	Conserved hypothetical protein
+137368..137520	-	153	AAK98931.1	orf51	spr0127	-	-	orf51
+137522..137707	-	186	AAK98932.1	-	spr0128	-	-	Hypothetical protein
+137885..138568	+	684	AAK98933.1	-	spr0129	-	-	Conserved hypothetical protein
+138565..139002	+	438	AAK98934.1	rimI	spr0130	-	-	Ribosomal protein alanine acetyltransferase
+138992..140002	+	1011	AAK98935.1	gcp	spr0131	-	-	Secreted metalloendopeptidase Gcp
+140042..140428	-	387	AAK98936.1	-	spr0132	-	-	Degenerate transposase (orf2)
+140419..140970	-	552	AAK98937.1	-	spr0133	-	-	Degenerate transposase (orf2)
+142041..142307	-	267	AAK98938.1	-	spr0134	-	-	Degenerative transposase
+142595..143809	+	1215	AAK98939.1	epsG	spr0135	-	-	Glycosyltransferase involved exopolysaccharide (EPS) synthesis
+143802..144755	+	954	AAK98940.1	-	spr0136	-	-	Glycosyl transferase, family 2
+144765..146381	+	1617	AAK98941.1	ABC-NP	spr0137	-	-	ABC transporter ATP-binding/membrane spanning permease - possible multidrug resistance
+147164..147919	+	756	AAK98942.1	-	spr0138	-	-	Hypothetical protein
+147932..149104	+	1173	AAK98943.1	ugd	spr0139	-	-	UDP-glucose dehydrogenase
+149499..150362	+	864	AAK98944.1	mutR	spr0140	-	-	Positive transcriptional regulator of mutA
+150653..150886	+	234	AAK98945.1	-	spr0141	-	-	Hypothetical protein
+150908..151585	+	678	AAK98946.1	-	spr0142	-	-	Hypothetical protein
+151597..152262	+	666	AAK98947.1	-	spr0143	-	-	Hypothetical protein
+152331..153560	+	1230	AAK98948.1	-	spr0144	-	-	Conserved hypothetical protein
+153770..154366	+	597	AAK98949.1	-	spr0145	-	-	Hypothetical protein
+154470..155300	+	831	AAK98950.1	ABC-SBP	spr0146	-	-	ABC transporter substrate-binding protein - amino acid transport
+155454..156308	+	855	AAK98951.1	ABC-SBP	spr0147	-	-	ABC transporter solute-binding protein - unknown substrate
+156408..157781	+	1374	AAK98952.1	dapE	spr0148	-	-	Succinyl-diaminopimelic descuccinlyase (ArgE/DapE/Acy1 family protein)
+157774..158835	+	1062	AAK98953.1	ABC-NBD	spr0149	-	-	ABC transporter ATP-binding protein - unknown substrate
+158837..159529	+	693	AAK98954.1	ABC-MSD	spr0150	-	-	ABC transporter membrane-spanning permease - unknown substrate
+159559..160128	-	570	AAK98955.1	-	spr0151	-	-	Hypothetical protein
+160263..160877	+	615	AAK98956.1	-	spr0152	-	-	Conserved hypothetical protein
+161830..162525	+	696	AAK98957.1	hk07	spr0153	-	-	Histidine kinase
+162537..163823	+	1287	AAK98958.1	rr07	spr0154	-	-	Response regulator
+163827..164408	+	582	AAK98959.1	-	spr0155	-	-	Hypothetical protein
+164354..164956	+	603	AAK98960.1	-	spr0156	-	-	Conserved hypothetical protein
+165249..166511	-	1263	AAK98961.1	-	spr0157	-	-	Conserved hypothetical protein
+166821..167279	-	459	AAK98962.1	-	spr0158	-	-	Hypothetical protein
+167276..167797	-	522	AAK98963.1	-	spr0159	-	-	Conserved hypothetical protein
+168072..170021	+	1950	AAK98964.1	hexB	spr0160	-	-	DNA mismatch repair protein
+170346..170813	-	468	AAK98965.1	ribE	spr0161	-	-	Riboflavin synthase beta chain
+170814..172019	-	1206	AAK98966.1	ribA	spr0162	-	-	Riboflavin biosynthesis; GTP-cyclohydrolase II
+172039..172674	-	636	AAK98967.1	ribC	spr0163	-	-	Riboflavin synthase alpha-chain
+172659..173759	-	1101	AAK98968.1	ribD	spr0164	-	-	Riboflavin biosynthese; a deaminase
+174163..174756	+	594	AAK98969.1	ruvA	spr0165	-	-	Holliday junction DNA helicase
+174766..175329	+	564	AAK98970.1	tag	spr0166	-	-	3-Methyladenine DNA glycosylase I, constitutive
+175326..176003	+	678	AAK98971.1	-	spr0167	-	-	Conserved hypothetical protein
+176158..177189	-	1032	AAK98972.1	-	spr0168	-	-	Conserved hypothetical protein
+177444..178148	-	705	AAK98973.1	-	spr0169	-	-	Hypothetical protein
+178139..179083	-	945	AAK98974.1	corA	spr0170	-	-	Magnesium and cobalt transporter
+179215..182046	+	2832	AAK98975.1	uvrA	spr0171	-	-	Excinuclease ABC - subunit A
+182039..183100	+	1062	AAK98976.1	pepP	spr0172	-	-	Aminopeptidase P
+183232..183630	+	399	AAK98977.1	arsC	spr0173	-	-	Arsenate reductase, putative
+183696..184265	+	570	AAK98978.1	-	spr0174	-	-	Hypothetical protein
+184352..184618	+	267	AAK98979.1	-	spr0175	-	-	Hypothetical protein
+184622..185041	+	420	AAK98980.1	-	spr0176	-	-	Conserved hypothetical protein
+185057..185362	+	306	AAK98981.1	-	spr0177	-	-	Conserved hypothetical protein
+185813..187069	+	1257	AAK98982.1	folC	spr0178	-	-	Dihydrofolate:folylpolyglutamate synthetase
+187066..187584	+	519	AAK98983.1	-	spr0179	-	-	Hypothetical protein
+187730..189262	+	1533	AAK98984.1	cls	spr0180	-	-	Cardiolipin synthase
+189340..189483	+	144	AAK98985.1	orf47	spr0181	-	-	orf47
+189502..191058	+	1557	AAK98986.1	-	spr0182	-	-	Hypothetical protein
+191172..193385	+	2214	AAK98987.1	nrdD	spr0183	-	-	Ribonucleotide reductase, class III, anaerobic
+193581..194087	+	507	AAK98988.1	-	spr0184	-	-	Hypothetical protein
+194080..194670	+	591	AAK98989.1	nrdG	spr0185	-	-	NrdD activating enzyme, generating glycyl radical
+194667..195284	+	618	AAK98990.1	-	spr0186	-	-	Hypothetical protein
+195551..195859	+	309	AAK98991.1	rpsJ	spr0187	-	-	30S Ribosomal protein S10
+196076..196702	+	627	AAK98992.1	rplC	spr0188	-	-	50S Ribosomal protein L3
+196727..197350	+	624	AAK98993.1	rplD	spr0189	-	-	50S Ribosomal protein L4
+197350..197646	+	297	AAK98994.1	rplW	spr0190	-	-	50S Ribosomal protein L23
+197664..198497	+	834	AAK98995.1	rplB	spr0191	-	-	50S Ribosomal protein L2
+198601..198882	+	282	AAK98996.1	rpsS	spr0192	-	-	30S Ribosomal protein S19
+198743..199198	-	456	AAK98997.1	-	spr0193	-	-	Hypothetical protein
+198894..199238	+	345	AAK98998.1	rplV	spr0194	-	-	50S Ribosomal protein L22
+199251..199904	+	654	AAK98999.1	rpsC	spr0195	-	-	30S Ribosomal protein S3
+199908..200321	+	414	AAK99000.1	rplP	spr0196	-	-	50S Ribosomal protein L16
+200331..200537	+	207	AAK99001.1	rpmC	spr0197	-	-	50S Ribosomal protein L29
+200562..200822	+	261	AAK99002.1	rpsQ	spr0198	-	-	30S Ribosomal protein S17
+200848..201216	+	369	AAK99003.1	rplN	spr0199	-	-	50S Ribosomal protein L14
+201294..201599	+	306	AAK99004.1	rplX	spr0200	-	-	50S Ribosomal protein L24
+201623..202165	+	543	AAK99005.1	rplE	spr0201	-	-	50S Ribosomal protein L5
+202183..202452	+	270	AAK99006.1	rpsN	spr0202	-	-	30S Ribosomal protein S14
+202737..203135	+	399	AAK99007.1	rpsH	spr0203	-	-	30S Ribosomal protein S8 (S8)
+203327..203863	+	537	AAK99008.1	rplF	spr0204	-	-	50S Ribosomal protein L6
+203947..204303	+	357	AAK99009.1	rplR	spr0205	-	-	50S Ribosomal protein L18
+204321..204815	+	495	AAK99010.1	rpsE	spr0206	-	-	30S Ribosomal protein S5
+204829..205011	+	183	AAK99011.1	rpmD	spr0207	-	-	50S Ribosomal protein L30
+205156..205596	+	441	AAK99012.1	rplO	spr0208	-	-	50S Ribosomal protein L15
+205609..206919	+	1311	AAK99013.1	secY	spr0209	-	-	Multispanning membrane protein, translocator of proteins
+207070..207708	+	639	AAK99014.1	adk	spr0210	-	-	Adenylate kinase (ATP-AMP transphosphorylase)
+207771..208043	+	273	AAK99015.1	infA	spr0211	-	-	Translation initiation factor IF-1
+208068..208184	+	117	AAK99016.1	rpmJ	spr0212	-	-	50S Ribosomal protein L36
+208202..208567	+	366	AAK99017.1	rpsM	spr0213	-	-	30S Ribosomal protein S13
+208585..208968	+	384	AAK99018.1	rpsK	spr0214	-	-	30S Ribosomal protein S11
+209011..209946	+	936	AAK99019.1	rpoA	spr0215	-	-	RNA polymerase alpha subunit
+209958..210344	+	387	AAK99020.1	rplQ	spr0216	-	-	50S Ribosomal protein L17
+210516..210875	+	360	AAK99021.1	-	spr0217	-	-	Conserved hypothetical protein
+210885..212222	+	1338	AAK99022.1	-	spr0218	-	-	Conserved hypothetical protein
+212409..213158	+	750	AAK99023.1	gpmB	spr0219	-	-	Phosphoglycerate mutase 2 paralog
+213261..214295	-	1035	AAK99024.1	ABC-MSP	spr0220	-	-	ABC transporter membrane-spanning permease - iron transport
+214280..214906	-	627	AAK99025.1	ABC-MSP	spr0221	-	-	ABC transporter membrane-spanning permease - iron transport
+214896..215987	-	1092	AAK99026.1	ABC-NBD	spr0222	-	-	ABC transporter ATP-binding protein - iron transport
+216000..216368	-	369	AAK99027.1	-	spr0223	-	-	ABC transporter solute-binding protein - iron transport, truncation
+216513..216707	-	195	AAK99028.1	-	spr0224	-	-	ABC transporter substrate-binding protein - iron transport, truncation
+217339..217536	-	198	AAK99029.1	-	spr0225	-	-	Hypothetical protein
+217611..218387	-	777	AAK99030.1	pflE	spr0226	-	-	Pyruvate formate-lyase 3
+218461..219255	+	795	AAK99031.1	deoR	spr0227	-	-	DEOR-type transcriptional regulator
+219268..220248	+	981	AAK99032.1	-	spr0228	-	-	Conserved hypothetical protein
+220443..220763	+	321	AAK99033.1	PTS-EIIA	spr0229	-	-	Phosphotransferase system sugar-specific EIIA component
+220809..221117	+	309	AAK99034.1	PTS-EIIB	spr0230	-	-	Phosphotransferase system sugar-specific EIIB component
+221110..222432	+	1323	AAK99035.1	PTS-EIIC	spr0231	-	-	Phosphotransferase system sugar-specific EIIC component
+222574..225021	+	2448	AAK99036.1	pflF	spr0232	-	-	Formate acetyltransferase 3
+225040..225708	+	669	AAK99037.1	talC	spr0233	-	-	Transaldolase C
+225726..226814	+	1089	AAK99038.1	gldA	spr0234	-	-	Glycerol dehydrogenase, NAD+ dependent
+227269..229770	+	2502	AAK99039.1	leuS	spr0235	-	-	Leucyl-tRNA synthetase
+229964..230659	+	696	AAK99040.1	-	spr0236	-	-	Conserved hypothetical protein
+230671..231087	+	417	AAK99041.1	-	spr0237	-	-	Conserved hypothetical protein
+232128..233126	+	999	AAK99042.1	ruvB	spr0238	-	-	Branch migration of Holliday structures
+233107..233679	+	573	AAK99043.1	-	spr0239	-	-	Hypothetical protein
+233892..234668	+	777	AAK99044.1	uppS	spr0240	-	-	Undecaprenyl diphosphate synthase
+234677..235480	+	804	AAK99045.1	cdsA	spr0241	-	-	Phosphatidate cytidylyltransferase
+235502..236761	+	1260	AAK99046.1	eep	spr0242	-	-	Determinant for enhanced expression of pheromone
+236774..238627	+	1854	AAK99047.1	proS	spr0243	-	-	Prolyl-tRNA synthetase
+238727..240106	+	1380	AAK99048.1	bglA	spr0244	-	-	6-phospho-beta-glucosidase
+240298..242106	+	1809	AAK99049.1	glmS	spr0245	-	-	L-glutamine-D-fructose-6-phosphate amidotransferase
+242225..243274	+	1050	AAK99050.1	-	spr0246	-	-	Conserved hypothetical protein
+243374..247144	-	3771	AAK99051.1	pulA	spr0247	-	-	Alkaline amylopullulanase
+247561..247974	+	414	AAK99052.1	rpsL	spr0248	-	-	30S Ribosomal protein S12
+247994..248464	+	471	AAK99053.1	rpsG	spr0249	-	-	30S Ribosomal protein S7
+248889..250970	+	2082	AAK99054.1	fusA	spr0250	-	-	Elongation factor G
+251074..255465	+	4392	AAK99055.1	polC	spr0251	-	-	DNA polymerase III, alpha subunit
+255567..255830	+	264	AAK99056.1	-	spr0252	-	-	Hypothetical protein
+255823..256101	+	279	AAK99057.1	-	spr0253	-	-	Conserved hypothetical protein
+256296..257537	+	1242	AAK99058.1	pepS	spr0254	-	-	Aminopeptidase
+257547..257777	+	231	AAK99059.1	-	spr0255	-	-	Conserved hypothetical protein
+258090..258812	+	723	AAK99060.1	rsuA	spr0256	-	-	Ribosomal small subunit pseudouridine synthase A
+258893..259057	+	165	AAK99061.1	-	spr0257	-	-	Hypothetical protein
+259029..260363	+	1335	AAK99062.1	pepC	spr0258	-	-	Aminopeptidase C
+260419..261330	-	912	AAK99063.1	manN	spr0259	-	-	Phosphotransferase system, mannose-specific EIID
+261354..262157	-	804	AAK99064.1	manM	spr0260	-	-	Phosphotransferase system, mannose-specific EIIC
+262185..263183	-	999	AAK99065.1	manL	spr0261	-	-	Phosphotransferase system, mannose-specific EIIAB
+263358..264377	-	1020	AAK99066.1	adhP	spr0262	-	-	Alcohol dehydrogenase, propanol-preferring
+264716..265528	-	813	AAK99067.1	-	spr0263	-	-	Conserved hypothetical protein
+265664..267136	+	1473	AAK99068.1	-	spr0264	-	-	Conserved hypothetical protein
+267187..267897	+	711	AAK99069.1	-	spr0265	-	-	Conserved hypothetical protein
+268022..268966	+	945	AAK99070.1	sulA	spr0266	-	-	Dihydropteroate synthase
+268968..270290	+	1323	AAK99071.1	sulB	spr0267	-	-	Dihydrofolate synthetase
+270271..270825	+	555	AAK99072.1	sulC	spr0268	-	-	GTP cyclohydrolase
+270868..271680	+	813	AAK99073.1	sulD	spr0269	-	-	Aldolase-pyrophosphokinase
+271725..272096	-	372	AAK99074.1	-	spr0270	-	-	Hypothetical protein
+272399..272845	+	447	AAK99075.1	rplM	spr0271	-	-	50S Ribosomal protein L13
+272865..273257	+	393	AAK99076.1	rpsI	spr0272	-	-	30S Ribosomal protein S9
+273609..273815	+	207	AAK99077.1	-	spr0273	-	-	Degenerate transposase
+273803..273895	+	93	AAK99078.1	-	spr0274	-	-	Phospho-beta-glucosidase, truncation
+273944..274309	+	366	AAK99079.1	-	spr0275	-	-	Hypothetical protein
+274499..275935	+	1437	AAK99080.1	bglA	spr0276	-	-	6-phospho-beta-glucosidase
+275987..276226	+	240	AAK99081.1	-	spr0277	-	-	Conserved hypothetical protein
+276329..276670	+	342	AAK99082.1	PTS-EII	spr0278	-	-	Phosphotransferase system sugar-specific EII component
+276788..278767	+	1980	AAK99083.1	bglG	spr0279	-	-	Transcription antiterminator BglG family
+278777..279091	+	315	AAK99084.1	PTS-EII	spr0280	-	-	Phosphotransferase system sugar-specific EII component
+279110..279616	+	507	AAK99085.1	-	spr0281	-	-	Hypothetical protein
+279696..281042	+	1347	AAK99086.1	PTS-EII	spr0282	-	-	Phosphotransferase system sugar-specific EII component
+281424..281600	+	177	AAK99087.1	-	spr0283	-	-	Hypothetical protein
+282002..284215	+	2214	AAK99088.1	xylS	spr0284	-	-	Alpha-xylosidase
+284437..284913	-	477	AAK99089.1	basA	spr0285	-	-	Gluthatione peroxidase
+285103..288339	+	3237	AAK99090.1	hysA	spr0286	-	-	Hyaluronate lyase precursor (hyaluronidase/hyase)
+289483..290112	-	630	AAK99091.1	kdgA	spr0287	-	-	2-keto-3-deoxy-6-phosphogluconate aldolase
+290122..291123	-	1002	AAK99092.1	kdgK	spr0288	-	-	2-keto-3-deoxygluconate kinase
+291154..291795	-	642	AAK99093.1	-	spr0289	-	-	Hypothetical protein
+291814..292629	-	816	AAK99094.1	gno	spr0290	-	-	5-keto-D-gluconate 5-reductase
+292900..293334	+	435	AAK99095.1	PTS-EII	spr0291	-	-	Phosphotransferase system sugar-specific EII component
+293346..294536	+	1191	AAK99096.1	ugl	spr0292	-	-	Unsaturated glucuronyl hydrolase
+294547..295038	+	492	AAK99097.1	PTS-EII	spr0293	-	-	Phosphotransferase system sugar-specific EII component
+295053..295832	+	780	AAK99098.1	PTS-EII	spr0294	-	-	Phosphotransferase system sugar-specific EII component
+295819..296637	+	819	AAK99099.1	PTS-EII	spr0295	-	-	Phosphotransferase system sugar-specific EII component
+296637..296930	+	294	AAK99100.1	-	spr0296	-	-	Conserved hypothetical protein
+296952..298853	+	1902	AAK99101.1	-	spr0297	-	-	Hypothetical protein
+298847..299914	+	1068	AAK99102.1	regR	spr0298	-	-	Transcription regulator, member of GalR family
+300143..300406	-	264	AAK99103.1	-	spr0299	-	-	Hypothetical protein, truncation
+300360..300602	-	243	AAK99104.1	-	spr0300	-	-	Hypothetical protein, truncation
+300618..300812	-	195	AAK99105.1	yorfE	spr0301	-	-	Transcription regulator
+300978..301928	+	951	AAK99106.1	yllC	spr0302	-	-	YllC protein
+301940..302257	+	318	AAK99107.1	ftsL	spr0303	-	-	Cell division protein
+302261..304513	+	2253	AAK99108.1	pbpX	spr0304	-	-	Penicillin-binding protein 2X
+304515..305495	+	981	AAK99109.1	mraY	spr0305	-	-	Undecaprenyl-phosphate-UDP-MurNAc-pentapeptide phospho-MurNAc-pentapeptide transferase
+305635..305820	+	186	AAK99110.1	-	spr0306	-	-	Hypothetical protein
+306052..308157	+	2106	AAK99111.1	clpL	spr0307	-	-	ATP-dependent protease ATP-binding subunit
+308453..308935	-	483	AAK99112.1	luxS	spr0308	-	-	Autoinducer-2 production protein
+309030..310514	-	1485	AAK99113.1	-	spr0309	-	-	Hypothetical protein
+310667..312274	+	1608	AAK99114.1	dexB	spr0310	-	-	Alpha, 1-6-glucosidase
+312433..312606	+	174	AAK99115.1	-	spr0311	-	-	Hypothetical protein
+312599..312760	-	162	AAK99116.1	-	spr0312	-	-	Degenerate transposase
+313115..313462	-	348	AAK99117.1	-	spr0313	-	-	Transposase
+313695..314657	+	963	AAK99118.1	cps2A	spr0314	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+314551..315585	+	1035	AAK99119.1	cps2H	spr0315	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+315715..316872	+	1158	AAK99120.1	cps2I	spr0316	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+316869..318278	+	1410	AAK99121.1	cps2J	spr0317	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+318314..319552	+	1239	AAK99122.1	cps2K	spr0318	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+319581..320186	+	606	AAK99123.1	cps2P	spr0319	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+320264..321133	+	870	AAK99124.1	cps2L	spr0320	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+321134..321727	+	594	AAK99125.1	cps2M	spr0321	-	-	The type 2 capsule locus of Streptococcus pneumoniae
+321740..322789	+	1050	AAK99126.1	cpsN	spr0322	-	-	dTDP-glucose-4,6-dehydratase
+322855..323706	+	852	AAK99127.1	cpsO	spr0323	-	-	dTDP-L-rhamnose synthase
+323782..324228	+	447	AAK99128.1	-	spr0324	-	-	Transposase, uncharacterized, truncation
+324231..324680	+	450	AAK99129.1	-	spr0325	-	-	Hypothetical protein
+324751..324909	+	159	AAK99130.1	-	spr0326	-	-	Hypothetical protein
+325111..327093	+	1983	AAK99131.1	aliA	spr0327	-	-	ABC transporter substrate-binding protein - oligopeptide transport
+327393..332696	+	5304	AAK99132.1	-	spr0328	-	-	Conserved hypothetical protein
+332863..335022	-	2160	AAK99133.1	pbpA	spr0329	-	-	Penicillin-binding protein 1A
+335019..335615	-	597	AAK99134.1	recU	spr0330	-	-	Recombination protein U
+335681..336208	+	528	AAK99135.1	-	spr0331	-	-	Conserved hypothetical protein
+336266..336607	+	342	AAK99136.1	-	spr0332	-	-	Conserved hypothetical protein
+337078..338250	+	1173	AAK99137.1	-	spr0333	-	-	Conserved hypothetical protein
+338263..339657	+	1395	AAK99138.1	-	spr0334	-	-	Conserved hypothetical protein
+339733..341157	+	1425	AAK99139.1	gnd	spr0335	-	-	6-phosphogluconate dehydrogenase
+341169..341858	+	690	AAK99140.1	csrR	spr0336	-	-	Response regulator
+341956..342972	+	1017	AAK99141.1	cbpF	spr0337	-	-	Choline-binding protein F
+343094..343972	+	879	AAK99142.1	mvk	spr0338	-	-	Mevalonate kinase
+343873..344907	+	1035	AAK99143.1	mvd1	spr0339	-	-	diphosphomevalonate decarboxylase
+344894..345901	+	1008	AAK99144.1	mvaK2	spr0340	-	-	Phosphomevalonate kinase
+345885..346895	+	1011	AAK99145.1	fni	spr0341	-	-	Isopentenyl diphosphate isomerase
+346973..347671	+	699	AAK99146.1	-	spr0342	-	-	Conserved hypothetical protein
+347668..348663	+	996	AAK99147.1	hk03	spr0343	-	-	Histidine kinase
+348677..349309	+	633	AAK99148.1	rr03	spr0344	-	-	Response regulator
+349310..349456	+	147	AAK99149.1	-	spr0345	-	-	DNA alkylation repair enzyme, truncation
+349534..349788	+	255	AAK99150.1	-	spr0346	-	-	DNA alkylation repair enzyme, truncation
+349807..350079	+	273	AAK99151.1	-	spr0347	-	-	DNA alkylation repair enzyme, truncation
+350229..350423	+	195	AAK99152.1	-	spr0348	-	-	Hypothetical protein
+350465..351121	+	657	AAK99153.1	-	spr0349	-	-	Choline binding protein G, truncation
+351246..351374	+	129	AAK99154.1	cbpG	spr0350	-	-	Choline binding protein G
+351393..352277	+	885	AAK99155.1	pcpC	spr0351	-	-	Choline-binding protein
+352405..352590	-	186	AAK99156.1	-	spr0352	-	-	Degenerate transposase (orf2)
+352538..352891	-	354	AAK99157.1	-	spr0353	-	-	Degenerate transposase (orf2)
+353009..353113	-	105	AAK99158.1	-	spr0354	-	-	Degenerate transposase (orf2)
+353339..353614	-	276	AAK99159.1	-	spr0355	-	-	Degenerate transposase (orf1)
+353760..355529	+	1770	AAK99160.1	mtlA	spr0356	-	-	Mannitol PTS EII
+355553..357508	+	1956	AAK99161.1	-	spr0357	-	-	Conserved hypothetical protein
+357510..357947	+	438	AAK99162.1	mtlF	spr0358	-	-	Mannitol-specific enzyme IIA component
+358009..359145	+	1137	AAK99163.1	mtlD	spr0359	-	-	Mannitol-1-phosphate 5-dehydrogenase
+359316..359474	+	159	AAK99164.1	-	spr0360	-	-	Hypothetical protein
+359527..359640	+	114	AAK99165.1	-	spr0361	-	-	Conserved hypothetical protein
+359944..361227	+	1284	AAK99166.1	ropA	spr0362	-	-	Trigger factor
+361275..363641	-	2367	AAK99167.1	recD	spr0363	-	-	Exonuclease V
+363875..364489	-	615	AAK99168.1	spi	spr0364	-	-	Signal peptidase I
+364501..365373	-	873	AAK99169.1	rnhB	spr0365	-	-	Ribonuclease HII
+365451..365762	+	312	AAK99170.1	-	spr0366	-	-	Hypothetical protein
+365759..366307	+	549	AAK99171.1	-	spr0367	-	-	Conserved hypothetical protein
+366411..368747	+	2337	AAK99172.1	mutS2	spr0368	-	-	DNA mismatch repair protein
+369089..370411	+	1323	AAK99173.1	dagA	spr0369	-	-	D-alanine glycine permease
+370629..371177	+	549	AAK99174.1	mip	spr0370	-	-	Macrophage infectivity potentiator protein
+371275..372186	+	912	AAK99175.1	shetA	spr0371	-	-	Exfoliative toxin A
+372211..373548	-	1338	AAK99176.1	serS	spr0372	-	-	Seryl-tRNA synthetase
+373698..374069	-	372	AAK99177.1	-	spr0373	-	-	Conserved hypothetical protein
+374072..375436	-	1365	AAK99178.1	lysC	spr0374	-	-	Aspartate kinase
+375761..376546	+	786	AAK99179.1	phaB	spr0375	-	-	Enoyl-CoA hydratase II
+376640..377074	+	435	AAK99180.1	-	spr0376	-	-	Conserved hypothetical protein
+377074..378048	+	975	AAK99181.1	fabH	spr0377	-	-	3-oxoacyl-acyl-carrier-protein synthase III
+378108..378332	+	225	AAK99182.1	acp	spr0378	-	-	Acyl carrier protein
+378451..379425	+	975	AAK99183.1	fabK	spr0379	-	-	Enoyl-acyl carrier protein(ACP) reductase
+379418..380338	+	921	AAK99184.1	fabD	spr0380	-	-	Malonyl acyl carrier protein transacylase
+380372..381103	+	732	AAK99185.1	fabG	spr0381	-	-	3-ketoacyl-acyl carrier protein reductase
+381116..382360	+	1245	AAK99186.1	fabF	spr0382	-	-	Beta ketoacyl-acyl carrier protein synthase
+382363..382848	+	486	AAK99187.1	accB	spr0383	-	-	Biotin carboxyl carrier protein of acetyl-CoA carboxylase
+382845..383267	+	423	AAK99188.1	fabZ	spr0384	-	-	Hydroxymyristoyl-(acyl carrier protein) dehydratase
+383279..384646	+	1368	AAK99189.1	accC	spr0385	-	-	Biotin carboxylase (a subunit of acetyl-CoA carboxylase (ACC)
+384683..385549	+	867	AAK99190.1	accD	spr0386	-	-	Acetyl-coenzyme A carboxylase carboxyl transferase subunit beta
+385546..386313	+	768	AAK99191.1	accA	spr0387	-	-	Acetyl-coenzyme A carboxylase carboxyl transferase subunit alpha
+386472..386657	+	186	AAK99192.1	-	spr0388	-	-	Hypothetical protein
+386914..387126	+	213	AAK99193.1	-	spr0389	-	-	Hypothetical protein
+387424..387864	-	441	AAK99194.1	nusB	spr0390	-	-	Transcription termination protein
+387839..388228	-	390	AAK99195.1	-	spr0391	-	-	Conserved hypothetical protein
+388250..388810	-	561	AAK99196.1	efp	spr0392	-	-	Elongation factor P
+388939..390381	-	1443	AAK99197.1	gatB	spr0393	-	-	Glutamyl tRNA-Gln amidotransferase subunit B
+390381..391847	-	1467	AAK99198.1	gatA	spr0394	-	-	Glu-tRNAGln amidotransferase subunit A
+391847..392149	-	303	AAK99199.1	gatC	spr0395	-	-	Glutamyl tRNA-Gln amidotransferase, subunit C
+392362..393906	+	1545	AAK99200.1	prfC	spr0396	-	-	Peptide chain release factor 3
+394175..394660	+	486	AAK99201.1	-	spr0397	-	-	Conserved hypothetical protein
+394776..394964	+	189	AAK99202.1	rpmB	spr0398	-	-	50S Ribosomal protein L28
+395121..395486	+	366	AAK99203.1	asp23	spr0399	-	-	Alkaline shock protein
+395489..397156	+	1668	AAK99204.1	-	spr0400	-	-	Conserved hypothetical protein
+397357..399057	+	1701	AAK99205.1	ilvB	spr0401	-	-	Acetolactate synthase large subunit
+399026..399526	+	501	AAK99206.1	ilvN	spr0402	-	-	Acetolactate synthase small subunit
+399592..400614	+	1023	AAK99207.1	ilvC	spr0403	-	-	Ketol-acid reductoisomerase
+400691..400957	+	267	AAK99208.1	-	spr0404	-	-	Hypothetical protein
+401195..401551	+	357	AAK99209.1	-	spr0405	-	-	Hypothetical protein
+401601..402851	+	1251	AAK99210.1	ilvA	spr0406	-	-	Threonine desaminase
+403586..403801	+	216	AAK99211.1	-	spr0407	-	-	Hypothetical protein
+403910..404650	-	741	AAK99212.1	glnQ	spr0408	-	-	ABC transporter ATP-binding protein - glutamine
+404650..405585	-	936	AAK99213.1	glnH	spr0409	-	-	ABC transporter substrate binding protein - glutamine transport
+406350..408242	+	1893	AAK99214.1	-	spr0410	-	-	Hypothetical protein
+408239..408400	-	162	AAK99215.1	-	spr0411	-	-	Degenerate transposase
+408542..409090	-	549	AAK99216.1	-	spr0412	-	-	Degenerate transposase
+409666..410511	+	846	AAK99217.1	bacA	spr0413	-	-	A lipid kinase; may confer bacitracin resistance by phosphorylation of undecaprenol
+410657..411727	-	1071	AAK99218.1	dinP	spr0414	-	-	DNA-damage-inducible protein P
+412113..414437	+	2325	AAK99219.1	pfl	spr0415	-	-	Pyruvate formate-lyase
+414804..415151	-	348	AAK99220.1	-	spr0416	-	-	Hypothetical protein
+415349..415633	-	285	AAK99221.1	-	spr0417	-	-	Conserved hypothetical protein
+416025..416195	+	171	AAK99222.1	-	spr0418	-	-	Hypothetical protein
+416246..416416	-	171	AAK99223.1	-	spr0419	-	-	Hypothetical protein
+417068..418291	-	1224	AAK99224.1	xylR	spr0420	-	-	Xylose repressor protein
+418456..419781	+	1326	AAK99225.1	PTS-EII	spr0421	-	-	Phosphotransferase system sugar-specific EII component
+419729..421669	+	1941	AAK99226.1	-	spr0422	-	-	Hypothetical protein
+421837..422181	+	345	AAK99227.1	PTS-EII	spr0423	-	-	Phosphotransferase system sugar-specific EII component
+422191..423603	+	1413	AAK99228.1	lacG	spr0424	-	-	Phospho-beta-D-galactosidase
+423672..425351	+	1680	AAK99229.1	PTS-EII	spr0425	-	-	Phosphotransferase system sugar-specific EII component
+425479..426918	-	1440	AAK99230.1	trkH	spr0426	-	-	Trk transporter membrane-spanning protein - K+ transport
+426922..428271	-	1350	AAK99231.1	trkA	spr0427	-	-	Trk transporter NAD+ binding protein - K+ transport
+428433..429308	+	876	AAK99232.1	-	spr0428	-	-	Conserved hypothetical protein
+429323..429871	+	549	AAK99233.1	-	spr0429	-	-	Conserved hypothetical protein
+430192..431874	+	1683	AAK99234.1	ABC-NBD	spr0430	-	-	ABC transporter ATP-binding protein - cobalt transport
+431859..432689	+	831	AAK99235.1	ABC-MSD	spr0431	-	-	ABC transporter membrane-spanning permease - unknown substrate
+432843..433385	+	543	AAK99236.1	cspR	spr0432	-	-	rRNA methylase
+433829..434407	+	579	AAK99237.1	-	spr0433	-	-	Conserved hypothetical protein
+434397..435047	+	651	AAK99238.1	-	spr0434	-	-	Conserved hypothetical protein
+435075..435464	+	390	AAK99239.1	-	spr0435	-	-	Hypothetical protein
+435469..435918	+	450	AAK99240.1	-	spr0436	-	-	Hypothetical protein
+436031..436633	+	603	AAK99241.1	rpoE	spr0437	-	-	RNA polymerase (delta subunit)
+437023..438630	+	1608	AAK99242.1	pyrG	spr0438	-	-	CTP synthetase
+439189..440820	-	1632	AAK99243.1	-	spr0439	-	-	Conserved hypothetical protein
+441113..446092	+	4980	AAK99244.1	-	spr0440	-	-	Hypothetical protein
+446182..447378	+	1197	AAK99245.1	pgk	spr0441	-	-	Phosphoglycerate kinase
+447514..448041	+	528	AAK99246.1	-	spr0442	-	-	Hypothetical protein
+448118..448474	+	357	AAK99247.1	glnR	spr0443	-	-	Transcriptional repressor of the glutamine synthetase gene
+448511..449857	+	1347	AAK99248.1	glnA	spr0444	-	-	Glutamine synthetase type 1
+450637..451917	+	1281	AAK99249.1	hsdS	spr0445	-	-	type I restriction enzyme
+451871..452470	-	600	AAK99250.1	hsdS	spr0446	-	-	Type I restriction enzyme EcoKI specificity protein (S protein)
+452481..453278	-	798	AAK99251.1	xerD	spr0447	-	-	Integrase/recombinase
+453335..454903	-	1569	AAK99252.1	hsdS	spr0448	-	-	Type I site-specific deoxyribonuclease chain S
+454903..456366	-	1464	AAK99253.1	hsdM	spr0449	-	-	EcoE type I restriction modification enzyme M subunit
+456379..458712	-	2334	AAK99254.1	hsdR	spr0450	-	-	EcoA type I restriction-modification enzyme R subunit
+459085..459285	+	201	AAK99255.1	-	spr0451	-	-	Hypothetical protein
+459320..459829	+	510	AAK99256.1	-	spr0452	-	-	Hypothetical protein
+459960..461027	+	1068	AAK99257.1	hrcA	spr0453	-	-	Heat inducible transcription repressor
+461030..461578	+	549	AAK99258.1	grpE	spr0454	-	-	Heat-shock protein (activation of DnaK)
+462058..463881	+	1824	AAK99259.1	dnaK	spr0455	-	-	Class I heat-shock protein (molecular chaperone)
+464641..465759	+	1119	AAK99260.1	dnaJ	spr0456	-	-	Heat-shock protein (activation of DnaK)
+466094..466381	-	288	AAK99261.1	-	spr0457	-	-	Hypothetical protein
+466391..466801	-	411	AAK99262.1	-	spr0458	-	-	Conserved hypothetical protein
+466869..467600	+	732	AAK99263.1	ABC-NBD	spr0459	-	-	ABC transporter ATP-binding protein - unknown substrate
+467597..468646	+	1050	AAK99264.1	ABC-MSP	spr0460	-	-	ABC transporter membrane-spanning permease - unknown substrate
+468814..469143	-	330	AAK99265.1	blpT	spr0461	-	-	Hypothetical protein
+469419..469757	+	339	AAK99266.1	blpS	spr0462	-	-	Regulatory protein
+469762..470499	+	738	AAK99267.1	rr13	spr0463	-	-	Response regulator
+470513..471853	+	1341	AAK99268.1	hk13	spr0464	-	-	Histidine kinase
+471895..472050	-	156	AAK99269.1	ip	spr0465	-	-	Bacteriocin-like peptide, double glycine cleavage type
+472107..473114	-	1008	AAK99270.1	-	spr0466	-	-	Conserved hypothetical protein, truncation
+473133..473468	-	336	AAK99271.1	-	spr0467	-	-	Conserved hypothetical protein, truncation
+473479..475104	-	1626	AAK99272.1	-	spr0468	-	-	Conserved hypothetical protein, truncation
+475049..475642	-	594	AAK99273.1	-	spr0469	-	-	Conserved hypothetical protein, truncation
+475926..476159	+	234	AAK99274.1	-	spr0470	-	-	Hypothetical protein
+476175..476354	+	180	AAK99275.1	-	spr0471	-	-	Hypothetical protein
+476191..476880	+	690	AAK99276.1	blpY	spr0472	-	-	BlpY protein
+476922..477155	+	234	AAK99277.1	blpZ	spr0473	-	-	Hypothetical protein
+477306..477917	+	612	AAK99278.1	pncP	spr0474	-	-	ABC transporter ATP binding protein - unknown substrate
+478078..478872	+	795	AAK99279.1	-	spr0475	-	-	Conserved hypothetical protein
+478869..479504	+	636	AAK99280.1	-	spr0476	-	-	Conserved hypothetical protein
+479630..480109	+	480	AAK99281.1	-	spr0477	-	-	Conserved hypothetical protein
+480153..481289	+	1137	AAK99282.1	nusA	spr0478	-	-	Transcription termination
+481311..481604	+	294	AAK99283.1	-	spr0479	-	-	Conserved hypothetical protein
+481597..481896	+	300	AAK99284.1	-	spr0480	-	-	Conserved hypothetical protein
+481913..484705	+	2793	AAK99285.1	infB	spr0481	-	-	Initiation factor IF2
+484929..485306	+	378	AAK99286.1	rbfA	spr0482	-	-	Ribosome binding factor A
+485549..486364	+	816	AAK99287.1	-	spr0483	-	-	Conserved hypothetical protein
+486366..486548	+	183	AAK99288.1	-	spr0484	-	-	Hypothetical protein
+486986..487231	+	246	AAK99289.1	-	spr0485	-	-	Hypothetical protein
+487231..488565	+	1335	AAK99290.1	-	spr0486	-	-	Conserved hypothetical protein
+488575..488829	+	255	AAK99291.1	-	spr0487	-	-	Hypothetical protein
+488925..489320	+	396	AAK99292.1	-	spr0488	-	-	Hypothetical protein
+489732..490181	+	450	AAK99293.1	-	spr0489	-	-	Hypothetical protein
+490168..490725	+	558	AAK99294.1	-	spr0490	-	-	Conserved hypothetical protein
+490727..491689	+	963	AAK99295.1	-	spr0491	-	-	Hypothetical protein
+491701..494352	+	2652	AAK99296.1	valS	spr0492	-	-	Valyl-tRNA synthetase
+494407..495177	+	771	AAK99297.1	-	spr0493	-	-	Conserved hypothetical protein
+495460..496263	+	804	AAK99298.1	-	spr0494	-	-	Hypothetical protein
+496379..496486	-	108	AAK99299.1	-	spr0495	-	-	Degenerate transposase (orf2)
+496468..496857	-	390	AAK99300.1	-	spr0496	-	-	Degenerate transposase (orf2)
+496934..497191	-	258	AAK99301.1	-	spr0497	-	-	Degenerate transposase (orf2)
+497417..497692	-	276	AAK99302.1	-	spr0498	-	-	Degenerate transposase (orf1)
+497816..498883	+	1068	AAK99303.1	-	spr0499	-	-	Hypothetical protein
+498905..499246	+	342	AAK99304.1	-	spr0500	-	-	Hypothetical protein
+499462..499665	+	204	AAK99305.1	-	spr0501	-	-	Hypothetical protein
+499631..499915	+	285	AAK99306.1	-	spr0502	-	-	Hypothetical protein
+499939..500571	+	633	AAK99307.1	-	spr0503	-	-	Hypothetical protein
+500872..501711	+	840	AAK99308.1	licT	spr0504	-	-	Transcriptional antiterminator (BglG family)
+501729..503567	+	1839	AAK99309.1	PTS-EII	spr0505	-	-	Phosphotransferase system sugar-specific EII component
+503580..504995	+	1416	AAK99310.1	bglH	spr0506	-	-	6-phospho-beta-glucosidase
+505506..506633	+	1128	AAK99311.1	pheS	spr0507	-	-	Phenylalanyl-tRNA synthetase alpha chain
+506633..507142	+	510	AAK99312.1	-	spr0508	-	-	Conserved hypothetical protein
+507219..509621	+	2403	AAK99313.1	pheT	spr0509	-	-	Phenylalanyl-tRNA synthetase beta chain
+509689..510690	-	1002	AAK99314.1	-	spr0510	-	-	Hypothetical protein
+510846..511148	+	303	AAK99315.1	-	spr0511	-	-	Degenerate transposase
+511168..511296	+	129	AAK99316.1	-	spr0512	-	-	Degenerate transposase
+511419..511685	+	267	AAK99317.1	-	spr0513	-	-	Conserved hypothetical protein
+511802..514195	+	2394	AAK99318.1	metE	spr0514	-	-	Tetrahydropteroyltriglutamate methyltransferase
+514259..515125	+	867	AAK99319.1	metF	spr0515	-	-	5,10-methylenetetrahydrofolate reductase
+515696..518023	+	2328	AAK99320.1	pnpA	spr0516	-	-	Polyribonucleotide nucleotidyltransferase
+518039..518656	+	618	AAK99321.1	cysE	spr0517	-	-	Serine acetyltransferase
+518668..519552	+	885	AAK99322.1	-	spr0518	-	-	Hypothetical protein
+519634..520977	+	1344	AAK99323.1	cysS	spr0519	-	-	Cysteinyl-tRNA synthetase
+520970..521356	+	387	AAK99324.1	-	spr0520	-	-	Conserved hypothetical protein
+521360..522244	+	885	AAK99325.1	-	spr0521	-	-	Conserved hypothetical protein
+522381..522836	+	456	AAK99326.1	-	spr0522	-	-	Hypothetical protein
+523125..523298	+	174	AAK99327.1	-	spr0523	-	-	Transposase, uncharacterized, truncation
+523650..524927	+	1278	AAK99328.1	vex1	spr0524	-	-	ABC transporter membrane-spanning permease - Pep export
+524940..525587	+	648	AAK99329.1	vex2	spr0525	-	-	ABC transporter ATP-binding protein - Pep export
+525639..527018	+	1380	AAK99330.1	vex3	spr0526	-	-	ABC transporter membrane-spanning permease - Pep export
+527198..527281	+	84	AAK99331.1	pep27	spr0527	-	-	A secreted peptide which is the signal sensed by VncR/S
+527330..527986	+	657	AAK99332.1	vncR	spr0528	-	-	VncR, response regulator
+527983..529311	+	1329	AAK99333.1	vncS	spr0529	-	-	VncS, histidine kinase
+529452..530333	+	882	AAK99334.1	fba	spr0530	-	-	Fructose-bisphosphate aldolase
+530654..531856	-	1203	AAK99335.1	-	spr0531	-	-	Hypothetical protein
+532102..532761	-	660	AAK99336.1	glnP	spr0532	-	-	ABC transporter membrane-spanning permease - glutamine transport
+532771..533448	-	678	AAK99337.1	glnP	spr0533	-	-	ABC transporter membrane-spanning permease - glutamine transport
+533461..534255	-	795	AAK99338.1	glnH	spr0534	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor precursor
+534266..534610	-	345	AAK99339.1	-	spr0535	-	-	ABC transporter ATP-binding protein - glutamine, truncation
+534635..535024	-	390	AAK99340.1	-	spr0536	-	-	ABC transporter ATP-binding protein - glutamine, truncation
+535289..537523	+	2235	AAK99341.1	recJ	spr0537	-	-	Single-stranded DNA-specific exonuclease, 5'-3'
+537698..539359	+	1662	AAK99342.1	-	spr0538	-	-	Conserved hypothetical protein
+539428..540207	+	780	AAK99343.1	estA	spr0539	-	-	tributyrin esterase
+540319..541539	+	1221	AAK99344.1	murM	spr0540	-	-	Serine/alanine adding enzyme
+541544..542776	+	1233	AAK99345.1	murN	spr0541	-	-	Alanine adding enzyme
+542892..543551	+	660	AAK99346.1	-	spr0542	-	-	Hypothetical protein
+543591..545435	+	1845	AAK99347.1	uvrC	spr0543	-	-	Exonuclease ABC - subunit C
+545425..546258	+	834	AAK99348.1	-	spr0544	-	-	Conserved hypothetical protein
+546440..547255	-	816	AAK99349.1	ABC-SBP	spr0545	-	-	ABC transporter substrate-binding protein - glutamine transport/Major cell binding factor precursor
+547411..548016	+	606	AAK99350.1	nrd	spr0546	-	-	Nitroreductase
+548029..549429	+	1401	AAK99351.1	pepV	spr0547	-	-	Dipeptidase
+549483..550061	+	579	AAK99352.1	-	spr0548	-	-	Conserved hypothetical protein
+550225..550377	+	153	AAK99353.1	-	spr0549	-	-	Hypothetical protein
+550378..550512	+	135	AAK99354.1	-	spr0550	-	-	Conserved hypothetical protein
+550668..552008	+	1341	AAK99355.1	brnQ	spr0551	-	-	Branched-chain amino acid transport system carrier protein
+552212..553249	+	1038	AAK99356.1	-	spr0552	-	-	Conserved hypothetical protein
+553218..553721	+	504	AAK99357.1	-	spr0553	-	-	Hypothetical protein
+553724..554440	+	717	AAK99358.1	-	spr0554	-	-	Conserved hypothetical protein
+554749..555174	+	426	AAK99359.1	rplK	spr0555	-	-	50S Ribosomal protein L11
+555382..556071	+	690	AAK99360.1	rplA	spr0556	-	-	50S Ribosomal protein L1
+558589..559581	+	993	AAK99361.1	ABC-NBD	spr0557	-	-	ABC transporter ATP-binding protein - role in polysaccharide efflux
+559541..560401	+	861	AAK99362.1	-	spr0558	-	-	Conserved hypothetical protein
+560403..561188	+	786	AAK99363.1	-	spr0559	-	-	Conserved hypothetical protein
+561441..561686	+	246	AAK99364.1	-	spr0560	-	-	Hypothetical protein
+562418..568852	+	6435	AAK99365.1	prtA	spr0561	-	-	Cell wall-associated serine proteinase precursor PrtA
+569431..569952	+	522	AAK99366.1	PTS-EII	spr0562	-	-	Phosphotransferase system sugar-specific EII component
+569990..570295	+	306	AAK99367.1	-	spr0563	-	-	Hypothetical protein
+570343..571818	+	1476	AAK99368.1	PTS-EII	spr0564	-	-	Phosphotransferase system sugar-specific EII component
+572123..578809	+	6687	AAK99369.1	bgaA	spr0565	-	-	beta-galactosidase precursor
+579191..579598	-	408	AAK99370.1	-	spr0566	-	-	Hypothetical protein
+579666..579911	-	246	AAK99371.1	-	spr0567	-	-	Hypothetical protein
+580123..580482	-	360	AAK99372.1	-	spr0568	-	-	Hypothetical protein
+580406..581026	+	621	AAK99373.1	-	spr0569	-	-	Hypothetical protein
+581084..581530	+	447	AAK99374.1	-	spr0570	-	-	Hypothetical protein
+581508..582071	+	564	AAK99375.1	-	spr0571	-	-	Conserved hypothetical protein
+582064..582318	+	255	AAK99376.1	-	spr0572	-	-	Hypothetical protein
+582330..584384	+	2055	AAK99377.1	nha2	spr0573	-	-	Na+/H+ antiporter
+584548..585423	+	876	AAK99378.1	-	spr0574	-	-	Conserved hypothetical protein
+585634..586344	+	711	AAK99379.1	ccdA	spr0575	-	-	Cytochrome c-type biogenesis protein
+586337..586930	+	594	AAK99380.1	-	spr0576	-	-	Conserved hypothetical protein
+586941..588053	+	1113	AAK99381.1	msrA	spr0577	-	-	Peptide methionine sulfoxide reductase paralog
+588303..589058	+	756	AAK99382.1	rr09	spr0578	-	-	Response regulator
+589055..590746	+	1692	AAK99383.1	hk09	spr0579	-	-	Histidine kinase
+590841..591425	+	585	AAK99384.1	-	spr0580	-	-	Conserved hypothetical protein
+591447..597077	+	5631	AAK99385.1	zmpB	spr0581	-	-	Zinc metalloprotease
+597147..598868	+	1722	AAK99386.1	pabB	spr0582	-	-	Para-aminobenzoate synthetase
+599026..600015	+	990	AAK99387.1	-	spr0583	-	-	Hypothetical protein
+600133..601110	+	978	AAK99388.1	glcK	spr0584	-	-	Glucose kinase
+601207..602046	+	840	AAK99389.1	thyA	spr0585	-	-	Thymidylate synthase
+602094..602264	-	171	AAK99390.1	-	spr0586	-	-	Hypothetical protein
+602140..602328	+	189	AAK99391.1	-	spr0587	-	-	Hypothetical protein
+602334..603269	+	936	AAK99392.1	miaA	spr0588	-	-	tRNA isopentenylpyrophosphate transferase
+603262..604500	+	1239	AAK99393.1	-	spr0589	-	-	Conserved hypothetical protein
+604493..605116	+	624	AAK99394.1	-	spr0590	-	-	Hypothetical protein
+605131..606060	+	930	AAK99395.1	-	spr0591	-	-	Conserved hypothetical protein
+606081..606836	+	756	AAK99396.1	-	spr0592	-	-	Conserved hypothetical protein
+606890..607936	-	1047	AAK99397.1	cpsY	spr0593	-	-	Regulatory function on capsule expression
+607862..608131	+	270	AAK99398.1	-	spr0594	-	-	Conserved hypothetical protein
+608131..608511	+	381	AAK99399.1	-	spr0595	-	-	Conserved hypothetical protein
+608630..608827	+	198	AAK99400.1	-	spr0596	-	-	Hypothetical protein
+608867..609592	-	726	AAK99401.1	rsuA	spr0597	-	-	Ribosomal small subunit pseudouridine synthase A
+609733..611595	+	1863	AAK99402.1	typA	spr0598	-	-	GTP-binding protein TypA/BipA (tyrosine phosphorylated protein A)
+611615..611869	+	255	AAK99403.1	-	spr0599	-	-	Hypothetical protein
+612185..612532	+	348	AAK99404.1	-	spr0600	-	-	Conserved hypothetical protein
+612603..614624	+	2022	AAK99405.1	-	spr0601	-	-	Conserved hypothetical protein
+614626..615267	+	642	AAK99406.1	ABC-NBD	spr0602	-	-	ABC transporter ATP-binding protein - sodium transport
+615371..616723	+	1353	AAK99407.1	murD	spr0603	-	-	UDP-N-acetylmuramoyl-L-alanine--D-glutamate ligase
+616727..617785	+	1059	AAK99408.1	murG	spr0604	-	-	Undecaprenyl-PP-MurNAc-pentapeptide-UDPGlcNAc GlcNAc transferase
+617795..618985	+	1191	AAK99409.1	divIB	spr0605	-	-	Cell division protein DivIB
+619165..619395	-	231	AAK99410.1	-	spr0606	-	-	Hypothetical protein
+619725..620573	+	849	AAK99411.1	-	spr0607	-	-	Hypothetical protein
+620916..621929	+	1014	AAK99412.1	-	spr0608	-	-	Hypothetical protein
+622097..622222	+	126	AAK99413.1	-	spr0609	-	-	ABC transporter ATP-binding protein - unknown substrate, truncation
+622319..622972	+	654	AAK99414.1	-	spr0610	-	-	ABC transporter ATP-binding protein - unknown substrate, truncation
+622965..623678	+	714	AAK99415.1	-	spr0611	-	-	Hypothetical protein
+623952..624095	-	144	AAK99416.1	-	spr0612	-	-	Degenerate transposase
+624413..625114	+	702	AAK99417.1	pyrF	spr0613	-	-	Orotidine-5'-decarboxylase
+625148..625780	+	633	AAK99418.1	pyrE	spr0614	-	-	Orotate phosphoribosyltransferase
+625960..626364	+	405	AAK99419.1	-	spr0615	-	-	Hypothetical protein
+626460..627224	+	765	AAK99420.1	-	spr0616	-	-	Hypothetical protein
+627173..627976	+	804	AAK99421.1	-	spr0617	-	-	Hypothetical protein
+627980..628684	+	705	AAK99422.1	-	spr0618	-	-	Hypothetical protein
+628681..629328	+	648	AAK99423.1	ABC-NBD	spr0619	-	-	ABC transporter ATP-binding protein - unknown substrate
+629408..629956	-	549	AAK99424.1	-	spr0620	-	-	ABC transporter substrate-binding protein - unknown substrate, truncation
+630031..630273	-	243	AAK99425.1	-	spr0621	-	-	ABC transporter substrate-binding protein - unknown substrate, truncation
+630285..631043	-	759	AAK99426.1	glnQ	spr0622	-	-	ABC transporter ATP-binding protein - glutamine transport
+631044..631721	-	678	AAK99427.1	glnP	spr0623	-	-	ABC transporter membrane-spanning permease - glutamine transport
+631681..632361	-	681	AAK99428.1	glnP	spr0624	-	-	ABC transporter membrane-spanning permease - glutamine transport
+632576..632722	+	147	AAK99429.1	-	spr0625	-	-	lactate oxidase, truncation
+632850..634340	+	1491	AAK99430.1	lysS	spr0626	-	-	Lysyl-tRNA synthetase (lysine--tRNA ligase) (LYSRS)
+634965..636101	+	1137	AAK99431.1	lctO	spr0627	-	-	Lactate oxidase
+636656..637324	+	669	AAK99432.1	-	spr0628	-	-	Conserved hypothetical protein
+637592..638395	+	804	AAK99433.1	thiM	spr0629	-	-	Hydroxyethylthiazole kinase
+638397..639026	+	630	AAK99434.1	thiE	spr0630	-	-	Thiamin-phosphate pyrophosphorylase
+639551..640144	+	594	AAK99435.1	-	spr0631	-	-	Conserved hypothetical protein
+640145..641530	+	1386	AAK99436.1	ABC-NBD	spr0632	-	-	ABC transporter ATP-binding protein - cobalt or other cation transport
+641532..642182	+	651	AAK99437.1	-	spr0633	-	-	Conserved hypothetical protein
+642193..642885	+	693	AAK99438.1	tenA	spr0634	-	-	Transcriptional regulator of extracellular enzyme genes
+642890..643414	+	525	AAK99439.1	-	spr0635	-	-	Hypothetical protein
+643414..644217	+	804	AAK99440.1	thiM	spr0636	-	-	Hydroxyethylthiazole kinase
+644210..644842	+	633	AAK99441.1	thiE	spr0637	-	-	Thiamine phosphate pyrophosphorylase
+645051..645842	-	792	AAK99442.1	thiD	spr0638	-	-	Phosphomethylpyrimidine kinase
+646178..646603	+	426	AAK99443.1	copY	spr0639	-	-	COPAB ATPases metal-fist type repressor
+646614..646985	+	372	AAK99444.1	-	spr0640	-	-	Conserved hypothetical protein
+646986..649238	+	2253	AAK99445.1	ctpA	spr0641	-	-	P-type ATPase - probable copper transporter
+649445..651220	+	1776	AAK99446.1	spxB	spr0642	-	-	Pyruvate oxidase
+651331..651678	+	348	AAK99447.1	-	spr0643	-	-	Hypothetical protein
+651795..652448	-	654	AAK99448.1	-	spr0644	-	-	Degenerate transposase
+652336..652683	-	348	AAK99449.1	-	spr0645	-	-	Hypothetical protein
+653116..653412	+	297	AAK99450.1	-	spr0646	-	-	Phospho-beta-gluco or galactosidase, truncation
+653533..654477	+	945	AAK99451.1	pmi	spr0647	-	-	Mannose-6-phosphate isomerase
+654580..655971	-	1392	AAK99452.1	-	spr0648	-	-	Sodium-dependent transporter
+656131..656793	+	663	AAK99453.1	mta	spr0649	-	-	Regulator of the multidrug efflux pump pmrA
+656822..657277	-	456	AAK99454.1	-	spr0650	-	-	Conserved hypothetical protein
+657297..658490	-	1194	AAK99455.1	-	spr0651	-	-	Conserved hypothetical protein
+658531..659376	-	846	AAK99456.1	-	spr0652	-	-	Conserved hypothetical protein
+659501..660058	+	558	AAK99457.1	-	spr0653	-	-	Conserved hypothetical protein
+660077..660544	+	468	AAK99458.1	comEB	spr0654	-	-	dCMP deaminase
+660612..661262	+	651	AAK99459.1	upp	spr0655	-	-	Uracil phosphoribosyltransferase
+661436..662026	+	591	AAK99460.1	clpP	spr0656	-	-	ATP-dependent CLP protease proteolytic subunit
+662105..662353	+	249	AAK99461.1	-	spr0657	-	-	Conserved hypothetical protein
+662219..662449	-	231	AAK99462.1	-	spr0658	-	-	Hypothetical protein
+662455..663615	+	1161	AAK99463.1	livJ	spr0659	-	-	ABC transporter substrate-binding protein - branched chain amino acid transport
+663874..664752	+	879	AAK99464.1	livH	spr0660	-	-	ABC transporter membrane-spanning permease - branched chain amino acid transport
+664756..665712	+	957	AAK99465.1	livM	spr0661	-	-	ABC transporter membrane-spanning permease - branched chain amino acid transport
+665712..666476	+	765	AAK99466.1	livG	spr0662	-	-	ABC transporter ATP-binding protein - branched chain amino acid transport
+666476..667186	+	711	AAK99467.1	livF	spr0663	-	-	ABC transporter ATP-binding protein - branched chain amino acid transport
+667600..668256	+	657	AAK99468.1	-	spr0664	-	-	Conserved hypothetical protein
+668470..669459	+	990	AAK99469.1	prfB	spr0665	-	-	Peptide chain release factor 2
+669477..670169	+	693	AAK99470.1	ftsE	spr0666	-	-	ABC transporter ATP-binding protein & cell division protein
+670099..671088	+	990	AAK99471.1	ftsX	spr0667	-	-	Cell division protein FtsX
+671374..673554	+	2181	AAK99472.1	ptsG	spr0668	-	-	PTS glucose-specific enzyme IIABC component
+673606..674421	+	816	AAK99473.1	-	spr0669	-	-	Hypothetical protein
+674561..675904	+	1344	AAK99474.1	rheB	spr0670	-	-	ATP-dependent RNA helicase
+676119..677309	+	1191	AAK99475.1	metK	spr0671	-	-	S-adenosylmethionine synthetase
+677862..678797	+	936	AAK99476.1	pyrDA	spr0672	-	-	Dihydroorotate dehydrogenase
+678831..679868	+	1038	AAK99477.1	holA	spr0673	-	-	DNA polymerase III, delta subunit
+680041..680646	+	606	AAK99478.1	sodA	spr0674	-	-	Manganese co-factored superoxide dismutase
+680803..681333	+	531	AAK99479.1	-	spr0675	-	-	Hypothetical protein
+681354..682439	+	1086	AAK99480.1	-	spr0676	-	-	Conserved hypothetical protein
+682441..682908	+	468	AAK99481.1	-	spr0677	-	-	Hypothetical protein
+682910..684451	+	1542	AAK99482.1	ABC-NBD	spr0678	-	-	ABC transporter ATP-binding protein - unknown substrate
+684508..685311	-	804	AAK99483.1	ppiA	spr0679	-	-	Peptidyl-prolyl cis-trans isomerase
+685395..685616	-	222	AAK99484.1	-	spr0680	-	-	Hypothetical protein
+685504..685734	-	231	AAK99485.1	-	spr0681	-	-	Hypothetical protein
+686482..686754	+	273	AAK99486.1	rpsP	spr0682	-	-	30S Ribosomal protein S16
+686774..687013	+	240	AAK99487.1	-	spr0683	-	-	Conserved hypothetical protein
+687578..688018	+	441	AAK99488.1	-	spr0684	-	-	Hypothetical protein
+688019..688378	+	360	AAK99489.1	-	spr0685	-	-	Hypothetical protein
+688409..688927	+	519	AAK99490.1	rimM	spr0686	-	-	16S rRNA processing protein RimM
+688917..689636	+	720	AAK99491.1	trmD	spr0687	-	-	tRNA (guanine-N1)-methyltransferase
+689648..689986	+	339	AAK99492.1	-	spr0688	-	-	Hypothetical protein
+690017..690337	-	321	AAK99493.1	-	spr0689	-	-	Hypothetical protein
+690411..690650	+	240	AAK99494.1	-	spr0690	-	-	Conserved hypothetical protein
+690854..691390	-	537	AAK99495.1	bioY	spr0691	-	-	Biotin synthase
+691587..692933	-	1347	AAK99496.1	gor	spr0692	-	-	Glutathione oxidoreductase
+693198..694397	+	1200	AAK99497.1	-	spr0693	-	-	Conserved hypothetical protein
+694381..695082	+	702	AAK99498.1	ABC-NBD	spr0694	-	-	ABC transporter ATP-binding protein - unknown substrate
+695084..696343	+	1260	AAK99499.1	-	spr0695	-	-	Conserved hypothetical protein
+696425..698464	+	2040	AAK99500.1	metS	spr0696	-	-	Methionyl-tRNA synthetase
+698792..699115	+	324	AAK99501.1	-	spr0697	-	-	Conserved hypothetical protein
+699119..699994	+	876	AAK99502.1	-	spr0698	-	-	Conserved hypothetical protein
+700006..700935	+	930	AAK99503.1	-	spr0699	-	-	Conserved hypothetical protein
+701014..701271	+	258	AAK99504.1	-	spr0700	-	-	Hypothetical protein
+701264..701962	+	699	AAK99505.1	fabG	spr0701	-	-	3-Ketoacyl-ACP reductase
+701973..702452	+	480	AAK99506.1	-	spr0702	-	-	Conserved hypothetical protein
+702460..703188	+	729	AAK99507.1	-	spr0703	-	-	Hypothetical protein
+703224..704099	+	876	AAK99508.1	-	spr0704	-	-	Hypothetical protein
+704074..704514	+	441	AAK99509.1	-	spr0705	-	-	Conserved hypothetical protein
+704637..707183	+	2547	AAK99510.1	pepN	spr0706	-	-	Aminopeptidase N
+707226..707966	+	741	AAK99511.1	ciaR	spr0707	-	-	Response regulator, transcriptional regulatory protein
+707956..709290	+	1335	AAK99512.1	ciaH	spr0708	-	-	Sensor protein CiaH histide kinase
+709324..709611	-	288	AAK99513.1	-	spr0709	-	-	Hypothetical protein
+709610..710680	+	1071	AAK99514.1	-	spr0710	-	-	Conserved hypothetical protein
+710880..713330	+	2451	AAK99515.1	dinG	spr0711	-	-	ATP-dependent DNA helicase
+713340..714590	+	1251	AAK99516.1	rodA	spr0712	-	-	Rod shape determining protein
+714601..715155	+	555	AAK99517.1	thiJ	spr0713	-	-	4-methyl-5(b-hydroxyethyl)-thiazole monophosphate biosynthesis protein
+715231..715803	+	573	AAK99518.1	gph	spr0714	-	-	Phosphoglycolate phosphatase
+715818..717764	+	1947	AAK99519.1	gyrB	spr0715	-	-	DNA gyrase
+717819..719573	+	1755	AAK99520.1	ezrA	spr0716	-	-	Cell division regulator, negative regulator of FtsZ ring formation
+720316..720720	+	405	AAK99521.1	-	spr0717	-	-	Transposase
+720608..721261	+	654	AAK99522.1	-	spr0718	-	-	Transposase
+721347..721526	-	180	AAK99523.1	-	spr0719	-	-	Transposase
+721895..722194	-	300	AAK99524.1	-	spr0720	-	-	Hypothetical protein
+722359..722781	-	423	AAK99525.1	-	spr0721	-	-	Conserved hypothetical protein
+722874..723221	+	348	AAK99526.1	-	spr0722	-	-	Transposase
+723400..723483	+	84	AAK99527.1	-	spr0723	-	-	Degenerate transposase
+723532..723708	+	177	AAK99528.1	-	spr0724	-	-	Degenerate transposase
+723946..726204	-	2259	AAK99529.1	clpE	spr0725	-	-	ATP dependent protease
+726433..726663	-	231	AAK99530.1	-	spr0726	-	-	Conserved hypothetical protein
+726847..727536	+	690	AAK99531.1	glnP	spr0727	-	-	ABC transporter membrane-spanning permease - glutamine transport
+727536..728270	+	735	AAK99532.1	glnQ	spr0728	-	-	ABC transporter ATP-binding protein - glutamine transport
+728361..729281	+	921	AAK99533.1	folD	spr0729	-	-	Fold bifunctional protein; includes: methylenetetrahydrofolate dehydrogenase, methenyltetrahydrofolate cyclohydrolase
+729423..730295	+	873	AAK99534.1	-	spr0730	-	-	Conserved hypothetical protein
+730520..731260	+	741	AAK99535.1	rpiA	spr0731	-	-	Ribose-5-phosphate epimerase
+731211..732485	+	1275	AAK99536.1	deoB	spr0732	-	-	phosphodeoxyribomutase
+732487..732897	+	411	AAK99537.1	-	spr0733	-	-	Hypothetical protein
+733045..733854	+	810	AAK99538.1	pnp	spr0734	-	-	Purine nucleoside phosphorylase (inosine phosphorylase)
+734318..735061	+	744	AAK99539.1	-	spr0735	-	-	Hypothetical protein
+735107..735310	+	204	AAK99540.1	-	spr0736	-	-	Hypothetical protein
+735335..735847	+	513	AAK99541.1	-	spr0737	-	-	Conserved hypothetical protein, truncation
+736505..737215	+	711	AAK99542.1	deoD	spr0738	-	-	Purine nucleoside phosphorylase (inosine phosphorylase)
+737238..737762	-	525	AAK99543.1	flaR	spr0739	-	-	Modulates DNA topology
+737815..738066	-	252	AAK99544.1	rpsT	spr0740	-	-	30S Ribosomal protein subunit S20
+738119..739069	-	951	AAK99545.1	coaA	spr0741	-	-	Pantothenate kinase
+739237..739677	+	441	AAK99546.1	-	spr0742	-	-	Hypothetical protein
+739884..740474	+	591	AAK99547.1	-	spr0743	-	-	Conserved hypothetical protein
+740471..741748	+	1278	AAK99548.1	pdp	spr0744	-	-	Pyrimidine nucleoside phosphorylase
+741766..742428	+	663	AAK99549.1	deoC	spr0745	-	-	Deoxyribose-phosphate aldolase
+742415..742804	+	390	AAK99550.1	cdd	spr0746	-	-	Cytidine deaminase
+742822..743946	+	1125	AAK99551.1	-	spr0747	-	-	Conserved hypothetical protein
+744090..745625	+	1536	AAK99552.1	ABC-NBD	spr0748	-	-	ABC transporter ATP-binding protein - ribose/galactose transport
+745591..746676	+	1086	AAK99553.1	ABC-MSP	spr0749	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+746679..747635	+	957	AAK99554.1	ABC-MSP	spr0750	-	-	ABC transporter membrane-spanning permease - ribose/galactose transport
+747720..747932	+	213	AAK99555.1	-	spr0751	-	-	Degenerate transposase (orf1)
+748068..748235	+	168	AAK99556.1	-	spr0752	-	-	Degenerate transposase (orf1)
+748235..748603	+	369	AAK99557.1	-	spr0753	-	-	Degenerate transposase (orf2)
+748579..749067	+	489	AAK99558.1	-	spr0754	-	-	Degenerate transposase (orf2)
+749110..749751	-	642	AAK99559.1	-	spr0755	-	-	Conserved hypothetical protein
+749887..751830	+	1944	AAK99560.1	parE	spr0756	-	-	Topoisomerase IV subunit B
+752241..754721	+	2481	AAK99561.1	parC	spr0757	-	-	Topoisomerase IV subunit A
+754851..755873	+	1023	AAK99562.1	ilvE	spr0758	-	-	Branched-chain-amino-acid transaminase
+755929..756633	+	705	AAK99563.1	-	spr0759	-	-	ABC transporter substrate-binding protein - oligopeptid transport, internal deletion
+756677..757387	+	711	AAK99564.1	-	spr0760	-	-	Conserved hypothetical protein
+757384..758307	+	924	AAK99565.1	-	spr0761	-	-	Conserved hypothetical protein
+758322..758966	+	645	AAK99566.1	pcp	spr0762	-	-	Pyrrolidone-carboxylate peptidase (5-oxoprolyl-peptidase)
+759134..759364	+	231	AAK99567.1	-	spr0763	-	-	Hypothetical protein
+759737..760939	+	1203	AAK99568.1	rpsA	spr0764	-	-	30S Ribosomal protein S1
+761074..761214	-	141	AAK99569.1	-	spr0765	-	-	Degenerate transposase (orf2)
+761198..761602	-	405	AAK99570.1	-	spr0766	-	-	Degenerate transposase (orf2)
+761883..762401	-	519	AAK99571.1	IS1167	spr0767	-	-	Transposase (orf1)
+762595..763092	+	498	AAK99572.1	-	spr0768	-	-	Conserved hypothetical protein
+763092..764747	+	1656	AAK99573.1	dnaX	spr0769	-	-	DNA-directed DNA polymerase III chain
+764775..764969	+	195	AAK99574.1	-	spr0770	-	-	Hypothetical protein
+765098..765889	+	792	AAK99575.1	ABC-NBD	spr0771	-	-	ABC transporter ATP-binding protein - unknown substrate
+765917..767179	+	1263	AAK99576.1	-	spr0772	-	-	Conserved hypothetical protein
+767190..768416	+	1227	AAK99577.1	-	spr0773	-	-	Conserved hypothetical protein
+768403..768843	+	441	AAK99578.1	nifU	spr0774	-	-	NifU protein
+768897..770309	+	1413	AAK99579.1	-	spr0775	-	-	Conserved hypothetical protein
+770508..771749	-	1242	AAK99580.1	dacA	spr0776	-	-	D-alanyl-D-alanine carboxypeptidase
+771852..772961	+	1110	AAK99581.1	-	spr0777	-	-	Conserved hypothetical protein
+774386..775126	+	741	AAK99582.1	fruR	spr0778	-	-	Transcriptional repressor of the fructose operon
+775123..776034	+	912	AAK99583.1	fruB	spr0779	-	-	Fructose-1-phosphate kinase
+776031..777983	+	1953	AAK99584.1	fruA	spr0780	-	-	Fructose specific-phosphotransferase system IIBC component
+778069..780372	+	2304	AAK99585.1	ftsK	spr0781	-	-	Cell division protein
+780417..780950	-	534	AAK99586.1	-	spr0782	-	-	Hypothetical protein
+780983..782125	+	1143	AAK99587.1	-	spr0783	-	-	Probable pyridoxal-phosphate dependent aminotransferase
+782134..783348	+	1215	AAK99588.1	thiI	spr0784	-	-	Thiamin biosynthesis protein
+783459..784307	+	849	AAK99589.1	-	spr0785	-	-	Hypothetical protein
+784329..784664	+	336	AAK99590.1	-	spr0786	-	-	Hypothetical protein
+784604..785035	-	432	AAK99591.1	-	spr0787	-	-	Hypothetical protein
+784661..785068	+	408	AAK99592.1	-	spr0788	-	-	Hypothetical protein
+785081..786247	+	1167	AAK99593.1	-	spr0789	-	-	Hypothetical protein
+786755..788248	+	1494	AAK99594.1	hsdM	spr0790	-	-	Type I restriction modification enzyme methylase subunit
+788261..788872	+	612	AAK99595.1	hsdS	spr0791	-	-	Type I restriction-modification enzyme 1, S subunit
+788951..792301	+	3351	AAK99596.1	hsdR	spr0792	-	-	Type 1 restriction modification system endonuclease R
+792887..793357	-	471	AAK99597.1	argR	spr0793	-	-	Arginine repressor
+793374..795761	-	2388	AAK99598.1	pepXP	spr0794	-	-	Xaa-pro dipeptidyl-peptidase
+795966..799094	+	3129	AAK99599.1	dnaE	spr0795	-	-	DNA-polymerase III alpha-chain
+799177..800184	+	1008	AAK99600.1	pfkA	spr0796	-	-	6-phosphofructokinase I
+800243..801748	+	1506	AAK99601.1	pykF	spr0797	-	-	Pyruvate kinase I; fructose-stimulated
+802865..803119	-	255	AAK99602.1	-	spr0798	-	-	Hypothetical protein
+803555..804427	+	873	AAK99603.1	-	spr0799	-	-	Hypothetical protein
+804440..804604	+	165	AAK99604.1	-	spr0800	-	-	Hypothetical protein
+804729..804917	-	189	AAK99605.1	-	spr0801	-	-	Degenerate transposase (orf1)
+805060..805371	+	312	AAK99606.1	-	spr0802	-	-	Hypothetical protein
+805375..806091	+	717	AAK99607.1	-	spr0803	-	-	Hypothetical protein
+806221..807036	-	816	AAK99608.1	-	spr0804	-	-	Conserved hypothetical protein
+807033..807938	-	906	AAK99609.1	-	spr0805	-	-	Conserved hypothetical protein
+808280..808648	+	369	AAK99610.1	-	spr0806	-	-	Hypothetical protein
+808645..809649	+	1005	AAK99611.1	-	spr0807	-	-	Conserved hypothetical protein
+809733..811880	+	2148	AAK99612.1	tex	spr0808	-	-	Toxin expression - transcriptional accessory protein
+811867..812316	+	450	AAK99613.1	-	spr0809	-	-	Conserved hypothetical protein
+812345..812647	+	303	AAK99614.1	-	spr0810	-	-	Hypothetical protein
+813001..813192	-	192	AAK99615.1	-	spr0811	-	-	Hypothetical protein
+813563..814378	+	816	AAK99616.1	ABC-NBD	spr0812	-	-	ABC transporter ATP-binding protein - unknown substrate
+814380..816368	+	1989	AAK99617.1	ABC-MSD	spr0813	-	-	ABC transporter membrane-spanning permease - unknown substrate
+816411..817001	-	591	AAK99618.1	-	spr0814	-	-	Conserved hypothetical protein
+817081..818001	-	921	AAK99619.1	-	spr0815	-	-	Degenerate transposase
+818663..820138	+	1476	AAK99620.1	cad	spr0816	-	-	Lysine decarboxylase
+820104..820340	-	237	AAK99621.1	-	spr0817	-	-	Degenerate transposase
+820292..820819	-	528	AAK99622.1	-	spr0818	-	-	Degenerate transposase
+821075..821935	+	861	AAK99623.1	speE	spr0819	-	-	Spermidine synthase
+821932..823191	+	1260	AAK99624.1	-	spr0820	-	-	Conserved hypothetical protein
+823191..824318	+	1128	AAK99625.1	nspC	spr0821	-	-	Carboxynorspermidine decarboxylase
+824315..825400	+	1086	AAK99626.1	-	spr0822	-	-	Conserved hypothetical protein
+825410..826285	+	876	AAK99627.1	but	spr0823	-	-	Beta-alanine synthase or beta-ureidopropionase
+826466..827275	-	810	AAK99628.1	-	spr0824	-	-	Conserved hypothetical protein
+827547..827768	+	222	AAK99629.1	-	spr0825	-	-	Hypothetical protein
+827822..828493	+	672	AAK99630.1	-	spr0826	-	-	Hypothetical protein
+828545..828742	-	198	AAK99631.1	-	spr0827	-	-	Hypothetical protein
+828735..829643	+	909	AAK99632.1	cpsY	spr0828	-	-	Regulatory function on capsule expression in group B streptococci
+829640..830101	+	462	AAK99633.1	lspA	spr0829	-	-	Signal peptidase type II; lipoprotein signal peptidase
+830091..830978	+	888	AAK99634.1	rluD	spr0830	-	-	23S rRNA pseudouridine synthase (supresses ftsH(ts) mutants)
+830981..832864	+	1884	AAK99635.1	lytD	spr0831	-	-	Teichoic acid phosphorylcholine esterase/choline binding protein E (cbpE)
+832944..834074	+	1131	AAK99636.1	proB	spr0832	-	-	Gamma-glutamyl kinase
+834084..835346	+	1263	AAK99637.1	proA	spr0833	-	-	Gamma-glutamyl phosphate reductase
+835350..836147	+	798	AAK99638.1	proC	spr0834	-	-	Pyrroline-5-carboxylate reductase
+836263..836901	+	639	AAK99639.1	tmk	spr0835	-	-	Thymidylate kinase
+836898..837788	+	891	AAK99640.1	holB	spr0836	-	-	DNA polymerase III, delta' subunit
+837801..838145	+	345	AAK99641.1	-	spr0837	-	-	Conserved hypothetical protein
+838148..839017	+	870	AAK99642.1	-	spr0838	-	-	Conserved hypothetical protein
+839217..839762	+	546	AAK99643.1	-	spr0839	-	-	Conserved hypothetical protein
+839871..840518	+	648	AAK99644.1	-	spr0840	-	-	Hypothetical protein
+840507..840896	-	390	AAK99645.1	IS1381	spr0841	-	-	Tranposase (orf2)
+840922..841311	-	390	AAK99646.1	IS1381	spr0842	-	-	Tranposase (orf1)
+841288..841560	+	273	AAK99647.1	-	spr0843	-	-	Hypothetical protein
+841805..843139	+	1335	AAK99648.1	gidA	spr0844	-	-	Glucose inhibited division protein
+843217..843960	+	744	AAK99649.1	pyrH	spr0845	-	-	UMP kinase
+843969..844526	+	558	AAK99650.1	frr	spr0846	-	-	Ribosome recycling factor
+844547..845440	+	894	AAK99651.1	-	spr0847	-	-	Conserved hypothetical protein
+845449..845664	+	216	AAK99652.1	-	spr0848	-	-	Conserved hypothetical protein
+845750..846718	+	969	AAK99653.1	phoL	spr0849	-	-	PhoH-like protein
+846911..847411	+	501	AAK99654.1	-	spr0850	-	-	Hypothetical protein
+847414..847641	+	228	AAK99655.1	-	spr0851	-	-	Hypothetical protein
+848041..848316	-	276	AAK99656.1	-	spr0852	-	-	Alanine dehydrogenase, truncation
+848313..848576	-	264	AAK99657.1	-	spr0853	-	-	Alanine dehydrogenase, truncation
+848727..849152	-	426	AAK99658.1	-	spr0854	-	-	Alanine dehydrogenase, truncation
+849329..849898	+	570	AAK99659.1	-	spr0855	-	-	Conserved hypothetical protein
+849966..850616	+	651	AAK99660.1	celA	spr0856	-	-	Competence protein
+850600..852840	+	2241	AAK99661.1	celB	spr0857	-	-	Competence protein
+853019..853207	+	189	AAK99662.1	-	spr0858	-	-	Hypothetical protein
+853218..853715	+	498	AAK99663.1	-	spr0859	-	-	Hypothetical protein
+853830..855011	+	1182	AAK99664.1	-	spr0860	-	-	Hypothetical protein
+855261..855848	+	588	AAK99665.1	infC	spr0861	-	-	Translation initiation factor IF-3
+855881..856081	+	201	AAK99666.1	rpmI	spr0862	-	-	50S Ribosomal protein L35
+856133..856492	+	360	AAK99667.1	rplT	spr0863	-	-	50S Ribosomal protein L20
+856499..856930	+	432	AAK99668.1	lguL	spr0864	-	-	Lactoylglutathione lyase
+857180..857980	+	801	AAK99669.1	pyrDII	spr0865	-	-	Dihydroorotate dehydrogenase electron transfer subunit
+857937..858929	+	993	AAK99670.1	pyrD	spr0866	-	-	Dihydroorotate dehydrogenase
+858971..861136	+	2166	AAK99671.1	lytB	spr0867	-	-	Endo-beta-N-acetylglucosaminidase
+861197..862879	-	1683	AAK99672.1	flpA	spr0868	-	-	Fibronectin-binding protein-like protein A
+862957..863454	+	498	AAK99673.1	-	spr0869	-	-	Conserved hypothetical protein
+863435..863830	+	396	AAK99674.1	dgkA	spr0870	-	-	Diacylglycerol kinase
+863847..864746	+	900	AAK99675.1	era	spr0871	-	-	GTPase/GTP-binding protein
+864795..865619	+	825	AAK99676.1	mutM	spr0872	-	-	Formamidopyrimidine-DNA glycosylase
+865592..866224	+	633	AAK99677.1	-	spr0873	-	-	Conserved hypothetical protein
+866108..866308	-	201	AAK99678.1	-	spr0874	-	-	Hypothetical protein
+866211..867410	+	1200	AAK99679.1	pmrA	spr0875	-	-	Major facilitator superfamily multi-drug resistance efflux pump
+867410..867559	+	150	AAK99680.1	rpmG	spr0876	-	-	50S Ribosomal protein L33
+867599..867832	+	234	AAK99681.1	secG	spr0877	-	-	Protein-export membrane protein secG
+867934..870288	+	2355	AAK99682.1	rnr	spr0878	-	-	Exoribonuclease R
+870251..870718	+	468	AAK99683.1	smpB	spr0879	-	-	Small protein B
+870728..871594	+	867	AAK99684.1	tehB	spr0880	-	-	Tellurite resistance
+871667..872620	+	954	AAK99685.1	coiA	spr0881	-	-	Competence protein
+872639..874441	+	1803	AAK99686.1	pepB	spr0882	-	-	Group B oligopeptidase
+874443..875156	+	714	AAK99687.1	-	spr0883	-	-	Conserved hypothetical protein
+875223..876164	+	942	AAK99688.1	ppmA	spr0884	-	-	Proteinase maturation protein
+876381..876623	-	243	AAK99689.1	-	spr0885	-	-	Degenerate transposase (orf2)
+876623..876820	-	198	AAK99690.1	-	spr0886	-	-	Degenerate transposase (orf1)
+877383..878003	-	621	AAK99691.1	gpmB	spr0887	-	-	Phosphoglycerate mutase
+878003..878485	-	483	AAK99692.1	ebsC	spr0888	-	-	Regulatory protein
+878485..879327	-	843	AAK99693.1	-	spr0889	-	-	Conserved hypothetical protein
+879422..880222	-	801	AAK99694.1	-	spr0890	-	-	Hypothetical protein
+880306..881745	+	1440	AAK99695.1	gcaD	spr0891	-	-	UDP-N-acetylglucosamine pyrophosphorylase
+881755..882300	+	546	AAK99696.1	-	spr0892	-	-	Conserved hypothetical protein
+882279..882626	+	348	AAK99697.1	-	spr0893	-	-	Hypothetical protein
+882643..883335	+	693	AAK99698.1	pfs	spr0894	-	-	5'-methylthioadenosine / S-adenosylhomocysteine nucleosidase
+883412..883903	+	492	AAK99699.1	-	spr0895	-	-	Conserved hypothetical protein
+883965..884591	+	627	AAK99700.1	dnaQ	spr0896	-	-	DNA polymerase III, epsilon chain
+884594..886363	+	1770	AAK99701.1	-	spr0897	-	-	Hypothetical protein
+886559..886924	+	366	AAK99702.1	-	spr0898	-	-	Degenerative transposase
+887083..887223	+	141	AAK99703.1	-	spr0899	-	-	Degenerate transposase
+887384..887584	+	201	AAK99704.1	-	spr0900	-	-	Hypothetical protein
+887403..888035	-	633	AAK99705.1	-	spr0901	-	-	Hypothetical protein
+887626..888030	+	405	AAK99706.1	-	spr0902	-	-	Hypothetical protein
+888261..888968	+	708	AAK99707.1	ccdA	spr0903	-	-	Cytochrome c-type biogenesis protein
+888961..889536	+	576	AAK99708.1	-	spr0904	-	-	Conserved hypothetical protein
+889898..891301	+	1404	AAK99709.1	yfnA	spr0905	-	-	Cationic amino acid transporter - APC Superfamily
+891426..892361	+	936	AAK99710.1	lmb	spr0906	-	-	Lipoprotein
+892369..894930	+	2562	AAK99711.1	phtD	spr0907	-	-	Pneumococcal histidine triad protein D precursor
+895140..898259	+	3120	AAK99712.1	phtE	spr0908	-	-	Pneumococcal histidine triad protein E precursor
+899089..899229	+	141	AAK99713.1	-	spr0909	-	-	Hypothetical protein
+899263..899811	+	549	AAK99714.1	-	spr0910	-	-	Pneumococcal histidine triad protein E precursor, truncation
+899873..900088	-	216	AAK99715.1	-	spr0911	-	-	Hypothetical protein
+900059..900688	+	630	AAK99716.1	-	spr0912	-	-	Hypothetical protein
+900731..901951	-	1221	AAK99717.1	pepT	spr0913	-	-	Aminotripeptidase; tripeptidase
+902106..903200	+	1095	AAK99718.1	hemH	spr0914	-	-	Ferrochelatase
+903242..903619	-	378	AAK99719.1	mscL	spr0915	-	-	Large conductance mechano-sensitive ion channel
+903701..904132	-	432	AAK99720.1	mesH	spr0916	-	-	MesH protein
+904183..904764	+	582	AAK99721.1	ccl	spr0917	-	-	citrulline cluster-linked gene
+905279..906355	+	1077	AAK99722.1	asd	spr0918	-	-	Aspartate beta-semialdehyde dehydrogenase
+906411..907346	+	936	AAK99723.1	dapA	spr0919	-	-	Dihydrodipicolinate synthase
+907393..908832	-	1440	AAK99724.1	thdF	spr0920	-	-	Thiophene and furan oxidation protein
+908903..909085	-	183	AAK99725.1	xylH	spr0921	-	-	4-oxalocrotonate tautomerase
+909208..909807	+	600	AAK99726.1	tdk	spr0922	-	-	Thymidine kinase
+909797..910276	+	480	AAK99727.1	bltD	spr0923	-	-	Spermine/spermidine acetyltransferase
+910286..911365	+	1080	AAK99728.1	prfA	spr0924	-	-	Peptide chain release factor I
+911365..912204	+	840	AAK99729.1	hemK	spr0925	-	-	HemK protein homolog; possible protoporphyrinogen oxidase
+912179..912790	+	612	AAK99730.1	-	spr0926	-	-	Conserved hypothetical protein
+912753..913223	+	471	AAK99731.1	-	spr0927	-	-	Conserved hypothetical protein
+913285..914541	+	1257	AAK99732.1	glyA	spr0928	-	-	Serine hydroxymethyltransferase
+914516..915523	+	1008	AAK99733.1	-	spr0929	-	-	Hypothetical protein
+915523..916137	+	615	AAK99734.1	-	spr0930	-	-	Conserved hypothetical protein
+916211..917185	+	975	AAK99735.1	-	spr0931	-	-	Conserved hypothetical protein
+917259..918890	+	1632	AAK99736.1	-	spr0932	-	-	Conserved hypothetical protein
+919628..919846	+	219	AAK99737.1	-	spr0933	-	-	Hypothetical protein
+920239..921264	+	1026	AAK99738.1	ABC-SBP	spr0934	-	-	ABC transporter substrate-binding protein - iron transport
+921242..922261	+	1020	AAK99739.1	ABC-MSP	spr0935	-	-	ABC transporter membrane-spanning permease - iron transport
+922261..923268	+	1008	AAK99740.1	ABC-MSP	spr0936	-	-	ABC transporter membrane-spanning permease - iron transport
+922743..923156	-	414	AAK99741.1	-	spr0937	-	-	Hypothetical protein
+923268..924062	+	795	AAK99742.1	ABC-NBD	spr0938	-	-	ABC transporter ATP-binding protein - iron transport
+924630..924839	+	210	AAK99743.1	-	spr0939	-	-	Hypothetical protein
+924964..925119	+	156	AAK99744.1	-	spr0940	-	-	Hypothetical protein
+925803..925964	+	162	AAK99745.1	-	spr0941	-	-	Hypothetical protein
+926056..927735	+	1680	AAK99746.1	ccrB	spr0942	-	-	Low similarity to site-specific recombinase
+927958..928569	+	612	AAK99747.1	-	spr0943	-	-	Hypothetical protein
+928882..929079	+	198	AAK99748.1	-	spr0944	-	-	Hypothetical protein
+929141..929956	+	816	AAK99749.1	-	spr0945	-	-	Hypothetical protein
+929956..930810	+	855	AAK99750.1	-	spr0946	-	-	Conserved hypothetical protein
+930871..931806	+	936	AAK99751.1	-	spr0947	-	-	Conserved hypothetical protein
+931945..933708	+	1764	AAK99752.1	nplT	spr0948	-	-	Neopullulanase
+933794..934111	+	318	AAK99753.1	-	spr0949	-	-	Hypothetical protein
+934157..934438	+	282	AAK99754.1	-	spr0950	-	-	Hypothetical protein
+934826..935359	+	534	AAK99755.1	-	spr0951	-	-	Hypothetical protein
+935359..936120	+	762	AAK99756.1	-	spr0952	-	-	Conserved hypothetical protein
+936148..936924	+	777	AAK99757.1	-	spr0953	-	-	Hypothetical protein
+936852..937304	+	453	AAK99758.1	-	spr0954	-	-	Hypothetical protein
+938136..938495	+	360	AAK99759.1	-	spr0955	-	-	Hypothetical protein
+938505..938834	+	330	AAK99760.1	-	spr0956	-	-	Hypothetical protein
+938857..939474	+	618	AAK99761.1	-	spr0957	-	-	Tn5252, relaxase, truncation
+939505..940062	+	558	AAK99762.1	-	spr0958	-	-	Tn5252, relaxase, truncation
+940146..940742	+	597	AAK99763.1	-	spr0959	-	-	Hypothetical protein
+940787..941641	-	855	AAK99764.1	mutR	spr0960	-	-	Similar to positive transcriptional regulator MutR
+941893..943188	+	1296	AAK99765.1	rffD	spr0961	-	-	UDP-N-acetyl-D-mannosaminuronic acid dehydrogenase
+943148..943798	+	651	AAK99766.1	-	spr0962	-	-	Conserved hypothetical protein
+943808..944590	+	783	AAK99767.1	-	spr0963	-	-	Hypothetical protein
+944613..946505	+	1893	AAK99768.1	-	spr0964	-	-	Hypothetical protein
+946534..947640	+	1107	AAK99769.1	-	spr0965	-	-	Hypothetical protein
+947648..948958	+	1311	AAK99770.1	-	spr0966	-	-	Conserved hypothetical protein
+948960..950183	+	1224	AAK99771.1	-	spr0967	-	-	Conserved hypothetical protein
+950173..951123	+	951	AAK99772.1	-	spr0968	-	-	Hypothetical protein
+951138..952337	+	1200	AAK99773.1	nikS	spr0969	-	-	Nikkomycin biosynthesis protein, carboxylase
+952356..953000	+	645	AAK99774.1	-	spr0970	-	-	Conserved hypothetical protein
+953383..954594	+	1212	AAK99775.1	mefE	spr0971	-	-	ABC transporter membrane-spanning permease - macrolide efflux
+955253..955474	+	222	AAK99776.1	-	spr0972	-	-	Conserved hypothetical protein
+956376..957605	+	1230	AAK99777.1	ftsW	spr0973	-	-	Cell division protein FtsW
+957625..960321	+	2697	AAK99778.1	ppc	spr0974	-	-	Phosphoenolpyruvate carboxylase
+960704..961738	+	1035	AAK99779.1	ABC-SBP	spr0975	-	-	ABC transporter substrate-binding protein - unknown substrate
+961807..962673	+	867	AAK99780.1	ABC-MSP	spr0976	-	-	ABC transporter membrane-spanning permease - unknown substrate
+962670..963428	+	759	AAK99781.1	ABC-NBD	spr0977	-	-	ABC transporter ATP-binding protein - unknown substrate
+963503..965278	+	1776	AAK99782.1	dnaG	spr0978	-	-	DNA primase
+965281..966390	+	1110	AAK99783.1	rpoD	spr0979	-	-	RNA polymerase sigmA FACTOR 70
+966371..966733	+	363	AAK99784.1	-	spr0980	-	-	Conserved hypothetical protein
+966767..967891	+	1125	AAK99785.1	cpoA	spr0981	-	-	Glycosyltransferase
+967907..969232	+	1326	AAK99786.1	-	spr0982	-	-	Conserved Hypothetical protein
+969263..969439	+	177	AAK99787.1	-	spr0983	-	-	Hypothetical protein
+969696..971006	+	1311	AAK99788.1	obg	spr0984	-	-	GTP-binding protein
+971016..971174	+	159	AAK99789.1	-	spr0985	-	-	Hypothetical protein
+971225..971728	-	504	AAK99790.1	-	spr0986	-	-	Degenerate transposase (orf2)
+971764..972018	-	255	AAK99791.1	-	spr0987	-	-	Degenerate transposase (orf2)
+972009..972563	-	555	AAK99792.1	IS1167	spr0988	-	-	Transposase (orf1)
+973796..975055	+	1260	AAK99793.1	murZ	spr0989	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+975065..975622	+	558	AAK99794.1	-	spr0990	-	-	Conserved hypothetical protein
+975615..976892	+	1278	AAK99795.1	-	spr0991	-	-	Conserved hypothetical protein
+976908..977768	+	861	AAK99796.1	map	spr0992	-	-	Methionine aminopeptidase
+977840..978547	+	708	AAK99797.1	-	spr0993	-	-	Degenerate transposase (orf1)
+978562..978951	+	390	AAK99798.1	IS1381	spr0994	-	-	Tranposase (orf2)
+979142..981433	+	2292	AAK99799.1	pcrA	spr0995	-	-	ATP-dependent DNA helicase
+981461..982156	+	696	AAK99800.1	radC	spr0996	-	-	DNA repair protein
+982153..982842	-	690	AAK99801.1	-	spr0997	-	-	Conserved hypothetical protein
+982860..983501	-	642	AAK99802.1	-	spr0998	-	-	Conserved hypothetical protein
+983584..983835	-	252	AAK99803.1	-	spr0999	-	-	Hypothetical protein
+983807..984154	-	348	AAK99804.1	-	spr1000	-	-	Hypothetical protein
+984159..985274	-	1116	AAK99805.1	nifS	spr1001	-	-	Pyridoxal-phosphate dependent aminotransferase
+985284..986243	-	960	AAK99806.1	prs	spr1002	-	-	Ribose-phosphate pyrophosphokinase
+986356..986925	-	570	AAK99807.1	-	spr1003	-	-	Conserved hypothetical protein
+987053..987724	+	672	AAK99808.1	-	spr1004	-	-	Similar to GTP pyrophosphokinase
+987696..988526	+	831	AAK99809.1	-	spr1005	-	-	Conserved hypothetical protein
+988523..989419	+	897	AAK99810.1	rluD	spr1006	-	-	23S rRNA pseudouridine synthase
+989463..990437	+	975	AAK99811.1	pta	spr1007	-	-	Phosphate acetyltransferase
+990699..991217	-	519	AAK99812.1	-	spr1008	-	-	Degenerate transposase (orf2)
+991498..992016	-	519	AAK99813.1	IS1167	spr1009	-	-	Transposase (orf1)
+992198..992497	-	300	AAK99814.1	-	spr1010	-	-	Conserved hypothetical protein
+992899..993603	+	705	AAK99815.1	-	spr1011	-	-	Conserved hypothetical protein
+993785..994099	+	315	AAK99816.1	rplU	spr1012	-	-	50S Ribosomal protein L21
+994115..994459	+	345	AAK99817.1	-	spr1013	-	-	Conserved hypothetical protein
+994500..994769	+	270	AAK99818.1	rpmA	spr1014	-	-	50S Ribosomal protein L27
+995115..995285	-	171	AAK99819.1	-	spr1015	-	-	Hypothetical protein
+995261..995434	+	174	AAK99820.1	-	spr1016	-	-	Hypothetical protein
+995722..996639	+	918	AAK99821.1	mreA	spr1017	-	-	Macrolide-efflux protein
+996732..997580	-	849	AAK99822.1	-	spr1018	-	-	Conserved hypothetical protein
+997722..998561	+	840	AAK99823.1	-	spr1019	-	-	Conserved hypothetical protein
+998667..998942	+	276	AAK99824.1	hlpA	spr1020	-	-	Histone-like DNA-binding protein
+999368..1001269	+	1902	AAK99825.1	ABC-NBD	spr1021	-	-	ABC transporter ATP-binding protein - unknown substrate
+1001242..1002135	+	894	AAK99826.1	rggD	spr1022	-	-	Transcriptional regulator
+1002215..1003393	+	1179	AAK99827.1	ABC-MSP	spr1023	-	-	ABC transporter membrane-spanning permease - macrolide efflux
+1003486..1005444	+	1959	AAK99828.1	ligA	spr1024	-	-	DNA ligase
+1005556..1007835	+	2280	AAK99829.1	pulI	spr1025	-	-	Thermostable pullulanase
+1007886..1008047	+	162	AAK99830.1	-	spr1026	-	-	Hypothetical protein
+1008187..1008360	-	174	AAK99831.1	-	spr1027	-	-	Hypothetical protein
+1008379..1009803	+	1425	AAK99832.1	gapN	spr1028	-	-	NADP-dependent glyceraldehyde-3-phosphate dehydrogenase
+1010268..1012196	+	1929	AAK99833.1	glgB	spr1029	-	-	1,4-alpha-glucan branching enzyme
+1012186..1013328	+	1143	AAK99834.1	glgC	spr1030	-	-	Glucose-1-phosphate adenylyltransferase
+1013318..1014457	+	1140	AAK99835.1	glgD	spr1031	-	-	Required for glycogen biosynthesis
+1014454..1015887	+	1434	AAK99836.1	glgA	spr1032	-	-	Glycogen synthase
+1016262..1016591	+	330	AAK99837.1	-	spr1033	-	-	Phosphoserine phosphatase, truncation
+1016588..1017715	+	1128	AAK99838.1	glxK	spr1034	-	-	Glycerate kinase
+1017712..1018158	-	447	AAK99839.1	-	spr1035	-	-	Hypothetical protein
+1018322..1019626	+	1305	AAK99840.1	eno	spr1036	-	-	Enolase
+1020110..1020448	-	339	AAK99841.1	-	spr1037	-	-	Transposase
+1020607..1020975	-	369	AAK99842.1	-	spr1038	-	-	Transposase
+1021482..1024757	+	3276	AAK99843.1	rexB	spr1039	-	-	Second subunit of major exonuclease
+1024754..1028404	+	3651	AAK99844.1	rexA	spr1040	-	-	First subunit of major exonuclease
+1028574..1029752	+	1179	AAK99845.1	-	spr1041	-	-	Hypothetical protein
+1029961..1035852	+	5892	AAK99846.1	iga	spr1042	-	-	Immunoglobulin A1 protease
+1036311..1037162	+	852	AAK99847.1	-	spr1043	-	-	Conserved hypothetical protein
+1037149..1037928	+	780	AAK99848.1	rnh	spr1044	-	-	Ribonuclease H
+1037929..1039494	+	1566	AAK99849.1	-	spr1045	-	-	Conserved hypothetical protein
+1040078..1041148	+	1071	AAK99850.1	xerC	spr1046	-	-	Integrase/recombinase
+1041221..1042210	-	990	AAK99851.1	lplA	spr1047	-	-	Lipoate protein ligase A
+1042274..1043977	-	1704	AAK99852.1	acoL	spr1048	-	-	Dihydrolipoamide dehydrogenase
+1044023..1045150	-	1128	AAK99853.1	acoC	spr1049	-	-	Dihydrolipoamide S-acetyltransferase
+1045284..1046276	-	993	AAK99854.1	acoB	spr1050	-	-	TPP-dependent acetoin dehydrogenase beta chain
+1046292..1047260	-	969	AAK99855.1	acoA	spr1051	-	-	TPP-dependent acetoin dehydrogenase alpha chain
+1047414..1048775	-	1362	AAK99856.1	-	spr1052	-	-	Conserved hypothetical protein
+1049060..1050328	-	1269	AAK99857.1	pyrC	spr1053	-	-	Dihydroorotase
+1050341..1050805	-	465	AAK99858.1	mutX	spr1054	-	-	8-oxodGTP nucleoside triphosphatase
+1050815..1051483	-	669	AAK99859.1	ung	spr1055	-	-	DNA-uracil glycosylase
+1051604..1052251	-	648	AAK99860.1	-	spr1056	-	-	Hypothetical protein
+1052265..1052978	-	714	AAK99861.1	-	spr1057	-	-	Conserved hypothetical protein
+1053436..1053594	-	159	AAK99862.1	-	spr1058	-	-	Hypothetical protein
+1053664..1053819	-	156	AAK99863.1	-	spr1059	-	-	Hypothetical protein
+1054238..1056805	-	2568	AAK99864.1	phpA	spr1060	-	-	Histidine Motif-Containing protein
+1056930..1059416	-	2487	AAK99865.1	phtA	spr1061	-	-	Pneumococcal histidine triad protein A precursor
+1059635..1061368	-	1734	AAK99866.1	ptsI	spr1062	-	-	PTS enzyme I
+1061374..1061637	-	264	AAK99867.1	ptsH	spr1063	-	-	Histidine-containing phosphocarrier protein of the PTS
+1061970..1062206	+	237	AAK99868.1	nrdH	spr1064	-	-	Glutaredoxin-like protein involved in electron transport system for ribonucleotide reductase system NrdEF
+1062287..1064446	+	2160	AAK99869.1	nrdE	spr1065	-	-	Ribonucleoside-diphosphate reductase (major subunit)
+1064634..1065596	+	963	AAK99870.1	nrdF	spr1066	-	-	Nonessential ribonucleoside-diP reductase 2, subunit beta, class I, function unknown
+1065778..1066539	+	762	AAK99871.1	lacR	spr1067	-	-	Lactose phosphotransferase system repressor
+1067037..1068443	-	1407	AAK99872.1	lacG	spr1069	-	-	Phospho-beta-D-galactosidase
+1068652..1070343	-	1692	AAK99873.1	lacE	spr1070	-	-	PTS system, lactose-specific IIBC component
+1070343..1070660	-	318	AAK99874.1	lacF	spr1071	-	-	PTS system, lactose-specific IIA component
+1070696..1071532	-	837	AAK99875.1	lacT	spr1072	-	-	Antiterminator protein
+1071766..1072746	-	981	AAK99876.1	lacD	spr1073	-	-	Tagatose 1,6-diphosphate aldolase
+1072748..1073677	-	930	AAK99877.1	lacC	spr1074	-	-	Tagatose-6-phosphate kinase
+1073688..1074203	-	516	AAK99878.1	lacB	spr1075	-	-	Galactose-6-phosphate isomerase LacB subunit
+1074234..1074659	-	426	AAK99879.1	lacA	spr1076	-	-	Galactose-6-phosphate isomerase LacA subunit
+1074817..1075161	-	345	AAK99880.1	-	spr1077	-	-	Function unknown, truncation
+1075330..1075728	-	399	AAK99881.1	-	spr1078	-	-	Degenerate transposase (orf2)
+1075659..1076180	-	522	AAK99882.1	-	spr1079	-	-	Degenerate transposase (orf1)
+1076140..1076442	-	303	AAK99883.1	-	spr1080	-	-	Hypothetical protein
+1076480..1076752	-	273	AAK99884.1	-	spr1081	-	-	Hypothetical protein
+1077369..1079192	-	1824	AAK99885.1	lepA	spr1082	-	-	GTP-binding protein LepA
+1079271..1079999	-	729	AAK99886.1	pphA	spr1083	-	-	Serine/threonine protein phosphatase
+1080001..1081668	-	1668	AAK99887.1	recN	spr1084	-	-	DNA repair and genetic recombination
+1081675..1082106	-	432	AAK99888.1	ahrC	spr1085	-	-	Transcriptional regulator of arginine metabolism expression
+1082099..1082914	-	816	AAK99889.1	-	spr1086	-	-	Conserved hypothetical protein
+1082907..1083782	-	876	AAK99890.1	ispA	spr1087	-	-	Farnesyl diphosphate synthase
+1083779..1083991	-	213	AAK99891.1	xseB	spr1088	-	-	Exodeoxyribonuclease small subunit
+1083969..1085315	-	1347	AAK99892.1	xseA	spr1089	-	-	Exodeoxyribonuclease large subunit
+1085437..1086075	-	639	AAK99893.1	udK	spr1090	-	-	Uridine kinase
+1086183..1086485	-	303	AAK99894.1	-	spr1091	-	-	Hypothetical protein
+1086726..1087604	-	879	AAK99895.1	truB	spr1092	-	-	tRNA pseudouridine 5S synthase
+1087705..1090890	-	3186	AAK99896.1	-	spr1093	-	-	Conserved hypothetical protein
+1090902..1092176	-	1275	AAK99897.1	-	spr1094	-	-	Conserved hypothetical protein
+1092272..1093387	-	1116	AAK99898.1	-	spr1095	-	-	O-acetylhomoserine sulfhydrylase, truncation
+1093409..1093531	-	123	AAK99899.1	-	spr1096	-	-	O-acetylhomoserine sulfhydrylase, truncation
+1093679..1094476	-	798	AAK99900.1	nirC	spr1097	-	-	Formate-nitrate transporter
+1094720..1095463	-	744	AAK99901.1	srtA	spr1098	-	-	Sortase
+1095463..1097931	-	2469	AAK99902.1	gyrA	spr1099	-	-	DNA gyrase subunit A
+1098125..1099111	+	987	AAK99903.1	ldh	spr1100	-	-	L-lactate dehydrogenase
+1099497..1102751	-	3255	AAK99904.1	-	spr1101	-	-	Uncharacterized restriction enzyme, interrupted-C
+1102916..1104793	-	1878	AAK99905.1	-	spr1102	-	-	Uncharacterized restriction enzyme, interrupted-N
+1104862..1105125	-	264	AAK99906.1	-	spr1103	-	-	Hypothetical protein
+1105118..1105420	-	303	AAK99907.1	-	spr1104	-	-	Hypothetical protein
+1105451..1106260	-	810	AAK99908.1	vicX	spr1105	-	-	VicX protein
+1106262..1107611	-	1350	AAK99909.1	hk02	spr1106	-	-	Histidine kinase
+1107604..1108359	-	756	AAK99910.1	rr02	spr1107	-	-	Response regulator
+1108363..1109538	-	1176	AAK99911.1	mutY	spr1108	-	-	Similar to A/G-specific adenine glycosylase
+1109867..1111537	-	1671	AAK99912.1	fhs	spr1109	-	-	Formate--tetrahydrofolate ligase
+1111752..1112456	+	705	AAK99913.1	dfp C-terminus	spr1110	-	-	Similar to C-terminal region of the Dfp protein
+1112468..1113019	+	552	AAK99914.1	dfp N-terminus	spr1111	-	-	Similar to N-terminal region of the Dfp protein
+1113003..1113566	+	564	AAK99915.1	-	spr1112	-	-	Conserved hypothetical protein
+1113794..1114375	+	582	AAK99916.1	-	spr1113	-	-	Hypothetical protein
+1114387..1114902	+	516	AAK99917.1	-	spr1114	-	-	Conserved hypothetical protein
+1114899..1115366	-	468	AAK99918.1	-	spr1115	-	-	Conserved hypothetical protein
+1115440..1115928	-	489	AAK99919.1	-	spr1116	-	-	Conserved hypothetical protein
+1115894..1116457	-	564	AAK99920.1	-	spr1117	-	-	Conserved hypothetical protein
+1116467..1118455	-	1989	AAK99921.1	uvrB	spr1118	-	-	Exonuclease ABC - subunit B
+1118532..1119485	-	954	AAK99922.1	-	spr1119	-	-	Conserved hypothetical protein
+1119658..1121823	+	2166	AAK99923.1	glnP	spr1120	-	-	ABC transporter membrane spanning permease - glutamine transport
+1121823..1122563	+	741	AAK99924.1	glnQ	spr1121	-	-	ABC transporter ATP-binding protein - glutamine transport
+1122712..1124199	+	1488	AAK99925.1	zwf	spr1122	-	-	Glucose-6-phosphate 1-dehydrogenase
+1124245..1125522	-	1278	AAK99926.1	ftsY	spr1123	-	-	Cell division protein FtsY
+1125526..1126344	-	819	AAK99927.1	-	spr1124	-	-	Conserved hypothetical protein
+1126344..1127138	-	795	AAK99928.1	-	spr1125	-	-	Conserved hypothetical protein
+1127135..1130674	-	3540	AAK99929.1	smc	spr1126	-	-	chromosome condensation and segregation SMC protein
+1130665..1131363	-	699	AAK99930.1	rncS	spr1127	-	-	Ribonuclease III
+1131681..1132667	-	987	AAK99931.1	guaC	spr1128	-	-	GMP reductase
+1132842..1134185	-	1344	AAK99932.1	-	spr1129	-	-	Hypothetical protein
+1134145..1136079	-	1935	AAK99933.1	-	spr1130	-	-	Hypothetical protein
+1136240..1136410	-	171	AAK99934.1	-	spr1131	-	-	Hypothetical protein
+1136391..1136564	-	174	AAK99935.1	-	spr1132	-	-	Hypothetical protein
+1137026..1137385	-	360	AAK99936.1	-	spr1133	-	-	3-isopropylmalate dehydratase small subunit, truncation
+1137389..1137658	-	270	AAK99937.1	-	spr1134	-	-	Conserved hypothetical protein
+1137655..1138692	-	1038	AAK99938.1	leuB	spr1135	-	-	3-isopropylmalate dehydrogenase
+1138704..1139138	-	435	AAK99939.1	-	spr1136	-	-	2-isopropylmalate synthase, truncation
+1139166..1139798	-	633	AAK99940.1	-	spr1137	-	-	2-isopropylmalate synthase, truncation
+1139817..1140473	-	657	AAK99941.1	-	spr1138	-	-	Hypothetical protein
+1140517..1141149	-	633	AAK99942.1	cutC	spr1139	-	-	Copper sensitivity
+1141242..1141601	-	360	AAK99943.1	-	spr1140	-	-	Conserved hypothetical protein
+1141707..1143812	-	2106	AAK99944.1	topA	spr1141	-	-	DNA topoisomerase I
+1143961..1145004	-	1044	AAK99945.1	-	spr1142	-	-	Conserved hypothetical protein
+1145198..1145383	-	186	AAK99946.1	-	spr1143	-	-	Hypothetical protein
+1145894..1146754	-	861	AAK99947.1	smf	spr1144	-	-	DNA processing Smf protein
+1146838..1147527	-	690	AAK99948.1	licC	spr1145	-	-	Homologous to LicC, which regulates expression of LPS epitopes in H. influenzae
+1147539..1148429	-	891	AAK99949.1	licB	spr1146	-	-	Homologous to LicB, which regulates expression of LPS epitopes in H. influenzae
+1148407..1149276	-	870	AAK99950.1	pck	spr1147	-	-	Choline kinase
+1149293..1150333	-	1041	AAK99951.1	-	spr1148	-	-	Conserved hypothetical protein
+1150320..1151027	-	708	AAK99952.1	-	spr1149	-	-	Conserved hypothetical protein
+1151363..1152850	+	1488	AAK99953.1	-	spr1150	-	-	Conserved hypothetical protein
+1152860..1153663	+	804	AAK99954.1	licD1	spr1151	-	-	Required for phosphorylcholine incorporation in teichoic and lipoteichoic acids
+1153665..1154474	+	810	AAK99955.1	licD2	spr1152	-	-	licD Protein
+1154749..1157925	-	3177	AAK99956.1	carB	spr1153	-	-	Carbamoylphosphate synthase (ammonia), heavy subunit
+1158238..1159317	-	1080	AAK99957.1	carA	spr1154	-	-	Carbamoylphosphate synthase (glutamine-hydrolysing) light subunit
+1159367..1160290	-	924	AAK99958.1	pyrB	spr1155	-	-	Aspartate carbamoyltransferase
+1160309..1160830	-	522	AAK99959.1	pyrR	spr1156	-	-	Transcriptional attenuation of the pyrimidine operon / uracil phosphoribosyltransferase activity
+1161041..1161670	-	630	AAK99960.1	nth	spr1157	-	-	endonuclease III (DNA repair)
+1161670..1162212	-	543	AAK99961.1	-	spr1158	-	-	Conserved hypothetical protein
+1162334..1162522	+	189	AAK99962.1	-	spr1159	-	-	Hypothetical protein
+1162519..1162698	+	180	AAK99963.1	-	spr1160	-	-	Hypothetical protein
+1162971..1164497	+	1527	AAK99964.1	ABC-NBD	spr1161	-	-	ABC transporter ATP-binding protein - unknown substrate
+1164646..1165554	-	909	AAK99965.1	htpX	spr1162	-	-	Heat shock protein
+1165547..1166107	-	561	AAK99966.1	lemA	spr1163	-	-	Cytoplasmic membrane protein
+1166177..1166914	+	738	AAK99967.1	gidB	spr1164	-	-	Glucose inhibited division protein B
+1167230..1168549	+	1320	AAK99968.1	pyrP	spr1165	-	-	Uracil permease
+1168744..1170315	-	1572	AAK99969.1	ffh	spr1166	-	-	Signal recognition particle (Fifty four homolog)
+1170327..1170659	-	333	AAK99970.1	-	spr1167	-	-	Conserved hypothetical protein
+1170750..1171127	-	378	AAK99971.1	-	spr1168	-	-	Hypothetical protein
+1171103..1172503	+	1401	AAK99972.1	-	spr1169	-	-	Conserved hypothetical protein
+1172516..1173322	+	807	AAK99973.1	-	spr1170	-	-	Conserved hypothetical protein
+1173490..1173837	-	348	AAK99974.1	rplS	spr1171	-	-	50S Ribosomal protein L19
+1173956..1174285	-	330	AAK99975.1	crcB	spr1172	-	-	CrcB protein
+1174279..1174653	-	375	AAK99976.1	crcB	spr1173	-	-	CrcB protein
+1174650..1174916	-	267	AAK99977.1	-	spr1174	-	-	Strong similarity to chorismate mutase; prephenate dehydratase
+1175032..1175475	-	444	AAK99978.1	flaV	spr1175	-	-	Flavodoxin
+1175567..1176514	+	948	AAK99979.1	-	spr1176	-	-	Conserved hypothetical protein
+1176610..1176852	+	243	AAK99980.1	rpmE	spr1177	-	-	50S ribosomal protein L31
+1176909..1177487	-	579	AAK99981.1	-	spr1178	-	-	Hypothetical protein
+1177462..1178466	-	1005	AAK99982.1	-	spr1179	-	-	Conserved hypothetical protein
+1178518..1178784	-	267	AAK99983.1	-	spr1180	-	-	Degenerate transposase
+1179472..1180818	+	1347	AAK99984.1	gdhA	spr1181	-	-	NADP-specific glutamate dehydrogenase
+1181314..1181484	-	171	AAK99985.1	-	spr1182	-	-	Hypothetical protein
+1181497..1182138	-	642	AAK99986.1	-	spr1183	-	-	ABC transporter ATP-bindng protein - possibly multidrug efflux, truncation
+1182410..1182847	+	438	AAK99987.1	-	spr1184	-	-	Hypothetical protein
+1183138..1183341	-	204	AAK99988.1	-	spr1185	-	-	Hypothetical protein
+1183359..1184090	-	732	AAK99989.1	-	spr1186	-	-	N-acetylneuraminate lyase subunit, truncation
+1184181..1184276	-	96	AAK99990.1	-	spr1187	-	-	N-acetylneuraminate lyase subunit, truncation
+1184308..1184715	-	408	AAK99991.1	cdd	spr1188	-	-	Cytidine deaminase
+1185003..1185491	-	489	AAK99992.1	-	spr1189	-	-	Conserved hypothetical protein
+1185496..1186914	-	1419	AAK99993.1	-	spr1190	-	-	Hypothetical protein
+1186915..1188897	-	1983	AAK99994.1	appD	spr1191	-	-	ABC transporter ATP-binding protein - oligopeptide transport
+1188910..1189761	-	852	AAK99995.1	appC	spr1192	-	-	ABC transporter membrane-spanning permease - oligopeptide transport
+1189778..1190773	-	996	AAK99996.1	appB	spr1193	-	-	ABC transporter membrane-spanning permease - oligopeptide transport
+1190838..1192466	-	1629	AAK99997.1	appA	spr1194	-	-	ABC transporter substrate-binding protein - oligopeptide transport
+1192548..1193471	-	924	AAK99998.1	-	spr1195	-	-	Conserved hypothetical protein
+1193495..1194193	-	699	AAK99999.1	nanE	spr1196	-	-	N-acetylmannosamine-6-P epimerase
+1194240..1194503	-	264	AAL00001.1	-	spr1197	-	-	Degenerate transposase (orf2)
+1194544..1194648	+	105	AAL00002.1	-	spr1198	-	-	Degenerate transposase
+1195086..1195307	-	222	AAL00003.1	-	spr1199	-	-	Hypothetical protein
+1195742..1195921	-	180	AAL00004.1	-	spr1200	-	-	Hypothetical protein
+1196371..1197690	-	1320	AAL00005.1	-	spr1201	-	-	Hypothetical protein
+1197693..1198451	-	759	AAL00006.1	ABC-NDB	spr1202	-	-	ABC transporter ATP-binding protein - unknown substrate
+1198448..1200055	-	1608	AAL00007.1	ABC-NP	spr1203	-	-	ABC transporter ATP-binding/membrane spanning protein - multidrug resistance
+1200052..1201992	-	1941	AAL00008.1	ptrB	spr1204	-	-	Protease II (oligopeptidase B)
+1202025..1204661	-	2637	AAL00009.1	-	spr1205	-	-	Conserved hypothetical protein
+1205152..1205739	-	588	AAL00010.1	-	spr1206	-	-	Hypothetical protein
+1205988..1206368	-	381	AAL00011.1	-	spr1207	-	-	Hypothetical protein
+1206423..1206701	-	279	AAL00012.1	-	spr1208	-	-	Hypothetical protein
+1206709..1206963	-	255	AAL00013.1	-	spr1209	-	-	Hypothetical protein
+1206960..1207172	-	213	AAL00014.1	-	spr1210	-	-	Hypothetical protein
+1207321..1207704	-	384	AAL00015.1	rplL	spr1211	-	-	50S Ribosomal protein L12
+1207765..1208265	-	501	AAL00016.1	rplJ	spr1212	-	-	50S Ribosomal protein L10
+1208270..1208455	+	186	AAL00017.1	-	spr1213	-	-	Hypothetical protein
+1208515..1209981	-	1467	AAL00018.1	trzA	spr1214	-	-	N-ethylammeline chlorohydrolase
+1210076..1211866	-	1791	AAL00019.1	ABC-N/P	spr1215	-	-	ABC transporter ATP-binding/membrane-spanning protein - unknown substrate
+1211829..1213553	-	1725	AAL00020.1	ABC-N/P	spr1216	-	-	ABC transporter ATP-binding/membrane-spanning protein - unknown substrate
+1213611..1214549	-	939	AAL00021.1	msrA	spr1217	-	-	Peptide methionine sulfoxide reductase
+1214845..1215714	-	870	AAL00022.1	thrB	spr1218	-	-	Homoserine kinase
+1215716..1217035	-	1320	AAL00023.1	hom	spr1219	-	-	Homoserine dehydrogenase
+1217153..1217890	-	738	AAL00024.1	mecA	spr1220	-	-	Negative regulator of genetic competence
+1218032..1219066	-	1035	AAL00025.1	-	spr1221	-	-	Hypothetical protein
+1219095..1220528	-	1434	AAL00026.1	-	spr1222	-	-	Hypothetical protein
+1220544..1221530	-	987	AAL00027.1	cps23FU	spr1223	-	-	Galactosyl transferase paralog
+1221532..1222689	-	1158	AAL00028.1	-	spr1224	-	-	Conserved hypothetical protein
+1222625..1223470	-	846	AAL00029.1	licD1	spr1225	-	-	LicD1 paralog
+1223749..1225023	-	1275	AAL00030.1	-	spr1226	-	-	Conserved hypothetical protein
+1225020..1225868	-	849	AAL00031.1	pheA	spr1227	-	-	Prephenate dehydratase
+1225865..1226341	-	477	AAL00032.1	aroK	spr1228	-	-	Shikimate kinase
+1226334..1227629	-	1296	AAL00033.1	aroA	spr1229	-	-	3-Enolpyruvylshikimate-5-phosphate synthetase
+1227709..1228047	-	339	AAL00034.1	-	spr1230	-	-	Conserved hypothetical protein
+1228058..1229161	-	1104	AAL00035.1	tyrA	spr1231	-	-	Prephenate dehydrogenase
+1229171..1230337	-	1167	AAL00036.1	aroC	spr1232	-	-	Chorismate synthase
+1230347..1231414	-	1068	AAL00037.1	aroB	spr1233	-	-	3-dehydroquinate synthase
+1231433..1232287	-	855	AAL00038.1	aroE	spr1234	-	-	Shikimate dehydrogenase
+1232277..1232954	-	678	AAL00039.1	aroD	spr1235	-	-	3-dehydroquinate dehydratase
+1232951..1234123	-	1173	AAL00040.1	-	spr1236	-	-	Conserved hypothetical protein
+1234801..1236462	-	1662	AAL00041.1	-	spr1237	-	-	Hypothetical protein
+1236416..1237222	-	807	AAL00042.1	ABC-NBD	spr1238	-	-	ABC transporter ATP-binding protein - unknown substrate
+1237343..1238797	+	1455	AAL00043.1	amy	spr1239	-	-	Alpha-amylase precursor
+1238887..1241505	-	2619	AAL00044.1	alaS	spr1240	-	-	Alanyl-tRNA synthetase
+1241527..1242024	-	498	AAL00045.1	-	spr1241	-	-	Conserved hypothetical protein
+1242287..1242526	-	240	AAL00046.1	-	spr1242	-	-	Hypothetical protein
+1242787..1243857	-	1071	AAL00047.1	potD	spr1243	-	-	ABC transporter substrate-binding protein - spermidine/putrescine transport
+1243854..1244627	-	774	AAL00048.1	potC	spr1244	-	-	ABC transporter membrane-spanning permease - spermidine/putrescine transport
+1244624..1245451	-	828	AAL00049.1	potB	spr1245	-	-	ABC transporter membrane-spanning permease - spermidine/putrescine transport
+1245411..1246568	-	1158	AAL00050.1	potA	spr1246	-	-	ABC transporter ATP-binding protein - spermidine/putrescine transport
+1246627..1247577	-	951	AAL00051.1	murB	spr1247	-	-	UDP-N-acetylenolpyruvoylglucosamine reductase
+1247689..1248441	-	753	AAL00052.1	-	spr1248	-	-	Conserved hypothetical protein
+1248451..1249182	-	732	AAL00053.1	aldB	spr1249	-	-	Alpha-acetolactate decarboxylase
+1249324..1250595	+	1272	AAL00054.1	-	spr1250	-	-	Conserved hypothetical protein
+1250615..1251430	-	816	AAL00055.1	glnH	spr1251	-	-	ABC transporter substrate-binding protein - glutamine-binding protein
+1251587..1252240	-	654	AAL00056.1	phoU	spr1252	-	-	Phosphate transport system regulatory protein
+1252252..1253010	-	759	AAL00057.1	pstB	spr1253	-	-	ABC transporter ATP-binding protein - phosphate transport
+1253023..1253826	-	804	AAL00058.1	pstB	spr1254	-	-	ABC transporter ATP-binding protein - phosphate transport
+1253837..1254721	-	885	AAL00059.1	pstA	spr1255	-	-	ABC transporter membrane-spanning permease - phosphate transport
+1254711..1255628	-	918	AAL00060.1	pstC	spr1256	-	-	ABC transporter membrane-spanning permease - phosphate transport
+1255628..1256506	-	879	AAL00061.1	pstS	spr1257	-	-	ABC transporter substrate-binding protein - phosphate transport
+1257080..1257475	-	396	AAL00062.1	-	spr1258	-	-	Hypothetical protein
+1257581..1258384	-	804	AAL00063.1	-	spr1259	-	-	Conserved hypothetical protein
+1258385..1259233	-	849	AAL00064.1	-	spr1260	-	-	Conserved hypothetical protein
+1259148..1259426	-	279	AAL00065.1	-	spr1261	-	-	Conserved hypothetical protein
+1259426..1259827	-	402	AAL00066.1	-	spr1262	-	-	Conserved hypothetical protein
+1260037..1260687	-	651	AAL00067.1	-	spr1263	-	-	Hypothetical protein
+1260644..1261417	-	774	AAL00068.1	nagD	spr1264	-	-	N-acetyl-glucosamine matabolism
+1261428..1262165	-	738	AAL00069.1	-	spr1265	-	-	Hypothetical protein
+1262170..1263300	-	1131	AAL00070.1	hemN	spr1266	-	-	Coproporphyrinogen III oxidase
+1263384..1263773	-	390	AAL00071.1	-	spr1267	-	-	Conserved hypothetical protein
+1263789..1264172	-	384	AAL00072.1	-	spr1268	-	-	Conserved hypothetical protein
+1264173..1264973	-	801	AAL00073.1	lgt	spr1269	-	-	Prolipoprotein diacylglycerol transferase
+1264954..1265904	-	951	AAL00074.1	hprK	spr1270	-	-	HPr(ser-P)kinase/phosphatase
+1266019..1266219	-	201	AAL00075.1	rpsU	spr1271	-	-	30S Ribosomal protein S21
+1266335..1267057	-	723	AAL00076.1	nagB	spr1272	-	-	N-acetylglucosamine-6-phosphate isomerase
+1267181..1268221	+	1041	AAL00077.1	queA	spr1273	-	-	S-adenosylmethionine:tRNA ribosyltransferase-isomerase
+1268770..1269159	-	390	AAL00078.1	-	spr1274	-	-	Choline binding protein
+1270613..1271164	-	552	AAL00079.1	-	spr1275	-	-	Conserved hypothetical protein
+1271411..1272235	-	825	AAL00080.1	nadE	spr1276	-	-	NAD synthetase, ammonia dependent
+1272232..1273692	-	1461	AAL00081.1	-	spr1277	-	-	Conserved hypothetical protein
+1273808..1274296	-	489	AAL00082.1	-	spr1278	-	-	Hypothetical protein
+1274286..1274525	-	240	AAL00083.1	-	spr1279	-	-	Conserved hypothetical protein
+1274880..1275608	-	729	AAL00084.1	-	spr1280	-	-	Hypothetical protein
+1275624..1276346	-	723	AAL00085.1	ABC-NBD	spr1281	-	-	ABC transporter ATP-binding protein - multidrug efflux
+1276851..1277576	-	726	AAL00086.1	-	spr1282	-	-	Hypothetical protein
+1277743..1277910	+	168	AAL00087.1	-	spr1283	-	-	Hypothetical protein
+1278165..1279469	-	1305	AAL00088.1	-	spr1284	-	-	Protease
+1280075..1280257	+	183	AAL00089.1	-	spr1285	-	-	Type II restriction endonuclease, uncharacterized, truncation
+1280441..1280632	+	192	AAL00090.1	-	spr1286	-	-	Type II restriction endonuclease, uncharacterized, truncation
+1280629..1281807	+	1179	AAL00091.1	spnIM	spr1287	-	-	DNA modification methyltransferase
+1282334..1283326	-	993	AAL00092.1	-	spr1288	-	-	Hypothetical protein
+1283480..1285240	+	1761	AAL00093.1	ABC-N/P	spr1289	-	-	ABC transporter ATP-binding/membrane-spanning protein - unknown substrate
+1285200..1286945	+	1746	AAL00094.1	ABC-N/P	spr1290	-	-	ABC transporter ATP-binding/membrane-spanning protein - unknown substrate
+1286956..1287540	+	585	AAL00095.1	-	spr1291	-	-	Hypothetical protein
+1287540..1288235	+	696	AAL00096.1	-	spr1292	-	-	Conserved hypothetical protein
+1288223..1289587	+	1365	AAL00097.1	ABC-NBD	spr1293	-	-	ABC transporter ATP-binding protein - unknown substrate
+1290375..1290836	-	462	AAL00098.1	-	spr1294	-	-	Hypothetical protein
+1290909..1291121	-	213	AAL00099.1	-	spr1295	-	-	Transposase, uncharacterized, truncation
+1291130..1291498	-	369	AAL00100.1	-	spr1296	-	-	Hypothetical protein
+1291422..1291616	-	195	AAL00101.1	-	spr1297	-	-	Hypothetical protein
+1291786..1292136	-	351	AAL00102.1	-	spr1298	-	-	Degenerate transposase
+1292117..1292356	-	240	AAL00103.1	-	spr1299	-	-	Degenerate transposase (orf1)
+1292606..1294168	-	1563	AAL00104.1	guaA	spr1300	-	-	Glutamine amidotransferase
+1294301..1295008	+	708	AAL00105.1	-	spr1301	-	-	Conserved hypothetical protein
+1295051..1296007	-	957	AAL00106.1	-	spr1302	-	-	Conserved hypothetical protein
+1295956..1296894	-	939	AAL00107.1	-	spr1303	-	-	Hypothetical protein
+1296891..1297631	-	741	AAL00108.1	cppA	spr1304	-	-	C3-degrading proteinase
+1297700..1298335	-	636	AAL00109.1	-	spr1305	-	-	Hypothetical protein
+1298337..1299164	-	828	AAL00110.1	-	spr1306	-	-	Conserved hypothetical protein
+1299186..1299521	-	336	AAL00111.1	-	spr1307	-	-	Hypothetical protein
+1299522..1300034	-	513	AAL00112.1	-	spr1308	-	-	Hypothetical protein
+1300224..1300439	+	216	AAL00113.1	-	spr1309	-	-	Hypothetical protein
+1300763..1301374	+	612	AAL00114.1	fms	spr1310	-	-	Peptide deformylase, N-formylmethionylaminoacyl-tRNA deformylase
+1301386..1302147	+	762	AAL00115.1	trmH	spr1311	-	-	tRNA (guanosine-2'-O-)-methyltransferase, TrmH family
+1302186..1303097	-	912	AAL00116.1	trxB	spr1312	-	-	Thioredoxin reductase
+1303163..1303399	-	237	AAL00117.1	-	spr1313	-	-	Hypothetical protein
+1303465..1304208	-	744	AAL00118.1	ABC-NDB	spr1314	-	-	ABC transporter ATP-binding protein - aspartate/glutamate transport
+1304208..1305008	-	801	AAL00119.1	ABC-MSP	spr1315	-	-	ABC transporter membrane-spanning permease - aspartate/glutamate transport
+1305166..1305522	-	357	AAL00120.1	-	spr1316	-	-	Conserved hypothetical protein
+1305516..1306046	-	531	AAL00121.1	ogt	spr1317	-	-	O6-methylguanine-DNA methyltransferase
+1306046..1306540	-	495	AAL00122.1	-	spr1318	-	-	Hypothetical protein
+1306669..1307121	+	453	AAL00123.1	-	spr1319	-	-	Hypothetical protein
+1307118..1307765	+	648	AAL00124.1	-	spr1320	-	-	Conserved hypothetical protein
+1307786..1308367	-	582	AAL00125.1	-	spr1321	-	-	Conserved hypothetical protein
+1308368..1309261	-	894	AAL00126.1	pdx1	spr1322	-	-	Pyridoxine biosynthesis protein
+1309395..1310774	-	1380	AAL00127.1	nox	spr1323	-	-	NADH oxidase
+1311068..1311991	+	924	AAL00128.1	apbE	spr1324	-	-	Thiamine biosynthesis lipoprotein
+1312051..1312656	+	606	AAL00129.1	-	spr1325	-	-	Conserved hypothetical protein
+1312674..1313918	+	1245	AAL00130.1	-	spr1326	-	-	Hypothetical protein
+1314035..1314292	-	258	AAL00131.1	-	spr1327	-	-	Conserved hypothetical protein
+1314334..1316370	-	2037	AAL00132.1	glyS	spr1328	-	-	Glycyl-tRNA synthetase beta chain
+1316630..1317547	-	918	AAL00133.1	glyQ	spr1329	-	-	Glycyl-tRNA synthetase alpha chain
+1317741..1318130	-	390	AAL00134.1	-	spr1330	-	-	Hypothetical protein
+1318112..1318519	-	408	AAL00135.1	-	spr1331	-	-	Hypothetical protein
+1318774..1319616	-	843	AAL00136.1	-	spr1332	-	-	Conserved hypothetical protein
+1319730..1321121	-	1392	AAL00137.1	pgdA	spr1333	-	-	Peptidoglycan GlcNAc deacetylase
+1321356..1321601	-	246	AAL00138.1	-	spr1334	-	-	Hypothetical protein
+1321864..1322925	+	1062	AAL00139.1	mocA	spr1335	-	-	Oxidoreductase
+1322922..1324004	+	1083	AAL00140.1	DEAD/H	spr1336	-	-	DEAD RNA helicase
+1324068..1324229	-	162	AAL00141.1	-	spr1337	-	-	Degenerate transposase
+1324163..1324579	-	417	AAL00142.1	-	spr1338	-	-	Degenerate transposase
+1324655..1325143	-	489	AAL00143.1	-	spr1339	-	-	Degenerate transposase (orf2)
+1325119..1325487	-	369	AAL00144.1	-	spr1340	-	-	Degenerate transposase (orf2)
+1325713..1325982	-	270	AAL00145.1	-	spr1341	-	-	Degenerate transposase (orf1)
+1325979..1326317	-	339	AAL00146.1	-	spr1342	-	-	Degenerate transposase
+1326964..1328160	-	1197	AAL00147.1	tufA	spr1343	-	-	Translation elongation factor TU
+1329082..1329951	-	870	AAL00148.1	glpF	spr1344	-	-	Glycerol uptake facilitator protein paralog
+1330175..1330783	-	609	AAL00149.1	-	spr1345	-	-	Hypothetical protein
+1330741..1331853	-	1113	AAL00150.1	-	spr1346	-	-	Hypothetical protein
+1331958..1332212	-	255	AAL00151.1	-	spr1347	-	-	Hypothetical protein
+1332206..1332448	-	243	AAL00152.1	-	spr1348	-	-	Hypothetical protein
+1332570..1332869	-	300	AAL00153.1	-	spr1349	-	-	Degenerate transposase
+1333089..1333304	-	216	AAL00154.1	-	spr1350	-	-	Degenerative transposase
+1333648..1335366	+	1719	AAL00155.1	pgm	spr1351	-	-	Phosphoglucomutase
+1335477..1335824	+	348	AAL00156.1	bta	spr1352	-	-	Bacterocin transport accessory protein
+1336103..1336939	-	837	AAL00157.1	glnH	spr1353	-	-	ABC transporter substrate-binding protein - glutamine transport
+1336952..1337581	-	630	AAL00158.1	glnQ	spr1354	-	-	ABC transporter ATP-binding protein - glutamine transport
+1337591..1338289	-	699	AAL00159.1	glnP	spr1355	-	-	ABC transporter membrane-spanning permease - glutamine transport
+1338378..1339622	-	1245	AAL00160.1	-	spr1356	-	-	Conserved hypothetical protein
+1339597..1340763	-	1167	AAL00161.1	-	spr1357	-	-	Conserved hypothetical protein
+1340907..1341920	+	1014	AAL00162.1	-	spr1358	-	-	Conserved hypothetical protein
+1341965..1342384	-	420	AAL00163.1	atpC	spr1359	-	-	Proton-translocating ATPase, F1 sector, epsilon-subunit
+1342395..1343801	-	1407	AAL00164.1	atpD	spr1360	-	-	Proton-translocating ATPase, F1 sector, beta-subunit
+1343887..1344765	-	879	AAL00165.1	atpG	spr1361	-	-	Proton-translocating ATPase, F1 sector, gamma-subunit
+1344781..1346286	-	1506	AAL00166.1	atpA	spr1362	-	-	Proton-translocating ATPase, F1 sector, alpha-subunit
+1346301..1346837	-	537	AAL00167.1	atpH	spr1363	-	-	Proton-translocating ATPase, F1 sector, delta-subunit
+1346837..1347331	-	495	AAL00168.1	atpF	spr1364	-	-	Proton-translocating ATPase, F0 sector, subunit b
+1347345..1348061	-	717	AAL00169.1	atpB	spr1365	-	-	Proton-translocating ATPase, F0 sector, subunit a
+1348096..1348296	-	201	AAL00170.1	atpE	spr1366	-	-	Proton-translocating ATPase, F0 sector, subunit c
+1348371..1349378	-	1008	AAL00171.1	IS1239	spr1367	-	-	Transposase
+1349823..1350305	-	483	AAL00172.1	-	spr1368	-	-	Hypothetical protein
+1350774..1351265	-	492	AAL00173.1	greA	spr1369	-	-	Transcription elongation factor GreA
+1351327..1352982	-	1656	AAL00174.1	-	spr1370	-	-	Hypothetical protein
+1353063..1353557	-	495	AAL00175.1	-	spr1371	-	-	Conserved hypothetical protein
+1353554..1354018	-	465	AAL00176.1	-	spr1372	-	-	Hypothetical protein
+1354028..1355362	-	1335	AAL00177.1	murC	spr1373	-	-	UDP-N-acetylmuramate-alanine ligase
+1355373..1355990	-	618	AAL00178.1	-	spr1374	-	-	Hypothetical protein
+1356038..1359136	-	3099	AAL00179.1	snf	spr1375	-	-	SWF/SNF family ATP-dependent RNA helicase
+1359229..1360395	-	1167	AAL00180.1	patB	spr1376	-	-	Aminotransferase
+1360403..1361497	-	1095	AAL00181.1	metB	spr1377	-	-	Cystathionine gamma-synthase
+1361655..1361807	-	153	AAL00182.1	-	spr1378	-	-	ABC transporter, truncation
+1361926..1362378	-	453	AAL00183.1	-	spr1379	-	-	ABC transporter, truncation
+1362403..1363026	-	624	AAL00184.1	-	spr1380	-	-	ABC transporter, truncation
+1363036..1363338	-	303	AAL00185.1	-	spr1381	-	-	ABC transporter, truncation
+1363510..1365468	-	1959	AAL00186.1	aliB	spr1382	-	-	ABC transporter substrate-binding protein - oligopeptide transport
+1365671..1367293	-	1623	AAL00187.1	-	spr1383	-	-	Polysaccharide transporter
+1367399..1368844	+	1446	AAL00188.1	murE	spr1384	-	-	UDP-N-acetylmuramoyl-L-alanyl-D-glutamyl-L- lysine Ligase
+1368890..1369084	-	195	AAL00189.1	-	spr1385	-	-	Hypothetical protein
+1369185..1369469	-	285	AAL00190.1	-	spr1386	-	-	Hypothetical protein
+1369466..1369780	-	315	AAL00191.1	-	spr1387	-	-	Hypothetical protein
+1369817..1370329	-	513	AAL00192.1	-	spr1388	-	-	Hypothetical protein
+1370416..1371351	-	936	AAL00193.1	ppaC	spr1389	-	-	Manganese-dependent inorganic pyrophosphatase
+1371422..1371721	-	300	AAL00194.1	-	spr1390	-	-	Conserved hypothetical protein
+1371711..1372460	-	750	AAL00195.1	-	spr1391	-	-	Conserved hypothetical protein
+1372514..1372900	-	387	AAL00196.1	-	spr1392	-	-	Conserved hypothetical protein
+1372875..1374275	-	1401	AAL00197.1	-	spr1393	-	-	Hypothetical protein
+1374570..1374809	-	240	AAL00198.1	rpsR	spr1394	-	-	30S Ribosomal protein S18
+1374841..1375311	-	471	AAL00199.1	ssbA	spr1395	-	-	Single stranded binding protein
+1375323..1375613	-	291	AAL00200.1	rpsF	spr1396	-	-	30S Ribosomal protein S6 (S6)
+1375766..1377109	-	1344	AAL00201.1	asnS	spr1397	-	-	Asparaginyl-tRNA synthetase (asparagine--tRNA ligase)
+1377128..1377499	-	372	AAL00202.1	-	spr1398	-	-	Conserved hypothetical protein
+1377486..1378673	-	1188	AAL00203.1	aspB	spr1399	-	-	Aspartate aminotransferase
+1378670..1379158	-	489	AAL00204.1	-	spr1400	-	-	Conserved hypothetical protein
+1379194..1379388	+	195	AAL00205.1	-	spr1401	-	-	Hypothetical protein
+1379398..1380027	+	630	AAL00206.1	-	spr1402	-	-	Hypothetical protein
+1380265..1387920	-	7656	AAL00207.1	-	spr1403	-	-	Hypothetical protein
+1388112..1389620	+	1509	AAL00208.1	-	spr1404	-	-	Conserved hypothetical protein
+1389671..1390399	-	729	AAL00209.1	-	spr1405	-	-	Conserved hypothetical protein
+1390478..1390657	-	180	AAL00210.1	-	spr1406	-	-	Hypothetical protein
+1390809..1392404	-	1596	AAL00211.1	-	spr1407	-	-	Hypothetical protein
+1392416..1392826	-	411	AAL00212.1	def	spr1408	-	-	Formylmethionine deformylase
+1392942..1393733	-	792	AAL00213.1	-	spr1409	-	-	Conserved hypothetical protein
+1393746..1396442	-	2697	AAL00214.1	pacL	spr1410	-	-	P-type ATPase - calcium transporter
+1396746..1397930	+	1185	AAL00215.1	-	spr1411	-	-	Conserved hypothetical protein
+1398073..1399944	-	1872	AAL00216.1	ABC-NBD	spr1412	-	-	ABC transporter ATP-binding protein - unknown substrate
+1399941..1401140	-	1200	AAL00217.1	cca	spr1413	-	-	tRNA nucleotidyltransferase
+1401137..1401904	-	768	AAL00218.1	dapB	spr1414	-	-	Dihydrodipicolinate reductase
+1402181..1403029	-	849	AAL00219.1	-	spr1415	-	-	Conserved hypothetical protein
+1403031..1403417	-	387	AAL00220.1	-	spr1416	-	-	Hypothetical protein
+1403479..1404831	-	1353	AAL00221.1	glmM	spr1417	-	-	Phosphoglucosamine mutase
+1404855..1405634	-	780	AAL00222.1	-	spr1418	-	-	Conserved hypothetical protein
+1405621..1406499	-	879	AAL00223.1	-	spr1419	-	-	Conserved hypothetical protein
+1406396..1406569	-	174	AAL00224.1	-	spr1420	-	-	Hypothetical protein
+1406614..1407582	+	969	AAL00225.1	trxB	spr1421	-	-	Thioredoxin reductase
+1407616..1408527	-	912	AAL00226.1	-	spr1422	-	-	Conserved hypothetical protein
+1408524..1409501	-	978	AAL00227.1	-	spr1423	-	-	Conserved hypothetical protein
+1409498..1410388	-	891	AAL00228.1	-	spr1424	-	-	Conserved hypothetical protein
+1410440..1410820	-	381	AAL00229.1	aldR	spr1425	-	-	Transcription regulator
+1410831..1411424	-	594	AAL00230.1	-	spr1426	-	-	Conserved hypothetical protein
+1411427..1412659	-	1233	AAL00231.1	clpX	spr1427	-	-	ATP-dependent Clp protease ATP-binding subunit (class III heat-shock protein)
+1412691..1412861	-	171	AAL00232.1	-	spr1428	-	-	Hypothetical protein
+1412861..1413367	-	507	AAL00233.1	dfr	spr1429	-	-	Dihydrofolate reductase
+1413497..1414033	-	537	AAL00234.1	dpr	spr1430	-	-	DNA binding protein starved cells-like peroxide resistance protein
+1414511..1416016	-	1506	AAL00235.1	lytC	spr1431	-	-	1,4-beta-N-acetylmuramidase
+1416054..1416833	-	780	AAL00236.1	tpi	spr1432	-	-	Triose phosphate isomerase
+1416910..1417587	-	678	AAL00237.1	-	spr1433	-	-	Conserved hypothetical protein
+1417596..1418540	-	945	AAL00238.1	metA	spr1434	-	-	Homoserine O-succinyltransferase
+1418722..1419252	-	531	AAL00239.1	apt	spr1435	-	-	Adenine phosphoribosyltransferase
+1419322..1420080	-	759	AAL00240.1	-	spr1436	-	-	Conserved hypothetical protein
+1420581..1421711	-	1131	AAL00241.1	msmK	spr1437	-	-	ABC transporter ATP-binding protein - multiple sugar transport
+1422161..1422736	-	576	AAL00242.1	entB	spr1438	-	-	Isochorismatase
+1422736..1423524	-	789	AAL00243.1	codY	spr1439	-	-	Transcriptional pleiotropic repressor
+1423788..1425362	-	1575	AAL00244.1	-	spr1440	-	-	Conserved hypothetical protein
+1425561..1426787	-	1227	AAL00245.1	oxlT	spr1441	-	-	Major facilitator:Oxalate:Formate Antiporter
+1426977..1428293	+	1317	AAL00246.1	merA	spr1442	-	-	Oxidoreductase (Mercury (II) reductase)
+1428392..1429735	+	1344	AAL00247.1	-	spr1443	-	-	Conserved hypothetical protein
+1429735..1430517	+	783	AAL00248.1	cobQ	spr1444	-	-	Cobyric acid synthase
+1430643..1431725	+	1083	AAL00249.1	pepQ	spr1445	-	-	Dipeptidase
+1432048..1432536	-	489	AAL00250.1	-	spr1446	-	-	Degenerate transposase (orf2)
+1432598..1432870	-	273	AAL00251.1	-	spr1447	-	-	Degenerate transposase (orf2)
+1433096..1433368	-	273	AAL00252.1	-	spr1448	-	-	Degenerate transposase (orf1)
+1433540..1434001	-	462	AAL00253.1	-	spr1449	-	-	Conserved hypothetical protein
+1433979..1434752	-	774	AAL00254.1	pdxK	spr1450	-	-	Pyridoxine kinase
+1434742..1435491	-	750	AAL00255.1	truA	spr1451	-	-	tRNA pseudouridine synthase A
+1435671..1435832	+	162	AAL00256.1	-	spr1452	-	-	Hypothetical protein
+1435804..1436955	-	1152	AAL00257.1	-	spr1453	-	-	Major facilitator superfamily transporter - efflux
+1437195..1437824	-	630	AAL00258.1	-	spr1454	-	-	Hypothetical protein
+1437827..1438165	-	339	AAL00259.1	phnA	spr1455	-	-	Required for expression of the phosphonate utilization phenotype in E. coli
+1438296..1438967	-	672	AAL00260.1	cmk	spr1456	-	-	Cytidylate kinase
+1438976..1439452	-	477	AAL00261.1	-	spr1457	-	-	Hypothetical protein
+1439432..1439710	+	279	AAL00262.1	fer	spr1458	-	-	Ferredoxin
+1439772..1440863	-	1092	AAL00263.1	gtrB	spr1459	-	-	Glycosil transferase
+1440727..1441746	-	1020	AAL00264.1	galE	spr1460	-	-	UDP-glucose 4-epimerase
+1442047..1443159	-	1113	AAL00265.1	-	spr1461	-	-	Conserved hypothetical protein
+1443167..1443964	-	798	AAL00266.1	-	spr1462	-	-	Conserved hypothetical protein
+1443951..1444628	-	678	AAL00267.1	-	spr1463	-	-	Conserved hypothetical protein
+1444730..1447066	-	2337	AAL00268.1	ctpE	spr1464	-	-	P-type ATPase - metal cation transport
+1447154..1447948	+	795	AAL00269.1	-	spr1465	-	-	Conserved hypothetical protein
+1448241..1448855	-	615	AAL00270.1	cadD	spr1466	-	-	Confers low level cadmium resistance in Staphylococcus aureus
+1449589..1449858	-	270	AAL00271.1	rpsO	spr1467	-	-	30S Ribosomal protein S15
+1449999..1450628	-	630	AAL00272.1	-	spr1468	-	-	Conserved hypothetical protein
+1450858..1451067	+	210	AAL00273.1	-	spr1469	-	-	Hypothetical protein
+1451432..1451638	+	207	AAL00274.1	-	spr1470	-	-	Hypothetical protein
+1451642..1451821	+	180	AAL00275.1	-	spr1471	-	-	Hypothetical protein
+1451840..1453822	+	1983	AAL00276.1	thrS	spr1472	-	-	Threonyl-tRNA synthetase 1
+1453871..1454845	-	975	AAL00277.1	hk01	spr1473	-	-	Histidine kinase
+1454838..1455515	-	678	AAL00278.1	rr01	spr1474	-	-	Response regulator
+1455671..1456744	+	1074	AAL00279.1	-	spr1475	-	-	Hypothetical protein
+1456835..1457137	-	303	AAL00280.1	-	spr1476	-	-	Hypothetical protein
+1457206..1457643	-	438	AAL00281.1	-	spr1477	-	-	Conserved hypothetical protein
+1457631..1457825	+	195	AAL00282.1	-	spr1478	-	-	Hypothetical protein
+1457719..1458567	-	849	AAL00283.1	-	spr1479	-	-	Conserved hypothetical protein
+1458673..1459323	+	651	AAL00284.1	marR	spr1480	-	-	Metalloregulator
+1459304..1459474	+	171	AAL00285.1	-	spr1481	-	-	Hypothetical protein
+1459595..1460017	+	423	AAL00286.1	-	spr1482	-	-	Hypothetical protein
+1460276..1460713	+	438	AAL00287.1	-	spr1483	-	-	Hypothetical protein
+1460808..1461107	-	300	AAL00288.1	-	spr1484	-	-	Hypothetical protein
+1462112..1462423	+	312	AAL00289.1	-	spr1485	-	-	Hypothetical protein
+1462462..1462905	-	444	AAL00290.1	-	spr1486	-	-	Conserved hypothetical protein
+1462935..1465157	-	2223	AAL00291.1	relA	spr1487	-	-	GTP pyrophosphokinase
+1465305..1465475	-	171	AAL00292.1	-	spr1488	-	-	Hypothetical protein
+1465568..1465786	+	219	AAL00293.1	-	spr1489	-	-	Hypothetical protein
+1466101..1466781	+	681	AAL00294.1	-	spr1490	-	-	Conserved hypothetical protein
+1466904..1468796	-	1893	AAL00295.1	pepO	spr1491	-	-	Endopeptidase O
+1469087..1469809	+	723	AAL00296.1	psaB	spr1492	-	-	ABC transporter ATP-binding protein - manganese transport
+1469806..1470654	+	849	AAL00297.1	psaC	spr1493	-	-	ABC transporter membrane-spanning permease - manganese transport
+1470686..1471615	+	930	AAL00298.1	psaA	spr1494	-	-	ABC transporter substrate-binding protein - manganese transport
+1471711..1472229	+	519	AAL00299.1	tpx	spr1495	-	-	Thioredoxin-linked thiol peroxidase
+1472325..1475099	-	2775	AAL00300.1	-	spr1496	-	-	Hypothetical protein
+1475035..1475745	-	711	AAL00301.1	ABC-NBD	spr1497	-	-	ABC transporter ATP-binding protein - unknown substrate
+1475986..1478397	-	2412	AAL00302.1	-	spr1498	-	-	Conserved hypothetical protein
+1478450..1479142	-	693	AAL00303.1	gpmA	spr1499	-	-	Phosphoglyceromutase
+1479193..1479381	-	189	AAL00304.1	-	spr1500	-	-	Hypothetical protein
+1479757..1479897	-	141	AAL00305.1	-	spr1501	-	-	Hypothetical protein
+1480465..1483257	-	2793	AAL00306.1	ileS	spr1502	-	-	Isoleucyl-tRNA synthetase
+1483401..1483562	-	162	AAL00307.1	-	spr1503	-	-	Hypothetical protein
+1483442..1483642	+	201	AAL00308.1	-	spr1504	-	-	Hypothetical protein
+1483605..1484405	-	801	AAL00309.1	divIVA	spr1505	-	-	Cell-division initiation protein (septum placement)
+1484402..1485253	-	852	AAL00310.1	-	spr1506	-	-	Conserved hypothetical protein
+1485184..1485447	-	264	AAL00311.1	-	spr1507	-	-	Conserved hypothetical protein
+1485447..1485986	-	540	AAL00312.1	-	spr1508	-	-	Conserved hypothetical protein
+1485996..1486667	-	672	AAL00313.1	-	spr1509	-	-	Conserved hypothetical protein
+1486672..1487931	-	1260	AAL00314.1	ftsZ	spr1510	-	-	Cell division protein FtsZ
+1487948..1489321	-	1374	AAL00315.1	ftsA	spr1511	-	-	Cell division protein FtsA
+1489540..1490244	-	705	AAL00316.1	-	spr1512	-	-	Hypothetical protein
+1490335..1490946	-	612	AAL00317.1	mutT	spr1513	-	-	Mutator protein
+1490933..1492306	-	1374	AAL00318.1	murF	spr1514	-	-	UDP-N-acetylmuramoylalanine-D-glutamyl-lysine-D- alanyl-D-alanine ligase
+1492390..1493433	-	1044	AAL00319.1	ddl	spr1515	-	-	D-alanine-D-alanine ligase
+1493609..1494205	-	597	AAL00320.1	recR	spr1516	-	-	Recombination protein RecR
+1494216..1496273	-	2058	AAL00321.1	pbp2b	spr1517	-	-	Penicillin-binding protein 2B
+1496473..1497324	+	852	AAL00322.1	-	spr1518	-	-	Conserved hypothetical protein
+1497340..1498224	-	885	AAL00323.1	glk	spr1519	-	-	Glucokinase
+1498242..1498973	-	732	AAL00324.1	-	spr1520	-	-	N-acetylneuraminate lyase subunit, truncation
+1499064..1499159	-	96	AAL00325.1	-	spr1521	-	-	N-acetylneuraminate lyase subunit, truncation
+1499342..1499806	-	465	AAL00326.1	-	spr1522	-	-	Hypothetical protein
+1500093..1500437	-	345	AAL00327.1	-	spr1523	-	-	Hypothetical protein
+1500534..1500986	-	453	AAL00328.1	-	spr1524	-	-	Conserved hypothetical protein
+1501259..1502098	-	840	AAL00329.1	ABC-MSP	spr1525	-	-	ABC transporter membrane-spanning permease - sugar transport
+1502114..1503010	-	897	AAL00330.1	ABC-MSP	spr1526	-	-	ABC transporter membrane-spanning permease - sugar transport
+1503232..1504560	-	1329	AAL00331.1	ABC-SBP	spr1527	-	-	ABC transporter substrate-binding protein - sugar transport
+1504685..1506217	-	1533	AAL00332.1	PTS-EII	spr1528	-	-	Phosphotransferase system sugar-specific EII component
+1506221..1506919	-	699	AAL00333.1	nanE	spr1529	-	-	N-acetylmannosamine-6-P epimerase
+1507099..1508202	-	1104	AAL00334.1	-	spr1530	-	-	Conserved hypothetical protein
+1508214..1510307	-	2094	AAL00335.1	nanB	spr1531	-	-	Sialidase B precursor (neuraminidase B)
+1510325..1511158	-	834	AAL00336.1	ABC-MSP	spr1532	-	-	ABC transporter membrane-spanning permease - sugar transport
+1511158..1512042	-	885	AAL00337.1	ABC-MSP	spr1533	-	-	ABC transporter membrane-spanning permease - sugar transport
+1512121..1513458	-	1338	AAL00338.1	ABC-SBP	spr1534	-	-	ABC transporter substrate-binding protein - sugar transport
+1513477..1513929	-	453	AAL00339.1	-	spr1535	-	-	Hypothetical protein
+1514944..1518051	-	3108	AAL00340.1	nanA	spr1536	-	-	Sialidase A precursor (neuraminidase A)
+1518294..1518521	-	228	AAL00341.1	-	spr1537	-	-	Hypothetical protein
+1519416..1520396	-	981	AAL00342.1	axe1	spr1538	-	-	Xylan esterase 1
+1520712..1522727	-	2016	AAL00343.1	recG	spr1539	-	-	Branch migration of Holliday junctions, junction-specific DNA helicase
+1522746..1523870	-	1125	AAL00344.1	alr	spr1540	-	-	Alanine racemase
+1523839..1524201	-	363	AAL00345.1	acpS	spr1541	-	-	Acyl Carrier protein synthase
+1524246..1525277	-	1032	AAL00346.1	aroF	spr1542	-	-	Phospho-2-dehydro-3-deoxyheptonate aldolase (DAHP synthatase); possibly tyr-sensitive
+1525279..1526310	-	1032	AAL00347.1	aroG	spr1543	-	-	phospho-2-dehydro-3-deoxyheptonate aldolase (DAHP synthatase isozyme)- possibly phe sensitive
+1526391..1528904	-	2514	AAL00348.1	secA	spr1544	-	-	Preprotein translocase secA subunit
+1529050..1529250	-	201	AAL00349.1	-	spr1545	-	-	Hypothetical protein
+1529350..1530000	-	651	AAL00350.1	ABC-NBD	spr1546	-	-	ABC transporter ATP-binding protein - unknown substrate
+1530004..1530681	-	678	AAL00351.1	-	spr1547	-	-	Hypothetical protein
+1530638..1531429	-	792	AAL00352.1	-	spr1548	-	-	Hypothetical protein
+1531451..1531843	-	393	AAL00353.1	-	spr1549	-	-	Hypothetical protein
+1532170..1533021	+	852	AAL00354.1	-	spr1550	-	-	Conserved hypothetical protein
+1533243..1533596	-	354	AAL00355.1	-	spr1551	-	-	Hypothetical protein
+1533733..1534077	-	345	AAL00356.1	-	spr1552	-	-	Hypothetical protein
+1534157..1535467	-	1311	AAL00357.1	serA	spr1553	-	-	Phosphoglycerate dehydrogenase
+1535481..1536194	-	714	AAL00358.1	frp	spr1554	-	-	Homologue of NADPH-flavin oxidoreductase
+1536191..1537087	-	897	AAL00359.1	dnaI	spr1555	-	-	Primosome component (helicase loader)
+1537088..1538257	-	1170	AAL00360.1	dnaB	spr1556	-	-	Chromosome replication initiation protein/membrane attachment protein, Putative
+1538258..1538791	-	534	AAL00361.1	-	spr1557	-	-	Conserved hypothetical protein
+1538871..1539236	+	366	AAL00362.1	-	spr1558	-	-	Conserved hypothetical protein
+1539214..1539936	+	723	AAL00363.1	ABC-NBD	spr1559	-	-	ABC transporter ATP-binding protein - unknown substrate
+1539872..1540720	+	849	AAL00364.1	-	spr1560	-	-	Hypothetical protein
+1541133..1542332	-	1200	AAL00365.1	natB	spr1561	-	-	ABC transporter membrane-spanning permease - Na+ export
+1542329..1543222	-	894	AAL00366.1	natA	spr1562	-	-	ABC transporter ATP-binding protein - Na+ export
+1543913..1544116	+	204	AAL00367.1	-	spr1563	-	-	Degenerate transposase
+1544531..1545148	+	618	AAL00368.1	-	spr1564	-	-	Hypothetical protein
+1545468..1546355	-	888	AAL00369.1	scrK	spr1565	-	-	Fructokinase
+1546504..1548387	-	1884	AAL00370.1	scrA	spr1566	-	-	Phosphotransferase system enzyme II
+1548764..1550218	+	1455	AAL00371.1	scrB	spr1568	-	-	Sucrose-6-phosphate hydrolase
+1550199..1551164	+	966	AAL00372.1	scrR	spr1569	-	-	Sucrose regulon regulatory protein
+1551199..1552473	-	1275	AAL00373.1	mvaA	spr1570	-	-	3-hydroxy-3-methylglutaryl-coenzyme a reductase
+1552473..1553669	-	1197	AAL00374.1	mvaS	spr1571	-	-	3-hydroxy-3-methylglutaryl coenzyme A (HMG-CoA) synthase
+1553776..1554063	-	288	AAL00375.1	-	spr1572	-	-	Hypothetical protein
+1554092..1554481	-	390	AAL00376.1	IS1381	spr1573	-	-	Tranposase (orf2)
+1554515..1554715	-	201	AAL00377.1	-	spr1574	-	-	Degenerate transposase (orf1)
+1554780..1555229	-	450	AAL00378.1	-	spr1575	-	-	Hypothetical protein
+1555231..1555989	-	759	AAL00379.1	-	spr1576	-	-	Conserved hypothetical protein
+1556104..1558083	-	1980	AAL00380.1	pkn2	spr1577	-	-	Eukaryotic-type serine/threonine kinase
+1558080..1558820	-	741	AAL00381.1	pppL	spr1578	-	-	Phosphoprotein phosphatase
+1558835..1560151	-	1317	AAL00382.1	sunL	spr1579	-	-	rRNA methylase
+1560141..1561076	-	936	AAL00383.1	fmt	spr1580	-	-	Methionyl-tRNA formyltransferase
+1561089..1563485	-	2397	AAL00384.1	priA	spr1581	-	-	Primosomal replication factor Y
+1563551..1563865	-	315	AAL00385.1	-	spr1582	-	-	Hypothetical protein
+1563890..1564516	-	627	AAL00386.1	gmk	spr1583	-	-	Guanylate kinase
+1564646..1566259	-	1614	AAL00387.1	-	spr1584	-	-	Conserved hypothetical protein
+1566450..1566704	-	255	AAL00388.1	-	spr1585	-	-	Conserved hypothetical protein
+1566708..1567001	-	294	AAL00389.1	-	spr1586	-	-	Conserved hypothetical protein
+1567200..1568297	-	1098	AAL00390.1	-	spr1587	-	-	Conserved hypothetical protein
+1568307..1569053	-	747	AAL00391.1	-	spr1588	-	-	Conserved hypothetical protein
+1569156..1569509	-	354	AAL00392.1	-	spr1589	-	-	Conserved hypothetical protein
+1569522..1570022	-	501	AAL00393.1	-	spr1590	-	-	Conserved hypothetical protein
+1570023..1570616	-	594	AAL00394.1	-	spr1591	-	-	Conserved hypothetical protein
+1570616..1571245	-	630	AAL00395.1	-	spr1592	-	-	Conserved hypothetical protein
+1571297..1571608	-	312	AAL00396.1	-	spr1593	-	-	Conserved hypothetical protein
+1571823..1572929	-	1107	AAL00397.1	-	spr1594	-	-	Conserved hypothetical protein
+1572932..1573522	-	591	AAL00398.1	-	spr1595	-	-	Conserved hypothetical protein
+1573474..1574370	-	897	AAL00399.1	corA	spr1596	-	-	CorA - magnesium and cobalt transporter
+1574427..1575032	-	606	AAL00400.1	-	spr1597	-	-	Hypothetical protein
+1575376..1576335	+	960	AAL00401.1	dctA	spr1598	-	-	Dicarboxylate/amino acid:cation (Na+ or H+) symporter
+1576403..1577356	+	954	AAL00402.1	-	spr1599	-	-	Conserved hypothetical protein
+1577455..1577880	+	426	AAL00403.1	-	spr1600	-	-	Conserverd hypothetical protein
+1577898..1578200	+	303	AAL00404.1	-	spr1601	-	-	Hypothetical protein
+1578217..1578531	+	315	AAL00405.1	trxA	spr1602	-	-	Thioredoxin reductase
+1578797..1579369	+	573	AAL00406.1	-	spr1603	-	-	Conserved hypothetical protein
+1579849..1580517	-	669	AAL00407.1	aqpZ	spr1604	-	-	Aquaporin Z - water channel protein
+1580628..1581188	-	561	AAL00408.1	-	spr1605	-	-	Hypothetical protein
+1581428..1583224	-	1797	AAL00409.1	pepF	spr1606	-	-	Similar to oligoendopeptidase
+1583235..1583990	-	756	AAL00410.1	-	spr1607	-	-	Conserved hypothetical protein
+1583980..1584957	-	978	AAL00411.1	prmA	spr1608	-	-	Ribosomal protein methyltransferase
+1585068..1585496	-	429	AAL00412.1	mutT	spr1609	-	-	7,8-dihydro-8-oxoguanine-triphosphatase
+1585462..1586580	-	1119	AAL00413.1	-	spr1610	-	-	Hypothetical protein
+1586584..1587054	-	471	AAL00414.1	-	spr1611	-	-	Hypothetical protein
+1587345..1587797	-	453	AAL00415.1	-	spr1612	-	-	Conserved hypothetical protein
+1587834..1588040	-	207	AAL00416.1	-	spr1613	-	-	Hypothetical protein
+1588150..1588329	-	180	AAL00417.1	-	spr1614	-	-	Hypothetical protein
+1588494..1588733	-	240	AAL00418.1	-	spr1615	-	-	Hypothetical protein
+1589003..1590274	+	1272	AAL00419.1	cshA	spr1616	-	-	Chromosome segregation helicase
+1590821..1592140	-	1320	AAL00420.1	sacA	spr1617	-	-	Sucrose-6-phosphate hydrolase
+1592150..1593004	-	855	AAL00421.1	ABC-MSP	spr1618	-	-	ABC transporter membrane-spanning permease - sugar transport
+1592997..1593905	-	909	AAL00422.1	ABC-MSP	spr1619	-	-	ABC transporter membrane-spanning permease - sugar transporter
+1593995..1595308	-	1314	AAL00423.1	ABC-SBP	spr1620	-	-	ABC transporter substrate-binding protein - sugar transport
+1595432..1596445	-	1014	AAL00424.1	scrR	spr1621	-	-	Sucrose operon repressor (SCR operon regulatory protein)
+1596789..1598327	-	1539	AAL00425.1	-	spr1622	-	-	Conserved hypothetical protein
+1598954..1599526	+	573	AAL00426.1	-	spr1623	-	-	Hypothetical protein
+1599538..1599708	+	171	AAL00427.1	-	spr1624	-	-	Conserved hypothetical protein
+1599747..1600355	+	609	AAL00428.1	-	spr1625	-	-	Conserved hypothetical protein
+1600386..1600589	+	204	AAL00429.1	-	spr1626	-	-	Hypothetical protein
+1601116..1601562	-	447	AAL00430.1	-	spr1627	-	-	Conserved hypothetical protein
+1601632..1602291	+	660	AAL00431.1	pilD	spr1628	-	-	Type 4 prepilin peptidase
+1602343..1603494	-	1152	AAL00432.1	-	spr1629	-	-	Conserved hypothetical protein
+1603509..1604240	-	732	AAL00433.1	-	spr1630	-	-	Hypothetical protein
+1604542..1605318	-	777	AAL00434.1	trpA	spr1631	-	-	Tryptophan synthase alpha chain
+1605311..1606534	-	1224	AAL00435.1	trpB	spr1632	-	-	Tryptophan synthase beta chain
+1606512..1607141	-	630	AAL00436.1	trpF	spr1633	-	-	Phosphoribosylanthranilate isomerase
+1607098..1607865	-	768	AAL00437.1	trpC	spr1634	-	-	Indole-3-glycerol-phosphate synthase
+1607862..1608866	-	1005	AAL00438.1	trpD	spr1635	-	-	Anthranilate phosphoribosyltransferase
+1608877..1609443	-	567	AAL00439.1	trpG	spr1636	-	-	Anthranilate synthase component II (glutamine amido-transferase)
+1609440..1610903	-	1464	AAL00440.1	trpE	spr1637	-	-	Anthranilate synthase component I
+1610936..1611091	-	156	AAL00441.1	-	spr1638	-	-	Hypothetical protein
+1611988..1612989	-	1002	AAL00442.1	ccpA	spr1639	-	-	Catabolite control protein
+1613097..1613465	-	369	AAL00443.1	-	spr1640	-	-	Hypothetical protein
+1613561..1614271	-	711	AAL00444.1	mgtC	spr1641	-	-	Mg(2+) transport ATPase/permease
+1614153..1614308	+	156	AAL00445.1	-	spr1642	-	-	Hypothetical protein
+1614274..1615965	-	1692	AAL00446.1	ABC-MSP	spr1643	-	-	ABC transporter membrane-spanning permease - unknown substrate
+1615977..1616987	-	1011	AAL00447.1	ABC-NBD	spr1644	-	-	ABC transporter ATP-binding protein - unknown substrate
+1617090..1618157	-	1068	AAL00448.1	ABC-SBP	spr1645	-	-	ABC transporter substrate-binding protein - unknown substrate
+1618182..1618841	-	660	AAL00449.1	-	spr1646	-	-	Hypothetical protein
+1619051..1620031	-	981	AAL00450.1	galE	spr1647	-	-	UDP-glucose 4-epimerase
+1620044..1621519	-	1476	AAL00451.1	galT	spr1648	-	-	Galactose-1-phosphate uridylyltransferase
+1621532..1622173	-	642	AAL00452.1	-	spr1649	-	-	Conserved hypothetical protein
+1622231..1622725	-	495	AAL00453.1	-	spr1650	-	-	Hypothetical protein
+1622786..1623082	-	297	AAL00454.1	-	spr1651	-	-	Hypothetical protein
+1623066..1625225	-	2160	AAL00455.1	-	spr1652	-	-	Hypothetical protein
+1626138..1626314	+	177	AAL00456.1	-	spr1653	-	-	Hypothetical protein
+1626356..1627609	-	1254	AAL00457.1	-	spr1654	-	-	Conserved hypothetical protein
+1627625..1628356	-	732	AAL00458.1	-	spr1655	-	-	Conserved hypothetical protein
+1628490..1630241	-	1752	AAL00459.1	ABC-N/P	spr1656	-	-	ABC transporter ATP-binding/membrane spanning protein - unknown substrate
+1630231..1632015	-	1785	AAL00460.1	ABC-N/P	spr1657	-	-	ABC transporter ATP-binding/membrane spanning protein - unknown substrate
+1632104..1632634	-	531	AAL00461.1	-	spr1658	-	-	Conserved hypothetical protein
+1632631..1632900	-	270	AAL00462.1	-	spr1659	-	-	Hypothetical protein
+1633221..1634048	+	828	AAL00463.1	exoA	spr1660	-	-	Exodeoxyribonuclease
+1634203..1634442	+	240	AAL00464.1	-	spr1661	-	-	Hypothetical protein
+1635320..1635901	+	582	AAL00465.1	xpt	spr1662	-	-	Xanthine phosphoribosyltransferase
+1635901..1637163	+	1263	AAL00466.1	pbuX	spr1663	-	-	Nucleobase:cation symporter for xanthine
+1637214..1637675	-	462	AAL00467.1	dpnD	spr1664	-	-	Restriction system of S. pneumoniae
+1637672..1638436	-	765	AAL00468.1	dpnC	spr1665	-	-	Type II restriction enzyme DpnI (dpnC)
+1638617..1639042	-	426	AAL00469.1	-	spr1666	-	-	Conserved hypothetical protein
+1639091..1640572	-	1482	AAL00470.1	galT	spr1667	-	-	Galactose-1-phosphate uridylyltransferase
+1640591..1641769	-	1179	AAL00471.1	galK	spr1668	-	-	Galactokinase
+1641933..1642940	+	1008	AAL00472.1	galR	spr1669	-	-	GalR, member of GalR-LacI family of transcriptional regulators, binds DNA; regulator of gal operon
+1642986..1644023	-	1038	AAL00473.1	adhB	spr1670	-	-	Alcohol dehydrogenase
+1644024..1644377	-	354	AAL00474.1	-	spr1671	-	-	Conserved hypothetical protein
+1644621..1645520	-	900	AAL00475.1	czcD	spr1672	-	-	Cation diffusion facilitator transporter - heavy metal transport
+1645644..1646180	+	537	AAL00476.1	-	spr1673	-	-	Conserved hypothetical protein
+1646347..1647156	-	810	AAL00477.1	-	spr1674	-	-	Conserved hypothetical protein
+1647556..1648074	+	519	AAL00478.1	IS1167	spr1675	-	-	Transposase (orf1)
+1648355..1648873	+	519	AAL00479.1	-	spr1676	-	-	Degenerate transposase (orf2)
+1648982..1650502	-	1521	AAL00480.1	proWX	spr1677	-	-	ABC transporter membrane-spanning permease - choline transporter
+1650495..1651223	-	729	AAL00481.1	proV	spr1678	-	-	ABC transporter ATP-binding protein - choline transporter
+1651238..1652002	-	765	AAL00482.1	-	spr1679	-	-	Hypothetical protein
+1652006..1652449	-	444	AAL00483.1	-	spr1680	-	-	Hypothetical protein
+1653131..1653436	-	306	AAL00484.1	-	spr1681	-	-	Hypothetical protein
+1653449..1654513	-	1065	AAL00485.1	pepA	spr1682	-	-	Glutamyl aminopeptidase
+1654914..1655615	+	702	AAL00486.1	-	spr1683	-	-	UDP-galactose 4-epimerase, truncation
+1656023..1656997	+	975	AAL00487.1	fatD	spr1684	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1656987..1657943	+	957	AAL00488.1	fatC	spr1685	-	-	ABC transporter membrane-spanning permease - ferric iron transport
+1657940..1658692	+	753	AAL00489.1	fecE	spr1686	-	-	ABC transporter ATP-binding protein - ferric iron transport
+1658788..1659753	+	966	AAL00490.1	fatB	spr1687	-	-	ABC transporter substrate-binding protein - ferric iron transport
+1659978..1660220	-	243	AAL00491.1	-	spr1688	-	-	Conserved hypothetical protein
+1660220..1660942	-	723	AAL00492.1	rluB	spr1689	-	-	Ribosomal large subunit pseudouridine synthase B
+1660929..1661498	-	570	AAL00493.1	-	spr1690	-	-	Conserved hypothetical protein
+1661517..1662245	-	729	AAL00494.1	-	spr1691	-	-	Conserved hypothetical protein
+1662245..1662985	-	741	AAL00495.1	xerD	spr1692	-	-	Recombinase, site specific
+1662976..1663437	-	462	AAL00496.1	-	spr1693	-	-	Conserved hypothetical protein
+1663434..1663955	-	522	AAL00497.1	-	spr1694	-	-	Conserved hypothetical protein
+1663931..1664941	-	1011	AAL00498.1	-	spr1695	-	-	Hypothetical protein
+1664899..1665693	-	795	AAL00499.1	murI	spr1696	-	-	Glutamate racemase
+1665900..1666202	-	303	AAL00500.1	-	spr1697	-	-	Hypothetical protein
+1666290..1667915	-	1626	AAL00501.1	dexS	spr1698	-	-	Dextran glucosidase
+1668093..1670210	-	2118	AAL00502.1	treP	spr1699	-	-	Phosphotransferase system, trehalose-specific IIBC component
+1670245..1670955	+	711	AAL00503.1	treR	spr1700	-	-	Trehalose operon transcriptional repressor
+1671111..1671893	+	783	AAL00504.1	-	spr1701	-	-	Degenerate transposase (orf1)
+1671890..1672417	+	528	AAL00505.1	-	spr1702	-	-	Degenerate transposase (orf2)
+1672492..1673463	-	972	AAL00506.1	amiF	spr1703	-	-	ABC transporter ATP-binding protein - oligopeptide transport
+1673429..1674496	-	1068	AAL00507.1	amiE	spr1704	-	-	ABC transporter ATP-binding protein - oligopeptide transport
+1674505..1675431	-	927	AAL00508.1	amiD	spr1705	-	-	ABC transporter membrane-spanning permease - oligopeptide transport
+1675431..1676927	-	1497	AAL00509.1	amiC	spr1706	-	-	ABC transporter membrane-spanning permease - oligopeptide transport
+1676994..1678973	-	1980	AAL00510.1	amiA	spr1707	-	-	ABC transporter substrate-binding protein - oligopeptide transport
+1679660..1680853	-	1194	AAL00511.1	-	spr1708	-	-	Hypothetical protein
+1680991..1682433	-	1443	AAL00512.1	gtfA	spr1709	-	-	Dextransucrase (sucrose 6-glucosyltransferase)
+1682791..1683624	-	834	AAL00513.1	msmG	spr1710	-	-	ABC transporter membrane spanning permease - multiple sugars
+1683638..1684528	-	891	AAL00514.1	msmF	spr1711	-	-	ABC transporter membrane-spanning permease - multiple sugars
+1684518..1685777	-	1260	AAL00515.1	msmE	spr1712	-	-	ABC transporter substrate-binding protein - multiple sugars
+1685869..1688031	-	2163	AAL00516.1	aga	spr1713	-	-	Alpha-galactosidase (melibiase)
+1688139..1688999	+	861	AAL00517.1	msmR	spr1714	-	-	MSM (multiple sugar metabolism) operon regulatory protein
+1688996..1689931	+	936	AAL00518.1	birA	spr1715	-	-	Biotin--[acetyl-CoA-carboxylase] ligase
+1690139..1690576	+	438	AAL00519.1	-	spr1716	-	-	Degenerate transposase (fusion of orf1 and orf2)
+1697564..1698919	-	1356	AAL00520.1	-	spr1717	-	-	Conserved hypothetical protein
+1698873..1699733	+	861	AAL00521.1	-	spr1718	-	-	Conserved hypothetical protein
+1699822..1700355	+	534	AAL00522.1	-	spr1719	-	-	Conserved hypothetical protein
+1700709..1700915	-	207	AAL00523.1	-	spr1720	-	-	Hypothetical protein
+1701075..1702304	+	1230	AAL00524.1	-	spr1721	-	-	Degenerate transposase (fusion of orf1 and orf2)
+1702403..1704025	-	1623	AAL00525.1	groEL	spr1722	-	-	Chaperonin GroEL
+1704041..1704325	-	285	AAL00526.1	groES	spr1723	-	-	Cochaperonin GroES
+1704481..1704876	-	396	AAL00527.1	ssbB	spr1724	-	-	Single-stranded DNA-binding protein
+1704954..1705715	-	762	AAL00528.1	ydfG	spr1725	-	-	Oxidoreductase
+1705748..1706374	-	627	AAL00529.1	-	spr1726	-	-	Conserved hypothetical protein
+1706390..1706707	-	318	AAL00530.1	-	spr1727	-	-	Conserved hypothetical protein
+1706704..1707003	-	300	AAL00531.1	-	spr1728	-	-	Hypothetical protein
+1707340..1707555	-	216	AAL00532.1	-	spr1729	-	-	Conserved hypothetical protein
+1707692..1708366	-	675	AAL00533.1	-	spr1730	-	-	Hypothetical protein
+1708372..1708821	-	450	AAL00534.1	-	spr1731	-	-	Hypothetical protein
+1708932..1709435	-	504	AAL00535.1	-	spr1732	-	-	Conserved hypothetical protein
+1709432..1709794	-	363	AAL00536.1	-	spr1733	-	-	Hypothetical protein
+1709860..1710891	-	1032	AAL00537.1	-	spr1734	-	-	ABC transporter ATP-binding protein - unknown substrate, truncation
+1710898..1711068	-	171	AAL00538.1	-	spr1735	-	-	ABC transporter ATP-binding protein - unknown substrate, truncation
+1711072..1711719	-	648	AAL00539.1	-	spr1736	-	-	ABC transporter ATP-binding protein - unknown substrate, truncation
+1711861..1712205	-	345	AAL00540.1	-	spr1737	-	-	Conserved hypothetical protein
+1712329..1713045	-	717	AAL00541.1	-	spr1738	-	-	Conserved hypothetical protein
+1713926..1715341	-	1416	AAL00542.1	ply	spr1739	-	-	Pneumolysin (sulfhydryl-activated toxin that lyses cholesterol containing membranes)
+1715352..1715762	-	411	AAL00543.1	-	spr1740	-	-	Hypothetical protein
+1715755..1716363	-	609	AAL00544.1	-	spr1741	-	-	Hypothetical protein
+1716369..1716851	-	483	AAL00545.1	-	spr1742	-	-	Hypothetical protein
+1716376..1716585	-	210	AAL00546.1	-	spr1743	-	-	Hypothetical protein
+1716958..1717089	+	132	AAL00547.1	-	spr1744	-	-	Degenerate transposase (orf1)
+1717094..1717357	+	264	AAL00548.1	-	spr1745	-	-	Degenerate transposase (orf2)
+1718122..1718382	-	261	AAL00549.1	-	spr1746	-	-	Hypothetical protein
+1718441..1718995	-	555	AAL00550.1	-	spr1747	-	-	Hypothetical protein
+1718982..1719179	-	198	AAL00551.1	-	spr1748	-	-	Hypothetical protein
+1719183..1719977	-	795	AAL00552.1	-	spr1749	-	-	Hypothetical protein
+1720385..1720810	-	426	AAL00553.1	-	spr1750	-	-	Hypothetical protein
+1720939..1721298	-	360	AAL00554.1	-	spr1751	-	-	Hypothetical protein
+1721344..1721586	-	243	AAL00555.1	-	spr1752	-	-	Hypothetical protein
+1721537..1721710	-	174	AAL00556.1	-	spr1753	-	-	Hypothetical protein
+1722069..1723025	-	957	AAL00557.1	lytA	spr1754	-	-	Autolysin (N-acetylmuramoyl-L-alanine amidase)
+1723091..1723153	-	63	AAL00558.1	-	spr1755	-	-	Hypothetical protein
+1723401..1724771	-	1371	AAL00559.1	dinF	spr1756	-	-	DNA-damage-inducible protein
+1725078..1726244	-	1167	AAL00560.1	recA	spr1757	-	-	DNA recombination/repair
+1726299..1727555	-	1257	AAL00561.1	cinA	spr1758	-	-	Competence induced protein
+1727640..1728656	-	1017	AAL00562.1	lytR	spr1759	-	-	Regulator of lytRABC operon
+1728664..1729182	-	519	AAL00563.1	-	spr1760	-	-	Conserved hypothetical protein
+1729172..1729615	-	444	AAL00564.1	-	spr1761	-	-	Conserved hypothetical protein
+1729701..1730321	-	621	AAL00565.1	-	spr1762	-	-	Hypothetical protein
+1730704..1731567	-	864	AAL00566.1	plcR	spr1763	-	-	Transcriptional activator
+1731759..1731929	+	171	AAL00567.1	-	spr1764	-	-	Hypothetical protein
+1732032..1732256	+	225	AAL00568.1	-	spr1765	-	-	Hypothetical protein
+1732263..1732451	+	189	AAL00569.1	-	spr1766	-	-	Hypothetical protein
+1732567..1735557	+	2991	AAL00570.1	cylM	spr1767	-	-	CylM protein, cytolytic toxin system
+1735907..1736611	+	705	AAL00571.1	-	spr1768	-	-	Conserved hypothetical protein
+1736592..1737521	+	930	AAL00572.1	-	spr1769	-	-	Hypothetical protein
+1737518..1739626	+	2109	AAL00573.1	clyB	spr1770	-	-	ABC transporter ATP-binding/membrane-spanning - hemolysin secretion protein
+1739650..1741389	+	1740	AAL00574.1	nisP	spr1771	-	-	Subtilisin-like serine protease
+1741440..1742207	+	768	AAL00575.1	-	spr1772	-	-	Hypothetical protein, truncation
+1742209..1742841	+	633	AAL00576.1	ABC-NBD	spr1773	-	-	ABC transporter ATP-binding protein - unknown substrate
+1742999..1743160	+	162	AAL00577.1	-	spr1774	-	-	Hypothetical protein
+1743787..1744200	-	414	AAL00578.1	ndk	spr1775	-	-	Nucleoside diphosphate kinase
+1744311..1747988	-	3678	AAL00579.1	rpoC	spr1776	-	-	DNA-dependent RNA polymerase
+1748021..1751671	-	3651	AAL00580.1	rpoB	spr1777	-	-	DNA-dependent RNA polymerase subunit beta
+1752316..1753647	-	1332	AAL00581.1	hlyX	spr1778	-	-	Hemolysin
+1753876..1754700	-	825	AAL00582.1	endA	spr1779	-	-	DNA-entry nuclease (competence-specific nuclease)
+1754739..1754945	-	207	AAL00583.1	epuA	spr1780	-	-	Hypothetical protein
+1754920..1756203	-	1284	AAL00584.1	murA	spr1781	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1756515..1757552	-	1038	AAL00585.1	-	spr1782	-	-	Conserved hypothetical protein
+1757536..1758024	-	489	AAL00586.1	kdtB	spr1783	-	-	lipopolysaccharide core biosynthesis protein
+1758014..1758553	-	540	AAL00587.1	-	spr1784	-	-	Conserved hypothetical protein
+1758618..1759616	-	999	AAL00588.1	asnA	spr1785	-	-	Aspartate--ammonia ligase (asparagine synthetase A)
+1759587..1759748	+	162	AAL00589.1	-	spr1786	-	-	Hypothetical protein
+1759722..1760429	-	708	AAL00590.1	-	spr1787	-	-	Conserved hypothetical protein
+1760461..1761219	-	759	AAL00591.1	yjfA	spr1788	-	-	Possible rRNA/tRNA methylase
+1761235..1761513	+	279	AAL00592.1	acyP	spr1789	-	-	Acylphosphate phosphohydrolase
+1761591..1762517	+	927	AAL00593.1	-	spr1790	-	-	Conserved hypothetical protein
+1762592..1763386	-	795	AAL00594.1	pflC	spr1791	-	-	Pyruvate-formate lyase activating enzyme
+1763512..1764762	-	1251	AAL00595.1	lysA	spr1792	-	-	Diaminopimelate decarboxylase
+1764829..1765656	-	828	AAL00596.1	purR	spr1793	-	-	Activator of purine biosynthetic genes
+1765923..1766927	-	1005	AAL00597.1	cbf1	spr1794	-	-	Cmp-binding-factor 1
+1766854..1768152	-	1299	AAL00598.1	-	spr1795	-	-	Conserved hypothetical protein
+1768112..1768795	-	684	AAL00599.1	-	spr1796	-	-	Conserved hypothetical protein
+1768737..1769393	-	657	AAL00600.1	rpe	spr1797	-	-	Pentose-5-phosphate-3-epimerase
+1769404..1770282	-	879	AAL00601.1	-	spr1798	-	-	Conserved hypothetical protein
+1770284..1771156	-	873	AAL00602.1	ksgA	spr1799	-	-	Dimethyladenosine transferase
+1771287..1771601	-	315	AAL00603.1	-	spr1800	-	-	Hypothetical protein
+1771588..1772229	-	642	AAL00604.1	ABC-NBD	spr1801	-	-	ABC transporter ATP-binding protein - unknown substrate
+1772231..1774273	-	2043	AAL00605.1	-	spr1802	-	-	Conserved hypothetical protein
+1774530..1775429	-	900	AAL00606.1	plcR	spr1803	-	-	Transcriptional activator
+1775501..1776061	-	561	AAL00607.1	-	spr1804	-	-	Conserved hypothetical protein
+1776061..1776834	-	774	AAL00608.1	-	spr1805	-	-	Conserved hypothetical protein
+1777140..1777805	-	666	AAL00609.1	-	spr1806	-	-	Hypothetical protein
+1778068..1778202	-	135	AAL00610.1	rpmH	spr1807	-	-	50S Ribosomal protein L34
+1778347..1779561	-	1215	AAL00611.1	aspC	spr1808	-	-	Potential aminotransferase
+1779717..1780025	-	309	AAL00612.1	-	spr1809	-	-	Hypothetical protein
+1780109..1780624	+	516	AAL00613.1	-	spr1810	-	-	Conserved hypothetical protein
+1780659..1782077	-	1419	AAL00614.1	-	spr1811	-	-	Conserved hypothetical protein
+1782113..1783075	+	963	AAL00615.1	ansB	spr1812	-	-	L-asparaginase (L-asparagine amidohydrolase)
+1783327..1784367	-	1041	AAL00616.1	ccpA	spr1813	-	-	Catabolite control protein A
+1784762..1785361	-	600	AAL00617.1	rr11	spr1814	-	-	Response regulator
+1785363..1786460	-	1098	AAL00618.1	hk11	spr1815	-	-	Histidine kinase
+1786460..1787227	-	768	AAL00619.1	-	spr1816	-	-	Conserved hypothetical protein
+1787199..1788083	-	885	AAL00620.1	ABC-NBD	spr1817	-	-	ABC transporter ATP binding protein - unknown substrate
+1788261..1788467	-	207	AAL00621.1	-	spr1818	-	-	Hypothetical protein
+1795146..1795625	-	480	AAL00622.1	comX2	spr1819	-	-	Competence-specific global transcription modulator
+1795747..1796298	-	552	AAL00623.1	nusG	spr1820	-	-	Transcription antitermination factor
+1796338..1796514	-	177	AAL00624.1	secE	spr1821	-	-	Preprotein translocase secE component
+1796524..1796676	-	153	AAL00625.1	rpmG	spr1822	-	-	50S Ribosomal protein L33
+1796729..1798924	-	2196	AAL00626.1	pbp2a	spr1823	-	-	Penicillin-binding protein 2a
+1799011..1799886	+	876	AAL00627.1	rluD	spr1824	-	-	Ribosomal large subunit pseudouridine synthase D
+1799954..1801033	-	1080	AAL00628.1	gapA	spr1825	-	-	Glyceraldehyde 3-phosphate dehydrogenase (phosphorylating)
+1801138..1802118	-	981	AAL00629.1	-	spr1826	-	-	Conserved hypothetical protein
+1802161..1802484	-	324	AAL00630.1	-	spr1827	-	-	Transposase
+1802664..1803011	-	348	AAL00631.1	-	spr1828	-	-	Transposase
+1803124..1804023	-	900	AAL00632.1	nadC	spr1829	-	-	Probable nicotinate-nucleotide pyrophosphorylase
+1804233..1805543	+	1311	AAL00633.1	-	spr1830	-	-	Conserved hypothetical protein
+1805909..1806103	-	195	AAL00634.1	-	spr1831	-	-	Hypothetical protein
+1806563..1807291	-	729	AAL00635.1	-	spr1832	-	-	Conserved hypothetical protein
+1807407..1808858	+	1452	AAL00636.1	bgl2	spr1833	-	-	Beta-glucosidase
+1808876..1810171	+	1296	AAL00637.1	ptcC	spr1834	-	-	Phosphotransferase system system, cellobiose-specific IIC component
+1810176..1810484	+	309	AAL00638.1	ptcB	spr1835	-	-	Phosphotransferase system system, cellobiose-specific IIB component
+1810463..1810789	+	327	AAL00639.1	ptcA	spr1836	-	-	Phosphotransferase system system, cellobiose-specific IIA component
+1811697..1814369	-	2673	AAL00640.1	adhE	spr1837	-	-	Alcohol-acetaldehyde dehydrogenase
+1814648..1815058	-	411	AAL00641.1	-	spr1838	-	-	Hypothetical protein
+1815060..1815488	-	429	AAL00642.1	-	spr1839	-	-	Conserved hypothetical protein
+1815535..1815834	-	300	AAL00643.1	-	spr1840	-	-	Conserved hypothetical protein
+1815951..1817927	-	1977	AAL00644.1	tktA	spr1841	-	-	Transketolase
+1818041..1819132	-	1092	AAL00645.1	-	spr1842	-	-	Conserved hypothetical protein
+1819244..1820917	-	1674	AAL00646.1	-	spr1843	-	-	Conserved hypothetical protein
+1821096..1821800	-	705	AAL00647.1	araD	spr1844	-	-	L-ribulose 5-phosphate 4-epimerase
+1821802..1822665	-	864	AAL00648.1	sga	spr1845	-	-	Hexulose-6-phosphate isomerase
+1822669..1823403	-	735	AAL00649.1	sgh	spr1846	-	-	Hexulose-6-phosphate synthase (HumpS)
+1823351..1823836	-	486	AAL00650.1	PTS-EII	spr1847	-	-	Phosphotransferase system sugar-specific EII component
+1823913..1824194	-	282	AAL00651.1	PTS-EII	spr1848	-	-	Phosphotransferase system sugar-specific EII component
+1824217..1825743	-	1527	AAL00652.1	PTS-EII	spr1849	-	-	Phosphotransferase system sugar-specific EII component
+1825805..1826428	-	624	AAL00653.1	-	spr1850	-	-	Hypothetical protein
+1826479..1827465	-	987	AAL00654.1	-	spr1851	-	-	Hypothetical protein
+1827484..1828314	-	831	AAL00655.1	-	spr1852	-	-	Conserved hypothetical protein
+1828283..1828654	-	372	AAL00656.1	rnpA	spr1853	-	-	Ribonuclease P - protein component
+1828803..1829993	-	1191	AAL00657.1	ackA	spr1854	-	-	Acetate kinase (acetokinase)
+1830044..1830997	-	954	AAL00658.1	-	spr1855	-	-	Conserved hypothetical protein
+1831058..1831438	-	381	AAL00659.1	-	spr1856	-	-	Hypothetical protein
+1831470..1831652	-	183	AAL00660.1	-	spr1857	-	-	Hypothetical protein
+1831789..1832202	-	414	AAL00661.1	-	spr1858	-	-	Hypothetical protein
+1832180..1832686	-	507	AAL00662.1	-	spr1859	-	-	Conserved hypothetical protein
+1832869..1833351	-	483	AAL00663.1	cglD	spr1861	-	-	Competence protein
+1833266..1833592	-	327	AAL00664.1	cglC	spr1862	-	-	Competence protein
+1833594..1834685	-	1092	AAL00665.1	cglB	spr1863	-	-	Competence protein
+1834558..1835499	-	942	AAL00666.1	cglA	spr1864	-	-	Competence protein
+1835575..1835946	-	372	AAL00667.1	-	spr1865	-	-	Conserved hypothetical protein
+1836091..1837149	-	1059	AAL00668.1	adh	spr1866	-	-	Putative alcohol dehydrogenase
+1837312..1838463	-	1152	AAL00669.1	nagA	spr1867	-	-	N-acetylglucosamine-6-phosphate deacetylase
+1838616..1840433	-	1818	AAL00670.1	-	spr1868	-	-	Hypothetical protein
+1840531..1841673	-	1143	AAL00671.1	tgt	spr1869	-	-	tRNA-guanine transglycosylase (guanine insertion enzyme)
+1841803..1842660	+	858	AAL00672.1	-	spr1870	-	-	Hypothetical protein
+1842688..1842903	-	216	AAL00673.1	-	spr1871	-	-	Pyrrolidone carboxyl peptidase, truncation
+1842900..1843214	-	315	AAL00674.1	-	spr1872	-	-	Pyrrolidone carboxyl peptidase, truncation
+1843471..1843770	-	300	AAL00675.1	-	spr1873	-	-	Conserved hypothetical protein
+1843781..1844119	-	339	AAL00676.1	marR	spr1874	-	-	Transcriptional regulator - MarR family
+1844525..1845667	-	1143	AAL00677.1	-	spr1875	-	-	Conserved hypothetical protein
+1845833..1846453	-	621	AAL00678.1	-	spr1876	-	-	Hypothetical protein
+1846457..1847737	-	1281	AAL00679.1	-	spr1877	-	-	Multi antimicrobial extrusion (MATE) family transporter
+1847798..1849282	-	1485	AAL00680.1	thrC	spr1878	-	-	Threonine synthase
+1849358..1850635	-	1278	AAL00681.1	-	spr1879	-	-	Hypothetical protein
+1857099..1857533	-	435	AAL00682.1	-	spr1880	-	-	Conserved hypothetical protein
+1857547..1859007	-	1461	AAL00683.1	gltX	spr1881	-	-	Glutamyl-tRNA synthetase (glutamate--tRNA ligase)
+1859131..1860480	-	1350	AAL00684.1	gpi	spr1882	-	-	Glucose-6-phosphate isomerase
+1860467..1860646	-	180	AAL00685.1	-	spr1883	-	-	Hypothetical protein
+1860650..1861387	-	738	AAL00686.1	guaA	spr1884	-	-	Glutamine amidotransferase
+1861478..1863289	-	1812	AAL00687.1	ABC-NP	spr1885	-	-	ABC transporter ATP-binding/membrane spanning protein - unknown substrate
+1863387..1863701	+	315	AAL00688.1	-	spr1886	-	-	Degenerate transposase
+1864031..1865725	-	1695	AAL00689.1	ABC-NP	spr1887	-	-	ABC transporter ATP-binding/membrane spanning protein - unknown substrate
+1865872..1868445	-	2574	AAL00690.1	hexA	spr1888	-	-	DNA mismatch repair protein HexA
+1868457..1868903	-	447	AAL00691.1	argR	spr1889	-	-	Arginine repressor
+1869051..1870742	+	1692	AAL00692.1	argS	spr1890	-	-	Arginyl-tRNA synthetase(arginine--tRNA ligase) (ARGRS)
+1871057..1871446	-	390	AAL00693.1	IS1381	spr1891	-	-	Tranposase (orf2)
+1871577..1872086	+	510	AAL00694.1	-	spr1892	-	-	Conserved hypothetical protein
+1872170..1872877	+	708	AAL00695.1	phoP pnpR	spr1893	-	-	Response regulator
+1872878..1874209	+	1332	AAL00696.1	phoR pnpS	spr1894	-	-	Histidine kinase
+1874313..1875251	+	939	AAL00697.1	pstS	spr1895	-	-	ABC transporter substrate-binding protein - phosphate transport
+1875369..1876232	+	864	AAL00698.1	pstC	spr1896	-	-	ABC transporter membrane-spanning permease - phosphate transport
+1876225..1877040	+	816	AAL00699.1	pstA	spr1897	-	-	ABC transporter membrane-spanning permease - phosphate transport
+1877042..1877794	+	753	AAL00700.1	pstB	spr1898	-	-	ABC transporter ATP-binding protein - phosphate transport
+1877809..1878459	+	651	AAL00701.1	phoU	spr1899	-	-	Negative regulator of pho regulon for phosphate transport
+1878527..1878943	+	417	AAL00702.1	-	spr1900	-	-	Transposase, IS1380-Spn1 related, truncation
+1879066..1879584	-	519	AAL00703.1	-	spr1901	-	-	Hypothetical protein
+1879718..1880734	+	1017	AAL00704.1	gpdA	spr1902	-	-	Glycerol-3-phosphate dehydrogenase (NAD(P)+)
+1880756..1881655	+	900	AAL00705.1	galU	spr1903	-	-	UTP-glucose-1-phosphate uridylyltransferase
+1881722..1882402	-	681	AAL00706.1	-	spr1904	-	-	Conserved hypothetical protein
+1882383..1882928	-	546	AAL00707.1	-	spr1905	-	-	Conserved hypothetical protein
+1882934..1884064	-	1131	AAL00708.1	hipO	spr1906	-	-	Similar to several hippurate hydrolases and amino acid amidohydrolases; can be a peptidase too
+1884132..1884830	-	699	AAL00709.1	dapD	spr1907	-	-	2,3,4,5-tetrahydropyridine-2-carboxylate N-succinyltransferase-related protein
+1885060..1886193	-	1134	AAL00710.1	-	spr1908	-	-	Conserved hypothetical protein
+1886036..1888501	-	2466	AAL00711.1	pbp1b	spr1909	-	-	Penicillin-binding protein 1b
+1888643..1889899	+	1257	AAL00712.1	tyrS	spr1910	-	-	Tyrosyl-tRNA synthetase 1
+1889977..1892049	-	2073	AAL00713.1	ctpC	spr1911	-	-	P-type ATPase - metal/cation transport
+1892042..1892353	-	312	AAL00714.1	-	spr1912	-	-	Hypothetical protein
+1892472..1893320	+	849	AAL00715.1	rrmA	spr1913	-	-	23S rRNA m1G745 methyltransferase
+1893836..1894042	-	207	AAL00716.1	-	spr1914	-	-	Hypothetical protein
+1894119..1894691	+	573	AAL00717.1	-	spr1915	-	-	Hypothetical protein
+1895736..1897994	-	2259	AAL00718.1	malP	spr1916	-	-	Maltodextrin phosphorylase
+1898020..1899537	-	1518	AAL00719.1	malM	spr1917	-	-	4-alpha-glucanotransferase (amylomaltase)
+1900087..1901358	+	1272	AAL00720.1	malX	spr1918	-	-	ABC transporter substrate-binding protein - maltose/maltodextrin
+1901454..1902761	+	1308	AAL00721.1	malC	spr1919	-	-	ABC transporter membrane-spanning permease - maltose/maltodextrin
+1902742..1903605	+	864	AAL00722.1	malD	spr1920	-	-	ABC transporter membrane-spanning permease - maltose/maltodextrin
+1903858..1904658	+	801	AAL00723.1	malA	spr1921	-	-	MalA protein
+1904668..1905654	+	987	AAL00724.1	malR	spr1922	-	-	Maltose operon transcriptional repressor
+1905946..1906887	-	942	AAL00725.1	-	spr1923	-	-	Conserved hypothetical protein
+1906865..1908628	-	1764	AAL00726.1	aspS	spr1924	-	-	Aspartyl-tRNA synthetase (aspartate-tRNA ligase)
+1908980..1909210	-	231	AAL00727.1	-	spr1925	-	-	Hypothetical protein
+1909228..1909869	-	642	AAL00728.1	-	spr1926	-	-	Hypothetical protein
+1909881..1910621	-	741	AAL00729.1	-	spr1927	-	-	Hypothetical protein
+1910618..1910818	-	201	AAL00730.1	-	spr1928	-	-	Hypothetical protein
+1910815..1911030	-	216	AAL00731.1	-	spr1929	-	-	Conserved hypothetical protein
+1911031..1911495	-	465	AAL00732.1	-	spr1930	-	-	Hypothetical protein
+1911671..1912960	-	1290	AAL00733.1	hisS	spr1931	-	-	Histidyl-tRNA synthetase
+1913038..1914285	-	1248	AAL00734.1	-	spr1932	-	-	Conserved hypothetical protein
+1914475..1915326	-	852	AAL00735.1	rgg	spr1933	-	-	Positive transcriptional regulator of glucosyltransferase and Spp phenotype
+1915450..1915791	+	342	AAL00736.1	-	spr1934	-	-	Conserved hypothetical protein
+1916000..1917703	-	1704	AAL00737.1	ilvD	spr1935	-	-	Dihydroxyacid dehydratase
+1917936..1918868	-	933	AAL00738.1	tktC	spr1936	-	-	Putative transketolase c-terminal section
+1918865..1919722	-	858	AAL00739.1	tktN	spr1937	-	-	Putative transketolase n-terminal section
+1919726..1921072	-	1347	AAL00740.1	-	spr1938	-	-	Conserved hypothetical protein
+1921085..1921369	-	285	AAL00741.1	-	spr1939	-	-	Hypothetical protein
+1921373..1923403	-	2031	AAL00742.1	-	spr1940	-	-	Conserved hypothetical protein
+1923594..1924601	+	1008	AAL00743.1	-	spr1941	-	-	Hypothetical protein
+1924604..1924804	+	201	AAL00744.1	-	spr1942	-	-	Hypothetical protein
+1924956..1925138	+	183	AAL00745.1	rpmF	spr1943	-	-	50S Ribosomal protein L32
+1925154..1925303	+	150	AAL00746.1	rpmG	spr1944	-	-	50S Ribosomal protein L33
+1925783..1927855	-	2073	AAL00747.1	pcpA	spr1945	-	-	Choline-binding protein
+1928212..1928781	+	570	AAL00748.1	-	spr1946	-	-	Degenerate transposase (orf1)
+1928807..1929196	+	390	AAL00749.1	IS1381	spr1947	-	-	Tranposase (orf2)
+1929248..1929574	-	327	AAL00750.1	-	spr1948	-	-	Hypothetical protein
+1929900..1931780	-	1881	AAL00751.1	-	spr1949	-	-	Hypothetical protein
+1931774..1932655	-	882	AAL00752.1	-	spr1950	-	-	Conserved hypothetical protein
+1932727..1935387	-	2661	AAL00753.1	-	spr1951	-	-	Conserved hypothetical protein
+1935463..1936767	-	1305	AAL00754.1	-	spr1952	-	-	Conserved hypothetical protein
+1936914..1938998	+	2085	AAL00755.1	-	spr1953	-	-	Conserved hypothetical protein
+1939038..1940789	-	1752	AAL00756.1	-	spr1954	-	-	Hypothetical protein
+1941478..1942221	+	744	AAL00757.1	-	spr1955	-	-	Arginine deiminase, truncation
+1942262..1942711	+	450	AAL00758.1	-	spr1956	-	-	Arginine deiminase, truncation
+1942769..1943785	+	1017	AAL00759.1	arcB	spr1957	-	-	Ornithine transcarbamoylase
+1943950..1944897	+	948	AAL00760.1	arcC	spr1958	-	-	Carbamate kinase
+1945106..1946617	+	1512	AAL00761.1	-	spr1959	-	-	Conserved hypothetical integral membrane protein
+1946639..1947970	+	1332	AAL00762.1	-	spr1960	-	-	Conserved hypothetical protein
+1948375..1948665	-	291	AAL00763.1	-	spr1961	-	-	Hypothetical protein
+1949304..1950203	-	900	AAL00764.1	-	spr1962	-	-	Conserved hypothetical protein
+1950333..1951484	-	1152	AAL00765.1	adh2	spr1963	-	-	Probable alcohol dehydrogenase
+1951630..1953396	-	1767	AAL00766.1	fucI	spr1964	-	-	L-fucose isomerase
+1953453..1956569	-	3117	AAL00767.1	-	spr1965	-	-	Hypothetical protein
+1956579..1958873	-	2295	AAL00768.1	-	spr1966	-	-	Conserved hypothetical protein
+1958932..1959732	-	801	AAL00769.1	PTS-EII	spr1967	-	-	Phosphotransferase system sugar-specific EII component
+1959729..1960502	-	774	AAL00770.1	PTS-EII	spr1968	-	-	Phosphotransferase system sugar-specific EII component
+1960527..1960997	-	471	AAL00771.1	PTS-EII	spr1969	-	-	Phosphotransferase system sugar-specific EII component
+1960988..1961434	-	447	AAL00772.1	PTS-EII	spr1970	-	-	Phosphotransferase system sugar-specific EII component
+1961412..1961852	-	441	AAL00773.1	fucU	spr1971	-	-	Fucose pathway protein, function unknown
+1961864..1962517	-	654	AAL00774.1	fucA	spr1972	-	-	L-fuculose phosphate aldolase
+1962617..1964065	-	1449	AAL00775.1	fcsK	spr1973	-	-	Fucose kinase
+1964196..1964969	+	774	AAL00776.1	fcsR	spr1974	-	-	Regulator of fucose operon
+1966098..1967603	-	1506	AAL00777.1	adcA	spr1975	-	-	ABC transporter substrate-binding protein - Zinc (Zn2+) transport
+1967613..1968449	-	837	AAL00778.1	adcB	spr1976	-	-	ABC transporter membrane-spanning permease - Zinc (Zn2+) transport
+1968412..1969116	-	705	AAL00779.1	adcC	spr1977	-	-	ABC transporter ATP-binding domain - Zinc (Zn2+) permease
+1969116..1969616	-	501	AAL00780.1	adcR	spr1978	-	-	Transcriptional repressor for Zn(2+)-responsive expression
+1969711..1970994	-	1284	AAL00781.1	dltD	spr1979	-	-	D-alanine transfer from undecaprenol-phosphate to the poly(glycerophosphate) chain
+1970972..1971211	-	240	AAL00782.1	dltC	spr1980	-	-	D-alanyl carrier protein
+1971225..1972469	-	1245	AAL00783.1	dltB	spr1981	-	-	D-alanine transfer from Dcp to undecaprenol-phosphate
+1972466..1973932	-	1467	AAL00784.1	dltA	spr1982	-	-	D-alanine-D-alanyl carrier protein ligase
+1974482..1975660	-	1179	AAL00785.1	-	spr1983	-	-	Conserved hypothetical protein
+1976116..1977108	-	993	AAL00786.1	-	spr1984	-	-	Transposase, uncharacterized, truncation
+1977112..1977393	-	282	AAL00787.1	-	spr1985	-	-	Transposase, uncharacterized, truncation
+1978504..1979091	+	588	AAL00788.1	-	spr1986	-	-	Hypothetical protein
+1979178..1979381	-	204	AAL00789.1	-	spr1987	-	-	Hypothetical protein, truncation
+1979572..1980276	-	705	AAL00790.1	glpF	spr1988	-	-	Glycerol uptake facilitator protein
+1980346..1980843	-	498	AAL00791.1	-	spr1989	-	-	Glycerol-3-phosphate dehydrogenase, truncation
+1980789..1982174	-	1386	AAL00792.1	-	spr1990	-	-	Glycerol-3-phosphate dehydrogenase, truncation
+1982216..1983724	-	1509	AAL00793.1	glpK	spr1991	-	-	Glycerol kinase
+1983883..1985310	-	1428	AAL00794.1	-	spr1992	-	-	Hypothetical protein
+1985475..1986347	+	873	AAL00795.1	hsp33	spr1993	-	-	Chaperonin (heat shock protein 33)
+1986304..1987314	+	1011	AAL00796.1	-	spr1994	-	-	Conserved hypothetical protein
+1987544..1989649	-	2106	AAL00797.1	pspC	spr1995	-	-	Choline binding protein A
+1989728..1990255	-	528	AAL00798.1	-	spr1996	-	-	Conserved hypothetical protein
+1990338..1991669	-	1332	AAL00799.1	hk06	spr1997	-	-	Histidine kinase
+1991666..1992319	-	654	AAL00800.1	rr06	spr1998	-	-	Response regulator
+1992961..1993104	-	144	AAL00801.1	-	spr1999	-	-	Class III stress response-related ATPase, truncation
+1993105..1995393	-	2289	AAL00802.1	-	spr2000	-	-	Class III stress response-related ATPase, truncation
+1995395..1995916	-	522	AAL00803.1	ctsR	spr2001	-	-	Transcriptional regulator CtsR
+1995972..1996700	-	729	AAL00804.1	ABC-NBD	spr2002	-	-	ABC transporter ATP-binding protein - anion transport
+1996700..1997707	-	1008	AAL00805.1	-	spr2003	-	-	Conserved hypothetical protein
+1997745..1998506	-	762	AAL00806.1	ABC-MSP	spr2004	-	-	ABC transporter membrane-spanning permease - unknown substrate
+1998466..1998756	-	291	AAL00807.1	-	spr2005	-	-	Conserved hypothetical protein
+1999012..2000358	-	1347	AAL00808.1	cbpD	spr2006	-	-	Choline binding protein D
+2000447..2000713	-	267	AAL00809.1	-	spr2007	-	-	Conserved hypothetical protein
+2000715..2002067	-	1353	AAL00810.1	dnaC	spr2008	-	-	Replicative DNA helicase
+2002111..2002563	-	453	AAL00811.1	rplI	spr2009	-	-	50S Ribosomal protein subunit L9
+2002560..2004533	-	1974	AAL00812.1	-	spr2010	-	-	Conserved hypothetical protein
+2004669..2005217	-	549	AAL00813.1	-	spr2011	-	-	Conserved hypothetical protein
+2005297..2005959	-	663	AAL00814.1	comFC	spr2012	-	-	Involved in transformation (competence for DNA uptake)
+2005956..2007254	-	1299	AAL00815.1	comFA	spr2013	-	-	Involved in transformation; required for DNA uptake but not for binding; Related to ATP-dependent RNA/DNA helicases
+2007310..2007945	+	636	AAL00816.1	-	spr2014	-	-	Conserved hypothetical protein
+2008230..2009150	+	921	AAL00817.1	cycK	spr2015	-	-	Cysteine synthase, O-acetylserine sulfhydrylase
+2009347..2009616	-	270	AAL00818.1	-	spr2016	-	-	Transposase, uncharacterized, truncation
+2009766..2009945	+	180	AAL00819.1	-	spr2017	-	-	Degenerate transposase
+2010201..2010488	-	288	AAL00820.1	-	spr2018	-	-	Degenerate transposase
+2010734..2011774	-	1041	AAL00821.1	tsf	spr2019	-	-	Elongation factor TS
+2011840..2012619	-	780	AAL00822.1	rpsB	spr2020	-	-	30S Ribosomal protein S2
+2012843..2014021	-	1179	AAL00823.1	gsp-781	spr2021	-	-	General stress protein GSP-781
+2014115..2014609	-	495	AAL00824.1	mreD	spr2022	-	-	Cell-shape determining protein MreD
+2014609..2015427	-	819	AAL00825.1	mreC	spr2023	-	-	Cell shape determining protein MreC
+2015486..2016280	-	795	AAL00826.1	ABC-MSP	spr2024	-	-	ABC transporter membrane-spanning permease - unknown substrate
+2016273..2017112	-	840	AAL00827.1	ABC-NBP	spr2025	-	-	ABC transporter ATP-binding protein - unknown substrate
+2017097..2017924	-	828	AAL00828.1	stpA	spr2026	-	-	ABC transporter ATP-binding protein - unknown substrate
+2017921..2018466	-	546	AAL00829.1	pgsA	spr2027	-	-	Phosphotidylglycerophosphate synthase
+2018477..2019307	-	831	AAL00830.1	-	spr2028	-	-	Conserved hypothetical protein
+2019340..2020623	-	1284	AAL00831.1	-	spr2029	-	-	Conserved hypothetical protein
+2020620..2021870	-	1251	AAL00832.1	-	spr2030	-	-	Conserved hypothetical protein
+2022029..2022397	+	369	AAL00833.1	-	spr2031	-	-	Conserved hypothetical protein
+2022400..2023497	+	1098	AAL00834.1	recF	spr2032	-	-	Recombination protein RecF
+2023548..2025026	-	1479	AAL00835.1	imdH	spr2033	-	-	Inosine-5'-monophosphate dehydrogenase
+2025178..2026203	-	1026	AAL00836.1	trpS	spr2034	-	-	Tryptophanyl-tRNA synthetase
+2026409..2028031	+	1623	AAL00837.1	ABC-NBD	spr2035	-	-	ABC transporter ATP-binding protein - unknown substrate
+2028093..2030645	+	2553	AAL00838.1	-	spr2036	-	-	Conserved hypothetical protein
+2030746..2031060	-	315	AAL00839.1	-	spr2037	-	-	Conserved hypothetical protein, truncation
+2031088..2031426	-	339	AAL00840.1	-	spr2038	-	-	Conserved hypothetical protein, truncation
+2031511..2032278	-	768	AAL00841.1	-	spr2039	-	-	Conserved hypothetical protein, truncation
+2032457..2032999	+	543	AAL00842.1	-	spr2040	-	-	Conserved hypothetical protein
+2033242..2033994	-	753	AAL00843.1	comE	spr2041	-	-	Response regulator
+2033991..2035316	-	1326	AAL00844.1	comD	spr2042	-	-	Histidine protein kinase
+2035337..2035462	-	126	AAL00845.1	comC	spr2043	-	-	Competence stimulating peptide precursor (CSP)
+2035744..2036223	-	480	AAL00846.1	-	spr2044	-	-	Conserved hypothetical protein
+2036394..2037587	+	1194	AAL00847.1	sphtra	spr2045	-	-	Serine protease
+2037645..2038403	+	759	AAL00848.1	spo0J	spr2046	-	-	Chromosome segregation protein

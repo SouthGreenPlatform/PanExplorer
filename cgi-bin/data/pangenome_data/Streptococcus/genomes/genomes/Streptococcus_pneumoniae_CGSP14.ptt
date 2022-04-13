@@ -1,0 +1,2209 @@
+Streptococcus pneumoniae CGSP14, complete genome.
+2206 proteins
+Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
+197..1558	+	1362	ACB89253.1	dnaA	SPCG_0001	-	-	chromosomal replication initiation protein
+1717..2853	+	1137	ACB89254.1	dnaN	SPCG_0002	-	-	DNA polymerase III subunit beta
+2864..3112	+	249	ACB89255.1	-	SPCG_0003	-	-	hypothetical protein
+3187..4311	+	1125	ACB89256.1	-	SPCG_0004	-	-	GTP-binding protein
+4382..4951	+	570	ACB89257.1	pth	SPCG_0005	-	-	peptidyl-tRNA hydrolase
+4952..8461	+	3510	ACB89258.1	mfd	SPCG_0006	-	-	transcription-repair coupling factor
+8519..8785	+	267	ACB89259.1	-	SPCG_0007	-	-	S4 domain protein
+8778..9146	+	369	ACB89260.1	-	SPCG_0008	-	-	hypothetical protein
+9197..10534	+	1338	ACB89261.1	-	SPCG_0009	-	-	hypothetical protein
+10531..11808	+	1278	ACB89262.1	-	SPCG_0010	-	-	mesJ/ycf62 family protein
+11812..12354	+	543	ACB89263.1	hgt	SPCG_0011	-	-	hypoxanthine-guanine phosphoribosyltransferase
+12370..14328	+	1959	ACB89264.1	ftsH	SPCG_0012	-	-	cell division protein FtsH
+14450..14929	+	480	ACB89265.1	comX1	SPCG_0013	-	-	transcriptional regulator ComX1
+20396..20743	+	348	ACB89266.1	-	SPCG_0014	-	-	IS630-Spn1, transposase Orf1
+21451..21588	+	138	ACB89267.1	-	SPCG_0015	-	-	hypothetical protein
+21494..21598	-	105	ACB89268.1	-	SPCG_0016	-	-	hypothetical protein
+21822..22028	-	207	ACB89269.1	-	SPCG_0017	-	-	hypothetical protein
+22338..22580	+	243	ACB89270.1	-	SPCG_0018	-	-	hypothetical protein
+22769..24097	+	1329	ACB89271.1	purA	SPCG_0019	-	-	adenylosuccinate synthetase
+24298..24765	+	468	ACB89272.1	-	SPCG_0020	-	-	cytidine/deoxycytidylate deaminase family protein
+24951..25394	+	444	ACB89273.1	dut	SPCG_0021	-	-	deoxyuridine 5'-triphosphate nucleotidohydrolase
+25354..25911	+	558	ACB89274.1	-	SPCG_0022	-	-	hypothetical protein
+26024..27286	+	1263	ACB89275.1	radA	SPCG_0023	-	-	DNA repair: sensitivity to gamma and UV radiation
+27290..27856	+	567	ACB89276.1	-	SPCG_0024	-	-	hypothetical protein
+27877..28221	+	345	ACB89277.1	-	SPCG_0025	-	-	hypothetical protein
+28203..28754	+	552	ACB89278.1	-	SPCG_0026	-	-	hypothetical protein
+28730..29569	+	840	ACB89279.1	-	SPCG_0027	-	-	IS3-Spn1, transposase
+29575..30135	+	561	ACB89280.1	-	SPCG_0028	-	-	predicted repair protein
+30229..31248	+	1020	ACB89281.1	prsA	SPCG_0029	-	-	ribose-phosphate pyrophosphokinase
+31366..31719	+	354	ACB89282.1	-	SPCG_0030	-	-	hypothetical protein
+31938..32120	+	183	ACB89283.1	-	SPCG_0031	-	-	competence-induced protein Ccs16
+32865..35534	+	2670	ACB89284.1	polA	SPCG_0032	-	-	DNA polymerase I
+35619..36056	+	438	ACB89285.1	-	SPCG_0033	-	-	hypothetical protein
+35958..36563	-	606	ACB89286.1	-	SPCG_0034	-	-	hypothetical protein
+36511..37533	-	1023	ACB89287.1	-	SPCG_0035	-	-	membrane protein
+37670..38839	+	1170	ACB89288.1	-	SPCG_0036	-	-	hypothetical protein
+38770..39486	-	717	ACB89290.1	-	SPCG_0037	-	-	hypothetical protein
+38836..39606	+	771	ACB89289.1	recO	SPCG_0038	-	-	DNA repair protein RecO
+39603..40595	+	993	ACB89291.1	plsX	SPCG_0039	-	-	fatty acid/phospholipid synthesis protein
+40601..40834	+	234	ACB89292.1	acpP	SPCG_0040	-	-	acyl carrier protein, putative
+40877..40969	+	93	ACB89293.1	-	SPCG_0041	-	-	degenerate transposase
+41079..41171	+	93	ACB89294.1	-	SPCG_0042	-	-	degenerate transposase
+41373..41603	+	231	ACB89295.1	-	SPCG_0043	-	-	bacteriocin BlpU
+42291..44471	+	2181	ACB89296.1	comA	SPCG_0044	-	-	competence factor transporting ATP-binding/permease protein ComA
+44484..45833	+	1350	ACB89297.1	comB	SPCG_0045	-	-	competence factor transport protein ComB
+45961..46710	+	750	ACB89298.1	purC	SPCG_0046	-	-	phosphoribosylaminoimidazole-succinocarboxamide synthase
+46909..50637	+	3729	ACB89299.1	purL	SPCG_0047	-	-	phosphoribosylformylglycinamidine synthase, putative
+50730..52172	+	1443	ACB89300.1	purF	SPCG_0048	-	-	amidophosphoribosyltransferase
+52209..53231	+	1023	ACB89301.1	purM	SPCG_0049	-	-	phosphoribosylaminoimidazole synthetase
+53228..53773	+	546	ACB89302.1	purN	SPCG_0050	-	-	phosphoribosylglycinamide formyltransferase
+53857..54366	+	510	ACB89303.1	vanZ	SPCG_0051	-	-	vanZ protein, putative
+54370..55938	+	1569	ACB89304.1	purH	SPCG_0052	-	-	bifunctional phosphoribosylaminoimidazolecarboxamide formyltransferase/IMP cyclohydrolase
+56060..57322	+	1263	ACB89305.1	purD	SPCG_0053	-	-	phosphoribosylamine--glycine ligase
+57579..57695	+	117	ACB89306.1	-	SPCG_0054	-	-	hypothetical protein
+57692..58213	+	522	ACB89307.1	purE	SPCG_0055	-	-	phosphoribosylaminoimidazole carboxylase catalytic subunit
+58161..59291	+	1131	ACB89308.1	purK	SPCG_0056	-	-	phosphoribosylaminoimidazole carboxylase
+59301..59528	+	228	ACB89309.1	-	SPCG_0057	-	-	hypothetical protein
+59591..60889	+	1299	ACB89310.1	purB	SPCG_0058	-	-	adenylosuccinate lyase
+60944..64969	-	4026	ACB89311.1	strH	SPCG_0059	-	-	beta-N-acetylhexosaminidase
+65196..65954	-	759	ACB89312.1	-	SPCG_0060	-	-	transcriptional regulator, GntR family
+66260..68047	+	1788	ACB89313.1	bgaC	SPCG_0061	-	-	beta-galactosidase
+68044..68520	+	477	ACB89314.1	-	SPCG_0062	-	-	PTS system, IIB component
+68548..69453	+	906	ACB89315.1	-	SPCG_0063	-	-	PTS system, IIC component
+69425..70255	+	831	ACB89316.1	-	SPCG_0064	-	-	PTS system, IID component
+70262..70666	+	405	ACB89317.1	-	SPCG_0065	-	-	PTS system, IIA component
+70964..72124	+	1161	ACB89318.1	agaS	SPCG_0066	-	-	sugar isomerase domain protein AgaS
+72246..73283	+	1038	ACB89319.1	galM	SPCG_0067	-	-	aldose 1-epimerase
+73490..74344	+	855	ACB89320.1	-	SPCG_0068	-	-	hypothetical protein
+74494..74751	+	258	ACB89321.1	-	SPCG_0069	-	-	hypothetical protein
+75209..75505	-	297	ACB89322.1	-	SPCG_0070	-	-	rhodanese-like domain protein, putative
+75495..75614	-	120	ACB89323.1	-	SPCG_0071	-	-	hypothetical protein
+75726..76490	+	765	ACB89324.1	-	SPCG_0072	-	-	phosphorylase, Pnp/Udp family
+76746..76886	+	141	ACB89325.1	-	SPCG_0073	-	-	hypothetical protein
+77055..78434	+	1380	ACB89326.1	trkH	SPCG_0074	-	-	potassium uptake protein, Trk family
+78427..79113	+	687	ACB89327.1	trkA	SPCG_0075	-	-	potassium uptake protein, Trk family
+79248..79451	+	204	ACB89328.1	-	SPCG_0076	-	-	hypothetical protein
+79513..80052	+	540	ACB89329.1	-	SPCG_0077	-	-	hypothetical protein
+79930..80499	-	570	ACB89331.1	-	SPCG_0079	-	-	hypothetical protein
+80119..80529	+	411	ACB89330.1	-	SPCG_0078	-	-	hypothetical protein
+80721..84131	+	3411	ACB89332.1	-	SPCG_0080	-	-	cell wall surface anchor family protein
+84298..84996	+	699	ACB89333.1	-	SPCG_0081	-	-	DNA-binding response regulator
+84993..86045	+	1053	ACB89334.1	-	SPCG_0082	-	-	sensor histidine kinase
+86240..86851	+	612	ACB89335.1	rpsD	SPCG_0083	-	-	30S ribosomal protein S4
+87072..87167	-	96	ACB89336.1	-	SPCG_0084	-	-	hypothetical protein
+87238..87507	+	270	ACB89337.1	-	SPCG_0085	-	-	hypothetical protein
+87587..87682	+	96	ACB89338.1	-	SPCG_0086	-	-	hypothetical protein
+87971..88930	+	960	ACB89339.1	-	SPCG_0087	-	-	ABC transporter, permease protein
+88893..89867	+	975	ACB89340.1	-	SPCG_0088	-	-	ABC transporter, permease protein
+89908..91446	+	1539	ACB89341.1	-	SPCG_0089	-	-	ABC transporter, substrate-binding protein
+91718..92704	+	987	ACB89342.1	-	SPCG_0090	-	-	hypothetical protein
+92886..93839	+	954	ACB89343.1	-	SPCG_0091	-	-	hypothetical protein
+93911..94975	-	1065	ACB89344.1	-	SPCG_0092	-	-	hypothetical protein
+95038..96000	-	963	ACB89345.1	-	SPCG_0093	-	-	hypothetical protein
+95942..96535	-	594	ACB89346.1	-	SPCG_0094	-	-	hypothetical protein
+96522..96848	-	327	ACB89347.1	-	SPCG_0095	-	-	hypothetical protein
+96987..98153	-	1167	ACB89348.1	-	SPCG_0096	-	-	transporter, putative
+98211..99368	+	1158	ACB89349.1	-	SPCG_0097	-	-	glycosyl transferase
+99410..101260	+	1851	ACB89350.1	-	SPCG_0098	-	-	capsular polysaccharide biosynthesis protein, putative
+101346..101603	-	258	ACB89351.1	-	SPCG_0099	-	-	hypothetical protein
+101653..102285	-	633	ACB89352.1	-	SPCG_0100	-	-	hydrolase, haloacid dehalogenase-like family
+102307..103179	-	873	ACB89353.1	-	SPCG_0101	-	-	L-serine dehydratase, iron-sulfur-dependent, alpha subunit
+103188..103859	-	672	ACB89354.1	-	SPCG_0102	-	-	L-serine dehydratase, iron-sulfur-dependent, beta subunit
+104101..104688	+	588	ACB89355.1	-	SPCG_0103	-	-	lysM domain protein
+104740..105060	-	321	ACB89356.1	-	SPCG_0104	-	-	hypothetical protein
+105486..105773	+	288	ACB89357.1	-	SPCG_0105	-	-	bacteriocin, putative
+105792..107933	+	2142	ACB89358.1	-	SPCG_0106	-	-	hypothetical protein
+107930..108571	+	642	ACB89359.1	-	SPCG_0107	-	-	amino acid ABC transporter, ATP-binding protein, putative
+108676..109584	+	909	ACB89360.1	-	SPCG_0108	-	-	amino acid ABC transporter, periplasmic amino acid-binding protein, putative
+109550..110020	+	471	ACB89361.1	-	SPCG_0109	-	-	argininosuccinate synthase, truncation
+110309..111208	-	900	ACB89362.1	-	SPCG_0110	-	-	hypothetical protein
+111626..111976	+	351	ACB89363.1	-	SPCG_0111	-	-	transporter, truncation
+111954..112325	+	372	ACB89364.1	-	SPCG_0112	-	-	hypothetical protein
+112919..113044	+	126	ACB89365.1	-	SPCG_0113	-	-	hypothetical protein
+113427..114485	+	1059	ACB89366.1	-	SPCG_0114	-	-	hypothetical protein
+114800..115777	+	978	ACB89367.1	-	SPCG_0115	-	-	hypothetical protein
+116135..116509	+	375	ACB89368.1	-	SPCG_0116	-	-	hypothetical protein
+116717..117619	+	903	ACB89369.1	-	SPCG_0117	-	-	hypothetical protein
+117642..118007	+	366	ACB89370.1	-	SPCG_0118	-	-	hypothetical protein
+117974..118732	+	759	ACB89371.1	-	SPCG_0119	-	-	hypothetical protein
+120255..122084	+	1830	ACB89372.1	pspA	SPCG_0120	-	-	pneumococcal surface protein A
+122431..123606	+	1176	ACB89373.1	trmU	SPCG_0121	-	-	tRNA (5-methylaminomethyl-2-thiouridylate)-methyltransferase
+123720..124202	+	483	ACB89374.1	-	SPCG_0122	-	-	mutT/nudix family protein
+124212..126125	+	1914	ACB89375.1	gidA	SPCG_0123	-	-	glucose-inhibited division protein A
+126478..128157	-	1680	ACB89376.1	-	SPCG_0124	-	-	metallo-beta-lactamase superfamily protein
+128159..128392	-	234	ACB89377.1	-	SPCG_0125	-	-	hypothetical protein
+128672..128779	+	108	ACB89378.1	-	SPCG_0126	-	-	hypothetical protein
+128802..128963	-	162	ACB89379.1	-	SPCG_0127	-	-	competence-induced protein Ccs1, truncated
+129210..129362	-	153	ACB89380.1	-	SPCG_0128	-	-	hypothetical protein
+129364..129549	-	186	ACB89381.1	-	SPCG_0129	-	-	hypothetical protein
+129727..130410	+	684	ACB89382.1	-	SPCG_0130	-	-	hypothetical protein
+130407..130844	+	438	ACB89383.1	rimI	SPCG_0131	-	-	ribosomal-protein-alanine acetyltransferase, putative
+130834..131844	+	1011	ACB89384.1	gcp	SPCG_0132	-	-	glycoprotease family protein
+131884..132270	-	387	ACB89385.1	-	SPCG_0133	-	-	degenerate transposase
+132477..133325	-	849	ACB89386.1	-	SPCG_0134	-	-	degenerate transposase
+134450..135013	+	564	ACB89387.1	-	SPCG_0135	-	-	hypothetical protein
+135141..135602	+	462	ACB89388.1	epsG	SPCG_0136	-	-	glycosyl transferase, putative
+135626..136579	+	954	ACB89389.1	-	SPCG_0137	-	-	glycosyl transferase, family 2
+136589..138205	+	1617	ACB89390.1	-	SPCG_0138	-	-	ABC transporter, ATP-binding protein
+138129..139070	+	942	ACB89391.1	-	SPCG_0139	-	-	hypothetical protein
+139099..140637	+	1539	ACB89392.1	-	SPCG_0140	-	-	hypothetical protein
+140643..141398	+	756	ACB89393.1	-	SPCG_0141	-	-	hypothetical protein
+141411..142583	+	1173	ACB89394.1	ugd	SPCG_0142	-	-	UDP-glucose dehydrogenase
+142954..143841	+	888	ACB89395.1	mutR	SPCG_0143	-	-	transcriptional regulator
+144111..144236	+	126	ACB89396.1	-	SPCG_0144	-	-	hypothetical protein, putative bacteriocin
+144296..147211	+	2916	ACB89397.1	-	SPCG_0145	-	-	lantibiotic biosynthesis protein
+147195..148472	+	1278	ACB89398.1	-	SPCG_0146	-	-	lantibiotic biosynthesis protein
+148501..149757	+	1257	ACB89399.1	-	SPCG_0147	-	-	lantibiotic efflux protein
+149836..150513	+	678	ACB89400.1	-	SPCG_0148	-	-	hypothetical protein
+150525..151190	+	666	ACB89401.1	-	SPCG_0149	-	-	hypothetical protein
+151259..152488	+	1230	ACB89402.1	-	SPCG_0150	-	-	hypothetical protein
+152943..153557	+	615	ACB89403.1	-	SPCG_0151	-	-	hypothetical protein
+153661..154491	+	831	ACB89404.1	-	SPCG_0152	-	-	ABC transporter, substrate-binding protein
+154645..155499	+	855	ACB89405.1	-	SPCG_0153	-	-	lipoprotein
+155596..156969	+	1374	ACB89406.1	-	SPCG_0154	-	-	hypothetical protein
+156962..158023	+	1062	ACB89407.1	-	SPCG_0155	-	-	ABC transporter, ATP-binding protein
+158025..158717	+	693	ACB89408.1	-	SPCG_0156	-	-	ABC transporter, permease protein, putative
+158833..159606	+	774	ACB89409.1	-	SPCG_0157	-	-	transcriptional activator, Rgg/GadR/MutR family protein, C-terminal domain
+159788..159907	+	120	ACB89410.1	-	SPCG_0158	-	-	hypothetical protein
+159930..160244	+	315	ACB89411.1	-	SPCG_0159	-	-	hypothetical protein
+160260..160646	+	387	ACB89412.1	-	SPCG_0160	-	-	hypothetical protein
+160675..162060	+	1386	ACB89413.1	-	SPCG_0161	-	-	hypothetical protein
+162238..163443	+	1206	ACB89414.1	-	SPCG_0162	-	-	Tn916, transcriptional regulator, putative
+163486..163707	+	222	ACB89415.1	-	SPCG_0163	-	-	hypothetical protein
+163824..164321	+	498	ACB89416.1	-	SPCG_0164	-	-	hypothetical protein
+164296..164802	+	507	ACB89417.1	-	SPCG_0165	-	-	hypothetical protein
+164735..167233	+	2499	ACB89418.1	-	SPCG_0166	-	-	hypothetical protein
+167236..169413	+	2178	ACB89419.1	-	SPCG_0167	-	-	hypothetical protein
+169410..170411	+	1002	ACB89420.1	-	SPCG_0168	-	-	hypothetical protein
+170408..171343	+	936	ACB89421.1	-	SPCG_0169	-	-	hypothetical protein
+171618..171704	+	87	ACB89422.1	-	SPCG_0170	-	-	tet(M) leader peptide
+171705..173639	+	1935	ACB89423.1	-	SPCG_0171	-	-	tetracycline resistance protein TetM
+174564..175301	+	738	ACB89424.1	-	SPCG_0172	-	-	rRNA methylase
+175656..176210	+	555	ACB89425.1	-	SPCG_0173	-	-	resolvase
+176214..179132	+	2919	ACB89426.1	-	SPCG_0174	-	-	transposase
+179188..179427	-	240	ACB89427.1	-	SPCG_0175	-	-	hypothetical protein
+179923..180354	+	432	ACB89428.1	-	SPCG_0176	-	-	hypothetical protein
+180351..180581	+	231	ACB89429.1	-	SPCG_0177	-	-	hypothetical protein
+181042..181245	+	204	ACB89430.1	-	SPCG_0178	-	-	hypothetical protein
+181327..182544	+	1218	ACB89431.1	-	SPCG_0179	-	-	hypothetical protein
+182961..184277	+	1317	ACB89432.1	-	SPCG_0180	-	-	hypothetical protein
+184315..184518	+	204	ACB89433.1	-	SPCG_0181	-	-	hypothetical protein
+184713..185375	-	663	ACB89434.1	-	SPCG_0182	-	-	hypothetical protein
+185632..186213	+	582	ACB89435.1	-	SPCG_0183	-	-	hypothetical protein
+186159..186761	+	603	ACB89436.1	-	SPCG_0184	-	-	hypothetical protein
+187054..188361	-	1308	ACB89437.1	-	SPCG_0185	-	-	hypothetical protein
+188626..189084	-	459	ACB89438.1	-	SPCG_0186	-	-	hypothetical protein
+189081..189602	-	522	ACB89439.1	-	SPCG_0187	-	-	hypothetical protein
+189877..191826	+	1950	ACB89440.1	hexB	SPCG_0188	-	-	DNA mismatch repair protein
+192151..192618	-	468	ACB89441.1	ribE	SPCG_0189	-	-	riboflavin synthase, beta subunit
+192619..193854	-	1236	ACB89442.1	ribA	SPCG_0190	-	-	3,4-dihydroxy-2-butanone 4-phosphate synthase/GTP cyclohydrolase II
+193844..194479	-	636	ACB89443.1	ribC	SPCG_0191	-	-	riboflavin synthase subunit alpha
+194464..195564	-	1101	ACB89444.1	ribD	SPCG_0192	-	-	riboflavin biosynthesis protein RibD
+195970..196563	+	594	ACB89445.1	ruvA	SPCG_0193	-	-	holliday junction DNA helicase motor protein
+196219..196776	-	558	ACB89447.1	-	SPCG_0194	-	-	hypothetical protein
+196573..197136	+	564	ACB89446.1	tag	SPCG_0195	-	-	DNA-3-methyladenine glycosylase I
+197133..197810	+	678	ACB89448.1	-	SPCG_0196	-	-	hypothetical protein
+197965..198996	-	1032	ACB89449.1	-	SPCG_0197	-	-	mccC family protein
+199184..199279	-	96	ACB89450.1	-	SPCG_0198	-	-	hypothetical protein
+199251..199955	-	705	ACB89451.1	-	SPCG_0199	-	-	hypothetical protein
+199946..200890	-	945	ACB89452.1	-	SPCG_0200	-	-	magnesium transporter, CorA family
+200989..203853	+	2865	ACB89453.1	uvrA	SPCG_0201	-	-	excinuclease ABC subunit A
+203846..204907	+	1062	ACB89454.1	pepP	SPCG_0202	-	-	peptidase M24 family protein
+205039..205437	+	399	ACB89455.1	spxA	SPCG_0203	-	-	transcriptional regulator Spx
+205503..206072	+	570	ACB89456.1	-	SPCG_0204	-	-	hypothetical protein
+206159..206425	+	267	ACB89457.1	-	SPCG_0205	-	-	hypothetical protein
+206429..206848	+	420	ACB89458.1	-	SPCG_0206	-	-	hypothetical protein
+206864..207169	+	306	ACB89459.1	-	SPCG_0207	-	-	hypothetical protein
+207471..208727	+	1257	ACB89460.1	folC	SPCG_0208	-	-	dihydrofolate synthetase, putative
+208724..209269	+	546	ACB89461.1	-	SPCG_0209	-	-	hypothetical protein
+209415..210947	+	1533	ACB89462.1	cls	SPCG_0210	-	-	cardiolipin synthetase
+211187..212743	+	1557	ACB89463.1	-	SPCG_0211	-	-	competence-induced protein Ccs4
+212857..215070	+	2214	ACB89464.1	-	SPCG_0212	-	-	anaerobic ribonucleoside triphosphate reductase
+215082..215222	+	141	ACB89465.1	-	SPCG_0213	-	-	hypothetical protein
+215266..215772	+	507	ACB89466.1	-	SPCG_0214	-	-	acetyltransferase, GNAT family
+215765..216355	+	591	ACB89467.1	nrdD	SPCG_0215	-	-	anaerobic ribonucleoside-triphosphate reductase activating protein
+216352..216969	+	618	ACB89468.1	-	SPCG_0216	-	-	hypothetical protein
+217236..217544	+	309	ACB89469.1	rpsJ	SPCG_0217	-	-	30S ribosomal protein S10
+217760..218386	+	627	ACB89470.1	rplC	SPCG_0218	-	-	50S ribosomal protein L3
+218411..219034	+	624	ACB89471.1	rplD	SPCG_0219	-	-	50S ribosomal protein L4
+219034..219330	+	297	ACB89472.1	rplW	SPCG_0220	-	-	50S ribosomal protein L23
+219348..220181	+	834	ACB89473.1	rplB	SPCG_0221	-	-	50S ribosomal protein L2
+220273..220554	+	282	ACB89474.1	rpsS	SPCG_0222	-	-	30S ribosomal protein S19
+220566..220910	+	345	ACB89475.1	rplV	SPCG_0223	-	-	50S ribosomal protein L22
+220923..221576	+	654	ACB89476.1	rpsC	SPCG_0224	-	-	30S ribosomal protein S3
+221580..221993	+	414	ACB89477.1	rplP	SPCG_0225	-	-	50S ribosomal protein L16
+222003..222209	+	207	ACB89478.1	rpmC	SPCG_0226	-	-	50S ribosomal protein L29
+222234..222494	+	261	ACB89479.1	rpsQ	SPCG_0227	-	-	30S ribosomal protein S17
+222520..222888	+	369	ACB89480.1	rplN	SPCG_0228	-	-	50S ribosomal protein L14
+222966..223271	+	306	ACB89481.1	rplX	SPCG_0229	-	-	50S ribosomal protein L24
+223295..223837	+	543	ACB89482.1	rplE	SPCG_0230	-	-	50S ribosomal protein L5
+223855..224124	+	270	ACB89483.1	rpsN	SPCG_0231	-	-	ribosomal protein S14
+224338..224736	+	399	ACB89484.1	rpsH	SPCG_0232	-	-	30S ribosomal protein S8
+224928..225464	+	537	ACB89485.1	rplF	SPCG_0233	-	-	50S ribosomal protein L6
+225509..225904	+	396	ACB89486.1	rplR	SPCG_0234	-	-	50S ribosomal protein L18
+225922..226416	+	495	ACB89487.1	rpsE	SPCG_0235	-	-	30S ribosomal protein S5
+226388..226612	+	225	ACB89488.1	rpmD	SPCG_0236	-	-	50S ribosomal protein L30
+226757..227197	+	441	ACB89489.1	rplO	SPCG_0237	-	-	50S ribosomal protein L15
+227210..228520	+	1311	ACB89490.1	secY	SPCG_0238	-	-	preprotein translocase SecY
+228671..229309	+	639	ACB89491.1	adk	SPCG_0239	-	-	adenylate kinase
+229372..229644	+	273	ACB89492.1	infA	SPCG_0240	-	-	translation initiation factor IF-1
+229803..230168	+	366	ACB89493.1	rpsM	SPCG_0241	-	-	30S ribosomal protein S13
+230186..230569	+	384	ACB89494.1	rpsK	SPCG_0242	-	-	30S ribosomal protein S11
+230612..231547	+	936	ACB89495.1	rpoA	SPCG_0243	-	-	DNA-directed RNA polymerase alpha subunit
+231559..231945	+	387	ACB89496.1	rplQ	SPCG_0244	-	-	50S ribosomal protein L17
+232117..232476	+	360	ACB89497.1	-	SPCG_0245	-	-	hypothetical protein
+232523..233824	+	1302	ACB89498.1	-	SPCG_0246	-	-	hypothetical protein
+234011..234760	+	750	ACB89499.1	gpmB	SPCG_0247	-	-	phosphoglycerate mutase family protein
+234863..235897	-	1035	ACB89500.1	-	SPCG_0248	-	-	ABC transporter membrane-spanning permease - iron transport
+235882..236418	-	537	ACB89501.1	-	SPCG_0250	-	-	ABC transporter membrane-spanning permease - iron transport, truncated
+236393..236485	-	93	ACB89503.1	-	SPCG_0249	-	-	hypothetical protein
+236462..236560	+	99	ACB89502.1	-	SPCG_0251	-	-	hypothetical protein
+236498..236902	-	405	ACB89504.1	-	SPCG_0252	-	-	hypothetical protein
+236930..237526	-	597	ACB89505.1	-	SPCG_0253	-	-	hypothetical protein
+237601..237969	-	369	ACB89506.1	-	SPCG_0254	-	-	hypothetical protein
+238114..238707	-	594	ACB89507.1	-	SPCG_0255	-	-	hypothetical protein
+239211..239987	-	777	ACB89508.1	pflE	SPCG_0256	-	-	pyruvate formate-lyase-activating enzyme, putative
+240061..240855	+	795	ACB89509.1	deoR	SPCG_0257	-	-	transcriptional regulator, DeoR family
+240868..241848	+	981	ACB89510.1	-	SPCG_0258	-	-	transcriptional regulator
+242043..242363	+	321	ACB89511.1	-	SPCG_0259	-	-	PTS system, IIA component
+242409..242717	+	309	ACB89512.1	-	SPCG_0260	-	-	PTS system, IIB component
+242710..244032	+	1323	ACB89513.1	-	SPCG_0261	-	-	PTS system, IIC component
+244174..246621	+	2448	ACB89514.1	pflF	SPCG_0262	-	-	formate acetyltransferase, putative
+246640..247308	+	669	ACB89515.1	talC	SPCG_0263	-	-	fructose-6-phosphate aldolase
+247326..248414	+	1089	ACB89516.1	gldA	SPCG_0264	-	-	glycerol dehydrogenase
+248869..251370	+	2502	ACB89517.1	leuS	SPCG_0265	-	-	leucyl-tRNA synthetase
+251565..252260	+	696	ACB89518.1	-	SPCG_0266	-	-	acetyltransferase, GNAT family
+252272..252688	+	417	ACB89519.1	-	SPCG_0267	-	-	acetyltransferase, GNAT family
+253503..253595	-	93	ACB89520.1	-	SPCG_0268	-	-	hypothetical protein
+253729..254727	+	999	ACB89521.1	ruvB	SPCG_0269	-	-	holliday junction DNA helicase RuvB
+254693..255280	+	588	ACB89522.1	-	SPCG_0270	-	-	hypothetical protein
+255493..256269	+	777	ACB89523.1	uppS	SPCG_0271	-	-	undecaprenyl diphosphate synthase
+256278..257081	+	804	ACB89524.1	cdsA	SPCG_0272	-	-	phosphatidate cytidylyltransferase
+257103..258362	+	1260	ACB89525.1	eep	SPCG_0273	-	-	eep protein
+258375..260228	+	1854	ACB89526.1	proS	SPCG_0274	-	-	prolyl-tRNA synthetase
+260327..261706	+	1380	ACB89527.1	-	SPCG_0275	-	-	glycosyl hydrolase, family 1
+261899..263707	+	1809	ACB89528.1	glmS	SPCG_0276	-	-	D-fructose-6-phosphate amidotransferase
+263826..264875	+	1050	ACB89529.1	-	SPCG_0277	-	-	oxidoreductase, putative
+264975..268772	-	3798	ACB89530.1	-	SPCG_0278	-	-	alkaline amylopullulanase, putative
+268849..270405	+	1557	ACB89531.1	-	SPCG_0279	-	-	IS1380-Spn1 transposase
+270667..270762	+	96	ACB89532.1	-	SPCG_0280	-	-	hypothetical protein
+270818..270910	+	93	ACB89533.1	-	SPCG_0281	-	-	hypothetical protein
+270897..271310	+	414	ACB89534.1	rpsL	SPCG_0282	-	-	30S ribosomal protein S12
+271330..271800	+	471	ACB89535.1	rpsG	SPCG_0283	-	-	30S ribosomal protein S7
+272225..274306	+	2082	ACB89536.1	fusA	SPCG_0284	-	-	elongation factor EF-2
+274410..278801	+	4392	ACB89537.1	polC	SPCG_0285	-	-	DNA polymerase III subunit alpha
+278903..279166	+	264	ACB89538.1	-	SPCG_0286	-	-	hypothetical protein
+279159..279437	+	279	ACB89539.1	-	SPCG_0287	-	-	hypothetical protein
+279458..279610	+	153	ACB89540.1	-	SPCG_0288	-	-	hypothetical protein
+279632..280873	+	1242	ACB89541.1	pepS	SPCG_0289	-	-	aminopeptidase PepS
+280883..281113	+	231	ACB89542.1	-	SPCG_0290	-	-	hypothetical protein
+281369..282091	+	723	ACB89543.1	rsuA	SPCG_0291	-	-	ribosomal small subunit pseudouridine synthase A
+282308..283642	+	1335	ACB89544.1	pepC	SPCG_0292	-	-	aminopeptidase C
+283698..284609	-	912	ACB89545.1	manN	SPCG_0293	-	-	PTS system, mannose-specific IID component
+284633..285436	-	804	ACB89546.1	manM	SPCG_0294	-	-	PTS system, mannose-specific IIC component
+285464..286462	-	999	ACB89547.1	manL	SPCG_0295	-	-	PTS system, mannose-specific IIAB components
+286862..288469	-	1608	ACB89548.1	-	SPCG_0296	-	-	IS1380-Spn1 transposase
+288396..289415	-	1020	ACB89549.1	adhP	SPCG_0297	-	-	alcohol dehydrogenase
+289524..289670	-	147	ACB89550.1	-	SPCG_0298	-	-	hypothetical protein
+289754..290566	-	813	ACB89551.1	-	SPCG_0299	-	-	Cof family protein
+290702..292174	+	1473	ACB89552.1	-	SPCG_0300	-	-	xanthine/uracil permease family protein
+292224..292934	+	711	ACB89553.1	-	SPCG_0301	-	-	hypothetical protein
+293028..294008	+	981	ACB89554.1	sulA	SPCG_0302	-	-	dihydropteroate synthase
+294010..295332	+	1323	ACB89555.1	sulB	SPCG_0303	-	-	dihydrofolate synthetase
+295313..295867	+	555	ACB89556.1	folE	SPCG_0304	-	-	GTP cyclohydrolase I
+295910..296722	+	813	ACB89557.1	sulD	SPCG_0305	-	-	bifunctional folate synthesis protein
+296767..297138	-	372	ACB89558.1	-	SPCG_0306	-	-	hypothetical protein
+297128..297232	-	105	ACB89559.1	-	SPCG_0307	-	-	hypothetical protein
+297441..297887	+	447	ACB89560.1	rplM	SPCG_0308	-	-	50S ribosomal protein L13
+297907..298299	+	393	ACB89561.1	rpsI	SPCG_0309	-	-	30S ribosomal protein S9
+298767..298937	+	171	ACB89562.1	-	SPCG_0310	-	-	hypothetical protein
+299013..299351	+	339	ACB89563.1	-	SPCG_0311	-	-	hypothetical protein
+299499..300977	+	1479	ACB89564.1	bglA	SPCG_0312	-	-	6-phospho-beta-glucosidase
+301029..301268	+	240	ACB89565.1	-	SPCG_0313	-	-	hypothetical protein
+301371..301712	+	342	ACB89566.1	-	SPCG_0314	-	-	PTS system, IIB component
+301830..303809	+	1980	ACB89567.1	-	SPCG_0315	-	-	PTS system, IIB component
+303819..304133	+	315	ACB89568.1	-	SPCG_0316	-	-	PTS system, IIA component
+304164..304670	+	507	ACB89569.1	-	SPCG_0317	-	-	hypothetical protein
+304750..306096	+	1347	ACB89570.1	-	SPCG_0318	-	-	PTS system, IIC component
+306477..306653	+	177	ACB89571.1	-	SPCG_0319	-	-	hypothetical protein
+307055..309268	+	2214	ACB89572.1	-	SPCG_0320	-	-	glycosyl hydrolase, family 31
+309490..309966	-	477	ACB89573.1	basA	SPCG_0321	-	-	glutathione peroxidase
+310156..313392	+	3237	ACB89574.1	-	SPCG_0322	-	-	hyaluronidase
+314536..315165	-	630	ACB89575.1	kdgA	SPCG_0323	-	-	keto-hydroxyglutarate-aldolase/keto-deoxy- phosphogluconate aldolase
+315175..316176	-	1002	ACB89576.1	-	SPCG_0324	-	-	carbohydrate kinase, PfkB family
+316207..316848	-	642	ACB89577.1	-	SPCG_0325	-	-	hypothetical protein
+316867..317682	-	816	ACB89578.1	gno	SPCG_0326	-	-	gluconate 5-dehydrogenase
+317954..318388	+	435	ACB89579.1	-	SPCG_0327	-	-	PTS system, IIA component
+318400..319590	+	1191	ACB89580.1	-	SPCG_0328	-	-	glucuronyl hydrolase
+319601..320092	+	492	ACB89581.1	-	SPCG_0329	-	-	PTS system, IIB component
+320107..320886	+	780	ACB89582.1	-	SPCG_0330	-	-	PTS system, IIC component
+320873..321691	+	819	ACB89583.1	-	SPCG_0331	-	-	PTS system, IID component
+321691..321984	+	294	ACB89584.1	-	SPCG_0332	-	-	preprotein translocase, YajC subunit
+322006..323907	+	1902	ACB89585.1	-	SPCG_0333	-	-	hypothetical protein
+323901..324968	+	1068	ACB89586.1	regR	SPCG_0334	-	-	sugar binding transcriptional regulator RegR
+325424..325666	-	243	ACB89587.1	-	SPCG_0335	-	-	hypothetical protein
+325682..325876	-	195	ACB89588.1	yorfE	SPCG_0336	-	-	transcriptional regulator, putative
+326042..326992	+	951	ACB89589.1	mraW	SPCG_0337	-	-	S-adenosyl-methyltransferase MraW
+327004..327321	+	318	ACB89590.1	ftsL	SPCG_0338	-	-	cell division protein FtsL
+327325..329577	+	2253	ACB89591.1	pbp2X	SPCG_0339	-	-	penicillin-binding protein 2X
+329579..330559	+	981	ACB89592.1	mraY	SPCG_0340	-	-	phospho-N-acetylmuramoyl-pentapeptide- transferase
+330699..330887	+	189	ACB89593.1	-	SPCG_0341	-	-	hypothetical protein
+331168..333273	+	2106	ACB89594.1	clpL	SPCG_0342	-	-	ATP-dependent Clp protease, ATP-binding subunit, putative
+334126..334608	-	483	ACB89595.1	luxS	SPCG_0343	-	-	S-ribosylhomocysteinase
+334703..336187	-	1485	ACB89596.1	-	SPCG_0344	-	-	hypothetical protein
+336340..337947	+	1608	ACB89597.1	dexB	SPCG_0345	-	-	glucan 1,6-alpha-glucosidase
+339007..340461	+	1455	ACB89598.1	wzg	SPCG_0346	-	-	capsular polysaccharide biosynthesis protein Cps14A
+340463..341194	+	732	ACB89599.1	wzh	SPCG_0347	-	-	capsular polysaccharide biosynthesis protein Cps14B
+341203..341895	+	693	ACB89600.1	wzd	SPCG_0348	-	-	capsular polysaccharide biosynthesis protein Cps14C
+341905..342588	+	684	ACB89601.1	wze	SPCG_0349	-	-	capsular polysaccharide biosynthesis protein Cps14D
+342604..343971	+	1368	ACB89602.1	wchA	SPCG_0350	-	-	glucosyl-1-phosphate transferase
+343975..344424	+	450	ACB89603.1	wchJ	SPCG_0351	-	-	putative glycosyltransferase activity enhancer
+344424..344927	+	504	ACB89604.1	wchK	SPCG_0352	-	-	ss-1,4-galactosyltransferase
+344917..346089	+	1173	ACB89605.1	wzy	SPCG_0353	-	-	putative polysaccharide polymerase
+346086..347105	+	1020	ACB89606.1	wchL	SPCG_0354	-	-	ss-1,3-N-acetylglucosaminyltransferase
+347075..348076	+	1002	ACB89607.1	wchM	SPCG_0355	-	-	ss-1,4-galactosyltransferase
+348144..349013	+	870	ACB89608.1	wchN	SPCG_0356	-	-	capsular polysaccharide synthesis protein
+348997..350469	+	1473	ACB89609.1	wzx	SPCG_0357	-	-	putative repeating unit transporter
+350621..350713	+	93	ACB89610.1	-	SPCG_0358	-	-	hypothetical protein
+350730..351047	+	318	ACB89611.1	-	SPCG_0359	-	-	hypothetical protein
+351407..353770	+	2364	ACB89612.1	lrp	SPCG_0360	-	-	putative surface anchored protein
+353925..354452	-	528	ACB89613.1	-	SPCG_0361	-	-	degenerate transposase
+354733..355251	-	519	ACB89614.1	-	SPCG_0362	-	-	degenerate transposase
+355487..357472	+	1986	ACB89615.1	aliA	SPCG_0363	-	-	oligopeptide ABC transporter, oligopeptide-binding protein AliA
+357773..363076	+	5304	ACB89616.1	-	SPCG_0364	-	-	cell wall surface anchor family protein
+363243..365402	-	2160	ACB89617.1	pbp1A	SPCG_0365	-	-	penicillin-binding protein 1A
+365399..365995	-	597	ACB89619.1	-	SPCG_0366	-	-	hypothetical protein
+365978..366589	+	612	ACB89618.1	-	SPCG_0367	-	-	hypothetical protein
+366647..367000	+	354	ACB89620.1	-	SPCG_0368	-	-	hypothetical protein
+367471..368643	+	1173	ACB89621.1	-	SPCG_0369	-	-	hypothetical protein
+368656..370050	+	1395	ACB89622.1	-	SPCG_0370	-	-	hypothetical protein
+370105..371550	+	1446	ACB89623.1	gnd	SPCG_0371	-	-	6-phosphogluconate dehydrogenase
+371562..372251	+	690	ACB89624.1	csrR	SPCG_0372	-	-	DNA-binding response regulator
+372260..373348	+	1089	ACB89625.1	cbpJ	SPCG_0373	-	-	choline binding protein J
+373466..374722	-	1257	ACB89626.1	-	SPCG_0374	-	-	hypothetical protein
+374857..375327	-	471	ACB89627.1	-	SPCG_0375	-	-	hypothetical protein
+376699..377577	+	879	ACB89628.1	mvk	SPCG_0376	-	-	mevalonate kinase
+377559..378512	+	954	ACB89629.1	mvd1	SPCG_0377	-	-	diphosphomevalonate decarboxylase
+378499..379506	+	1008	ACB89630.1	mvaK2	SPCG_0378	-	-	phosphomevalonate kinase
+379490..380500	+	1011	ACB89631.1	fni	SPCG_0379	-	-	isopentenyl pyrophosphate isomerase
+380577..381275	+	699	ACB89632.1	-	SPCG_0380	-	-	hypothetical protein
+381272..382267	+	996	ACB89633.1	-	SPCG_0381	-	-	sensor histidine kinase, putative
+382281..382913	+	633	ACB89634.1	-	SPCG_0382	-	-	DNA-binding response regulator
+382914..383156	+	243	ACB89635.1	-	SPCG_0383	-	-	hypothetical protein
+383138..383392	+	255	ACB89636.1	-	SPCG_0384	-	-	DNA alkylation repair enzyme, truncation
+383411..383683	+	273	ACB89637.1	-	SPCG_0385	-	-	DNA alkylation repair enzyme, truncation
+383833..384072	+	240	ACB89638.1	-	SPCG_0386	-	-	hypothetical protein
+384069..384974	+	906	ACB89639.1	cbpG	SPCG_0387	-	-	choline binding protein G
+384993..385418	+	426	ACB89640.1	-	SPCG_0388	-	-	hypothetical protein
+385536..386015	+	480	ACB89641.1	-	SPCG_0389	-	-	hypothetical protein
+386143..386328	-	186	ACB89642.1	-	SPCG_0390	-	-	degenerate transposase
+386276..386506	-	231	ACB89643.1	-	SPCG_0391	-	-	degenerate transposase
+386568..386840	-	273	ACB89644.1	-	SPCG_0392	-	-	degenerate transposase
+387066..387341	-	276	ACB89645.1	-	SPCG_0393	-	-	degenerate transposase
+387487..389256	+	1770	ACB89646.1	mtlA	SPCG_0394	-	-	PTS system, mannitol-specific IIBC components
+389280..391235	+	1956	ACB89647.1	-	SPCG_0395	-	-	transcriptional regulator, putative
+391237..391674	+	438	ACB89648.1	mtlF	SPCG_0396	-	-	PTS system, mannitol-specific IIA component
+391736..392872	+	1137	ACB89649.1	mtlD	SPCG_0397	-	-	mannitol-1-phosphate 5-dehydrogenase
+393088..393246	+	159	ACB89650.1	-	SPCG_0398	-	-	hypothetical protein
+393716..394999	+	1284	ACB89651.1	tig	SPCG_0399	-	-	trigger factor
+395047..397413	-	2367	ACB89652.1	recD	SPCG_0400	-	-	helicase, putative
+397647..398261	-	615	ACB89653.1	spi	SPCG_0401	-	-	signal peptidase I
+398273..399145	-	873	ACB89654.1	-	SPCG_0402	-	-	ribonuclease HIII
+399223..399534	+	312	ACB89655.1	-	SPCG_0403	-	-	hypothetical protein
+399531..400079	+	549	ACB89656.1	-	SPCG_0404	-	-	hypothetical protein
+400183..402519	+	2337	ACB89657.1	mutS2	SPCG_0405	-	-	mutS2 family protein
+402640..402741	-	102	ACB89658.1	-	SPCG_0406	-	-	hypothetical protein
+402862..404184	+	1323	ACB89659.1	dagA	SPCG_0407	-	-	sodium:alanine symporter family protein
+404402..404950	+	549	ACB89660.1	mip	SPCG_0408	-	-	hypothetical protein
+405048..405959	+	912	ACB89661.1	shetA	SPCG_0409	-	-	exfoliative toxin, putative
+405984..407342	-	1359	ACB89662.1	serS	SPCG_0410	-	-	seryl-tRNA synthetase
+407472..407843	-	372	ACB89663.1	-	SPCG_0411	-	-	hypothetical protein
+407846..409210	-	1365	ACB89664.1	lysC	SPCG_0412	-	-	aspartate kinase
+409579..410349	+	771	ACB89665.1	phaB	SPCG_0413	-	-	enoyl-CoA hydratase
+410459..410893	+	435	ACB89666.1	-	SPCG_0414	-	-	transcriptional regulator, MarR family
+410893..411867	+	975	ACB89667.1	fabH	SPCG_0415	-	-	3-oxoacyl-(acyl carrier protein) synthase
+411927..412151	+	225	ACB89668.1	acp	SPCG_0416	-	-	acyl carrier protein
+412270..413244	+	975	ACB89669.1	fabK	SPCG_0417	-	-	enoyl-(acyl-carrier-protein) reductase
+413237..414157	+	921	ACB89670.1	fabD	SPCG_0418	-	-	acyl-carrier-protein S-malonyltransferase
+414191..414922	+	732	ACB89671.1	fabG	SPCG_0419	-	-	3-ketoacyl-(acyl-carrier-protein) reductase
+414935..416179	+	1245	ACB89672.1	fabF	SPCG_0420	-	-	3-oxoacyl-(acyl carrier protein) synthase
+416182..416667	+	486	ACB89673.1	accB	SPCG_0421	-	-	acetyl-CoA carboxylase
+416664..417086	+	423	ACB89674.1	fabZ	SPCG_0422	-	-	(3R)-hydroxymyristoyl ACP dehydratase
+417098..418465	+	1368	ACB89675.1	accC	SPCG_0423	-	-	acetyl-CoA carboxylase
+418502..419368	+	867	ACB89676.1	accD	SPCG_0424	-	-	acetyl-CoA carboxylase beta subunit
+419365..420132	+	768	ACB89677.1	accA	SPCG_0425	-	-	acetyl-CoA carboxylase alpha subunit
+420329..420580	+	252	ACB89678.1	-	SPCG_0426	-	-	hypothetical protein
+421370..421810	-	441	ACB89679.1	nusB	SPCG_0427	-	-	transcription antitermination protein NusB
+421785..422174	-	390	ACB89680.1	-	SPCG_0428	-	-	hypothetical protein
+422196..422756	-	561	ACB89681.1	efp	SPCG_0429	-	-	elongation factor P
+422885..424327	-	1443	ACB89682.1	gatB	SPCG_0430	-	-	aspartyl/glutamyl-tRNA amidotransferase subunit B
+424327..425793	-	1467	ACB89683.1	gatA	SPCG_0431	-	-	glutamyl-tRNA amidotransferase subunit A
+425793..426155	-	363	ACB89684.1	gatC	SPCG_0432	-	-	aspartyl/glutamyl-tRNA amidotransferase subunit C
+426308..427852	+	1545	ACB89685.1	prfC	SPCG_0433	-	-	peptide chain release factor 3
+428107..428304	+	198	ACB89686.1	-	SPCG_0434	-	-	hypothetical protein
+428415..428591	+	177	ACB89687.1	-	SPCG_0435	-	-	hypothetical protein
+428707..428895	+	189	ACB89688.1	rpmB	SPCG_0436	-	-	50S ribosomal protein L28
+429052..429417	+	366	ACB89689.1	asp23	SPCG_0437	-	-	hypothetical protein
+429420..431087	+	1668	ACB89690.1	-	SPCG_0438	-	-	hypothetical protein
+431288..432988	+	1701	ACB89691.1	ilvB	SPCG_0439	-	-	acetolactate synthase large subunit
+432957..433457	+	501	ACB89692.1	ilvN	SPCG_0440	-	-	acetolactate synthase small subunit
+433523..434545	+	1023	ACB89693.1	ilvC	SPCG_0441	-	-	ketol-acid reductoisomerase
+434622..434888	+	267	ACB89694.1	-	SPCG_0442	-	-	hypothetical protein
+435126..435482	+	357	ACB89695.1	-	SPCG_0443	-	-	hypothetical protein
+435532..436782	+	1251	ACB89696.1	ilvA	SPCG_0444	-	-	threonine dehydratase
+436924..437112	+	189	ACB89697.1	-	SPCG_0445	-	-	hypothetical protein
+437666..437881	+	216	ACB89698.1	-	SPCG_0446	-	-	hypothetical protein
+437990..438730	-	741	ACB89699.1	glnQ	SPCG_0447	-	-	amino acid ABC transporter, ATP-binding protein
+438730..440295	-	1566	ACB89700.1	glnH	SPCG_0448	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+440430..442322	+	1893	ACB89701.1	-	SPCG_0449	-	-	hypothetical protein
+442319..442489	-	171	ACB89702.1	-	SPCG_0450	-	-	hypothetical protein
+442701..443171	-	471	ACB89703.1	-	SPCG_0451	-	-	degenerate transposase
+443747..444592	+	846	ACB89704.1	-	SPCG_0452	-	-	bacitracin resistance protein/undecaprenol kinase, putative
+444631..445275	-	645	ACB89705.1	-	SPCG_0453	-	-	degenerate transposase
+445272..445922	-	651	ACB89706.1	-	SPCG_0454	-	-	degenerate transposase
+446159..447286	-	1128	ACB89707.1	dinP	SPCG_0455	-	-	DNA polymerase IV
+447568..449892	+	2325	ACB89708.1	pfl	SPCG_0456	-	-	formate acetyltransferase
+450260..450607	-	348	ACB89709.1	-	SPCG_0457	-	-	hypothetical protein
+450805..451089	-	285	ACB89710.1	-	SPCG_0458	-	-	hypothetical protein
+452664..452888	+	225	ACB89711.1	-	SPCG_0459	-	-	PTS system, lactose-specific IIBC components, truncated
+453013..454452	-	1440	ACB89712.1	trkH	SPCG_0460	-	-	potassium uptake protein, Trk family
+454456..455805	-	1350	ACB89713.1	trkA	SPCG_0461	-	-	potassium uptake protein, Trk family
+455966..456841	+	876	ACB89714.1	-	SPCG_0462	-	-	hypothetical protein
+456856..457404	+	549	ACB89715.1	-	SPCG_0463	-	-	hypothetical protein
+457411..457668	+	258	ACB89716.1	-	SPCG_0464	-	-	hypothetical protein
+457770..459452	+	1683	ACB89717.1	-	SPCG_0465	-	-	ABC transporter, ATP-binding protein
+459437..460267	+	831	ACB89718.1	-	SPCG_0466	-	-	hypothetical protein
+460421..460963	+	543	ACB89719.1	cspR	SPCG_0467	-	-	RNA methyltransferase, TrmH family
+461401..461979	+	579	ACB89720.1	-	SPCG_0468	-	-	hypothetical protein
+461969..462619	+	651	ACB89721.1	-	SPCG_0469	-	-	PAP2 family protein
+462647..463036	+	390	ACB89722.1	-	SPCG_0470	-	-	hypothetical protein
+463041..463490	+	450	ACB89723.1	-	SPCG_0471	-	-	hypothetical protein
+463603..464205	+	603	ACB89724.1	rpoE	SPCG_0472	-	-	DNA-directed RNA polymerase subunit delta
+464595..466202	+	1608	ACB89725.1	pyrG	SPCG_0473	-	-	CTP synthetase
+466761..468392	-	1632	ACB89726.1	-	SPCG_0474	-	-	Na/Pi cotransporter II-related protein
+468594..468704	+	111	ACB89727.1	-	SPCG_0475	-	-	hypothetical protein
+468685..473664	+	4980	ACB89728.1	-	SPCG_0476	-	-	endo-beta-N-acetylglucosaminidase, putative
+473754..474950	+	1197	ACB89729.1	pgk	SPCG_0477	-	-	phosphoglycerate kinase
+475086..475613	+	528	ACB89730.1	-	SPCG_0478	-	-	hypothetical protein
+475690..476046	+	357	ACB89731.1	glnR	SPCG_0479	-	-	transcriptional regulator, MerR family
+476083..477429	+	1347	ACB89732.1	glnA	SPCG_0480	-	-	glutamine synthetase, type I
+477902..478039	+	138	ACB89733.1	-	SPCG_0481	-	-	hypothetical protein
+478210..479502	+	1293	ACB89734.1	hsdS	SPCG_0482	-	-	type I restriction-modification system, S subunit
+479450..481000	-	1551	ACB89735.1	hsdS	SPCG_0483	-	-	type I restriction-modification system, S subunit
+481000..482463	-	1464	ACB89736.1	hsdM	SPCG_0484	-	-	type I restriction-modification system, M subunit
+482476..484809	-	2334	ACB89737.1	hsdR	SPCG_0485	-	-	type I restriction-modification system, R subunit
+485159..485287	-	129	ACB89738.1	-	SPCG_0486	-	-	hypothetical protein
+485488..485925	+	438	ACB89739.1	-	SPCG_0487	-	-	hypothetical protein
+486056..487123	+	1068	ACB89740.1	hrcA	SPCG_0488	-	-	heat-inducible transcription repressor
+487126..487674	+	549	ACB89741.1	grpE	SPCG_0489	-	-	heat shock protein GrpE
+488154..489977	+	1824	ACB89742.1	dnaK	SPCG_0490	-	-	molecular chaperone DnaK
+491122..492258	+	1137	ACB89743.1	-	SPCG_0491	-	-	dnaJ protein
+492948..493235	-	288	ACB89744.1	-	SPCG_0492	-	-	hypothetical protein
+493245..493655	-	411	ACB89745.1	-	SPCG_0493	-	-	HIT family protein
+493723..494454	+	732	ACB89746.1	-	SPCG_0494	-	-	ABC transporter, ATP-binding protein
+494451..495500	+	1050	ACB89747.1	-	SPCG_0495	-	-	ABC transporter, permease protein, putative
+495668..495997	-	330	ACB89748.1	blpT	SPCG_0496	-	-	blpT protein, fusion
+496274..496612	+	339	ACB89749.1	blpS	SPCG_0497	-	-	blpS protein
+496617..497354	+	738	ACB89750.1	-	SPCG_0498	-	-	response regulator BlpR
+497368..498708	+	1341	ACB89751.1	-	SPCG_0499	-	-	sensor histidine kinase BlpH, putative
+498965..500326	-	1362	ACB89752.1	-	SPCG_0500	-	-	blpC ABC transporter
+500337..502496	-	2160	ACB89753.1	-	SPCG_0501	-	-	competence factor transporting ATP-binding/permease protein ComA
+502771..503001	+	231	ACB89754.1	blpU	SPCG_0502	-	-	bacteriocin BlpU
+503581..503985	+	405	ACB89755.1	blpL	SPCG_0503	-	-	immunity protein BlpL
+504183..504371	+	189	ACB89756.1	-	SPCG_0504	-	-	IS1381 transposase protein A, truncation
+504599..504988	+	390	ACB89757.1	-	SPCG_0505	-	-	IS1381 transposase protein B
+505190..505444	+	255	ACB89758.1	blpM	SPCG_0506	-	-	bacteriocin BlpM
+505460..505663	+	204	ACB89759.1	blpN	SPCG_0507	-	-	blpN protein
+505895..506056	+	162	ACB89760.1	blpO	SPCG_0508	-	-	bacteriocin BlpO
+507050..507448	+	399	ACB89761.1	blpX	SPCG_0509	-	-	immunity protein BlpX
+507500..508189	+	690	ACB89762.1	blpY	SPCG_0510	-	-	immunity protein BlpY
+508231..508464	+	234	ACB89763.1	blpZ	SPCG_0511	-	-	blpZ protein, fusion
+508615..509226	+	612	ACB89764.1	-	SPCG_0512	-	-	hypothetical protein
+509387..510181	+	795	ACB89765.1	-	SPCG_0513	-	-	hypothetical protein
+510178..510813	+	636	ACB89766.1	-	SPCG_0514	-	-	tRNA (guanine-N(7)-)-methyltransferase
+510868..511419	+	552	ACB89767.1	-	SPCG_0515	-	-	hypothetical protein
+511463..512599	+	1137	ACB89768.1	nusA	SPCG_0516	-	-	transcription elongation factor NusA
+512621..512914	+	294	ACB89769.1	-	SPCG_0517	-	-	hypothetical protein
+512907..513206	+	300	ACB89770.1	-	SPCG_0518	-	-	hypothetical protein
+513223..516015	+	2793	ACB89771.1	infB	SPCG_0519	-	-	translation initiation factor IF-2
+516239..516616	+	378	ACB89772.1	rbfA	SPCG_0520	-	-	ribosome-binding factor A
+516859..517674	+	816	ACB89773.1	-	SPCG_0521	-	-	hypothetical protein
+518045..518278	-	234	ACB89774.1	-	SPCG_0522	-	-	hypothetical protein
+518297..518542	+	246	ACB89775.1	-	SPCG_0523	-	-	hypothetical protein
+518542..519876	+	1335	ACB89776.1	-	SPCG_0524	-	-	hypothetical protein
+519886..520140	+	255	ACB89777.1	-	SPCG_0525	-	-	hypothetical protein
+520236..520631	+	396	ACB89778.1	-	SPCG_0526	-	-	hypothetical protein
+521004..521438	+	435	ACB89779.1	-	SPCG_0527	-	-	hypothetical protein
+521272..521841	+	570	ACB89780.1	-	SPCG_0528	-	-	hypothetical protein
+521478..522038	+	561	ACB89781.1	-	SPCG_0529	-	-	acetyltransferase, GNAT family
+522023..522616	+	594	ACB89782.1	-	SPCG_0530	-	-	hypothetical protein
+522609..525260	+	2652	ACB89783.1	valS	SPCG_0531	-	-	valyl-tRNA synthetase
+525341..525505	+	165	ACB89784.1	-	SPCG_0532	-	-	type II DNA modification methyltransferase, truncation
+525453..525548	-	96	ACB89785.1	-	SPCG_0533	-	-	hypothetical protein
+525556..527160	+	1605	ACB89786.1	-	SPCG_0534	-	-	hypothetical protein
+527540..528343	+	804	ACB89787.1	-	SPCG_0535	-	-	cell filamentation protein Fic-related protein
+528459..529040	-	582	ACB89788.1	-	SPCG_0536	-	-	IS3-Spn1 transposase, truncation
+529517..529729	-	213	ACB89789.1	-	SPCG_0537	-	-	degenerate transposase
+530200..531348	+	1149	ACB89790.1	-	SPCG_0538	-	-	hypothetical protein
+531444..531539	+	96	ACB89791.1	-	SPCG_0539	-	-	hypothetical protein
+531564..532106	+	543	ACB89792.1	-	SPCG_0540	-	-	hypothetical protein
+532130..532762	+	633	ACB89793.1	-	SPCG_0541	-	-	hypothetical protein
+533062..533901	+	840	ACB89794.1	licT	SPCG_0542	-	-	transcription antiterminator Lict
+533919..535757	+	1839	ACB89795.1	-	SPCG_0543	-	-	PTS system, beta-glucosides-specific IIABC components
+535770..537185	+	1416	ACB89796.1	-	SPCG_0544	-	-	6-phospho-beta-glucosidase
+537695..538822	+	1128	ACB89797.1	pheS	SPCG_0545	-	-	phenylalanyl-tRNA synthetase alpha subunit
+538822..539331	+	510	ACB89798.1	-	SPCG_0546	-	-	acetyltransferase, GNAT family
+539408..541813	+	2406	ACB89799.1	pheT	SPCG_0547	-	-	phenylalanyl-tRNA synthetase beta subunit
+541881..542882	-	1002	ACB89800.1	-	SPCG_0548	-	-	hypothetical protein
+543038..543532	+	495	ACB89801.1	-	SPCG_0549	-	-	IS1239 transposase, truncation
+543611..543877	+	267	ACB89802.1	-	SPCG_0550	-	-	transcriptional regulator, putative
+543958..546387	+	2430	ACB89803.1	metE	SPCG_0551	-	-	5-methyltetrahydropteroyltriglutamate-- homocysteine methyltransferase
+546451..547317	+	867	ACB89804.1	metF	SPCG_0552	-	-	5,10-methylenetetrahydrofolate reductase, putative
+547888..550215	+	2328	ACB89805.1	pnpA	SPCG_0553	-	-	polyribonucleotide nucleotidyltransferase
+550231..550848	+	618	ACB89806.1	cysE	SPCG_0554	-	-	serine acetyltransferase
+550860..551744	+	885	ACB89807.1	-	SPCG_0555	-	-	acetyltransferase, GNAT family
+551831..553174	+	1344	ACB89808.1	cysS	SPCG_0556	-	-	cysteinyl-tRNA synthetase
+553167..553553	+	387	ACB89809.1	-	SPCG_0557	-	-	hypothetical protein
+553557..554441	+	885	ACB89810.1	-	SPCG_0558	-	-	leucine-rich protein
+554905..555282	+	378	ACB89811.1	-	SPCG_0559	-	-	hypothetical protein
+555953..557230	+	1278	ACB89812.1	-	SPCG_0560	-	-	transmembrane protein Vexp1
+557243..557890	+	648	ACB89813.1	-	SPCG_0561	-	-	ABC transporter, ATP-binding protein Vexp2
+557942..559321	+	1380	ACB89814.1	-	SPCG_0562	-	-	transmembrane protein Vexp3
+559492..559584	+	93	ACB89815.1	pep27	SPCG_0563	-	-	pep27 protein
+559633..560289	+	657	ACB89816.1	vncR	SPCG_0564	-	-	DNA-binding response regulator VncR
+560286..561614	+	1329	ACB89817.1	vncS	SPCG_0565	-	-	sensor histidine kinase VncS
+561755..562636	+	882	ACB89818.1	fba	SPCG_0566	-	-	fructose-bisphosphate aldolase
+562957..564159	-	1203	ACB89819.1	-	SPCG_0567	-	-	oxidoreductase, putative
+564442..565101	-	660	ACB89820.1	-	SPCG_0568	-	-	amino acid ABC transporter, permease protein
+565111..565788	-	678	ACB89821.1	-	SPCG_0569	-	-	amino acid ABC transporter, permease protein
+565801..566682	-	882	ACB89822.1	-	SPCG_0570	-	-	amino acid ABC transporter, amino acid-binding protein
+566606..567376	-	771	ACB89823.1	-	SPCG_0571	-	-	amino acid ABC transporter, ATP-binding protein
+567629..569863	+	2235	ACB89824.1	recJ	SPCG_0572	-	-	single-stranded-DNA-specific exonuclease RecJ
+570038..571699	+	1662	ACB89825.1	-	SPCG_0573	-	-	metallo-beta-lactamase superfamily protein
+571768..572547	+	780	ACB89826.1	estA	SPCG_0574	-	-	tributyrin esterase
+572660..573880	+	1221	ACB89827.1	murM	SPCG_0575	-	-	beta-lactam resistance factor
+573885..575117	+	1233	ACB89828.1	murN	SPCG_0576	-	-	beta-lactam resistance factor
+575175..575897	+	723	ACB89829.1	-	SPCG_0577	-	-	hypothetical protein
+575937..577784	+	1848	ACB89830.1	uvrC	SPCG_0578	-	-	excinuclease ABC subunit C
+577834..578271	+	438	ACB89831.1	-	SPCG_0579	-	-	hypothetical protein
+578272..578607	+	336	ACB89832.1	-	SPCG_0580	-	-	hypothetical protein
+578791..579606	-	816	ACB89833.1	-	SPCG_0581	-	-	amino acid ABC transporter, amino acid-binding protein, putative
+579665..579775	+	111	ACB89834.1	-	SPCG_0582	-	-	hypothetical protein
+579762..580367	+	606	ACB89835.1	nrd	SPCG_0583	-	-	nitroreductase family protein
+580380..581780	+	1401	ACB89836.1	pepV	SPCG_0584	-	-	dipeptidase
+581834..582412	+	579	ACB89837.1	-	SPCG_0585	-	-	hypothetical protein
+582536..582724	+	189	ACB89838.1	-	SPCG_0586	-	-	hypothetical protein
+583015..584355	+	1341	ACB89839.1	brnQ	SPCG_0587	-	-	branched-chain amino acid transport system II carrier protein
+584559..585596	+	1038	ACB89840.1	-	SPCG_0588	-	-	hypothetical protein
+585565..586068	+	504	ACB89841.1	-	SPCG_0589	-	-	HIT family protein
+586071..586787	+	717	ACB89842.1	-	SPCG_0590	-	-	hypothetical protein
+587096..587521	+	426	ACB89843.1	rplK	SPCG_0591	-	-	50S ribosomal protein L11
+587729..588418	+	690	ACB89844.1	rplA	SPCG_0592	-	-	50S ribosomal protein L1
+589020..589532	+	513	ACB89845.1	-	SPCG_0593	-	-	hypothetical protein
+590577..591569	+	993	ACB89846.1	-	SPCG_0594	-	-	ABC transporter, ATP-binding protein
+591529..592389	+	861	ACB89847.1	-	SPCG_0595	-	-	membrane protein
+592391..593176	+	786	ACB89848.1	-	SPCG_0596	-	-	hypothetical protein
+593274..593492	+	219	ACB89849.1	-	SPCG_0597	-	-	hypothetical protein
+593429..593638	+	210	ACB89850.1	-	SPCG_0598	-	-	hypothetical protein
+594362..600796	+	6435	ACB89851.1	prtA	SPCG_0599	-	-	serine protease, subtilase family
+601407..601904	+	498	ACB89852.1	-	SPCG_0600	-	-	PTS system IIA component, putative
+601942..602247	+	306	ACB89853.1	-	SPCG_0601	-	-	PTS system, IIB component, putative
+602295..603770	+	1476	ACB89854.1	-	SPCG_0602	-	-	PTS system, IIC component, putative
+604120..610821	+	6702	ACB89855.1	bgaA	SPCG_0603	-	-	beta-galactosidase
+611131..611685	-	555	ACB89856.1	-	SPCG_0604	-	-	degenerate transposase
+611673..611918	-	246	ACB89857.1	-	SPCG_0605	-	-	degenerate transposase
+612129..612449	-	321	ACB89859.1	-	SPCG_0606	-	-	hypothetical protein
+612424..613089	+	666	ACB89858.1	-	SPCG_0607	-	-	hypothetical protein
+613090..613536	+	447	ACB89860.1	-	SPCG_0608	-	-	Predicted Fe-S oxidoreductase
+613514..614077	+	564	ACB89861.1	-	SPCG_0609	-	-	hypothetical protein
+614101..614325	+	225	ACB89862.1	-	SPCG_0610	-	-	hypothetical protein
+614300..614401	+	102	ACB89863.1	-	SPCG_0611	-	-	hypothetical protein
+614376..616391	+	2016	ACB89864.1	-	SPCG_0612	-	-	sodium/hydrogen exchanger family protein
+616555..617430	+	876	ACB89865.1	-	SPCG_0613	-	-	ribonuclease BN, putative
+617641..618351	+	711	ACB89866.1	ccdA	SPCG_0614	-	-	cytochrome c-type biogenesis protein CcdA
+618344..618937	+	594	ACB89867.1	-	SPCG_0615	-	-	thioredoxin family protein
+618948..620060	+	1113	ACB89868.1	msrA	SPCG_0616	-	-	bifunctional methionine sulfoxide reductase A/B protein
+620400..621155	+	756	ACB89869.1	-	SPCG_0617	-	-	DNA-binding response regulator
+621152..622843	+	1692	ACB89870.1	-	SPCG_0618	-	-	sensor histidine kinase, putative
+622938..623522	+	585	ACB89871.1	-	SPCG_0619	-	-	hypothetical protein
+623544..629486	+	5943	ACB89872.1	zmpB	SPCG_0620	-	-	zinc metalloprotease ZmpB, putative
+629547..631268	+	1722	ACB89873.1	-	SPCG_0621	-	-	chorismate binding enzyme
+631269..631877	+	609	ACB89874.1	-	SPCG_0622	-	-	hypothetical protein
+631936..632934	+	999	ACB89875.1	-	SPCG_0623	-	-	pneumococcal surface protein, putative
+633043..634020	+	978	ACB89876.1	glcK	SPCG_0624	-	-	glucokinase
+634117..634956	+	840	ACB89877.1	thyA	SPCG_0625	-	-	thymidylate synthase
+635004..635174	-	171	ACB89879.1	-	SPCG_0626	-	-	hypothetical protein
+635050..635238	+	189	ACB89878.1	-	SPCG_0627	-	-	hypothetical protein
+635244..636179	+	936	ACB89880.1	miaA	SPCG_0628	-	-	tRNA delta(2)-isopentenylpyrophosphate transferase
+636172..637410	+	1239	ACB89881.1	-	SPCG_0629	-	-	GTP-binding protein HflX
+637403..638026	+	624	ACB89882.1	-	SPCG_0630	-	-	hypothetical protein
+638041..638970	+	930	ACB89883.1	-	SPCG_0631	-	-	ribonuclease Z
+638991..639746	+	756	ACB89884.1	-	SPCG_0632	-	-	oxidoreductase, short chain dehydrogenase/reductase family
+639800..640798	-	999	ACB89886.1	-	SPCG_0633	-	-	transcriptional regulator, putative
+640772..641041	+	270	ACB89885.1	-	SPCG_0634	-	-	hypothetical protein
+641041..641421	+	381	ACB89887.1	-	SPCG_0635	-	-	hypothetical protein
+641540..641737	+	198	ACB89888.1	-	SPCG_0636	-	-	hypothetical protein
+641777..642502	-	726	ACB89889.1	rsuA	SPCG_0637	-	-	ribosomal small subunit pseudouridine synthase A
+642643..644505	+	1863	ACB89890.1	-	SPCG_0638	-	-	elongation factor Tu family protein
+644525..644779	+	255	ACB89891.1	-	SPCG_0639	-	-	hypothetical protein
+645326..645442	+	117	ACB89892.1	-	SPCG_0640	-	-	hypothetical protein
+645513..647534	+	2022	ACB89893.1	-	SPCG_0641	-	-	hypothetical protein
+647536..648177	+	642	ACB89894.1	-	SPCG_0642	-	-	ABC transporter, ATP-binding protein
+648281..649633	+	1353	ACB89895.1	murD	SPCG_0643	-	-	UDP-N-acetylmuramoyl-L-alanyl-D-glutamate synthetase
+649635..650693	+	1059	ACB89896.1	murG	SPCG_0644	-	-	N-acetylglucosaminyl transferase
+650703..651902	+	1200	ACB89897.1	divIB	SPCG_0645	-	-	cell division protein DivIB
+652012..652158	+	147	ACB89898.1	-	SPCG_0646	-	-	hypothetical protein
+652170..652301	+	132	ACB89899.1	-	SPCG_0647	-	-	hypothetical protein
+652642..653490	+	849	ACB89900.1	-	SPCG_0648	-	-	hypothetical protein
+653820..654560	+	741	ACB89901.1	-	SPCG_0649	-	-	HesA/MoeB/ThiF family protein
+655000..655875	+	876	ACB89902.1	-	SPCG_0650	-	-	ABC transporter ATP-binding protein - unknown substrate
+655868..656581	+	714	ACB89903.1	-	SPCG_0651	-	-	hypothetical protein
+656855..656998	-	144	ACB89904.1	-	SPCG_0652	-	-	hypothetical protein
+657316..658017	+	702	ACB89905.1	pyrF	SPCG_0653	-	-	orotidine 5'-phosphate decarboxylase
+658051..658683	+	633	ACB89906.1	pyrE	SPCG_0654	-	-	orotate phosphoribosyltransferase
+659362..660126	+	765	ACB89907.1	-	SPCG_0655	-	-	hypothetical protein
+660881..661585	+	705	ACB89908.1	-	SPCG_0656	-	-	hypothetical protein
+661582..662229	+	648	ACB89909.1	-	SPCG_0657	-	-	ABC transporter, ATP-binding protein
+662309..663169	-	861	ACB89910.1	-	SPCG_0658	-	-	amino acid (glutamine) ABC transporter substrate binding protein
+663181..663939	-	759	ACB89911.1	-	SPCG_0659	-	-	amino acid ABC transporter, ATP-binding protein
+663940..664857	-	918	ACB89912.1	-	SPCG_0660	-	-	amino acid ABC transporter, permease protein
+664890..665036	+	147	ACB89913.1	-	SPCG_0661	-	-	hypothetical protein
+665164..666654	+	1491	ACB89914.1	lysS	SPCG_0662	-	-	lysyl-tRNA synthetase
+667278..668414	+	1137	ACB89915.1	lctO	SPCG_0663	-	-	lactate oxidase
+668971..669639	+	669	ACB89916.1	-	SPCG_0664	-	-	transcriptional regulator, putative
+669636..669881	-	246	ACB89917.1	-	SPCG_0665	-	-	hypothetical protein
+669944..670747	+	804	ACB89918.1	thiM	SPCG_0666	-	-	hydroxyethylthiazole kinase
+670749..671378	+	630	ACB89919.1	thiE	SPCG_0667	-	-	thiamine-phosphate pyrophosphorylase
+671937..672497	+	561	ACB89920.1	-	SPCG_0668	-	-	hypothetical protein
+672498..673883	+	1386	ACB89921.1	-	SPCG_0669	-	-	ABC transporter, ATP-binding protein
+673885..674535	+	651	ACB89922.1	-	SPCG_0670	-	-	hypothetical protein
+674546..675238	+	693	ACB89923.1	tenA	SPCG_0671	-	-	transcriptional activator TenA
+675243..675767	+	525	ACB89924.1	-	SPCG_0672	-	-	hypothetical protein
+675764..676570	+	807	ACB89925.1	thiM	SPCG_0673	-	-	hydroxyethylthiazole kinase, putative
+676563..677195	+	633	ACB89926.1	thiE	SPCG_0674	-	-	thiamine-phosphate pyrophosphorylase
+677405..678196	-	792	ACB89927.1	thiD	SPCG_0675	-	-	phosphomethylpyrimidine kinase
+678532..678957	+	426	ACB89928.1	copY	SPCG_0676	-	-	transcriptional repressor, putative
+678968..679339	+	372	ACB89929.1	-	SPCG_0677	-	-	hypothetical protein
+679340..681592	+	2253	ACB89930.1	ctpA	SPCG_0678	-	-	cation-transporting ATPase, E1-E2 family
+681799..683574	+	1776	ACB89931.1	spxB	SPCG_0679	-	-	pyruvate oxidase
+683685..684032	+	348	ACB89932.1	-	SPCG_0680	-	-	hypothetical protein
+684244..684660	-	417	ACB89933.1	-	SPCG_0681	-	-	hypothetical protein
+684689..684955	-	267	ACB89934.1	-	SPCG_0682	-	-	hypothetical protein
+685292..685387	-	96	ACB89935.1	-	SPCG_0683	-	-	hypothetical protein
+685452..685733	+	282	ACB89936.1	-	SPCG_0684	-	-	6-phospho-beta-glucosidase, truncation
+685811..686809	+	999	ACB89937.1	-	SPCG_0685	-	-	mannose-6-phosphate isomerase
+686793..686996	+	204	ACB89938.1	-	SPCG_0686	-	-	hypothetical protein
+686830..688089	-	1260	ACB89939.1	-	SPCG_0687	-	-	sodium-dependent transporter
+688086..688313	-	228	ACB89940.1	-	SPCG_0688	-	-	hypothetical protein
+688412..689152	+	741	ACB89941.1	-	SPCG_0689	-	-	transcriptional regulator, MerR family
+689181..689636	-	456	ACB89942.1	-	SPCG_0690	-	-	mutT/nudix family protein
+689656..690849	-	1194	ACB89943.1	-	SPCG_0691	-	-	hypothetical protein
+690890..691735	-	846	ACB89944.1	-	SPCG_0692	-	-	hypothetical protein
+691860..692417	+	558	ACB89945.1	-	SPCG_0693	-	-	transcriptional regulator, TetR family
+692436..692903	+	468	ACB89946.1	-	SPCG_0694	-	-	cytidine and deoxycytidylate deaminase family protein
+692971..693621	+	651	ACB89947.1	-	SPCG_0695	-	-	uracil phosphoribosyltransferase
+693794..694384	+	591	ACB89948.1	-	SPCG_0696	-	-	ATP-dependent Clp protease proteolytic subunit
+694381..694479	-	99	ACB89950.1	-	SPCG_0697	-	-	hypothetical protein
+694463..694711	+	249	ACB89949.1	-	SPCG_0698	-	-	hypothetical protein
+694813..695973	+	1161	ACB89951.1	-	SPCG_0699	-	-	branched-chain amino acid ABC transporter, amino acid-binding protein
+696232..697110	+	879	ACB89952.1	-	SPCG_0700	-	-	branched-chain amino acid ABC transporter, permease protein
+697114..698070	+	957	ACB89953.1	-	SPCG_0701	-	-	branched-chain amino acid ABC transporter, permease protein
+698070..698834	+	765	ACB89954.1	-	SPCG_0702	-	-	branched-chain amino acid ABC transporter, ATP-binding protein
+698834..699544	+	711	ACB89955.1	-	SPCG_0703	-	-	branched-chain amino acid ABC transporter, ATP-binding protein
+699958..700614	+	657	ACB89956.1	-	SPCG_0704	-	-	acetoin utilization protein AcuB, putative
+700828..701817	+	990	ACB89957.1	prfB	SPCG_0705	-	-	peptide chain release factor 2
+701835..702527	+	693	ACB89958.1	ftsE	SPCG_0706	-	-	cell division ABC transporter, ATP-binding protein FtsE
+702457..703446	+	990	ACB89959.1	ftsX	SPCG_0707	-	-	cell division ABC transporter, permease protein FtsX
+703732..705912	+	2181	ACB89960.1	ptsG	SPCG_0708	-	-	PTS system, IIABC components
+705918..706037	+	120	ACB89961.1	-	SPCG_0709	-	-	hypothetical protein
+706030..706779	+	750	ACB89962.1	-	SPCG_0710	-	-	hypothetical protein
+706919..708262	+	1344	ACB89963.1	rheB	SPCG_0711	-	-	ATP-dependent RNA helicase, DEAD/DEAH box family
+708477..709667	+	1191	ACB89964.1	metK	SPCG_0712	-	-	S-adenosylmethionine synthetase
+710220..711155	+	936	ACB89965.1	-	SPCG_0713	-	-	dihydroorotate dehydrogenase
+711189..712226	+	1038	ACB89966.1	holA	SPCG_0714	-	-	DNA polymerase III subunit delta
+712399..713004	+	606	ACB89967.1	sodA	SPCG_0715	-	-	superoxide dismutase, manganese-dependent
+713162..713692	+	531	ACB89968.1	-	SPCG_0716	-	-	hypothetical protein
+713713..714798	+	1086	ACB89969.1	-	SPCG_0717	-	-	hypothetical protein
+714798..715280	+	483	ACB89970.1	-	SPCG_0718	-	-	vanZF-related protein
+715282..716823	+	1542	ACB89971.1	-	SPCG_0719	-	-	ABC transporter, ATP-binding protein
+716879..717682	-	804	ACB89972.1	ppiA	SPCG_0720	-	-	peptidyl-prolyl cis-trans isomerase, cyclophilin-type
+717766..717978	-	213	ACB89973.1	-	SPCG_0721	-	-	hypothetical protein
+718457..718666	-	210	ACB89974.1	-	SPCG_0722	-	-	hypothetical protein
+718836..719123	+	288	ACB89975.1	rpsP	SPCG_0723	-	-	30S ribosomal protein S16
+719127..719366	+	240	ACB89976.1	-	SPCG_0724	-	-	KH domain protein
+719931..720731	+	801	ACB89977.1	-	SPCG_0725	-	-	hypothetical protein
+720762..721280	+	519	ACB89978.1	rimM	SPCG_0726	-	-	16S rRNA-processing protein
+721270..721989	+	720	ACB89979.1	trmD	SPCG_0727	-	-	tRNA (guanine-N(1)-)-methyltransferase
+722001..722339	+	339	ACB89980.1	-	SPCG_0728	-	-	ATP cone domain-containing protein
+722370..722690	-	321	ACB89981.1	-	SPCG_0729	-	-	hypothetical protein
+722764..723003	+	240	ACB89982.1	-	SPCG_0730	-	-	hypothetical protein
+723000..723128	-	129	ACB89983.1	-	SPCG_0731	-	-	hypothetical protein
+723255..723791	-	537	ACB89984.1	-	SPCG_0732	-	-	hypothetical protein
+723964..725334	-	1371	ACB89985.1	gor	SPCG_0733	-	-	glutathione reductase
+725620..726819	+	1200	ACB89986.1	-	SPCG_0734	-	-	hypothetical protein
+726803..727504	+	702	ACB89987.1	-	SPCG_0735	-	-	ABC transporter, ATP-binding protein
+727506..728765	+	1260	ACB89988.1	-	SPCG_0736	-	-	hypothetical protein
+728847..730886	+	2040	ACB89989.1	metG	SPCG_0737	-	-	methionine--tRNA ligase
+731259..731582	+	324	ACB89990.1	-	SPCG_0738	-	-	hypothetical protein
+731586..732401	+	816	ACB89991.1	-	SPCG_0739	-	-	hypothetical protein
+732473..733402	+	930	ACB89992.1	-	SPCG_0740	-	-	oxidoreductase, aldo/keto reductase family
+733468..733734	+	267	ACB89993.1	-	SPCG_0741	-	-	hypothetical protein
+733727..734425	+	699	ACB89994.1	fabG	SPCG_0742	-	-	3-ketoacyl-(acyl-carrier-protein) reductase
+734436..734936	+	501	ACB89995.1	-	SPCG_0743	-	-	mutT/nudix family protein
+734911..735783	+	873	ACB89996.1	-	SPCG_0744	-	-	PEP-utilizing enzyme family protein
+735758..736198	+	441	ACB89997.1	-	SPCG_0745	-	-	hypothetical protein
+736321..738867	+	2547	ACB89998.1	pepN	SPCG_0746	-	-	aminopeptidase N
+738910..739650	+	741	ACB89999.1	ciaR	SPCG_0747	-	-	DNA-binding response regulator CiaR
+739640..740974	+	1335	ACB90000.1	ciaH	SPCG_0748	-	-	sensor histidine kinase CiaH
+741008..741295	-	288	ACB90002.1	-	SPCG_0749	-	-	hypothetical protein
+741294..742364	+	1071	ACB90001.1	-	SPCG_0750	-	-	hypothetical protein
+742564..745014	+	2451	ACB90003.1	dinG	SPCG_0751	-	-	ATP-dependent DNA helicase
+745024..746274	+	1251	ACB90004.1	rodA	SPCG_0752	-	-	rod shape-determining protein RodA, putative
+746285..746839	+	555	ACB90005.1	thiJ	SPCG_0753	-	-	4-methyl-5(b-hydroxyethyl)-thiazole monophosphate biosynthesis protein, putative
+746915..747487	+	573	ACB90006.1	gph	SPCG_0754	-	-	hydrolase, haloacid dehalogenase-like family
+747502..749448	+	1947	ACB90007.1	gyrB	SPCG_0755	-	-	DNA gyrase subunit B
+749503..751257	+	1755	ACB90008.1	ezrA	SPCG_0756	-	-	septation ring formation regulator EzrA
+751788..751883	+	96	ACB90009.1	-	SPCG_0757	-	-	hypothetical protein
+751981..752196	-	216	ACB90010.1	-	SPCG_0758	-	-	IS66 family element, Orf2
+752564..752863	-	300	ACB90011.1	-	SPCG_0759	-	-	hypothetical protein
+753028..753492	-	465	ACB90012.1	-	SPCG_0760	-	-	mutT/nudix family protein
+753542..753958	+	417	ACB90013.1	-	SPCG_0761	-	-	IS630-Spn1, transposase Orf1
+754612..756870	-	2259	ACB90014.1	clpE	SPCG_0762	-	-	ATP-dependent Clp protease, ATP-binding subunit ClpE
+757099..757329	-	231	ACB90015.1	-	SPCG_0763	-	-	hypothetical protein
+757513..758202	+	690	ACB90016.1	-	SPCG_0764	-	-	amino acid ABC transporter, permease protein
+758202..758936	+	735	ACB90017.1	-	SPCG_0765	-	-	amino acid ABC transporter, ATP-binding protein
+759027..759947	+	921	ACB90018.1	-	SPCG_0766	-	-	methylenetetrahydrofolate dehydrogenase/methenyltetrahydrofolate cyclohydrolase
+760085..760906	+	822	ACB90019.1	-	SPCG_0767	-	-	hypothetical protein
+760921..761793	+	873	ACB90020.1	-	SPCG_0768	-	-	hypothetical protein
+761790..761915	-	126	ACB90021.1	-	SPCG_0769	-	-	hypothetical protein
+762018..762758	+	741	ACB90022.1	rpiA	SPCG_0770	-	-	ribose-5-phosphate isomerase A
+762709..763983	+	1275	ACB90023.1	deoB	SPCG_0771	-	-	phosphopentomutase
+763985..764158	+	174	ACB90024.1	-	SPCG_0772	-	-	hypothetical protein
+764273..764542	+	270	ACB90025.1	-	SPCG_0773	-	-	hypothetical protein
+764542..765351	+	810	ACB90026.1	pnp	SPCG_0774	-	-	purine nucleoside phosphorylase
+765815..766222	+	408	ACB90027.1	-	SPCG_0775	-	-	hypothetical protein
+766232..766807	+	576	ACB90028.1	-	SPCG_0776	-	-	hypothetical protein
+766832..767344	+	513	ACB90029.1	-	SPCG_0777	-	-	hemolysin-related protein
+768002..768712	+	711	ACB90030.1	deoD	SPCG_0778	-	-	purine nucleoside phosphorylase, family 1
+768735..769259	-	525	ACB90031.1	flaR	SPCG_0779	-	-	topology modulation protein
+769312..769563	-	252	ACB90032.1	rpsT	SPCG_0780	-	-	30S ribosomal protein S20
+769616..770566	-	951	ACB90033.1	coaA	SPCG_0781	-	-	pantothenate kinase
+770726..771130	+	405	ACB90034.1	-	SPCG_0782	-	-	hypothetical protein
+771337..771927	+	591	ACB90035.1	-	SPCG_0783	-	-	hypothetical protein
+771924..773201	+	1278	ACB90036.1	pdp	SPCG_0784	-	-	pyrimidine-nucleoside phosphorylase
+773219..773881	+	663	ACB90037.1	deoC	SPCG_0785	-	-	deoxyribose-phosphate aldolase
+773868..774257	+	390	ACB90038.1	cdd	SPCG_0786	-	-	cytidine deaminase
+774275..775399	+	1125	ACB90039.1	-	SPCG_0787	-	-	lipoprotein
+775543..777078	+	1536	ACB90040.1	-	SPCG_0788	-	-	sugar ABC transporter, ATP-binding protein
+777044..778129	+	1086	ACB90041.1	-	SPCG_0789	-	-	sugar ABC transporter, permease protein, putative
+778132..779088	+	957	ACB90042.1	-	SPCG_0790	-	-	sugar ABC transporter, permease protein, putative
+779173..779385	+	213	ACB90043.1	-	SPCG_0791	-	-	degenerate transposase
+779521..779688	+	168	ACB90044.1	-	SPCG_0792	-	-	hypothetical protein
+779688..779960	+	273	ACB90045.1	-	SPCG_0793	-	-	degenerate transposase
+780022..780510	+	489	ACB90046.1	-	SPCG_0794	-	-	degenerate transposase
+780553..781194	-	642	ACB90047.1	-	SPCG_0795	-	-	hypothetical protein
+781330..783273	+	1944	ACB90048.1	parE	SPCG_0796	-	-	DNA topoisomerase IV subunit B
+783273..783380	+	108	ACB90049.1	-	SPCG_0797	-	-	hypothetical protein
+783394..783519	+	126	ACB90050.1	-	SPCG_0798	-	-	hypothetical protein
+783684..786164	+	2481	ACB90051.1	parC	SPCG_0799	-	-	DNA topoisomerase IV subunit A
+786296..787318	+	1023	ACB90052.1	ilvE	SPCG_0800	-	-	branched-chain amino acid aminotransferase
+787374..788078	+	705	ACB90053.1	-	SPCG_0801	-	-	ABC-type oligopeptide transport system, periplasmic component
+788122..788832	+	711	ACB90054.1	-	SPCG_0802	-	-	hypothetical protein
+788829..789752	+	924	ACB90055.1	-	SPCG_0803	-	-	membrane protein
+789767..790411	+	645	ACB90056.1	pcp	SPCG_0804	-	-	pyrrolidone-carboxylate peptidase
+790579..790809	+	231	ACB90057.1	-	SPCG_0805	-	-	hypothetical protein
+791182..792384	+	1203	ACB90058.1	rpsA	SPCG_0806	-	-	30S ribosomal protein S1
+792469..792972	-	504	ACB90059.1	-	SPCG_0807	-	-	degenerate transposase
+793253..793624	-	372	ACB90060.1	-	SPCG_0808	-	-	degenerate transposase
+793964..794461	+	498	ACB90061.1	-	SPCG_0809	-	-	hypothetical protein
+794461..796116	+	1656	ACB90062.1	dnaX	SPCG_0810	-	-	DNA polymerase III subunits gamma and tau
+796144..796338	+	195	ACB90063.1	-	SPCG_0811	-	-	hypothetical protein
+796467..797258	+	792	ACB90064.1	-	SPCG_0812	-	-	ABC transporter, ATP-binding protein
+797286..798548	+	1263	ACB90065.1	-	SPCG_0813	-	-	hypothetical protein
+798514..799785	+	1272	ACB90066.1	-	SPCG_0814	-	-	aminotransferase, class-V
+799742..800212	+	471	ACB90067.1	nifU	SPCG_0815	-	-	nifU family protein
+800266..801678	+	1413	ACB90068.1	-	SPCG_0816	-	-	FeS assembly protein SufB
+801909..803150	-	1242	ACB90069.1	dacA	SPCG_0817	-	-	D-alanyl-D-alanine carboxypeptidase
+803253..804362	+	1110	ACB90070.1	-	SPCG_0818	-	-	membrane protein
+805241..805348	-	108	ACB90071.1	-	SPCG_0819	-	-	hypothetical protein
+805487..806263	-	777	ACB90072.1	-	SPCG_0820	-	-	hypothetical protein
+806290..806760	-	471	ACB90073.1	-	SPCG_0821	-	-	hypothetical protein
+806815..807279	-	465	ACB90074.1	-	SPCG_0822	-	-	hypothetical protein
+807327..807434	+	108	ACB90075.1	-	SPCG_0823	-	-	hypothetical protein
+807884..808624	+	741	ACB90076.1	fruR	SPCG_0824	-	-	lactose phosphotransferase system repressor
+808621..809532	+	912	ACB90077.1	fruB	SPCG_0825	-	-	1-phosphofructokinase, putative
+809529..811481	+	1953	ACB90078.1	fruA	SPCG_0826	-	-	PTS system, fructose specific IIABC components
+811567..813870	+	2304	ACB90079.1	ftsK	SPCG_0827	-	-	spoE family protein
+813915..814448	-	534	ACB90081.1	-	SPCG_0828	-	-	hypothetical protein
+814421..815623	+	1203	ACB90080.1	-	SPCG_0829	-	-	aminotransferase, class-V
+815632..816846	+	1215	ACB90082.1	thiI	SPCG_0830	-	-	thiamine biosynthesis protein ThiI
+816957..817805	+	849	ACB90083.1	-	SPCG_0831	-	-	hypothetical protein
+817827..818162	+	336	ACB90084.1	-	SPCG_0832	-	-	hypothetical protein
+818159..818566	+	408	ACB90085.1	-	SPCG_0833	-	-	hypothetical protein
+818579..819745	+	1167	ACB90086.1	-	SPCG_0834	-	-	hypothetical protein
+820253..821746	+	1494	ACB90087.1	-	SPCG_0835	-	-	type I restriction-modification system, M subunit, putative
+821759..822301	+	543	ACB90088.1	-	SPCG_0836	-	-	type I restriction-modification system, S subunit, putative
+822298..823416	+	1119	ACB90089.1	-	SPCG_0837	-	-	type I restriction-modification system, S subunit, putative
+823476..823712	+	237	ACB90090.1	-	SPCG_0838	-	-	hypothetical protein
+823709..824122	+	414	ACB90091.1	-	SPCG_0839	-	-	hypothetical protein
+824240..825205	+	966	ACB90092.1	-	SPCG_0840	-	-	integrase/recombinase, phage integrase family
+825150..825809	+	660	ACB90093.1	-	SPCG_0841	-	-	type I restriction-modification system, S subunit, putative
+825839..829189	+	3351	ACB90094.1	-	SPCG_0842	-	-	type I restriction-modification system, R subunit, putative
+829589..831169	-	1581	ACB90095.1	-	SPCG_0843	-	-	IS1380-Spn1 transposase
+831169..831369	+	201	ACB90096.1	-	SPCG_0844	-	-	hypothetical protein
+831571..831846	-	276	ACB90097.1	-	SPCG_0845	-	-	degenerate transposase
+831902..832045	+	144	ACB90098.1	-	SPCG_0846	-	-	hypothetical protein
+832138..832725	+	588	ACB90099.1	-	SPCG_0847	-	-	hypothetical protein
+833123..833932	+	810	ACB90100.1	-	SPCG_0848	-	-	phosphosugar-binding transcriptional regulator, putative
+833937..834638	+	702	ACB90101.1	-	SPCG_0849	-	-	N-acetylmannosamine-6-phosphate 2-epimerase
+834663..835580	+	918	ACB90102.1	-	SPCG_0850	-	-	N-acetylneuraminate lyase
+835608..837149	+	1542	ACB90103.1	-	SPCG_0851	-	-	sodium:solute symporter family protein
+837168..837626	+	459	ACB90104.1	-	SPCG_0852	-	-	hypothetical protein
+837628..839850	+	2223	ACB90105.1	nanC	SPCG_0853	-	-	neuraminidase, putative
+839860..840999	+	1140	ACB90106.1	-	SPCG_0854	-	-	oxidoreductase, Gfo/Idh/MocA family
+841156..842046	+	891	ACB90107.1	-	SPCG_0855	-	-	ROK family protein
+842071..842394	+	324	ACB90108.1	-	SPCG_0856	-	-	hypothetical protein
+842384..844375	+	1992	ACB90109.1	-	SPCG_0857	-	-	ATP synthase subunit I
+844391..844867	+	477	ACB90110.1	-	SPCG_0858	-	-	ATP synthase subunit K
+844901..845482	+	582	ACB90111.1	-	SPCG_0859	-	-	v-type sodium ATP synthase, subunit E
+845547..846554	+	1008	ACB90112.1	-	SPCG_0860	-	-	v-type sodium ATP synthase, subunit C
+846544..846864	+	321	ACB90113.1	-	SPCG_0861	-	-	v-type ATP synthase subunit F
+846903..848702	+	1800	ACB90114.1	-	SPCG_0862	-	-	v-type ATP synthase subunit A
+848703..850088	+	1386	ACB90115.1	-	SPCG_0863	-	-	v-type ATP synthase subunit B
+850111..850722	+	612	ACB90116.1	-	SPCG_0864	-	-	ATP synthase subunit D
+850832..851359	-	528	ACB90117.1	-	SPCG_0865	-	-	degenerate transposase
+851640..852158	-	519	ACB90118.1	-	SPCG_0866	-	-	degenerate transposase
+852291..852458	+	168	ACB90119.1	-	SPCG_0867	-	-	hypothetical protein
+852474..852734	+	261	ACB90120.1	-	SPCG_0868	-	-	hypothetical protein
+852838..853308	-	471	ACB90121.1	-	SPCG_0869	-	-	transcriptional repressor, putative
+853325..855598	-	2274	ACB90122.1	-	SPCG_0870	-	-	x-prolyl-dipeptidyl aminopeptidase
+855918..859046	+	3129	ACB90123.1	-	SPCG_0871	-	-	DNA polymerase III subunit alpha
+859129..860136	+	1008	ACB90124.1	pfkA	SPCG_0872	-	-	6-phosphofructokinase
+860195..861700	+	1506	ACB90125.1	-	SPCG_0873	-	-	pyruvate kinase
+862864..863082	-	219	ACB90126.1	-	SPCG_0874	-	-	hypothetical protein
+863518..864390	+	873	ACB90127.1	-	SPCG_0875	-	-	hypothetical protein
+864403..864567	+	165	ACB90128.1	-	SPCG_0876	-	-	hypothetical protein
+864488..864580	+	93	ACB90129.1	-	SPCG_0877	-	-	hypothetical protein
+864497..864880	-	384	ACB90130.1	-	SPCG_0878	-	-	IS1381 transposase protein A
+865023..865334	+	312	ACB90131.1	-	SPCG_0879	-	-	hypothetical protein
+865338..866054	+	717	ACB90132.1	-	SPCG_0880	-	-	hypothetical protein
+866184..866999	-	816	ACB90133.1	-	SPCG_0881	-	-	hypothetical protein
+866996..867901	-	906	ACB90134.1	-	SPCG_0882	-	-	hypothetical protein
+867902..868033	-	132	ACB90135.1	-	SPCG_0883	-	-	hypothetical protein
+868243..869610	+	1368	ACB90136.1	-	SPCG_0884	-	-	capsular polysaccharide biosynthesis protein, putative
+869694..871841	+	2148	ACB90137.1	-	SPCG_0885	-	-	transcriptional regulator, putative
+871828..872277	+	450	ACB90138.1	-	SPCG_0886	-	-	hypothetical protein
+872335..872607	+	273	ACB90139.1	-	SPCG_0887	-	-	hypothetical protein
+872655..872819	-	165	ACB90140.1	-	SPCG_0888	-	-	hypothetical protein
+873523..874338	+	816	ACB90141.1	-	SPCG_0889	-	-	ABC transporter, ATP-binding protein
+874340..876328	+	1989	ACB90142.1	-	SPCG_0890	-	-	ABC transporter, permease protein, putative
+876370..876960	-	591	ACB90143.1	-	SPCG_0891	-	-	uncharacterized membrane protein
+877040..877960	-	921	ACB90144.1	-	SPCG_0892	-	-	IS1239 transposase
+878622..880097	+	1476	ACB90145.1	cad	SPCG_0893	-	-	lysine decarboxylase
+880063..880533	-	471	ACB90146.1	-	SPCG_0894	-	-	pilin gene inverting-related protein,truncated
+881034..881894	+	861	ACB90147.1	speE	SPCG_0895	-	-	spermidine synthase
+881891..883150	+	1260	ACB90148.1	-	SPCG_0896	-	-	hypothetical protein
+883150..884277	+	1128	ACB90149.1	nspC	SPCG_0897	-	-	carboxynorspermidine decarboxylase
+884274..885359	+	1086	ACB90150.1	-	SPCG_0898	-	-	hypothetical protein
+885369..886244	+	876	ACB90151.1	-	SPCG_0899	-	-	carbon-nitrogen hydrolase family protein
+886425..887234	-	810	ACB90152.1	-	SPCG_0900	-	-	Cof family protein
+887781..888452	+	672	ACB90153.1	-	SPCG_0901	-	-	hypothetical protein
+888694..889602	+	909	ACB90154.1	cpsY	SPCG_0902	-	-	transcriptional regulator, LysR family
+889599..890060	+	462	ACB90155.1	lspA	SPCG_0903	-	-	lipoprotein signal peptidase
+890050..890937	+	888	ACB90156.1	rluD	SPCG_0904	-	-	ribosomal large subunit pseudouridine synthase D
+890940..892823	+	1884	ACB90157.1	lytD	SPCG_0905	-	-	choline binding protein E
+892903..894033	+	1131	ACB90158.1	proB	SPCG_0906	-	-	gamma-glutamyl kinase
+894043..895305	+	1263	ACB90159.1	proA	SPCG_0907	-	-	gamma-glutamyl phosphate reductase
+895309..896106	+	798	ACB90160.1	proC	SPCG_0908	-	-	pyrroline-5-carboxylate reductase
+896326..896964	+	639	ACB90161.1	tmk	SPCG_0909	-	-	thymidylate kinase
+896961..897851	+	891	ACB90162.1	holB	SPCG_0910	-	-	DNA polymerase III subunit delta
+897864..898208	+	345	ACB90163.1	-	SPCG_0911	-	-	hypothetical protein
+898211..899080	+	870	ACB90164.1	-	SPCG_0912	-	-	tetrapyrrole methylase family protein
+899280..899825	+	546	ACB90165.1	-	SPCG_0913	-	-	hypothetical protein
+900078..900512	+	435	ACB90166.1	-	SPCG_0914	-	-	hypothetical protein
+900570..900959	-	390	ACB90167.1	-	SPCG_0915	-	-	IS1381 transposase protein B
+900976..901377	-	402	ACB90168.1	-	SPCG_0916	-	-	IS1381 transposase protein A
+901748..903154	+	1407	ACB90169.1	gidA	SPCG_0917	-	-	glucose-inhibited division protein A
+903232..903975	+	744	ACB90170.1	pyrH	SPCG_0918	-	-	uridylate kinase
+903984..904541	+	558	ACB90171.1	frr	SPCG_0919	-	-	ribosome releasing factor
+904562..905455	+	894	ACB90172.1	-	SPCG_0920	-	-	hypothetical protein
+905464..905679	+	216	ACB90173.1	-	SPCG_0921	-	-	hypothetical protein
+905765..906733	+	969	ACB90174.1	phoL	SPCG_0922	-	-	phoH family protein
+906736..907203	+	468	ACB90175.1	-	SPCG_0923	-	-	hypothetical protein
+907215..907592	+	378	ACB90176.1	-	SPCG_0924	-	-	hypothetical protein
+907775..908275	+	501	ACB90177.1	-	SPCG_0925	-	-	acetyltransferase, GNAT family
+908278..908505	+	228	ACB90178.1	-	SPCG_0926	-	-	hypothetical protein
+908909..909184	-	276	ACB90179.1	-	SPCG_0927	-	-	alanine dehydrogenase
+909181..910008	-	828	ACB90180.1	-	SPCG_0928	-	-	alanine dehydrogenase
+910185..910754	+	570	ACB90181.1	-	SPCG_0929	-	-	acetyltransferase, GNAT family
+910822..911472	+	651	ACB90182.1	celA	SPCG_0930	-	-	competence protein CelA
+911456..913696	+	2241	ACB90183.1	celB	SPCG_0931	-	-	competence protein CelB
+913875..914063	+	189	ACB90184.1	-	SPCG_0932	-	-	hypothetical protein
+914096..914623	+	528	ACB90185.1	-	SPCG_0933	-	-	ABC transporter, ATP-binding protein
+914679..915863	+	1185	ACB90186.1	-	SPCG_0934	-	-	hypothetical protein
+916117..916704	+	588	ACB90187.1	infC	SPCG_0935	-	-	translation initiation factor IF-3
+916737..916937	+	201	ACB90188.1	rpmI	SPCG_0936	-	-	50S ribosomal protein L35
+916989..917348	+	360	ACB90189.1	rplT	SPCG_0937	-	-	50S ribosomal protein L20
+917355..917786	+	432	ACB90190.1	lguL	SPCG_0938	-	-	lactoylglutathione lyase
+918036..918836	+	801	ACB90191.1	pyrDII	SPCG_0939	-	-	dihydroorotate dehydrogenase electron transfer subunit
+918793..919785	+	993	ACB90192.1	pyrD	SPCG_0940	-	-	dihydroorotate dehydrogenase
+919827..921860	+	2034	ACB90193.1	lytB	SPCG_0941	-	-	endo-beta-N-acetylglucosaminidase
+921921..923603	-	1683	ACB90194.1	flpA	SPCG_0942	-	-	adherence and virulence protein A
+923681..924178	+	498	ACB90195.1	-	SPCG_0943	-	-	hypothetical protein
+924159..924554	+	396	ACB90196.1	dgkA	SPCG_0944	-	-	diacylglycerol kinase
+924571..925470	+	900	ACB90197.1	era	SPCG_0945	-	-	GTP-binding protein Era
+925519..926343	+	825	ACB90198.1	mutM	SPCG_0946	-	-	formamidopyrimidine-DNA glycosylase
+926316..926948	+	633	ACB90199.1	coaE	SPCG_0947	-	-	dephospho-CoA kinase
+926935..928134	+	1200	ACB90200.1	pmrA	SPCG_0948	-	-	multi-drug resistance efflux pump
+928323..928556	+	234	ACB90201.1	secG	SPCG_0949	-	-	translocase
+928658..931012	+	2355	ACB90202.1	rnr	SPCG_0950	-	-	exoribonuclease, VacB/Rnb family
+930975..931442	+	468	ACB90203.1	smpB	SPCG_0951	-	-	ssrA-binding protein
+931452..932318	+	867	ACB90204.1	tehB	SPCG_0952	-	-	tellurite resistance protein TehB
+932391..933344	+	954	ACB90205.1	coiA	SPCG_0953	-	-	competence protein CoiA
+933363..935165	+	1803	ACB90206.1	-	SPCG_0954	-	-	oligoendopeptidase F
+935167..935880	+	714	ACB90207.1	-	SPCG_0955	-	-	O-methyltransferase
+935947..936888	+	942	ACB90208.1	-	SPCG_0956	-	-	peptidylprolyl isomerase
+937007..937348	-	342	ACB90209.1	-	SPCG_0957	-	-	IS3-Spn1, transposase, truncation
+938109..938729	-	621	ACB90210.1	gpmB	SPCG_0958	-	-	phosphoglycerate mutase family protein
+938729..939211	-	483	ACB90211.1	ebsC	SPCG_0959	-	-	regulatory protein, putative
+939211..940053	-	843	ACB90212.1	-	SPCG_0960	-	-	hypothetical protein
+940148..940948	-	801	ACB90213.1	-	SPCG_0961	-	-	hypothetical protein
+941032..942471	+	1440	ACB90214.1	gcaD	SPCG_0962	-	-	UDP-N-acetylglucosamine pyrophosphorylase
+942481..943026	+	546	ACB90215.1	-	SPCG_0963	-	-	mutT/nudix family protein
+943005..943352	+	348	ACB90216.1	-	SPCG_0964	-	-	hypothetical protein
+943369..944061	+	693	ACB90217.1	pfs	SPCG_0965	-	-	5'-methylthioadenosine/S-adenosylhomocysteine nucleosidase
+944138..944629	+	492	ACB90218.1	-	SPCG_0966	-	-	hypothetical protein
+944691..945317	+	627	ACB90219.1	dnaQ	SPCG_0967	-	-	DNA polymerase III subunit epsilon
+945320..947089	+	1770	ACB90220.1	-	SPCG_0968	-	-	hypothetical protein
+947285..947632	+	348	ACB90221.1	-	SPCG_0969	-	-	IS630-Spn1 transposase
+947811..947951	+	141	ACB90222.1	-	SPCG_0970	-	-	hypothetical protein
+948112..948312	+	201	ACB90223.1	-	SPCG_0971	-	-	hypothetical protein
+948131..948763	-	633	ACB90224.1	-	SPCG_0972	-	-	hypothetical protein
+948989..949696	+	708	ACB90225.1	ccdA	SPCG_0973	-	-	cytochrome c-type biogenesis protein CcdA
+949689..950264	+	576	ACB90226.1	-	SPCG_0974	-	-	thioredoxin family protein
+950626..952029	+	1404	ACB90227.1	yfnA	SPCG_0975	-	-	amino acid permease family protein
+952154..953089	+	936	ACB90228.1	lmb	SPCG_0976	-	-	adhesion lipoprotein
+953097..955601	+	2505	ACB90229.1	-	SPCG_0977	-	-	hypothetical protein
+955811..958930	+	3120	ACB90230.1	-	SPCG_0978	-	-	hypothetical protein
+959760..959900	+	141	ACB90231.1	-	SPCG_0979	-	-	hypothetical protein
+959934..960416	+	483	ACB90232.1	-	SPCG_0980	-	-	pneumococcal histidine triad protein E precursor, truncation
+960525..960746	-	222	ACB90234.1	-	SPCG_0981	-	-	hypothetical protein
+960732..960968	+	237	ACB90233.1	-	SPCG_0982	-	-	hypothetical protein
+960997..961329	+	333	ACB90235.1	-	SPCG_0983	-	-	hypothetical protein
+961365..962588	-	1224	ACB90236.1	pepT	SPCG_0984	-	-	peptidase T
+962743..963837	+	1095	ACB90237.1	hemH	SPCG_0985	-	-	ferrochelatase
+963884..963976	-	93	ACB90238.1	-	SPCG_0986	-	-	hypothetical protein
+963992..964744	-	753	ACB90239.1	-	SPCG_0987	-	-	degenerate transposase
+964737..965282	-	546	ACB90240.1	-	SPCG_0988	-	-	degenerate transposase
+965398..965775	-	378	ACB90241.1	mscL	SPCG_0989	-	-	large conductance mechanosensitive channel protein MscL
+965857..966288	-	432	ACB90242.1	-	SPCG_0990	-	-	gtrA family protein
+966339..966920	+	582	ACB90243.1	-	SPCG_0991	-	-	hypothetical protein
+967198..967452	+	255	ACB90244.1	-	SPCG_0992	-	-	hypothetical protein
+967678..968754	+	1077	ACB90245.1	asd	SPCG_0993	-	-	aspartate-semialdehyde dehydrogenase
+968810..969745	+	936	ACB90246.1	dapA	SPCG_0994	-	-	dihydrodipicolinate synthase
+969792..971231	-	1440	ACB90247.1	thdF	SPCG_0995	-	-	tRNA modification GTPase
+971302..971526	-	225	ACB90248.1	xylH	SPCG_0996	-	-	4-oxalocrotonate tautomerase
+971607..972197	+	591	ACB90249.1	tdk	SPCG_0997	-	-	thymidine kinase
+972194..973273	+	1080	ACB90250.1	prfA	SPCG_0998	-	-	peptide chain release factor 1
+973273..974112	+	840	ACB90251.1	hemK	SPCG_0999	-	-	hemK protein
+974069..974698	+	630	ACB90252.1	-	SPCG_1000	-	-	Sua5/YciO/YrdC family protein
+974661..975131	+	471	ACB90253.1	-	SPCG_1001	-	-	acetyltransferase, GNAT family
+975193..976449	+	1257	ACB90254.1	glyA	SPCG_1002	-	-	serine hydroxymethyltransferase
+976424..977431	+	1008	ACB90255.1	-	SPCG_1003	-	-	hypothetical protein
+977431..978045	+	615	ACB90256.1	-	SPCG_1004	-	-	hypothetical protein
+978119..979093	+	975	ACB90257.1	-	SPCG_1005	-	-	hypothetical protein
+979062..979154	+	93	ACB90258.1	-	SPCG_1006	-	-	hypothetical protein
+979167..980792	+	1626	ACB90259.1	-	SPCG_1007	-	-	RNA methyltransferase, TrmA family
+981918..982019	+	102	ACB90260.1	-	SPCG_1008	-	-	hypothetical protein
+982140..983165	+	1026	ACB90261.1	-	SPCG_1009	-	-	iron-compound ABC transporter, iron compound-binding protein
+983136..983690	-	555	ACB90263.1	-	SPCG_1010	-	-	hypothetical protein
+983143..984162	+	1020	ACB90262.1	-	SPCG_1011	-	-	iron-compound ABC transporter, permease protein
+984162..985169	+	1008	ACB90264.1	-	SPCG_1012	-	-	iron-compound ABC transporter, permease protein
+985169..985963	+	795	ACB90265.1	-	SPCG_1013	-	-	iron-compound ABC transporter, ATP-binding protein
+986832..987149	+	318	ACB90266.1	-	SPCG_1014	-	-	hypothetical protein
+987454..988167	+	714	ACB90267.1	-	SPCG_1015	-	-	hypothetical protein
+988185..989102	+	918	ACB90268.1	-	SPCG_1016	-	-	hypothetical protein
+989535..989939	+	405	ACB90269.1	-	SPCG_1017	-	-	hypothetical protein
+990113..990841	+	729	ACB90270.1	-	SPCG_1018	-	-	putative phage-associated protein
+991525..991686	+	162	ACB90271.1	-	SPCG_1019	-	-	hypothetical protein
+991778..993457	+	1680	ACB90272.1	-	SPCG_1020	-	-	site-specific recombinase, resolvase family
+993680..994291	+	612	ACB90273.1	-	SPCG_1021	-	-	hypothetical protein
+994604..994801	+	198	ACB90274.1	-	SPCG_1022	-	-	hypothetical protein
+994863..995621	+	759	ACB90275.1	-	SPCG_1023	-	-	hypothetical protein
+995679..996533	+	855	ACB90276.1	-	SPCG_1024	-	-	hydrolase, putative
+996594..997529	+	936	ACB90277.1	-	SPCG_1025	-	-	hypothetical protein
+997668..999431	+	1764	ACB90278.1	nplT	SPCG_1026	-	-	neopullulanase
+999517..999834	+	318	ACB90279.1	-	SPCG_1027	-	-	hypothetical protein
+999880..1000161	+	282	ACB90280.1	-	SPCG_1028	-	-	hypothetical protein
+1000549..1001082	+	534	ACB90281.1	-	SPCG_1029	-	-	transcriptional regulator, putative
+1001082..1001843	+	762	ACB90282.1	-	SPCG_1030	-	-	hypothetical protein
+1001871..1002647	+	777	ACB90283.1	-	SPCG_1031	-	-	phosphoesterase, putative
+1002650..1003027	+	378	ACB90284.1	-	SPCG_1032	-	-	hypothetical protein
+1003859..1004218	+	360	ACB90285.1	-	SPCG_1033	-	-	Tn5252, Orf 10 protein
+1004228..1004593	+	366	ACB90286.1	-	SPCG_1034	-	-	Tn5252, Orf 9 protein
+1004580..1006430	+	1851	ACB90287.1	-	SPCG_1035	-	-	Tn5252, relaxase
+1006683..1007363	+	681	ACB90288.1	-	SPCG_1036	-	-	degenerate transposase
+1007381..1007650	+	270	ACB90289.1	-	SPCG_1037	-	-	degenerate transposase
+1008811..1009809	-	999	ACB90290.1	-	SPCG_1038	-	-	IS1239 transposase
+1010368..1011411	+	1044	ACB90291.1	-	SPCG_1039	-	-	hypothetical protein
+1011560..1013665	+	2106	ACB90292.1	topA	SPCG_1040	-	-	DNA topoisomerase I
+1013886..1014245	+	360	ACB90293.1	-	SPCG_1041	-	-	hypothetical protein
+1014338..1014970	+	633	ACB90294.1	cutC	SPCG_1042	-	-	copper homeostasis protein CutC
+1015014..1015670	+	657	ACB90295.1	-	SPCG_1043	-	-	hypothetical protein
+1015689..1016222	+	534	ACB90296.1	-	SPCG_1044	-	-	hypothetical protein
+1016338..1016772	+	435	ACB90297.1	-	SPCG_1045	-	-	hypothetical protein
+1016784..1017821	+	1038	ACB90298.1	-	SPCG_1046	-	-	3-isopropylmalate dehydrogenase
+1017818..1018087	+	270	ACB90299.1	-	SPCG_1047	-	-	hypothetical protein
+1018091..1018450	+	360	ACB90300.1	-	SPCG_1048	-	-	3-isopropylmalate dehydratase, small subunit, putative
+1018669..1018812	+	144	ACB90301.1	-	SPCG_1049	-	-	hypothetical protein
+1018912..1019085	+	174	ACB90302.1	-	SPCG_1050	-	-	hypothetical protein
+1019066..1019236	+	171	ACB90303.1	-	SPCG_1051	-	-	hypothetical protein
+1019398..1021332	+	1935	ACB90304.1	-	SPCG_1052	-	-	endonuclease, putative
+1021292..1022635	+	1344	ACB90305.1	-	SPCG_1053	-	-	hypothetical protein
+1022810..1023796	+	987	ACB90306.1	guaC	SPCG_1054	-	-	guanosine 5'-monophosphate oxidoreductase
+1024114..1024812	+	699	ACB90307.1	rncS	SPCG_1055	-	-	ribonuclease III
+1024803..1028342	+	3540	ACB90308.1	-	SPCG_1056	-	-	hypothetical protein
+1028339..1029133	+	795	ACB90309.1	-	SPCG_1057	-	-	cof family protein
+1029133..1029951	+	819	ACB90310.1	-	SPCG_1058	-	-	cof family protein
+1029955..1031244	+	1290	ACB90311.1	ftsY	SPCG_1059	-	-	signal recognition particle-docking protein FtsY
+1031290..1032777	-	1488	ACB90312.1	zwf	SPCG_1060	-	-	glucose-6-phosphate 1-dehydrogenase
+1032926..1033666	-	741	ACB90313.1	-	SPCG_1061	-	-	amino acid ABC transporter, ATP-binding protein
+1033666..1035831	-	2166	ACB90314.1	-	SPCG_1062	-	-	amino acid ABC transporter, amino acid-binding protein/permease protein
+1036000..1036953	+	954	ACB90315.1	-	SPCG_1063	-	-	hypothetical protein
+1037030..1039018	+	1989	ACB90316.1	uvrB	SPCG_1064	-	-	excinuclease ABC subunit B
+1039028..1039591	+	564	ACB90317.1	-	SPCG_1065	-	-	acetyltransferase, GNAT family
+1039557..1040045	+	489	ACB90318.1	-	SPCG_1066	-	-	acetyltransferase, GNAT family
+1040119..1040586	+	468	ACB90319.1	-	SPCG_1067	-	-	mutT/nudix family protein
+1040583..1041098	-	516	ACB90320.1	-	SPCG_1068	-	-	transcriptional regulator, biotin repressor family
+1041110..1041691	-	582	ACB90321.1	-	SPCG_1069	-	-	hypothetical protein
+1041919..1042482	-	564	ACB90322.1	-	SPCG_1070	-	-	membrane protein
+1042466..1043017	-	552	ACB90323.1	-	SPCG_1071	-	-	phosphopantothenoylcysteine synthase/decarboxylase
+1043029..1043733	-	705	ACB90324.1	-	SPCG_1072	-	-	hypothetical protein
+1043948..1045618	+	1671	ACB90325.1	fhs	SPCG_1073	-	-	formate--tetrahydrofolate ligase
+1045947..1047122	+	1176	ACB90326.1	mutY	SPCG_1074	-	-	A/G-specific adenine glycosylase
+1047126..1047881	+	756	ACB90327.1	-	SPCG_1075	-	-	DNA-binding response regulator
+1047874..1049223	+	1350	ACB90328.1	-	SPCG_1076	-	-	sensory box sensor histidine kinase
+1049225..1050034	+	810	ACB90329.1	vicX	SPCG_1077	-	-	vicX protein
+1050065..1050367	+	303	ACB90330.1	-	SPCG_1078	-	-	hypothetical protein
+1050360..1050623	+	264	ACB90331.1	-	SPCG_1079	-	-	hypothetical protein
+1050598..1051254	+	657	ACB90332.1	-	SPCG_1080	-	-	ion transporter, putative
+1051582..1052580	-	999	ACB90333.1	-	SPCG_1081	-	-	L-lactate dehydrogenase
+1052705..1055230	+	2526	ACB90334.1	-	SPCG_1082	-	-	DNA gyrase subunit A
+1055230..1055973	+	744	ACB90335.1	-	SPCG_1083	-	-	hypothetical protein
+1056217..1057014	+	798	ACB90336.1	-	SPCG_1084	-	-	transporter, FNT family, putative
+1057162..1057284	+	123	ACB90337.1	-	SPCG_1085	-	-	O-acetylhomoserine sulfhydrylase, truncation
+1057306..1058421	+	1116	ACB90338.1	-	SPCG_1086	-	-	O-acetylhomoserine sulfhydrylase, truncation
+1058517..1059791	+	1275	ACB90339.1	-	SPCG_1087	-	-	hypothetical protein
+1059803..1062988	+	3186	ACB90340.1	-	SPCG_1088	-	-	hypothetical protein
+1063089..1063967	+	879	ACB90341.1	truB	SPCG_1089	-	-	tRNA pseudouridine synthase B
+1064116..1064211	+	96	ACB90342.1	-	SPCG_1090	-	-	hypothetical protein
+1064208..1064510	+	303	ACB90343.1	-	SPCG_1091	-	-	hypothetical protein
+1064618..1065256	+	639	ACB90344.1	udK	SPCG_1092	-	-	uridine kinase
+1065378..1066724	+	1347	ACB90345.1	xseA	SPCG_1093	-	-	exodeoxyribonuclease VII large subunit
+1066702..1066914	+	213	ACB90346.1	xseB	SPCG_1094	-	-	exodeoxyribonuclease VII small subunit
+1066911..1067786	+	876	ACB90347.1	-	SPCG_1095	-	-	geranyltranstransferase
+1067779..1068594	+	816	ACB90348.1	-	SPCG_1096	-	-	hemolysin A, putative
+1068587..1069018	+	432	ACB90349.1	ahrC	SPCG_1097	-	-	transcriptional repressor, putative
+1069025..1070692	+	1668	ACB90350.1	recN	SPCG_1098	-	-	DNA repair protein RecN
+1070694..1071422	+	729	ACB90351.1	pphA	SPCG_1099	-	-	serine/threonine protein phosphatase
+1071438..1073324	+	1887	ACB90352.1	-	SPCG_1100	-	-	GTP-binding protein LepA
+1073737..1074258	+	522	ACB90353.1	-	SPCG_1101	-	-	PTS system IIA component, putative
+1074296..1074598	+	303	ACB90354.1	-	SPCG_1102	-	-	hypothetical protein
+1075036..1075425	+	390	ACB90355.1	-	SPCG_1103	-	-	IS1381 transposase protein B
+1075594..1075938	+	345	ACB90356.1	-	SPCG_1104	-	-	Galactose mutarotase-like protein
+1076095..1076520	+	426	ACB90357.1	lacA	SPCG_1105	-	-	galactose-6-phosphate isomerase
+1076551..1077066	+	516	ACB90358.1	lacB	SPCG_1106	-	-	galactose-6-phosphate isomerase
+1077077..1078006	+	930	ACB90359.1	lacC	SPCG_1107	-	-	tagatose-6-phosphate kinase
+1078008..1078988	+	981	ACB90360.1	lacD	SPCG_1108	-	-	tagatose 1,6-diphosphate aldolase
+1079222..1080058	+	837	ACB90361.1	lacT	SPCG_1109	-	-	transcription antiterminator LacT
+1080094..1080411	+	318	ACB90362.1	-	SPCG_1110	-	-	PTS system, lactose-specific IIA component
+1080383..1082107	+	1725	ACB90363.1	-	SPCG_1111	-	-	PTS system, lactose-specific IIBC components
+1082313..1083728	+	1416	ACB90364.1	lacG	SPCG_1112	-	-	6-phospho-beta-galactosidase
+1083771..1084028	+	258	ACB90365.1	-	SPCG_1113	-	-	hypothetical protein
+1084307..1085068	-	762	ACB90366.1	lacR	SPCG_1114	-	-	lactose phosphotransferase system repressor
+1085378..1085896	+	519	ACB90367.1	-	SPCG_1115	-	-	degenerate transposase
+1086177..1086704	+	528	ACB90368.1	-	SPCG_1116	-	-	degenerate transposase
+1086742..1087704	-	963	ACB90369.1	nrdF	SPCG_1117	-	-	ribonucleotide-diphosphate reductase beta subunit
+1087892..1090051	-	2160	ACB90370.1	nrdE	SPCG_1118	-	-	ribonucleotide-diphosphate reductase alpha subunit
+1090132..1090368	-	237	ACB90371.1	nrdH	SPCG_1119	-	-	nrdH-redoxin
+1090701..1090964	+	264	ACB90372.1	-	SPCG_1120	-	-	phosphocarrier protein HPr
+1090970..1092703	+	1734	ACB90373.1	-	SPCG_1121	-	-	phosphoenolpyruvate-protein phosphotransferase
+1092922..1095480	+	2559	ACB90374.1	-	SPCG_1122	-	-	hypothetical protein
+1095622..1095996	+	375	ACB90375.1	-	SPCG_1123	-	-	hypothetical protein
+1096072..1096284	+	213	ACB90376.1	-	SPCG_1124	-	-	degenerate transposase
+1096449..1097387	+	939	ACB90377.1	-	SPCG_1125	-	-	hypothetical protein
+1097409..1098161	+	753	ACB90378.1	-	SPCG_1126	-	-	hydrolase, haloacid dehalogenase-like family
+1098219..1098821	+	603	ACB90379.1	-	SPCG_1127	-	-	hypothetical protein
+1098942..1099610	+	669	ACB90380.1	ung	SPCG_1128	-	-	uracil-DNA glycosylase
+1099620..1100084	+	465	ACB90381.1	mutX	SPCG_1129	-	-	mutator MutT protein
+1100097..1101365	+	1269	ACB90382.1	-	SPCG_1130	-	-	dihydroorotase
+1101650..1103011	+	1362	ACB90383.1	-	SPCG_1131	-	-	MATE efflux family protein
+1103008..1103118	-	111	ACB90384.1	-	SPCG_1132	-	-	hypothetical protein
+1103165..1104133	+	969	ACB90385.1	acoA	SPCG_1133	-	-	acetoin dehydrogenase, E1 component, alpha subunit, putative
+1104149..1105141	+	993	ACB90386.1	acoB	SPCG_1134	-	-	acetoin dehydrogenase, E1 component, beta subunit, putative
+1105275..1106402	+	1128	ACB90387.1	acoC	SPCG_1135	-	-	dihydrolipoamide acetyltransferase
+1106448..1108151	+	1704	ACB90388.1	acoL	SPCG_1136	-	-	acetoin dehydrogenase complex, E3 component, dihydrolipoamide dehydrogenase, putative
+1108215..1109204	+	990	ACB90389.1	-	SPCG_1137	-	-	lipoate-protein ligase, putative
+1109269..1110339	-	1071	ACB90390.1	xerC	SPCG_1138	-	-	tyrosine recombinase
+1110923..1112488	-	1566	ACB90391.1	-	SPCG_1139	-	-	voltage-gated chloride channel family protein
+1112489..1113268	-	780	ACB90392.1	-	SPCG_1140	-	-	ribonuclease HII
+1113255..1114106	-	852	ACB90393.1	-	SPCG_1141	-	-	GTP-binding protein
+1114351..1119834	-	5484	ACB90394.1	zmpD	SPCG_1142	-	-	zinc metalloprotease ZmpD, putative
+1119878..1125604	-	5727	ACB90395.1	iga	SPCG_1143	-	-	immunoglobulin A1 protease
+1125813..1126991	-	1179	ACB90396.1	-	SPCG_1144	-	-	hypothetical protein
+1127161..1130811	-	3651	ACB90397.1	rexA	SPCG_1145	-	-	exonuclease RexA
+1130808..1134110	-	3303	ACB90398.1	rexB	SPCG_1146	-	-	exonuclease RexB
+1134591..1134938	+	348	ACB90399.1	-	SPCG_1147	-	-	IS630-Spn1, transposase Orf1
+1135487..1136005	+	519	ACB90400.1	-	SPCG_1148	-	-	degenerate transposase
+1136286..1136813	+	528	ACB90401.1	-	SPCG_1149	-	-	degenerate transposase
+1136988..1138292	-	1305	ACB90402.1	eno	SPCG_1150	-	-	phosphopyruvate hydratase
+1138456..1138902	+	447	ACB90403.1	-	SPCG_1151	-	-	hypothetical protein
+1138899..1139228	-	330	ACB90404.1	-	SPCG_1152	-	-	hypothetical protein
+1139197..1140027	-	831	ACB90405.1	-	SPCG_1153	-	-	hypothetical protein
+1140024..1140182	-	159	ACB90406.1	-	SPCG_1154	-	-	phosphoserine phosphatase, truncation
+1140297..1140668	-	372	ACB90407.1	-	SPCG_1155	-	-	phosphoserine phosphatase
+1140727..1142160	-	1434	ACB90408.1	glgA	SPCG_1156	-	-	glycogen synthase
+1142157..1143296	-	1140	ACB90409.1	glgD	SPCG_1157	-	-	glycogen biosynthesis protein GlgD
+1143286..1144428	-	1143	ACB90410.1	glgC	SPCG_1158	-	-	glucose-1-phosphate adenylyltransferase
+1144418..1146346	-	1929	ACB90411.1	glgB	SPCG_1159	-	-	glycogen branching enzyme
+1146795..1148219	-	1425	ACB90412.1	gapN	SPCG_1160	-	-	glyceraldehyde-3-phosphate dehydrogenase, NADP-dependent
+1148551..1148712	-	162	ACB90413.1	-	SPCG_1161	-	-	hypothetical protein
+1148763..1151042	-	2280	ACB90414.1	pulI	SPCG_1162	-	-	pullulanase, putative
+1151154..1153112	-	1959	ACB90415.1	ligA	SPCG_1163	-	-	DNA ligase
+1153205..1154383	-	1179	ACB90416.1	-	SPCG_1164	-	-	transporter, putative
+1154463..1154555	-	93	ACB90417.1	-	SPCG_1165	-	-	hypothetical protein
+1154689..1155339	-	651	ACB90418.1	-	SPCG_1166	-	-	hypothetical protein
+1155312..1157213	-	1902	ACB90419.1	-	SPCG_1167	-	-	ABC transporter, ATP-binding protein
+1157643..1157918	-	276	ACB90420.1	hlpA	SPCG_1168	-	-	DNA-binding protein HU
+1158025..1158864	-	840	ACB90421.1	-	SPCG_1169	-	-	degV family protein
+1159006..1159854	+	849	ACB90422.1	-	SPCG_1170	-	-	hypothetical protein
+1159947..1160864	-	918	ACB90423.1	mreA	SPCG_1171	-	-	riboflavin kinase/flavin adenine dinucleotide synthase
+1161202..1161330	+	129	ACB90424.1	-	SPCG_1172	-	-	hypothetical protein
+1161302..1161472	+	171	ACB90425.1	-	SPCG_1173	-	-	hypothetical protein
+1161818..1162111	-	294	ACB90426.1	rpmA	SPCG_1174	-	-	50S ribosomal protein L27
+1162128..1162472	-	345	ACB90427.1	-	SPCG_1175	-	-	hypothetical protein
+1162488..1162877	-	390	ACB90428.1	rplU	SPCG_1176	-	-	50S ribosomal protein L21
+1162990..1163688	-	699	ACB90429.1	-	SPCG_1177	-	-	hypothetical protein
+1164090..1164389	+	300	ACB90430.1	-	SPCG_1178	-	-	hypothetical protein
+1164730..1165704	-	975	ACB90431.1	pta	SPCG_1179	-	-	phosphate acetyltransferase
+1165748..1166644	-	897	ACB90432.1	rluD	SPCG_1180	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1166641..1167471	-	831	ACB90433.1	ppnK	SPCG_1181	-	-	inorganic polyphosphate/ATP-NAD kinase
+1167443..1168114	-	672	ACB90434.1	-	SPCG_1182	-	-	hypothetical protein
+1168242..1168811	+	570	ACB90435.1	-	SPCG_1183	-	-	hypothetical protein
+1168924..1169883	+	960	ACB90436.1	-	SPCG_1184	-	-	ribose-phosphate pyrophosphokinase
+1169893..1171008	+	1116	ACB90437.1	-	SPCG_1185	-	-	aminotransferase, class-V
+1171013..1171360	+	348	ACB90438.1	-	SPCG_1186	-	-	hypothetical protein
+1171332..1171583	+	252	ACB90439.1	-	SPCG_1187	-	-	hypothetical protein
+1171666..1172307	+	642	ACB90440.1	-	SPCG_1188	-	-	redox-sensing transcriptional repressor Rex
+1172325..1173014	+	690	ACB90441.1	-	SPCG_1189	-	-	glutamine amidotransferase, class I
+1173011..1173706	-	696	ACB90442.1	radC	SPCG_1190	-	-	DNA repair protein RadC
+1173734..1176025	-	2292	ACB90443.1	pcrA	SPCG_1191	-	-	ATP-dependent DNA helicase PcrA
+1176216..1176605	-	390	ACB90444.1	-	SPCG_1192	-	-	IS1381 transposase protein B
+1176631..1176939	-	309	ACB90445.1	-	SPCG_1193	-	-	IS1381 transposase protein A
+1177401..1178261	-	861	ACB90446.1	map	SPCG_1194	-	-	methionine aminopeptidase
+1178277..1179554	-	1278	ACB90447.1	-	SPCG_1195	-	-	hypothetical protein
+1179547..1180104	-	558	ACB90448.1	-	SPCG_1196	-	-	acetyltransferase, GNAT family
+1180114..1181373	-	1260	ACB90449.1	murZ	SPCG_1197	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1182575..1183093	+	519	ACB90450.1	-	SPCG_1198	-	-	degenerate transposase
+1183374..1183901	+	528	ACB90451.1	-	SPCG_1199	-	-	degenerate transposase
+1183952..1184110	-	159	ACB90452.1	-	SPCG_1200	-	-	hypothetical protein
+1184120..1185430	-	1311	ACB90453.1	obg	SPCG_1201	-	-	GTP-binding protein, GTP1/Obg family
+1185494..1185628	-	135	ACB90454.1	-	SPCG_1202	-	-	hypothetical protein
+1185687..1185863	-	177	ACB90455.1	-	SPCG_1203	-	-	hypothetical protein
+1185894..1187219	-	1326	ACB90456.1	-	SPCG_1204	-	-	glycosyl transferase, group 1
+1187235..1188317	-	1083	ACB90457.1	cpoA	SPCG_1205	-	-	glycosyl transferase CpoA
+1188393..1188755	-	363	ACB90458.1	-	SPCG_1206	-	-	hypothetical protein
+1188736..1189845	-	1110	ACB90459.1	rpoD	SPCG_1207	-	-	RNA polymerase sigma factor
+1189848..1191623	-	1776	ACB90460.1	dnaG	SPCG_1208	-	-	DNA primase
+1191698..1192456	-	759	ACB90461.1	-	SPCG_1209	-	-	ABC transporter, ATP-binding protein
+1192453..1193319	-	867	ACB90462.1	-	SPCG_1210	-	-	hypothetical protein
+1193388..1194422	-	1035	ACB90463.1	-	SPCG_1211	-	-	hypothetical protein
+1194805..1197501	-	2697	ACB90464.1	ppc	SPCG_1212	-	-	phosphoenolpyruvate carboxylase
+1197521..1198750	-	1230	ACB90465.1	ftsW	SPCG_1213	-	-	cell division protein FtsW, putative
+1199013..1199207	-	195	ACB90466.1	-	SPCG_1214	-	-	IS1381 transposase protein A, truncation
+1199312..1199644	-	333	ACB90467.1	-	SPCG_1215	-	-	hypothetical protein
+1199830..1200438	-	609	ACB90468.1	-	SPCG_1216	-	-	hypothetical protein
+1200522..1202315	-	1794	ACB90469.1	-	SPCG_1217	-	-	site-specific recombinase, resolvase family
+1202765..1202968	-	204	ACB90470.1	-	SPCG_1218	-	-	hypothetical protein
+1203392..1203607	+	216	ACB90471.1	-	SPCG_1219	-	-	degenerate transposase
+1203732..1204106	+	375	ACB90472.1	-	SPCG_1220	-	-	degenerate transposase
+1204091..1204411	+	321	ACB90473.1	-	SPCG_1221	-	-	degenerate transposase
+1205044..1205829	-	786	ACB90474.1	-	SPCG_1222	-	-	hypothetical protein
+1206088..1206699	-	612	ACB90475.1	-	SPCG_1223	-	-	daunorubicin resistance transmembrane protein
+1206650..1207234	-	585	ACB90476.1	-	SPCG_1224	-	-	hypothetical protein
+1207295..1207504	-	210	ACB90477.1	-	SPCG_1225	-	-	hypothetical protein
+1208658..1209449	-	792	ACB90478.1	-	SPCG_1226	-	-	hypothetical protein
+1209526..1211163	-	1638	ACB90479.1	-	SPCG_1227	-	-	drug-resistant methionyl-tRNA synthetase
+1211231..1211905	-	675	ACB90480.1	-	SPCG_1228	-	-	Chloramphenicol acetyltransferase
+1212706..1213704	+	999	ACB90481.1	-	SPCG_1229	-	-	IS1239 transposase
+1214276..1215136	-	861	ACB90482.1	-	SPCG_1230	-	-	DNA processing protein DprA, putative
+1215220..1215909	-	690	ACB90483.1	-	SPCG_1231	-	-	licC protein
+1215921..1216811	-	891	ACB90484.1	-	SPCG_1232	-	-	licB protein
+1216789..1217658	-	870	ACB90485.1	pck	SPCG_1233	-	-	choline kinase
+1217675..1218715	-	1041	ACB90486.1	-	SPCG_1234	-	-	alcohol dehydrogenase, zinc-containing
+1218702..1219409	-	708	ACB90487.1	ispD	SPCG_1235	-	-	2-C-methyl-D-erythritol 4-phosphate cytidylyltransferase
+1219745..1221232	+	1488	ACB90488.1	-	SPCG_1236	-	-	polysaccharide biosynthesis protein, putative
+1221242..1222045	+	804	ACB90489.1	licD1	SPCG_1237	-	-	licD1 protein
+1222014..1222856	+	843	ACB90490.1	licD2	SPCG_1238	-	-	licD2 protein
+1223131..1226307	-	3177	ACB90491.1	carB	SPCG_1239	-	-	carbamoyl-phosphate synthase large subunit
+1226620..1227699	-	1080	ACB90492.1	carA	SPCG_1240	-	-	carbamoyl-phosphate synthase small subunit
+1227749..1228672	-	924	ACB90493.1	pyrB	SPCG_1241	-	-	aspartate carbamoyltransferase catalytic subunit
+1228691..1229212	-	522	ACB90494.1	pyrR	SPCG_1242	-	-	pyrimidine regulatory protein PyrR
+1229423..1230052	-	630	ACB90495.1	nth	SPCG_1243	-	-	endonuclease III
+1230052..1230594	-	543	ACB90496.1	-	SPCG_1244	-	-	hypothetical protein
+1231320..1232879	+	1560	ACB90497.1	-	SPCG_1245	-	-	ABC transporter, ATP-binding protein
+1233028..1233936	-	909	ACB90498.1	htpX	SPCG_1246	-	-	heat shock protein HtpX
+1233929..1234489	-	561	ACB90499.1	lemA	SPCG_1247	-	-	lemA protein
+1234559..1235296	+	738	ACB90500.1	gidB	SPCG_1248	-	-	glucose-inhibited division protein B
+1235612..1236931	+	1320	ACB90501.1	pyrP	SPCG_1249	-	-	uracil permease
+1237126..1238697	-	1572	ACB90502.1	ffh	SPCG_1250	-	-	signal recognition particle protein
+1238709..1239041	-	333	ACB90503.1	-	SPCG_1251	-	-	hypothetical protein
+1239132..1239509	-	378	ACB90505.1	-	SPCG_1252	-	-	hypothetical protein
+1239485..1240885	+	1401	ACB90504.1	-	SPCG_1253	-	-	hypothetical protein
+1240898..1241704	+	807	ACB90506.1	-	SPCG_1254	-	-	Cof family protein
+1241915..1243690	-	1776	ACB90507.1	-	SPCG_1255	-	-	hypothetical protein
+1244176..1245357	-	1182	ACB90508.1	-	SPCG_1256	-	-	choline binding protein PcpA
+1245370..1246590	-	1221	ACB90509.1	-	SPCG_1257	-	-	pneumococcal surface protein A
+1246618..1247538	+	921	ACB90510.1	-	SPCG_1258	-	-	rgg protein, putative
+1247770..1247991	-	222	ACB90511.1	-	SPCG_1259	-	-	hypothetical protein
+1248218..1248565	-	348	ACB90512.1	rplS	SPCG_1260	-	-	50S ribosomal protein L19
+1248684..1249013	-	330	ACB90513.1	crcB	SPCG_1261	-	-	crcB protein
+1249007..1249381	-	375	ACB90514.1	crcB	SPCG_1262	-	-	crcB protein
+1249378..1249644	-	267	ACB90515.1	-	SPCG_1263	-	-	hypothetical protein
+1249760..1250203	-	444	ACB90516.1	flaV	SPCG_1264	-	-	flavodoxin
+1250295..1251242	+	948	ACB90517.1	-	SPCG_1265	-	-	DHH subfamily 1 protein
+1251296..1251580	+	285	ACB90518.1	rpmE	SPCG_1266	-	-	50S ribosomal protein L31
+1251637..1252242	-	606	ACB90519.1	-	SPCG_1267	-	-	hypothetical protein
+1252190..1253194	-	1005	ACB90520.1	-	SPCG_1268	-	-	hypothetical protein
+1253246..1253368	-	123	ACB90521.1	-	SPCG_1269	-	-	hypothetical protein
+1253365..1253499	-	135	ACB90522.1	-	SPCG_1270	-	-	hypothetical protein
+1253749..1253844	-	96	ACB90523.1	-	SPCG_1271	-	-	hypothetical protein
+1254186..1255532	+	1347	ACB90524.1	gdhA	SPCG_1272	-	-	glutamate dehydrogenase
+1255821..1259432	-	3612	ACB90525.1	-	SPCG_1273	-	-	glutamate dehydrogenase
+1259712..1260899	-	1188	ACB90526.1	-	SPCG_1274	-	-	site-specific recombinase
+1260871..1261179	-	309	ACB90527.1	-	SPCG_1275	-	-	hypothetical protein
+1261741..1263570	-	1830	ACB90528.1	-	SPCG_1276	-	-	Tn5252, relaxase
+1263557..1263922	-	366	ACB90529.1	-	SPCG_1277	-	-	Tn5252, Orf 9 protein
+1263927..1264283	-	357	ACB90530.1	-	SPCG_1278	-	-	Tn5252, Orf 10 protein
+1264667..1264921	-	255	ACB90531.1	-	SPCG_1279	-	-	hypothetical protein
+1264987..1268991	-	4005	ACB90532.1	-	SPCG_1280	-	-	DNA-dependent ATPase I and helicase II
+1269113..1269499	-	387	ACB90533.1	-	SPCG_1281	-	-	hypothetical protein
+1269571..1270521	-	951	ACB90534.1	-	SPCG_1282	-	-	hypothetical protein
+1270606..1271724	-	1119	ACB90535.1	-	SPCG_1283	-	-	hypothetical protein
+1271986..1273821	-	1836	ACB90536.1	-	SPCG_1284	-	-	hypothetical protein
+1274199..1274477	-	279	ACB90537.1	-	SPCG_1285	-	-	hypothetical protein
+1274452..1275156	-	705	ACB90538.1	-	SPCG_1286	-	-	phosphoserine phosphatase
+1275209..1275775	-	567	ACB90539.1	-	SPCG_1287	-	-	hypothetical protein
+1275868..1276092	-	225	ACB90540.1	-	SPCG_1288	-	-	hypothetical protein
+1276181..1276798	-	618	ACB90541.1	-	SPCG_1289	-	-	hypothetical protein
+1277120..1277842	-	723	ACB90542.1	-	SPCG_1290	-	-	hypothetical protein
+1278159..1279094	+	936	ACB90543.1	-	SPCG_1291	-	-	putative replication initiation protein Rep(RC)
+1279959..1280609	-	651	ACB90544.1	-	SPCG_1292	-	-	chloramphenicol acetyltransferase
+1280780..1281028	-	249	ACB90545.1	-	SPCG_1293	-	-	hypothetical protein
+1281267..1282055	-	789	ACB90546.1	-	SPCG_1294	-	-	hypothetical protein
+1282531..1283289	-	759	ACB90547.1	-	SPCG_1295	-	-	hypothetical protein
+1283289..1283765	-	477	ACB90548.1	-	SPCG_1296	-	-	transcriptional regulator, putative
+1283835..1284107	-	273	ACB90549.1	-	SPCG_1297	-	-	hypothetical protein
+1284145..1284528	-	384	ACB90550.1	-	SPCG_1298	-	-	hypothetical protein
+1284525..1284758	-	234	ACB90551.1	-	SPCG_1299	-	-	hypothetical protein
+1284809..1285894	-	1086	ACB90552.1	-	SPCG_1300	-	-	hypothetical protein
+1285904..1286545	-	642	ACB90553.1	-	SPCG_1301	-	-	parvulin-like peptidyl-prolyl isomerase
+1286705..1286902	+	198	ACB90554.1	-	SPCG_1302	-	-	hypothetical protein
+1286916..1287233	-	318	ACB90555.1	-	SPCG_1303	-	-	hypothetical protein
+1287226..1287510	-	285	ACB90556.1	-	SPCG_1304	-	-	hypothetical protein
+1287585..1293818	-	6234	ACB90557.1	-	SPCG_1305	-	-	SNF2 family protein
+1293851..1294261	-	411	ACB90558.1	-	SPCG_1306	-	-	hypothetical protein
+1294413..1295108	-	696	ACB90559.1	-	SPCG_1307	-	-	hypothetical protein
+1295217..1298030	-	2814	ACB90560.1	-	SPCG_1308	-	-	hypothetical protein
+1298042..1300357	-	2316	ACB90561.1	-	SPCG_1309	-	-	hypothetical protein
+1300347..1300709	-	363	ACB90562.1	-	SPCG_1310	-	-	hypothetical protein
+1300763..1301617	-	855	ACB90563.1	-	SPCG_1311	-	-	hypothetical protein
+1301634..1301876	-	243	ACB90564.1	-	SPCG_1312	-	-	hypothetical protein
+1301897..1303777	-	1881	ACB90565.1	-	SPCG_1313	-	-	hypothetical protein
+1303774..1304283	-	510	ACB90566.1	-	SPCG_1314	-	-	hypothetical protein
+1304252..1304551	-	300	ACB90567.1	-	SPCG_1315	-	-	hypothetical protein
+1304834..1305670	-	837	ACB90568.1	-	SPCG_1316	-	-	hypothetical protein
+1305670..1306314	-	645	ACB90569.1	-	SPCG_1317	-	-	hypothetical protein
+1306549..1306668	+	120	ACB90570.1	-	SPCG_1318	-	-	hypothetical protein
+1306691..1307005	+	315	ACB90571.1	-	SPCG_1319	-	-	hypothetical protein
+1307021..1307407	+	387	ACB90572.1	-	SPCG_1320	-	-	hypothetical protein
+1307436..1308821	+	1386	ACB90573.1	-	SPCG_1321	-	-	hypothetical protein
+1308999..1310417	+	1419	ACB90574.1	-	SPCG_1322	-	-	hypothetical protein
+1310674..1311459	+	786	ACB90575.1	-	SPCG_1323	-	-	erythromycin ribosome methylase
+1311797..1312339	+	543	ACB90576.1	-	SPCG_1324	-	-	streptothricin acetyltransferase
+1312432..1313226	+	795	ACB90577.1	-	SPCG_1325	-	-	aminoglycoside phosphotransferase type III
+1314404..1314643	+	240	ACB90578.1	-	SPCG_1326	-	-	omega2 protein
+1314900..1315637	+	738	ACB90579.1	-	SPCG_1327	-	-	rRNA methylase
+1315992..1316546	+	555	ACB90580.1	-	SPCG_1328	-	-	resolvase
+1316550..1319468	+	2919	ACB90581.1	-	SPCG_1329	-	-	transposase
+1319524..1319763	-	240	ACB90582.1	-	SPCG_1330	-	-	hypothetical protein
+1320259..1320690	+	432	ACB90583.1	-	SPCG_1331	-	-	hypothetical protein
+1320687..1320917	+	231	ACB90584.1	-	SPCG_1332	-	-	hypothetical protein
+1321378..1321581	+	204	ACB90585.1	-	SPCG_1333	-	-	hypothetical protein
+1321663..1322625	+	963	ACB90586.1	-	SPCG_1334	-	-	hypothetical protein
+1322622..1322879	+	258	ACB90587.1	-	SPCG_1335	-	-	hypothetical protein
+1323094..1323681	-	588	ACB90588.1	-	SPCG_1336	-	-	hypothetical protein
+1323684..1323917	-	234	ACB90589.1	-	SPCG_1337	-	-	hypothetical protein
+1324303..1324752	-	450	ACB90590.1	-	SPCG_1338	-	-	hypothetical protein
+1324736..1326094	-	1359	ACB90591.1	-	SPCG_1339	-	-	type II DNA modification methyltransferase Spn5252IP
+1326193..1326972	-	780	ACB90592.1	-	SPCG_1340	-	-	replication initiator A, N-terminal
+1326969..1327142	-	174	ACB90594.1	-	SPCG_1341	-	-	hypothetical protein
+1327118..1327264	+	147	ACB90593.1	-	SPCG_1342	-	-	hypothetical protein
+1327330..1327731	+	402	ACB90595.1	rplL	SPCG_1343	-	-	50S ribosomal protein L7/L12
+1327788..1328351	-	564	ACB90596.1	rplJ	SPCG_1344	-	-	50S ribosomal protein L10
+1328538..1330004	-	1467	ACB90597.1	trzA	SPCG_1345	-	-	chlorohydrolase
+1330099..1331886	-	1788	ACB90598.1	-	SPCG_1346	-	-	ABC transporter, ATP-binding/permease protein
+1331849..1333573	-	1725	ACB90599.1	-	SPCG_1347	-	-	ABC transporter, ATP-binding/permease protein
+1333631..1334569	-	939	ACB90600.1	msrA	SPCG_1348	-	-	bifunctional methionine sulfoxide reductase A/B protein
+1334864..1335733	-	870	ACB90601.1	thrB	SPCG_1349	-	-	homoserine kinase
+1335735..1337054	-	1320	ACB90602.1	hom	SPCG_1350	-	-	homoserine dehydrogenase
+1337172..1337924	-	753	ACB90603.1	mecA	SPCG_1351	-	-	adaptor protein
+1338051..1339085	-	1035	ACB90604.1	-	SPCG_1352	-	-	hypothetical protein
+1339114..1340547	-	1434	ACB90605.1	-	SPCG_1353	-	-	hypothetical protein
+1340563..1341549	-	987	ACB90606.1	-	SPCG_1354	-	-	glycosyl transferase, family 2
+1341551..1342654	-	1104	ACB90607.1	-	SPCG_1355	-	-	glycosyl transferase, group 1
+1342644..1343489	-	846	ACB90608.1	licD3	SPCG_1356	-	-	licD3 protein
+1343540..1343650	-	111	ACB90609.1	-	SPCG_1357	-	-	hypothetical protein
+1343768..1345042	-	1275	ACB90610.1	-	SPCG_1358	-	-	psr protein
+1345039..1345887	-	849	ACB90611.1	pheA	SPCG_1359	-	-	prephenate dehydratase
+1345884..1346360	-	477	ACB90612.1	aroK	SPCG_1360	-	-	shikimate kinase
+1346353..1347648	-	1296	ACB90613.1	aroA	SPCG_1361	-	-	3-phosphoshikimate 1-carboxyvinyltransferase
+1347728..1348066	-	339	ACB90614.1	-	SPCG_1362	-	-	hypothetical protein
+1348077..1349180	-	1104	ACB90615.1	tyrA	SPCG_1363	-	-	prephenate dehydrogenase
+1349190..1350356	-	1167	ACB90616.1	aroC	SPCG_1364	-	-	chorismate synthase
+1350366..1351433	-	1068	ACB90617.1	aroB	SPCG_1365	-	-	3-dehydroquinate synthase
+1351452..1352306	-	855	ACB90618.1	aroE	SPCG_1366	-	-	shikimate/quinate 5-dehydrogenase
+1352296..1352973	-	678	ACB90619.1	aroD	SPCG_1367	-	-	3-dehydroquinate dehydratase
+1352970..1354142	-	1173	ACB90620.1	-	SPCG_1368	-	-	hypothetical protein
+1354820..1356481	-	1662	ACB90621.1	-	SPCG_1369	-	-	hypothetical protein
+1356435..1357250	-	816	ACB90622.1	-	SPCG_1370	-	-	ABC transporter, ATP-binding protein
+1357363..1358817	+	1455	ACB90623.1	amy	SPCG_1371	-	-	cytoplasmic alpha-amylase
+1358907..1361525	-	2619	ACB90624.1	alaS	SPCG_1372	-	-	alanyl-tRNA synthetase
+1361547..1362044	-	498	ACB90625.1	-	SPCG_1373	-	-	hypothetical protein
+1362698..1363768	-	1071	ACB90626.1	-	SPCG_1374	-	-	spermidine/putrescine ABC transporter, spermidine/putrescine-binding protein
+1363765..1364565	-	801	ACB90627.1	-	SPCG_1375	-	-	spermidine/putrescine ABC transporter, permease protein
+1364535..1365362	-	828	ACB90628.1	-	SPCG_1376	-	-	spermidine/putrescine ABC transporter, permease protein
+1365322..1366479	-	1158	ACB90629.1	-	SPCG_1377	-	-	spermidine/putrescine ABC transporter, ATP-binding protein
+1366639..1367544	-	906	ACB90630.1	murB	SPCG_1378	-	-	UDP-N-acetylenolpyruvoylglucosamine reductase
+1367596..1367694	+	99	ACB90631.1	-	SPCG_1379	-	-	hypothetical protein
+1367658..1368410	-	753	ACB90632.1	-	SPCG_1380	-	-	hypothetical protein
+1368420..1369151	-	732	ACB90633.1	aldB	SPCG_1381	-	-	alpha-acetolactate decarboxylase
+1369293..1370564	+	1272	ACB90634.1	-	SPCG_1382	-	-	hypothetical protein
+1370584..1371399	-	816	ACB90635.1	-	SPCG_1383	-	-	amino acid ABC transporter, amino acid-binding protein
+1371556..1372209	-	654	ACB90636.1	-	SPCG_1384	-	-	phosphate transport system regulatory protein PhoU, putative
+1372221..1372979	-	759	ACB90637.1	-	SPCG_1385	-	-	phosphate ABC transporter, ATP-binding protein, putative
+1372992..1373795	-	804	ACB90638.1	-	SPCG_1386	-	-	phosphate ABC transporter, ATP-binding protein, putative
+1373806..1374690	-	885	ACB90639.1	-	SPCG_1387	-	-	phosphate ABC transporter, permease protein, putative
+1374680..1375597	-	918	ACB90640.1	-	SPCG_1388	-	-	phosphate ABC transporter, permease protein, putative
+1375597..1376475	-	879	ACB90641.1	-	SPCG_1389	-	-	phosphate ABC transporter, phosphate-binding protein, putative
+1377049..1378353	-	1305	ACB90642.1	-	SPCG_1390	-	-	NOL1/NOP2/sun family protein
+1378354..1379127	-	774	ACB90643.1	-	SPCG_1391	-	-	inositol monophosphatase family protein
+1379117..1379395	-	279	ACB90644.1	-	SPCG_1392	-	-	hypothetical protein
+1379395..1379796	-	402	ACB90645.1	spxA	SPCG_1393	-	-	transcriptional regulator Spx
+1380006..1380656	-	651	ACB90646.1	-	SPCG_1394	-	-	hypothetical protein
+1380613..1381386	-	774	ACB90647.1	-	SPCG_1395	-	-	hydrolase, haloacid dehalogenase-like family
+1381397..1382134	-	738	ACB90648.1	-	SPCG_1396	-	-	acyl-ACP thioesterase, putative
+1382139..1383269	-	1131	ACB90649.1	hemN	SPCG_1397	-	-	coproporphyrinogen III oxidase
+1383353..1383742	-	390	ACB90650.1	-	SPCG_1398	-	-	hypothetical protein
+1383758..1384141	-	384	ACB90651.1	-	SPCG_1399	-	-	hypothetical protein
+1384142..1384942	-	801	ACB90652.1	lgt	SPCG_1400	-	-	prolipoprotein diacylglyceryl transferase
+1384923..1385873	-	951	ACB90653.1	hprK	SPCG_1401	-	-	HPr kinase/phosphorylase
+1385988..1386188	-	201	ACB90654.1	rpsU	SPCG_1402	-	-	ribosomal protein S21
+1386304..1387026	-	723	ACB90655.1	nagB	SPCG_1403	-	-	glucosamine-6-phosphate isomerase
+1387150..1388190	+	1041	ACB90656.1	queA	SPCG_1404	-	-	S-adenosylmethionine:tRNA ribosyltransferase-isomerase
+1388851..1389240	-	390	ACB90657.1	-	SPCG_1405	-	-	choline binding protein
+1390701..1391252	-	552	ACB90658.1	-	SPCG_1406	-	-	acetyltransferase, GNAT family
+1391602..1392426	-	825	ACB90659.1	nadE	SPCG_1407	-	-	NAD(+) synthetase
+1392423..1393883	-	1461	ACB90660.1	-	SPCG_1408	-	-	nicotinate phosphoribosyltransferase
+1393999..1394487	-	489	ACB90661.1	-	SPCG_1409	-	-	hypothetical protein
+1395150..1395551	-	402	ACB90662.1	-	SPCG_1410	-	-	hypothetical protein
+1395567..1395701	-	135	ACB90663.1	-	SPCG_1411	-	-	hypothetical protein
+1395711..1396031	-	321	ACB90664.1	-	SPCG_1412	-	-	hypothetical protein
+1396041..1396289	-	249	ACB90665.1	-	SPCG_1413	-	-	hypothetical protein
+1396792..1397517	-	726	ACB90666.1	-	SPCG_1414	-	-	peptidase, U32 family
+1397670..1397837	+	168	ACB90667.1	-	SPCG_1415	-	-	hypothetical protein
+1398092..1399396	-	1305	ACB90668.1	-	SPCG_1416	-	-	peptidase, U32 family
+1400002..1400184	+	183	ACB90669.1	-	SPCG_1417	-	-	type II restriction endonuclease, uncharacterized, truncation
+1400368..1400556	+	189	ACB90670.1	-	SPCG_1418	-	-	type II restriction endonuclease, uncharacterized, truncation
+1400553..1401743	+	1191	ACB90671.1	-	SPCG_1419	-	-	type II DNA modification methyltransferase, putative
+1401990..1402136	+	147	ACB90672.1	-	SPCG_1420	-	-	hypothetical protein
+1402258..1403250	-	993	ACB90673.1	-	SPCG_1421	-	-	transcriptional regulator, AraC family
+1403404..1405164	+	1761	ACB90674.1	-	SPCG_1422	-	-	ABC transporter, ATP-binding/permease protein
+1405124..1406869	+	1746	ACB90675.1	-	SPCG_1423	-	-	ABC transporter, ATP-binding protein
+1406880..1407509	+	630	ACB90676.1	-	SPCG_1424	-	-	hypothetical protein
+1407458..1407967	+	510	ACB90677.1	-	SPCG_1425	-	-	hypothetical protein
+1407955..1409319	+	1365	ACB90678.1	-	SPCG_1426	-	-	ABC transporter, ATP-binding protein
+1410250..1410546	-	297	ACB90679.1	-	SPCG_1427	-	-	hypothetical protein
+1410619..1410903	-	285	ACB90680.1	-	SPCG_1428	-	-	hypothetical protein
+1410950..1411156	-	207	ACB90681.1	-	SPCG_1429	-	-	hypothetical protein
+1411320..1411514	-	195	ACB90682.1	-	SPCG_1430	-	-	hypothetical protein
+1411833..1412069	-	237	ACB90683.1	-	SPCG_1431	-	-	IS66 family element, Orf2, truncation
+1412050..1412289	-	240	ACB90684.1	-	SPCG_1432	-	-	IS66 family element, Orf1
+1412539..1414101	-	1563	ACB90685.1	-	SPCG_1433	-	-	bifunctional GMP synthase/glutamine amidotransferase protein
+1414234..1414941	+	708	ACB90686.1	-	SPCG_1434	-	-	transcriptional regulator, GntR family
+1414984..1415940	-	957	ACB90687.1	-	SPCG_1435	-	-	membrane protein
+1415889..1416824	-	936	ACB90688.1	-	SPCG_1436	-	-	hypothetical protein
+1416821..1417561	-	741	ACB90689.1	cppA	SPCG_1437	-	-	cppA protein
+1417630..1418265	-	636	ACB90690.1	-	SPCG_1438	-	-	platelet activating factor, putative
+1418267..1419094	-	828	ACB90691.1	-	SPCG_1439	-	-	cof family protein
+1419116..1419451	-	336	ACB90692.1	-	SPCG_1440	-	-	hypothetical protein
+1419452..1419964	-	513	ACB90693.1	-	SPCG_1441	-	-	hypothetical protein
+1420058..1420180	-	123	ACB90694.1	-	SPCG_1442	-	-	hypothetical protein
+1420692..1421303	+	612	ACB90695.1	def	SPCG_1443	-	-	peptide deformylase
+1421315..1422076	+	762	ACB90696.1	trmH	SPCG_1444	-	-	spoU rRNA methylase family protein
+1422115..1423026	-	912	ACB90697.1	trxB	SPCG_1445	-	-	thioredoxin reductase
+1423092..1423328	-	237	ACB90698.1	-	SPCG_1446	-	-	hypothetical protein
+1423394..1424137	-	744	ACB90699.1	-	SPCG_1447	-	-	amino acid ABC transporter, ATP-binding protein
+1424137..1424937	-	801	ACB90700.1	-	SPCG_1448	-	-	amino acid ABC transporter, permease protein
+1425095..1425451	-	357	ACB90701.1	-	SPCG_1449	-	-	hypothetical protein
+1425464..1425976	-	513	ACB90702.1	ogt	SPCG_1450	-	-	methylated-DNA--protein-cysteine S-methyltransferase
+1425976..1426470	-	495	ACB90703.1	-	SPCG_1451	-	-	acetyltransferase, GNAT family
+1426599..1427051	+	453	ACB90704.1	-	SPCG_1452	-	-	hypothetical protein
+1427048..1427695	+	648	ACB90705.1	-	SPCG_1453	-	-	hemolysin
+1428047..1429363	-	1317	ACB90706.1	-	SPCG_1454	-	-	hypothetical protein
+1429381..1430181	-	801	ACB90707.1	-	SPCG_1455	-	-	ABC transporter, ATP-binding protein
+1430669..1431253	-	585	ACB90708.1	-	SPCG_1456	-	-	hypothetical protein
+1431254..1432147	-	894	ACB90709.1	pdx1	SPCG_1457	-	-	pyridoxine biosynthesis protein
+1432281..1433660	-	1380	ACB90710.1	nox	SPCG_1458	-	-	NADH oxidase
+1433954..1434877	+	924	ACB90711.1	apbE	SPCG_1459	-	-	thiamine biosynthesis protein ApbE, putative
+1434937..1435542	+	606	ACB90712.1	-	SPCG_1460	-	-	oxidoreductase, putative
+1435561..1436805	+	1245	ACB90713.1	-	SPCG_1461	-	-	oxidoreductase, putative
+1437028..1437285	-	258	ACB90714.1	-	SPCG_1462	-	-	hypothetical protein
+1437327..1439363	-	2037	ACB90715.1	glyS	SPCG_1463	-	-	glycyl-tRNA synthetase beta subunit
+1439649..1440566	-	918	ACB90716.1	glyQ	SPCG_1464	-	-	glycyl-tRNA synthetase alpha subunit
+1440758..1441537	-	780	ACB90717.1	-	SPCG_1465	-	-	hypothetical protein
+1441792..1442634	-	843	ACB90718.1	-	SPCG_1466	-	-	oxidoreductase, aldo/keto reductase family
+1442748..1444190	-	1443	ACB90719.1	pgdA	SPCG_1467	-	-	peptidoglycan N-acetylglucosamine deacetylase A
+1444374..1444751	-	378	ACB90720.1	-	SPCG_1468	-	-	hypothetical protein
+1444771..1445853	+	1083	ACB90721.1	mocA	SPCG_1469	-	-	oxidoreductase, Gfo/Idh/MocA family
+1445850..1446932	+	1083	ACB90722.1	-	SPCG_1470	-	-	ATP-dependent RNA helicase, DEAD/DEAH box family
+1446996..1447262	-	267	ACB90723.1	-	SPCG_1471	-	-	hypothetical protein
+1447527..1447634	-	108	ACB90724.1	-	SPCG_1472	-	-	hypothetical protein
+1447886..1448017	-	132	ACB90725.1	-	SPCG_1473	-	-	hypothetical protein
+1448401..1449615	-	1215	ACB90726.1	tuf	SPCG_1474	-	-	elongation factor Tu
+1450530..1451399	-	870	ACB90727.1	glpF	SPCG_1475	-	-	glycerol uptake facilitator protein, putative
+1451622..1451783	-	162	ACB90728.1	-	SPCG_1476	-	-	cell wall surface anchor family protein
+1452100..1453212	-	1113	ACB90729.1	-	SPCG_1477	-	-	hypothetical protein
+1453850..1453945	-	96	ACB90730.1	-	SPCG_1478	-	-	hypothetical protein
+1453911..1454210	-	300	ACB90731.1	-	SPCG_1479	-	-	transposase, IS630-Spn1 related, Orf2
+1454430..1454645	-	216	ACB90732.1	-	SPCG_1480	-	-	hypothetical protein
+1454989..1456707	+	1719	ACB90733.1	pgm	SPCG_1481	-	-	phosphoglucomutase
+1456757..1457284	-	528	ACB90734.1	-	SPCG_1482	-	-	degenerate transposase
+1457565..1458083	-	519	ACB90735.1	-	SPCG_1483	-	-	degenerate transposase
+1458310..1458657	+	348	ACB90736.1	bta	SPCG_1484	-	-	bacterocin transport accessory protein
+1458937..1459773	-	837	ACB90737.1	-	SPCG_1485	-	-	amino acid ABC transporter, amino acid-binding protein
+1459786..1460415	-	630	ACB90738.1	-	SPCG_1486	-	-	amino acid ABC transporter, ATP-binding protein
+1460425..1461123	-	699	ACB90739.1	-	SPCG_1487	-	-	amino acid ABC transporter, permease protein
+1461212..1462456	-	1245	ACB90740.1	-	SPCG_1488	-	-	TPR domain protein
+1462431..1463597	-	1167	ACB90741.1	-	SPCG_1489	-	-	membrane protein
+1463741..1464754	+	1014	ACB90742.1	-	SPCG_1490	-	-	hypothetical protein
+1464799..1465218	-	420	ACB90743.1	atpC	SPCG_1491	-	-	ATP synthase subunit epsilon
+1465229..1466635	-	1407	ACB90744.1	atpD	SPCG_1492	-	-	ATP synthase subunit B
+1466721..1467599	-	879	ACB90745.1	atpG	SPCG_1493	-	-	ATP synthase subunit C
+1467615..1469120	-	1506	ACB90746.1	atpA	SPCG_1494	-	-	ATP synthase subunit A
+1469135..1469671	-	537	ACB90747.1	atpH	SPCG_1495	-	-	ATP synthase subunit D
+1469671..1470165	-	495	ACB90748.1	atpF	SPCG_1496	-	-	ATP synthase subunit B
+1470179..1470895	-	717	ACB90749.1	atpB	SPCG_1497	-	-	ATP synthase subunit A
+1470930..1471130	-	201	ACB90750.1	atpE	SPCG_1498	-	-	ATP synthase F0, C subunit
+1471205..1472257	-	1053	ACB90751.1	-	SPCG_1499	-	-	IS1239 transposase
+1472670..1473152	-	483	ACB90752.1	-	SPCG_1500	-	-	acetyltransferase, GNAT family
+1473186..1473728	-	543	ACB90753.1	-	SPCG_1501	-	-	hypothetical protein
+1473756..1474247	-	492	ACB90754.1	greA	SPCG_1502	-	-	transcription elongation factor GreA
+1474309..1475964	-	1656	ACB90755.1	-	SPCG_1503	-	-	hypothetical protein
+1476045..1476539	-	495	ACB90756.1	-	SPCG_1504	-	-	acetyltransferase, GNAT family
+1476536..1477000	-	465	ACB90757.1	-	SPCG_1505	-	-	acetyltransferase, GNAT family
+1477010..1478344	-	1335	ACB90758.1	murC	SPCG_1506	-	-	UDP-N-acetylmuramate--L-alanine ligase
+1478355..1478972	-	618	ACB90759.1	-	SPCG_1507	-	-	hypothetical protein
+1479020..1482118	-	3099	ACB90760.1	snf	SPCG_1508	-	-	snf2 family protein
+1482211..1483377	-	1167	ACB90761.1	patB	SPCG_1509	-	-	aminotransferase, class II
+1483385..1484479	-	1095	ACB90762.1	metB	SPCG_1510	-	-	cystathionine gamma-synthase
+1484636..1485229	-	594	ACB90763.1	-	SPCG_1511	-	-	hypothetical protein
+1485217..1485756	-	540	ACB90764.1	-	SPCG_1512	-	-	hypothetical protein
+1485765..1486310	-	546	ACB90765.1	-	SPCG_1513	-	-	ABC-type multidrug transport system, ATPase and permease components
+1486482..1488440	-	1959	ACB90766.1	aliB	SPCG_1514	-	-	oligopeptide ABC transporter, oligopeptide-binding protein AliB
+1488427..1488522	-	96	ACB90767.1	-	SPCG_1515	-	-	hypothetical protein
+1488643..1490280	-	1638	ACB90768.1	-	SPCG_1516	-	-	polysaccharide biosynthesis protein, putative
+1490371..1491816	+	1446	ACB90769.1	murE	SPCG_1517	-	-	UDP-N-acetylmuramoylalanyl-D-glutamate--2, 6-diaminopimelate ligase
+1492110..1492682	-	573	ACB90770.1	-	SPCG_1518	-	-	hypothetical protein
+1492719..1493231	-	513	ACB90771.1	-	SPCG_1519	-	-	hypothetical protein
+1493318..1494253	-	936	ACB90772.1	ppaC	SPCG_1520	-	-	putative manganese-dependent inorganic pyrophosphatase
+1494324..1494623	-	300	ACB90773.1	-	SPCG_1521	-	-	hypothetical protein
+1494613..1495362	-	750	ACB90774.1	-	SPCG_1522	-	-	hypothetical protein
+1495416..1495802	-	387	ACB90775.1	-	SPCG_1523	-	-	hypothetical protein
+1495777..1497177	-	1401	ACB90776.1	-	SPCG_1524	-	-	cof family protein/peptidyl-prolyl cis-trans isomerase, cyclophilin type
+1497472..1497711	-	240	ACB90777.1	rpsR	SPCG_1525	-	-	30S ribosomal protein S18
+1497743..1498213	-	471	ACB90778.1	ssbA	SPCG_1526	-	-	single-strand DNA-binding protein
+1498225..1498515	-	291	ACB90779.1	rpsF	SPCG_1527	-	-	30S ribosomal protein S6
+1498669..1500012	-	1344	ACB90780.1	asnS	SPCG_1528	-	-	asparaginyl-tRNA synthetase
+1500031..1500402	-	372	ACB90781.1	-	SPCG_1529	-	-	hypothetical protein
+1500389..1501576	-	1188	ACB90782.1	aspB	SPCG_1530	-	-	aspartate aminotransferase
+1501573..1502061	-	489	ACB90783.1	-	SPCG_1531	-	-	hypothetical protein
+1502301..1502930	+	630	ACB90784.1	-	SPCG_1532	-	-	hypothetical protein
+1503208..1503936	-	729	ACB90785.1	-	SPCG_1533	-	-	hypothetical protein
+1504030..1504194	-	165	ACB90786.1	-	SPCG_1534	-	-	hypothetical protein
+1504347..1505942	-	1596	ACB90787.1	-	SPCG_1535	-	-	hypothetical protein
+1505954..1506364	-	411	ACB90788.1	def	SPCG_1536	-	-	peptide deformylase
+1506480..1507271	-	792	ACB90789.1	-	SPCG_1537	-	-	glutathione S-transferase family protein
+1507284..1510028	-	2745	ACB90790.1	pacL	SPCG_1538	-	-	cation-transporting ATPase, E1-E2 family
+1510284..1511468	+	1185	ACB90791.1	-	SPCG_1539	-	-	cation efflux family protein
+1511611..1513482	-	1872	ACB90792.1	-	SPCG_1540	-	-	ABC transporter, ATP-binding protein
+1513479..1514678	-	1200	ACB90793.1	-	SPCG_1541	-	-	polyA polymerase family protein
+1514675..1515442	-	768	ACB90794.1	dapB	SPCG_1542	-	-	dihydrodipicolinate reductase
+1515708..1516556	-	849	ACB90795.1	-	SPCG_1543	-	-	degV family protein
+1516558..1516944	-	387	ACB90796.1	-	SPCG_1544	-	-	hypothetical protein
+1517006..1518358	-	1353	ACB90797.1	glmM	SPCG_1545	-	-	phosphoglucomutase/phosphomannomutase family protein
+1518382..1519161	-	780	ACB90798.1	-	SPCG_1546	-	-	hypothetical protein
+1519148..1520026	-	879	ACB90799.1	-	SPCG_1547	-	-	hypothetical protein
+1520141..1521106	+	966	ACB90800.1	-	SPCG_1548	-	-	pyridine nucleotide-disulphide oxidoreductase family protein
+1521140..1522051	-	912	ACB90801.1	-	SPCG_1549	-	-	hypothetical protein
+1522048..1523025	-	978	ACB90802.1	-	SPCG_1550	-	-	hypothetical protein
+1523022..1523912	-	891	ACB90803.1	-	SPCG_1551	-	-	hypothetical protein
+1523964..1524344	-	381	ACB90804.1	-	SPCG_1552	-	-	endoribonuclease L-PSP
+1524355..1524948	-	594	ACB90805.1	-	SPCG_1553	-	-	GTP-binding protein
+1524951..1526183	-	1233	ACB90806.1	clpX	SPCG_1554	-	-	ATP-dependent protease ATP-binding subunit
+1526215..1526385	-	171	ACB90807.1	-	SPCG_1555	-	-	hypothetical protein
+1526385..1526891	-	507	ACB90808.1	dfr	SPCG_1556	-	-	dihydrofolate reductase
+1527021..1527539	-	519	ACB90809.1	-	SPCG_1557	-	-	non-heme iron-containing ferritin
+1527752..1527844	+	93	ACB90810.1	-	SPCG_1558	-	-	hypothetical protein
+1528037..1529542	-	1506	ACB90811.1	lytC	SPCG_1559	-	-	lysozyme
+1529580..1530359	-	780	ACB90812.1	tpiA	SPCG_1560	-	-	triosephosphate isomerase
+1530436..1531113	-	678	ACB90813.1	-	SPCG_1561	-	-	hypothetical protein
+1531122..1532066	-	945	ACB90814.1	metA	SPCG_1562	-	-	homoserine O-succinyltransferase
+1532248..1532778	-	531	ACB90815.1	apt	SPCG_1563	-	-	adenine phosphoribosyltransferase
+1532848..1533606	-	759	ACB90816.1	-	SPCG_1564	-	-	methyltransferase, putative
+1534107..1535237	-	1131	ACB90817.1	-	SPCG_1565	-	-	sugar ABC transporter, ATP-binding protein
+1535687..1536262	-	576	ACB90818.1	entB	SPCG_1566	-	-	isochorismatase family protein
+1536262..1537050	-	789	ACB90819.1	codY	SPCG_1567	-	-	transcriptional repressor CodY
+1537315..1538889	-	1575	ACB90820.1	-	SPCG_1568	-	-	ATP-dependent RNA helicase, putative
+1539088..1540314	-	1227	ACB90821.1	oxlT	SPCG_1569	-	-	oxalate:formate antiporter
+1540507..1541823	+	1317	ACB90822.1	merA	SPCG_1570	-	-	pyridine nucleotide-disulfide oxidoreductase
+1541922..1543265	+	1344	ACB90823.1	-	SPCG_1571	-	-	mur ligase family protein
+1543265..1544047	+	783	ACB90824.1	-	SPCG_1572	-	-	hypothetical protein
+1544173..1545255	+	1083	ACB90825.1	-	SPCG_1573	-	-	proline dipeptidase
+1545579..1546412	-	834	ACB90826.1	-	SPCG_1574	-	-	IS3-Spn1, transposase
+1546405..1546572	-	168	ACB90827.1	-	SPCG_1575	-	-	degenerate transposase
+1547147..1547608	-	462	ACB90828.1	-	SPCG_1576	-	-	hypothetical protein
+1547586..1548359	-	774	ACB90829.1	pdxK	SPCG_1577	-	-	phosphomethylpyrimidine kinase
+1548349..1549098	-	750	ACB90830.1	truA	SPCG_1578	-	-	tRNA pseudouridine synthase A
+1549278..1549439	+	162	ACB90831.1	-	SPCG_1579	-	-	cytidylate kinase
+1549411..1550562	-	1152	ACB90832.1	-	SPCG_1580	-	-	hypothetical protein
+1550802..1551431	-	630	ACB90833.1	-	SPCG_1581	-	-	hypothetical protein
+1551434..1551772	-	339	ACB90834.1	phnA	SPCG_1582	-	-	phnA protein
+1551903..1552574	-	672	ACB90835.1	cmk	SPCG_1583	-	-	cytidylate kinase
+1552583..1553059	-	477	ACB90836.1	-	SPCG_1584	-	-	hypothetical protein
+1553111..1553317	+	207	ACB90837.1	-	SPCG_1585	-	-	ferredoxin
+1553507..1554151	-	645	ACB90838.1	-	SPCG_1586	-	-	hypothetical protein
+1554326..1555315	-	990	ACB90839.1	gtrB	SPCG_1587	-	-	glycosyl transferase, family 2
+1555263..1556282	-	1020	ACB90840.1	galE	SPCG_1588	-	-	UDP-glucose 4-epimerase
+1556261..1556410	-	150	ACB90841.1	-	SPCG_1589	-	-	hypothetical protein
+1556583..1557695	-	1113	ACB90842.1	-	SPCG_1590	-	-	oxidoreductase, DadA family protein
+1557703..1558500	-	798	ACB90843.1	-	SPCG_1591	-	-	hypothetical protein
+1558487..1559164	-	678	ACB90844.1	-	SPCG_1592	-	-	bcl-2 family protein
+1559522..1559626	+	105	ACB90845.1	-	SPCG_1593	-	-	hypothetical protein
+1559713..1560663	+	951	ACB90846.1	-	SPCG_1594	-	-	hypothetical protein
+1560771..1562216	+	1446	ACB90847.1	-	SPCG_1595	-	-	hypothetical protein
+1562218..1563456	+	1239	ACB90848.1	-	SPCG_1596	-	-	hypothetical protein
+1563645..1566791	+	3147	ACB90849.1	-	SPCG_1597	-	-	snf2 family protein
+1567228..1569564	-	2337	ACB90850.1	ctpE	SPCG_1598	-	-	cation-transporting ATPase, E1-E2 family
+1569652..1570446	+	795	ACB90851.1	-	SPCG_1599	-	-	acyltransferase family protein
+1570738..1571352	-	615	ACB90852.1	cadD	SPCG_1600	-	-	cadmium resistance transporter, putative
+1572168..1572437	-	270	ACB90853.1	-	SPCG_1601	-	-	30S ribosomal protein S15
+1572452..1572556	-	105	ACB90854.1	-	SPCG_1602	-	-	hypothetical protein
+1572578..1573207	-	630	ACB90855.1	-	SPCG_1603	-	-	hypothetical protein
+1573716..1573820	+	105	ACB90856.1	-	SPCG_1604	-	-	hypothetical protein
+1574011..1574400	+	390	ACB90857.1	-	SPCG_1605	-	-	hypothetical protein
+1574419..1576401	+	1983	ACB90858.1	thrS	SPCG_1606	-	-	threonyl-tRNA synthetase
+1576450..1577424	-	975	ACB90859.1	-	SPCG_1607	-	-	sensor histidine kinase
+1577417..1578184	-	768	ACB90860.1	-	SPCG_1608	-	-	DNA-binding response regulator
+1578250..1579323	+	1074	ACB90861.1	-	SPCG_1609	-	-	hypothetical protein
+1579786..1580223	-	438	ACB90862.1	-	SPCG_1610	-	-	rrf2 family protein
+1580299..1581147	-	849	ACB90863.1	-	SPCG_1611	-	-	hypothetical protein
+1581253..1581903	+	651	ACB90864.1	-	SPCG_1612	-	-	iron-dependent transcriptional regulator
+1581975..1583231	-	1257	ACB90865.1	-	SPCG_1613	-	-	IS1167, transposase
+1583502..1584149	+	648	ACB90866.1	-	SPCG_1614	-	-	hypothetical protein
+1584280..1584693	+	414	ACB90867.1	-	SPCG_1615	-	-	hypothetical protein
+1584712..1584897	+	186	ACB90868.1	-	SPCG_1616	-	-	hypothetical protein
+1585164..1585607	-	444	ACB90869.1	-	SPCG_1617	-	-	D-tyrosyl-tRNA deacylase
+1585637..1587859	-	2223	ACB90870.1	relA	SPCG_1618	-	-	GTP pyrophosphokinase
+1588767..1589447	+	681	ACB90871.1	-	SPCG_1619	-	-	metallo-beta-lactamase superfamily protein
+1589570..1591522	-	1953	ACB90872.1	pepO	SPCG_1620	-	-	endopeptidase O
+1591720..1592475	+	756	ACB90873.1	-	SPCG_1621	-	-	manganese ABC transporter, ATP-binding protein
+1592472..1593320	+	849	ACB90874.1	-	SPCG_1622	-	-	putative manganese ABC transporter permease
+1593340..1594281	+	942	ACB90875.1	-	SPCG_1623	-	-	manganese ABC transporter, manganese-binding adhesion liprotein
+1594377..1594895	+	519	ACB90876.1	tpx	SPCG_1624	-	-	thiol peroxidase
+1594991..1597765	-	2775	ACB90877.1	-	SPCG_1625	-	-	hypothetical protein
+1597701..1598411	-	711	ACB90878.1	-	SPCG_1626	-	-	ABC transporter, ATP-binding protein
+1598652..1601063	-	2412	ACB90879.1	-	SPCG_1627	-	-	hypothetical protein
+1601116..1601808	-	693	ACB90880.1	gpmA	SPCG_1628	-	-	phosphoglyceromutase
+1601859..1602149	-	291	ACB90881.1	-	SPCG_1629	-	-	hypothetical protein
+1602343..1602723	-	381	ACB90882.1	-	SPCG_1630	-	-	integral membrane protein
+1603126..1605918	-	2793	ACB90883.1	ileS	SPCG_1631	-	-	isoleucyl-tRNA synthetase
+1606171..1606287	-	117	ACB90884.1	-	SPCG_1632	-	-	hypothetical protein
+1606266..1607066	-	801	ACB90885.1	-	SPCG_1633	-	-	cell division protein DivIVA
+1607063..1607848	-	786	ACB90886.1	divIVA	SPCG_1634	-	-	ylmH protein
+1607845..1608108	-	264	ACB90887.1	-	SPCG_1635	-	-	ylmG protein
+1608108..1608647	-	540	ACB90888.1	-	SPCG_1636	-	-	ylmF protein
+1608657..1609328	-	672	ACB90889.1	-	SPCG_1637	-	-	ylmE protein
+1609333..1610592	-	1260	ACB90890.1	-	SPCG_1638	-	-	cell division protein FtsZ
+1610609..1611982	-	1374	ACB90891.1	ftsZ	SPCG_1639	-	-	cell division protein FtsA
+1612201..1612905	-	705	ACB90892.1	ftsA	SPCG_1640	-	-	hypothetical protein
+1612996..1613607	-	612	ACB90893.1	-	SPCG_1641	-	-	mutT/nudix family protein
+1613594..1614967	-	1374	ACB90894.1	mutT	SPCG_1642	-	-	UDP-N-acetylmuramoylalanyl-D-glutamyl-2, 6-diaminopimelate--D-alanyl-D-alanyl ligase
+1615051..1616094	-	1044	ACB90895.1	murF	SPCG_1643	-	-	D-alanylalanine synthetase
+1616270..1616866	-	597	ACB90896.1	recR	SPCG_1644	-	-	recombination protein RecR
+1616877..1618934	-	2058	ACB90897.1	pbp2B	SPCG_1645	-	-	penicillin-binding protein 2B
+1619128..1619979	+	852	ACB90898.1	-	SPCG_1646	-	-	phosphosugar-binding transcriptional regulator, putative
+1619995..1620879	-	885	ACB90899.1	-	SPCG_1647	-	-	ROK family protein
+1620897..1621814	-	918	ACB90900.1	-	SPCG_1648	-	-	N-acetylneuraminate lyase, putative
+1621983..1622627	-	645	ACB90901.1	-	SPCG_1649	-	-	hypothetical protein
+1622609..1622707	-	99	ACB90902.1	-	SPCG_1650	-	-	hypothetical protein
+1622904..1623248	-	345	ACB90903.1	-	SPCG_1651	-	-	hypothetical protein
+1623345..1623797	-	453	ACB90904.1	-	SPCG_1652	-	-	hypothetical protein
+1623821..1623973	-	153	ACB90905.1	-	SPCG_1653	-	-	hypothetical protein
+1624069..1624908	-	840	ACB90906.1	-	SPCG_1654	-	-	sugar ABC transporter, permease protein
+1624924..1625820	-	897	ACB90907.1	-	SPCG_1655	-	-	sugar ABC transporter, permease protein
+1626042..1627370	-	1329	ACB90908.1	-	SPCG_1656	-	-	sugar ABC transporter, sugar-binding protein
+1627495..1629027	-	1533	ACB90909.1	-	SPCG_1657	-	-	PTS system, IIBC components
+1629031..1629729	-	699	ACB90910.1	nanE	SPCG_1658	-	-	N-acetylmannosamine-6-phosphate 2-epimerase
+1629903..1631006	-	1104	ACB90911.1	-	SPCG_1659	-	-	oxidoreductase, Gfo/Idh/MocA family
+1631018..1633111	-	2094	ACB90912.1	nanB	SPCG_1660	-	-	neuraminidase B
+1633129..1633962	-	834	ACB90913.1	-	SPCG_1661	-	-	ABC transporter, permease protein
+1633962..1634846	-	885	ACB90914.1	-	SPCG_1662	-	-	ABC transporter, permease protein
+1634925..1636262	-	1338	ACB90915.1	-	SPCG_1663	-	-	ABC transporter, substrate-binding protein
+1636281..1636733	-	453	ACB90916.1	-	SPCG_1664	-	-	hypothetical protein
+1637747..1640689	-	2943	ACB90917.1	nanA	SPCG_1665	-	-	sialidase A precursor (neuraminidase A)
+1640932..1641159	-	228	ACB90918.1	-	SPCG_1666	-	-	hypothetical protein
+1641433..1642095	-	663	ACB90919.1	-	SPCG_1667	-	-	hypothetical protein
+1642414..1643394	-	981	ACB90920.1	axe1	SPCG_1668	-	-	acetyl xylan esterase, putative
+1643951..1645966	-	2016	ACB90921.1	recG	SPCG_1669	-	-	ATP-dependent DNA helicase RecG
+1645985..1647109	-	1125	ACB90922.1	alr	SPCG_1670	-	-	alanine racemase
+1647078..1647449	-	372	ACB90923.1	acpS	SPCG_1671	-	-	4'-phosphopantetheinyl transferase
+1647485..1648516	-	1032	ACB90924.1	aroF	SPCG_1672	-	-	3-deoxy-7-phosphoheptulonate synthase
+1648518..1649549	-	1032	ACB90925.1	aroG	SPCG_1673	-	-	3-deoxy-7-phosphoheptulonate synthase
+1649630..1652143	-	2514	ACB90926.1	secA	SPCG_1674	-	-	translocase
+1652289..1652576	-	288	ACB90927.1	-	SPCG_1675	-	-	hypothetical protein
+1652587..1653237	-	651	ACB90928.1	-	SPCG_1676	-	-	ABC transporter, ATP-binding protein
+1653241..1653921	-	681	ACB90929.1	-	SPCG_1677	-	-	hypothetical protein
+1653875..1654705	-	831	ACB90930.1	-	SPCG_1678	-	-	hypothetical protein
+1654851..1655189	-	339	ACB90931.1	-	SPCG_1679	-	-	hypothetical protein
+1655327..1655674	-	348	ACB90932.1	-	SPCG_1680	-	-	hypothetical protein
+1655753..1657063	-	1311	ACB90933.1	serA	SPCG_1681	-	-	GTP-binding protein EngA
+1657077..1657790	-	714	ACB90934.1	-	SPCG_1682	-	-	nitroreductase family protein
+1657787..1658683	-	897	ACB90935.1	dnaI	SPCG_1683	-	-	primosomal protein DnaI
+1658684..1659853	-	1170	ACB90936.1	-	SPCG_1684	-	-	hypothetical protein
+1659854..1660387	-	534	ACB90937.1	-	SPCG_1685	-	-	hypothetical protein
+1660467..1660832	+	366	ACB90938.1	-	SPCG_1686	-	-	transcriptional regulator, GntR family
+1660810..1661532	+	723	ACB90939.1	-	SPCG_1687	-	-	ABC transporter, ATP-binding protein
+1661468..1662316	+	849	ACB90940.1	-	SPCG_1688	-	-	ABC transporter, ATP-binding protein
+1662669..1663868	-	1200	ACB90941.1	-	SPCG_1689	-	-	hypothetical protein
+1663865..1664758	-	894	ACB90942.1	-	SPCG_1690	-	-	ABC transporter, ATP-binding protein
+1665149..1665250	-	102	ACB90943.1	-	SPCG_1691	-	-	hypothetical protein
+1666068..1666685	+	618	ACB90944.1	-	SPCG_1692	-	-	hypothetical protein
+1666728..1667615	-	888	ACB90945.1	scrK	SPCG_1693	-	-	fructokinase
+1667764..1669725	-	1962	ACB90946.1	scrA	SPCG_1694	-	-	PTS system IIABC components
+1669827..1670024	-	198	ACB90947.1	-	SPCG_1695	-	-	hypothetical protein
+1670077..1671531	+	1455	ACB90948.1	scrB	SPCG_1696	-	-	sucrose-6-phosphate hydrolase
+1671512..1672477	+	966	ACB90949.1	scrR	SPCG_1697	-	-	sucrose operon repressor
+1672512..1673786	-	1275	ACB90950.1	mvaA	SPCG_1698	-	-	3-hydroxy-3-methylglutaryl-CoA reductase
+1673786..1674982	-	1197	ACB90951.1	mvaS	SPCG_1699	-	-	hydroxymethylglutaryl-CoA synthase
+1675089..1675376	-	288	ACB90952.1	-	SPCG_1700	-	-	hypothetical protein
+1675405..1675794	-	390	ACB90953.1	-	SPCG_1701	-	-	IS1381 transposase protein B
+1675828..1676028	-	201	ACB90954.1	-	SPCG_1702	-	-	IS1381 transposase protein A, truncation
+1676093..1676542	-	450	ACB90955.1	-	SPCG_1703	-	-	hypothetical protein
+1676544..1677302	-	759	ACB90956.1	-	SPCG_1704	-	-	hypothetical protein
+1677417..1679396	-	1980	ACB90957.1	pkn2	SPCG_1705	-	-	serine/threonine protein kinase
+1679393..1680133	-	741	ACB90958.1	pppL	SPCG_1706	-	-	phosphatase, putative
+1680148..1681464	-	1317	ACB90959.1	sunL	SPCG_1707	-	-	rRNA methyltransferase RsmB
+1681454..1682389	-	936	ACB90960.1	fmt	SPCG_1708	-	-	methionyl-tRNA formyltransferase
+1682402..1683376	-	975	ACB90961.1	-	SPCG_1709	-	-	primosome assembly protein PriA
+1683370..1684797	-	1428	ACB90962.1	-	SPCG_1710	-	-	primosome assembly protein PriA
+1684863..1685177	-	315	ACB90963.1	-	SPCG_1711	-	-	DNA-directed RNA polymerase omega subunit
+1685202..1685828	-	627	ACB90964.1	gmk	SPCG_1712	-	-	guanylate kinase
+1685958..1687571	-	1614	ACB90965.1	-	SPCG_1713	-	-	hypothetical protein
+1687762..1688016	-	255	ACB90966.1	-	SPCG_1714	-	-	hypothetical protein
+1688020..1688313	-	294	ACB90967.1	-	SPCG_1715	-	-	hypothetical protein
+1688512..1689609	-	1098	ACB90968.1	-	SPCG_1716	-	-	hypothetical protein
+1689619..1690374	-	756	ACB90969.1	-	SPCG_1717	-	-	hypothetical protein
+1690679..1691032	-	354	ACB90970.1	-	SPCG_1718	-	-	iojap-related protein
+1691045..1691545	-	501	ACB90971.1	-	SPCG_1719	-	-	isochorismatase family protein
+1691546..1692139	-	594	ACB90972.1	-	SPCG_1720	-	-	hypothetical protein
+1692139..1692768	-	630	ACB90973.1	nadD	SPCG_1721	-	-	nicotinic acid mononucleotide adenyltransferase
+1692820..1693131	-	312	ACB90974.1	-	SPCG_1722	-	-	hypothetical protein
+1693331..1694437	-	1107	ACB90975.1	-	SPCG_1723	-	-	GTP-binding protein
+1694440..1695030	-	591	ACB90976.1	-	SPCG_1724	-	-	hypothetical protein
+1694982..1695890	-	909	ACB90977.1	corA	SPCG_1725	-	-	transporter, CorA family, putative
+1695947..1696552	-	606	ACB90978.1	-	SPCG_1726	-	-	mechanosensitive ion channel, putative
+1696896..1697855	+	960	ACB90979.1	dctA	SPCG_1727	-	-	dicarboxylate/amino acid:cation (Na+ or H+) symporter
+1697923..1698876	+	954	ACB90980.1	-	SPCG_1728	-	-	hypothetical protein
+1698893..1699132	-	240	ACB90981.1	-	SPCG_1729	-	-	hypothetical protein
+1699243..1700535	+	1293	ACB90982.1	-	SPCG_1730	-	-	IS1167, transposase
+1700578..1700802	-	225	ACB90983.1	-	SPCG_1731	-	-	hypothetical protein
+1700807..1700986	-	180	ACB90984.1	-	SPCG_1732	-	-	hypothetical protein
+1700988..1702325	-	1338	ACB90985.1	-	SPCG_1733	-	-	hypothetical protein
+1702318..1703829	-	1512	ACB90986.1	-	SPCG_1734	-	-	glycosyl transferase, group 1
+1703841..1706213	-	2373	ACB90987.1	-	SPCG_1735	-	-	translocase
+1706206..1706646	-	441	ACB90988.1	-	SPCG_1736	-	-	hypothetical protein
+1706643..1708178	-	1536	ACB90989.1	-	SPCG_1737	-	-	hypothetical protein
+1708162..1709742	-	1581	ACB90990.1	-	SPCG_1738	-	-	hypothetical protein
+1709752..1710969	-	1218	ACB90991.1	-	SPCG_1739	-	-	preprotein translocase SecY family protein
+1711026..1711703	-	678	ACB90992.1	-	SPCG_1740	-	-	glycosyl transferase, family 2
+1711930..1713126	-	1197	ACB90993.1	-	SPCG_1741	-	-	glycosyl transferase, family 8
+1713135..1714355	-	1221	ACB90994.1	-	SPCG_1742	-	-	glycosyl transferase, family 8
+1714386..1716830	-	2445	ACB90995.1	-	SPCG_1743	-	-	glycosyl transferase, family 8
+1716840..1717850	-	1011	ACB90996.1	-	SPCG_1744	-	-	hypothetical protein
+1717890..1719095	-	1206	ACB90997.1	-	SPCG_1745	-	-	glycosyl transferase, family 8
+1719104..1719979	-	876	ACB90998.1	-	SPCG_1746	-	-	glycosyl transferase
+1720434..1721192	-	759	ACB90999.1	-	SPCG_1747	-	-	hypothetical protein
+1721202..1722080	-	879	ACB91000.1	-	SPCG_1748	-	-	exopolysaccharide biosynthesis protein, acetyltransferase
+1722077..1724167	-	2091	ACB91001.1	-	SPCG_1749	-	-	glycosyl transferase, family 2/glycosyl transferase family 8
+1724222..1738309	-	14088	ACB91002.1	-	SPCG_1750	-	-	cell wall surface anchor family protein
+1738670..1739131	-	462	ACB91003.1	-	SPCG_1751	-	-	degenerate transposase
+1739464..1739889	+	426	ACB91004.1	-	SPCG_1752	-	-	transcriptional regulator, putative
+1739907..1740209	+	303	ACB91005.1	-	SPCG_1753	-	-	hypothetical protein
+1740226..1740540	+	315	ACB91006.1	trxA	SPCG_1754	-	-	thioredoxin
+1740807..1741379	+	573	ACB91007.1	-	SPCG_1755	-	-	hypothetical protein
+1741634..1742302	-	669	ACB91008.1	aqpZ	SPCG_1756	-	-	aquaporin
+1742413..1743210	-	798	ACB91009.1	-	SPCG_1757	-	-	hypothetical protein
+1743450..1745246	-	1797	ACB91010.1	pepF	SPCG_1758	-	-	oligoendopeptidase F, putative
+1745257..1746012	-	756	ACB91011.1	-	SPCG_1759	-	-	hypothetical protein
+1746002..1746952	-	951	ACB91012.1	prmA	SPCG_1760	-	-	ribosomal protein L11 methyltransferase
+1746965..1747984	-	1020	ACB91013.1	-	SPCG_1761	-	-	putative otitis media-associated P41
+1748035..1750278	-	2244	ACB91014.1	-	SPCG_1762	-	-	Subtilisin-like serine protease
+1750280..1751314	-	1035	ACB91015.1	-	SPCG_1763	-	-	putative AAA+ ATPase
+1751424..1751582	-	159	ACB91016.1	-	SPCG_1764	-	-	mutT/nudix family protein
+1751563..1752666	-	1104	ACB91017.1	-	SPCG_1765	-	-	hypothetical protein
+1752670..1753140	-	471	ACB91018.1	-	SPCG_1766	-	-	hypothetical protein
+1753431..1753883	-	453	ACB91019.1	-	SPCG_1767	-	-	hypothetical protein
+1754236..1754415	-	180	ACB91020.1	-	SPCG_1768	-	-	hypothetical protein
+1754486..1754590	-	105	ACB91021.1	-	SPCG_1769	-	-	hypothetical protein
+1754580..1754822	-	243	ACB91022.1	-	SPCG_1770	-	-	hypothetical protein
+1755092..1756363	+	1272	ACB91023.1	-	SPCG_1771	-	-	ATPase, AAA family
+1756908..1758233	-	1326	ACB91024.1	sacA	SPCG_1772	-	-	sucrose-6-phosphate hydrolase, putative
+1758237..1759949	-	1713	ACB91025.1	-	SPCG_1773	-	-	ABC transporter, substrate-binding protein
+1759882..1760799	-	918	ACB91026.1	-	SPCG_1774	-	-	ABC transporter, permease protein
+1760783..1761727	-	945	ACB91027.1	-	SPCG_1775	-	-	ABC transporter, permease protein
+1761850..1762869	-	1020	ACB91028.1	-	SPCG_1776	-	-	sugar-binding transcriptional regulator, LacI family
+1763212..1764750	-	1539	ACB91029.1	-	SPCG_1777	-	-	transcriptional activator, putative
+1765136..1765300	+	165	ACB91030.1	-	SPCG_1778	-	-	hypothetical protein
+1765378..1765950	+	573	ACB91031.1	-	SPCG_1779	-	-	hypothetical protein
+1765962..1766132	+	171	ACB91032.1	-	SPCG_1780	-	-	hypothetical protein
+1766171..1766779	+	609	ACB91033.1	-	SPCG_1781	-	-	general stress protein 24, putative
+1766810..1767013	+	204	ACB91034.1	-	SPCG_1782	-	-	hypothetical protein
+1768163..1768933	-	771	ACB91035.1	-	SPCG_1783	-	-	hypothetical protein
+1768948..1769796	-	849	ACB91036.1	-	SPCG_1784	-	-	hypothetical protein
+1769793..1771268	-	1476	ACB91037.1	-	SPCG_1785	-	-	probable phosphonate monoester hydrolase
+1771591..1772946	-	1356	ACB91038.1	-	SPCG_1786	-	-	phosphotransferase system (PTS) cellobiose-specific, IIC component, putative
+1772956..1773273	-	318	ACB91039.1	-	SPCG_1787	-	-	phosphotransferase system (PTS) cellobiose-specific component IIA, putative
+1773290..1773607	-	318	ACB91040.1	-	SPCG_1788	-	-	PTS system, IIB component
+1773622..1774524	-	903	ACB91041.1	-	SPCG_1789	-	-	PEP phosphonomutase-like protein, putative
+1774521..1775783	-	1263	ACB91042.1	-	SPCG_1790	-	-	phosphotransferase system cellobiose-specific component IIC
+1776063..1777241	+	1179	ACB91043.1	-	SPCG_1791	-	-	ROK family protein, putative
+1777469..1777915	-	447	ACB91044.1	-	SPCG_1792	-	-	acetyltransferase, GNAT family
+1777931..1778065	-	135	ACB91046.1	-	SPCG_1793	-	-	hypothetical protein
+1778039..1778644	+	606	ACB91045.1	pilD	SPCG_1794	-	-	type IV prepilin peptidase, putative
+1778616..1779461	-	846	ACB91047.1	trpA	SPCG_1795	-	-	tryptophan synthase subunit alpha
+1779385..1780608	-	1224	ACB91048.1	trpB	SPCG_1796	-	-	tryptophan synthase subunit beta
+1780586..1781215	-	630	ACB91049.1	trpF	SPCG_1797	-	-	N-(5'-phosphoribosyl)anthranilate isomerase
+1781172..1781939	-	768	ACB91050.1	trpC	SPCG_1798	-	-	indole-3-glycerol-phosphate synthase
+1781936..1782940	-	1005	ACB91051.1	trpD	SPCG_1799	-	-	anthranilate phosphoribosyltransferase
+1782951..1783517	-	567	ACB91052.1	trpG	SPCG_1800	-	-	anthranilate synthase component II
+1783514..1784977	-	1464	ACB91053.1	trpE	SPCG_1801	-	-	anthranilate synthase component I
+1785169..1785261	-	93	ACB91054.1	-	SPCG_1802	-	-	hypothetical protein
+1785248..1785499	-	252	ACB91055.1	-	SPCG_1803	-	-	hypothetical protein
+1786107..1787108	-	1002	ACB91056.1	-	SPCG_1804	-	-	sugar-binding transcriptional regulator, LacI family
+1787679..1788389	-	711	ACB91057.1	-	SPCG_1805	-	-	mgtC/SapB family protein
+1788392..1789903	-	1512	ACB91058.1	-	SPCG_1806	-	-	ABC transporter, permease protein
+1790094..1791104	-	1011	ACB91059.1	-	SPCG_1807	-	-	ABC transporter, ATP-binding protein
+1791207..1792274	-	1068	ACB91060.1	-	SPCG_1808	-	-	ABC transporter, substrate-binding protein
+1792299..1792958	-	660	ACB91061.1	-	SPCG_1809	-	-	hypothetical protein
+1793687..1793983	-	297	ACB91062.1	-	SPCG_1810	-	-	hypothetical protein
+1793967..1796126	-	2160	ACB91063.1	-	SPCG_1811	-	-	cell wall surface anchor family protein
+1797256..1798509	-	1254	ACB91064.1	-	SPCG_1812	-	-	capsular polysaccharide biosynthesis protein, putative
+1798525..1799256	-	732	ACB91065.1	-	SPCG_1813	-	-	glycosyl transferase, putative
+1799390..1801141	-	1752	ACB91066.1	-	SPCG_1814	-	-	ABC transporter, ATP-binding/permease protein
+1801131..1802915	-	1785	ACB91067.1	-	SPCG_1815	-	-	ABC transporter, ATP-binding/permease protein
+1803004..1803534	-	531	ACB91068.1	-	SPCG_1816	-	-	hypothetical protein
+1803531..1803800	-	270	ACB91069.1	-	SPCG_1817	-	-	hypothetical protein
+1804120..1804947	+	828	ACB91070.1	exoA	SPCG_1818	-	-	exodeoxyribonuclease
+1805102..1805206	+	105	ACB91071.1	-	SPCG_1819	-	-	hypothetical protein
+1805210..1805341	+	132	ACB91072.1	-	SPCG_1820	-	-	hypothetical protein
+1806219..1806800	+	582	ACB91073.1	xpt	SPCG_1821	-	-	xanthine phosphoribosyltransferase
+1806800..1808062	+	1263	ACB91074.1	-	SPCG_1822	-	-	xanthine permease
+1808113..1808574	-	462	ACB91075.1	dpnD	SPCG_1823	-	-	dpnD protein
+1808571..1809335	-	765	ACB91076.1	dpnC	SPCG_1824	-	-	type II restriction endonuclease DpnI
+1809577..1809957	-	381	ACB91077.1	-	SPCG_1825	-	-	hypothetical protein
+1810006..1811487	-	1482	ACB91078.1	galT	SPCG_1826	-	-	galactose-1-phosphate uridylyltransferase
+1811506..1812684	-	1179	ACB91079.1	galK	SPCG_1827	-	-	galactokinase
+1812848..1813855	+	1008	ACB91080.1	galR	SPCG_1828	-	-	galactose operon repressor
+1813901..1814938	-	1038	ACB91081.1	adhB	SPCG_1829	-	-	alcohol dehydrogenase, zinc-containing
+1814939..1815292	-	354	ACB91082.1	-	SPCG_1830	-	-	transcriptional regulator, MerR family
+1815536..1816435	-	900	ACB91083.1	-	SPCG_1831	-	-	cation efflux system protein
+1816559..1817095	+	537	ACB91084.1	-	SPCG_1832	-	-	transcriptional regulator, TetR family
+1817261..1818070	-	810	ACB91085.1	-	SPCG_1833	-	-	transporter, putative
+1818411..1819946	-	1536	ACB91086.1	-	SPCG_1834	-	-	choline transporter
+1819924..1820652	-	729	ACB91087.1	-	SPCG_1835	-	-	choline transporter
+1820667..1821431	-	765	ACB91088.1	-	SPCG_1836	-	-	hypothetical protein
+1821435..1821878	-	444	ACB91089.1	-	SPCG_1837	-	-	transcriptional regulator, MarR family
+1822560..1822865	-	306	ACB91090.1	-	SPCG_1838	-	-	hypothetical protein
+1822878..1823942	-	1065	ACB91091.1	pepA	SPCG_1839	-	-	glutamyl-aminopeptidase
+1824343..1825044	+	702	ACB91092.1	-	SPCG_1840	-	-	NAD-dependent epimerase/dehydratase family protein
+1825060..1825170	+	111	ACB91093.1	-	SPCG_1841	-	-	hypothetical protein
+1825452..1826426	+	975	ACB91094.1	-	SPCG_1842	-	-	iron-compound ABC transporter, permease protein
+1826416..1827372	+	957	ACB91095.1	-	SPCG_1843	-	-	iron-compound ABC transporter, permease protein
+1827369..1828121	+	753	ACB91096.1	-	SPCG_1844	-	-	iron-compound ABC transporter, ATP-binding protein
+1828217..1829182	+	966	ACB91097.1	-	SPCG_1845	-	-	iron-compound ABC transporter, iron-compound-binding protein
+1829407..1829649	-	243	ACB91098.1	-	SPCG_1846	-	-	hypothetical protein
+1829649..1830371	-	723	ACB91099.1	rluB	SPCG_1847	-	-	ribosomal large subunit pseudouridine synthase B
+1830358..1830927	-	570	ACB91100.1	scpB	SPCG_1848	-	-	segregation and condensation protein B
+1830946..1831674	-	729	ACB91101.1	scpA	SPCG_1849	-	-	segregation and condensation protein A
+1831674..1832414	-	741	ACB91102.1	xerD	SPCG_1850	-	-	tyrosine recombinase
+1832405..1832866	-	462	ACB91103.1	-	SPCG_1851	-	-	CBS domain protein
+1832863..1833384	-	522	ACB91104.1	-	SPCG_1852	-	-	hypothetical protein
+1833360..1834370	-	1011	ACB91105.1	-	SPCG_1853	-	-	HAM1 protein
+1834328..1835122	-	795	ACB91106.1	murI	SPCG_1854	-	-	glutamate racemase
+1835329..1835631	-	303	ACB91107.1	-	SPCG_1855	-	-	hypothetical protein
+1835833..1837458	-	1626	ACB91108.1	dexS	SPCG_1856	-	-	dextran glucosidase DexS, putative
+1837636..1839753	-	2118	ACB91109.1	treP	SPCG_1857	-	-	trehalose PTS system, IIABC components
+1839788..1840498	+	711	ACB91110.1	treR	SPCG_1858	-	-	trehalose operon transcriptional repressor
+1840653..1841171	+	519	ACB91111.1	-	SPCG_1859	-	-	degenerate transposase
+1841452..1841979	+	528	ACB91112.1	-	SPCG_1860	-	-	degenerate transposase
+1842054..1843049	-	996	ACB91113.1	amiF	SPCG_1861	-	-	oligopeptide ABC transporter, ATP-binding protein AmiF
+1842991..1844058	-	1068	ACB91114.1	amiE	SPCG_1862	-	-	oligopeptide ABC transporter, ATP-binding protein AmiE
+1844067..1844993	-	927	ACB91115.1	amiD	SPCG_1863	-	-	oligopeptide ABC transporter, permease protein AmiD
+1844993..1846489	-	1497	ACB91116.1	amiC	SPCG_1864	-	-	oligopeptide ABC transporter, permease protein AmiC
+1846556..1848535	-	1980	ACB91117.1	amiA	SPCG_1865	-	-	oligopeptide ABC transporter, oligopeptide-binding protein AmiA
+1849221..1850414	-	1194	ACB91118.1	-	SPCG_1866	-	-	hypothetical protein
+1850552..1852024	-	1473	ACB91119.1	-	SPCG_1867	-	-	sucrose phosphorylase
+1852205..1852345	-	141	ACB91120.1	-	SPCG_1868	-	-	hypothetical protein
+1852352..1853209	-	858	ACB91121.1	-	SPCG_1869	-	-	sugar ABC transporter, permease protein
+1853199..1854089	-	891	ACB91122.1	-	SPCG_1870	-	-	sugar ABC transporter, permease protein
+1854079..1855338	-	1260	ACB91123.1	-	SPCG_1871	-	-	sugar ABC transporter, sugar-binding protein
+1855373..1857535	-	2163	ACB91124.1	aga	SPCG_1872	-	-	alpha-galactosidase
+1857643..1858503	+	861	ACB91125.1	msmR	SPCG_1873	-	-	msm operon regulatory protein
+1858500..1859435	+	936	ACB91126.1	birA	SPCG_1874	-	-	biotin--protein ligase
+1866338..1867693	-	1356	ACB91128.1	-	SPCG_1875	-	-	RNA methyltransferase, TrmA family
+1867663..1868526	+	864	ACB91127.1	-	SPCG_1876	-	-	aminoglycoside phosphotransferase, putative
+1868536..1869312	+	777	ACB91129.1	recX	SPCG_1877	-	-	recA regulator RecX
+1869401..1869934	+	534	ACB91130.1	-	SPCG_1878	-	-	hypothetical protein
+1870291..1870497	-	207	ACB91131.1	-	SPCG_1879	-	-	hypothetical protein
+1870657..1871886	+	1230	ACB91132.1	-	SPCG_1880	-	-	IS1167, transposase
+1871986..1873608	-	1623	ACB91133.1	groEL	SPCG_1881	-	-	chaperonin GroEL
+1873624..1873908	-	285	ACB91134.1	groES	SPCG_1882	-	-	co-chaperonin GroES
+1874178..1874573	-	396	ACB91135.1	ssbB	SPCG_1883	-	-	single-strand DNA-binding protein
+1874650..1875411	-	762	ACB91136.1	ydfG	SPCG_1884	-	-	oxidoreductase, short chain dehydrogenase/reductase family
+1875444..1876070	-	627	ACB91137.1	-	SPCG_1885	-	-	hypothetical protein
+1876086..1876403	-	318	ACB91138.1	-	SPCG_1886	-	-	thioredoxin, putative
+1876400..1876699	-	300	ACB91139.1	-	SPCG_1887	-	-	hypothetical protein
+1877036..1877251	-	216	ACB91140.1	-	SPCG_1888	-	-	hypothetical protein
+1877388..1878062	-	675	ACB91141.1	-	SPCG_1889	-	-	hypothetical protein
+1878068..1878517	-	450	ACB91142.1	-	SPCG_1890	-	-	hypothetical protein
+1878628..1879131	-	504	ACB91143.1	-	SPCG_1891	-	-	PAP2 family protein
+1879128..1879490	-	363	ACB91144.1	-	SPCG_1892	-	-	hypothetical protein
+1879556..1880587	-	1032	ACB91145.1	-	SPCG_1893	-	-	ABC transporter, ATP-binding protein
+1880594..1881415	-	822	ACB91146.1	-	SPCG_1894	-	-	ABC transporter, permease protein
+1881432..1881548	-	117	ACB91147.1	-	SPCG_1895	-	-	hypothetical protein
+1881557..1881901	-	345	ACB91148.1	-	SPCG_1896	-	-	transcriptional regulator, MarR family
+1882025..1882741	-	717	ACB91149.1	-	SPCG_1897	-	-	hypothetical protein
+1883622..1885037	-	1416	ACB91150.1	ply	SPCG_1898	-	-	pneumolysin
+1885048..1885458	-	411	ACB91151.1	-	SPCG_1899	-	-	hypothetical protein
+1885451..1886059	-	609	ACB91152.1	-	SPCG_1900	-	-	hypothetical protein
+1886072..1886548	-	477	ACB91153.1	-	SPCG_1901	-	-	hypothetical protein
+1886655..1886786	+	132	ACB91154.1	-	SPCG_1902	-	-	degenerate transposase
+1886791..1887054	+	264	ACB91155.1	-	SPCG_1903	-	-	degenerate transposase
+1887819..1888079	-	261	ACB91156.1	-	SPCG_1904	-	-	hypothetical protein
+1888138..1888692	-	555	ACB91157.1	-	SPCG_1905	-	-	hypothetical protein
+1888679..1888777	-	99	ACB91158.1	-	SPCG_1906	-	-	hypothetical protein
+1888839..1888937	-	99	ACB91159.1	-	SPCG_1907	-	-	hypothetical protein
+1888880..1889464	-	585	ACB91160.1	-	SPCG_1908	-	-	hypothetical protein
+1889872..1890297	-	426	ACB91161.1	-	SPCG_1909	-	-	hypothetical protein
+1890426..1890785	-	360	ACB91162.1	-	SPCG_1910	-	-	hypothetical protein
+1891024..1891185	-	162	ACB91163.1	-	SPCG_1965	-	-	type II restriction-modification system regulatory protein, putative
+1891531..1892487	-	957	ACB91164.1	lytA	SPCG_1911	-	-	autolysin
+1892863..1894233	-	1371	ACB91165.1	dinF	SPCG_1912	-	-	MATE efflux family protein DinF
+1894540..1895706	-	1167	ACB91166.1	recA	SPCG_1913	-	-	recombinase A
+1895761..1897017	-	1257	ACB91167.1	cinA	SPCG_1914	-	-	competence damage-inducible protein A
+1897102..1898118	-	1017	ACB91168.1	lytR	SPCG_1915	-	-	transcriptional regulator, putative
+1898126..1898644	-	519	ACB91169.1	-	SPCG_1916	-	-	acetyltransferase, GNAT family
+1898634..1899077	-	444	ACB91170.1	-	SPCG_1917	-	-	hypothetical protein
+1899163..1899804	-	642	ACB91171.1	-	SPCG_1918	-	-	hypothetical protein
+1900165..1901028	-	864	ACB91172.1	plcR	SPCG_1919	-	-	transcriptional regulator PlcR, putative
+1901217..1901387	+	171	ACB91173.1	-	SPCG_1920	-	-	hypothetical protein
+1901837..1903852	+	2016	ACB91174.1	-	SPCG_1921	-	-	hypothetical protein
+1903854..1904486	+	633	ACB91175.1	-	SPCG_1922	-	-	ABC transporter, ATP-binding protein
+1905432..1905845	-	414	ACB91176.1	ndk	SPCG_1923	-	-	nucleoside diphosphate kinase
+1905956..1909633	-	3678	ACB91177.1	rpoC	SPCG_1924	-	-	DNA-directed RNA polymerase beta' subunit
+1909666..1912140	-	2475	ACB91178.1	-	SPCG_1925	-	-	hypothetical protein
+1912182..1913315	-	1134	ACB91179.1	-	SPCG_1926	-	-	hypothetical protein
+1913732..1913839	+	108	ACB91180.1	-	SPCG_1927	-	-	hypothetical protein
+1913960..1915291	-	1332	ACB91181.1	-	SPCG_1928	-	-	CBS domain protein
+1915582..1916406	-	825	ACB91182.1	endA	SPCG_1929	-	-	DNA-entry nuclease
+1916626..1917909	-	1284	ACB91183.1	murA	SPCG_1930	-	-	UDP-N-acetylglucosamine 1-carboxyvinyltransferase
+1918221..1919258	-	1038	ACB91184.1	-	SPCG_1931	-	-	hypothetical protein
+1919242..1919730	-	489	ACB91185.1	kdtB	SPCG_1932	-	-	phosphopantetheine adenylyltransferase
+1919720..1920259	-	540	ACB91186.1	-	SPCG_1933	-	-	type II DNA modification methyltransferase, putative
+1920324..1921316	-	993	ACB91188.1	asnA	SPCG_1934	-	-	asparagine synthetase AsnA
+1921290..1921454	+	165	ACB91187.1	-	SPCG_1935	-	-	hypothetical protein
+1921428..1922135	-	708	ACB91189.1	-	SPCG_1936	-	-	membrane protein
+1922167..1922925	-	759	ACB91190.1	-	SPCG_1937	-	-	spoU rRNA Methylase family protein
+1922941..1923219	+	279	ACB91191.1	acyP	SPCG_1938	-	-	acylphosphatase
+1923297..1924223	+	927	ACB91192.1	-	SPCG_1939	-	-	oxaA-like protein precursor
+1924298..1925092	-	795	ACB91193.1	pflC	SPCG_1940	-	-	pyruvate formate-lyase-activating enzyme
+1925218..1926468	-	1251	ACB91194.1	lysA	SPCG_1941	-	-	diaminopimelate decarboxylase
+1926535..1927362	-	828	ACB91195.1	purR	SPCG_1942	-	-	purine operon repressor
+1927629..1928633	-	1005	ACB91196.1	cbf1	SPCG_1943	-	-	cmp-binding-factor 1
+1928560..1929858	-	1299	ACB91197.1	-	SPCG_1944	-	-	competence-induced protein Ccs50
+1929818..1930501	-	684	ACB91198.1	-	SPCG_1945	-	-	hypothetical protein
+1930443..1931162	-	720	ACB91199.1	rpe	SPCG_1946	-	-	ribulose-phosphate 3-epimerase
+1931110..1931988	-	879	ACB91200.1	-	SPCG_1947	-	-	ribosome-associated GTPase
+1931990..1932862	-	873	ACB91201.1	ksgA	SPCG_1948	-	-	dimethyladenosine transferase
+1932993..1933307	-	315	ACB91202.1	-	SPCG_1949	-	-	hypothetical protein
+1933294..1933935	-	642	ACB91203.1	-	SPCG_1950	-	-	ABC transporter, ATP-binding protein
+1933937..1935979	-	2043	ACB91204.1	-	SPCG_1951	-	-	immunity protein, putative
+1936044..1936340	-	297	ACB91205.1	-	SPCG_1952	-	-	hypothetical protein
+1936660..1937559	-	900	ACB91206.1	plcR	SPCG_1953	-	-	transcriptional regulator PlcR, putative
+1937631..1938191	-	561	ACB91207.1	-	SPCG_1954	-	-	primase-related protein
+1938191..1938964	-	774	ACB91208.1	-	SPCG_1955	-	-	hydrolase, putative
+1939161..1939253	+	93	ACB91209.1	-	SPCG_1956	-	-	hypothetical protein
+1939269..1940168	-	900	ACB91210.1	-	SPCG_1957	-	-	cell wall surface anchor family protein
+1940452..1940586	-	135	ACB91211.1	rpmH	SPCG_1958	-	-	50S ribosomal protein L34
+1940731..1941945	-	1215	ACB91212.1	aspC	SPCG_1959	-	-	aspartate aminotransferase
+1942101..1942409	-	309	ACB91213.1	-	SPCG_1960	-	-	hypothetical protein
+1942493..1943008	+	516	ACB91214.1	-	SPCG_1961	-	-	universal stress protein family
+1943043..1944461	-	1419	ACB91215.1	-	SPCG_1962	-	-	cof family protein
+1944497..1945459	+	963	ACB91216.1	ansB	SPCG_1963	-	-	L-asparaginase, putative
+1945755..1946795	-	1041	ACB91217.1	ccpA	SPCG_1964	-	-	catabolite control protein A
+1947189..1947788	-	600	ACB91218.1	-	SPCG_1966	-	-	DNA-binding response regulator
+1947789..1948886	-	1098	ACB91219.1	-	SPCG_1967	-	-	sensor histidine kinase, putative
+1948886..1949689	-	804	ACB91220.1	-	SPCG_1968	-	-	hypothetical protein
+1949625..1950509	-	885	ACB91221.1	-	SPCG_1969	-	-	ABC transporter, ATP-binding protein
+1950496..1950690	-	195	ACB91222.1	-	SPCG_1970	-	-	hypothetical protein
+1950777..1950893	-	117	ACB91223.1	-	SPCG_1971	-	-	hypothetical protein
+1957572..1958051	-	480	ACB91224.1	comX2	SPCG_1972	-	-	competence-specific global transcription modulator
+1958173..1958724	-	552	ACB91225.1	nusG	SPCG_1973	-	-	transcription antitermination protein NusG
+1958764..1958940	-	177	ACB91226.1	secE	SPCG_1974	-	-	translocase
+1959245..1960516	+	1272	ACB91227.1	-	SPCG_1975	-	-	putative IS1202 transposase
+1960934..1963129	-	2196	ACB91228.1	pbp2A	SPCG_1976	-	-	penicillin-binding protein 2A
+1963216..1964091	+	876	ACB91229.1	rluD	SPCG_1977	-	-	ribosomal large subunit pseudouridine synthase, RluD subfamily
+1964197..1965489	+	1293	ACB91230.1	-	SPCG_1978	-	-	IS1167, transposase
+1965579..1966658	-	1080	ACB91231.1	gapA	SPCG_1979	-	-	glyceraldehyde-3-phosphate dehydrogenase
+1966806..1967765	-	960	ACB91232.1	-	SPCG_1980	-	-	hypothetical protein
+1967851..1968189	-	339	ACB91233.1	-	SPCG_1981	-	-	IS630-Spn1, transposase Orf2
+1968347..1968715	-	369	ACB91234.1	-	SPCG_1982	-	-	IS630-Spn1, transposase Orf1
+1968828..1969727	-	900	ACB91235.1	nadC	SPCG_1983	-	-	nicotinate-nucleotide pyrophosphorylase
+1969937..1971247	+	1311	ACB91236.1	-	SPCG_1984	-	-	membrane protein
+1971629..1971823	-	195	ACB91237.1	-	SPCG_1985	-	-	hypothetical protein
+1972283..1973011	-	729	ACB91238.1	-	SPCG_1986	-	-	transcriptional regulator, GntR family
+1973127..1974578	+	1452	ACB91239.1	-	SPCG_1987	-	-	glycosyl hydrolase, family 1
+1974596..1975891	+	1296	ACB91240.1	-	SPCG_1988	-	-	PTS system, IIC component
+1975857..1976204	+	348	ACB91241.1	-	SPCG_1989	-	-	PTS system, IIB component
+1976183..1976509	+	327	ACB91242.1	-	SPCG_1990	-	-	PTS system, IIA component
+1977495..1980167	-	2673	ACB91243.1	adhE	SPCG_1991	-	-	alcohol dehydrogenase, iron-containing
+1980446..1980856	-	411	ACB91244.1	-	SPCG_1992	-	-	hypothetical protein
+1980858..1981286	-	429	ACB91245.1	-	SPCG_1993	-	-	phosphotyrosine protein phosphatase
+1981333..1981632	-	300	ACB91246.1	yajC	SPCG_1994	-	-	preprotein translocase subunit YajC
+1981749..1983725	-	1977	ACB91247.1	tktA	SPCG_1995	-	-	transketolase
+1983839..1984930	-	1092	ACB91248.1	-	SPCG_1996	-	-	hypothetical protein
+1985042..1986715	-	1674	ACB91249.1	-	SPCG_1997	-	-	transcriptional regulator, BglG family
+1986894..1987598	-	705	ACB91250.1	araD	SPCG_1998	-	-	L-ribulose-5-phosphate 4-epimerase
+1987600..1988061	-	462	ACB91251.1	-	SPCG_1999	-	-	hexulose-6-phosphate isomerase, putative
+1988102..1988458	-	357	ACB91252.1	-	SPCG_2000	-	-	hexulose-6-phosphate isomerase, putative
+1988462..1989127	-	666	ACB91253.1	sgh	SPCG_2001	-	-	hexulose-6-phosphate synthase, putative
+1989144..1989629	-	486	ACB91254.1	-	SPCG_2002	-	-	PTS system, IIA component
+1989706..1989987	-	282	ACB91255.1	-	SPCG_2003	-	-	PTS system, IIB component
+1990010..1991536	-	1527	ACB91256.1	ulaA	SPCG_2004	-	-	ascorbate-specific PTS system enzyme IIC
+1991598..1992221	-	624	ACB91257.1	-	SPCG_2005	-	-	hypothetical protein
+1992272..1993258	-	987	ACB91258.1	-	SPCG_2006	-	-	jag protein, putative
+1993277..1994107	-	831	ACB91259.1	-	SPCG_2007	-	-	spoIIIJ family protein
+1994076..1994447	-	372	ACB91260.1	rnpA	SPCG_2008	-	-	ribonuclease P
+1994464..1994595	-	132	ACB91261.1	-	SPCG_2009	-	-	hypothetical protein
+1994596..1995816	-	1221	ACB91262.1	-	SPCG_2010	-	-	acetate kinase
+1995837..1996790	-	954	ACB91263.1	-	SPCG_2011	-	-	hypothetical protein
+1996851..1997231	-	381	ACB91264.1	-	SPCG_2012	-	-	hypothetical protein
+1997263..1997445	-	183	ACB91265.1	-	SPCG_2013	-	-	hypothetical protein
+1997548..1997994	-	447	ACB91266.1	-	SPCG_2014	-	-	hypothetical protein
+1997972..1998379	-	408	ACB91267.1	-	SPCG_2015	-	-	hypothetical protein
+1998396..1998656	-	261	ACB91268.1	-	SPCG_2016	-	-	hypothetical protein
+1998661..1999089	-	429	ACB91269.1	cglD	SPCG_2017	-	-	competence protein CglD
+1999058..1999384	-	327	ACB91270.1	cglC	SPCG_2018	-	-	competence protein CglC
+1999386..2000429	-	1044	ACB91271.1	cglB	SPCG_2019	-	-	competence protein CglB
+2000350..2001291	-	942	ACB91272.1	cglA	SPCG_2020	-	-	competence protein CglA
+2001367..2001738	-	372	ACB91273.1	-	SPCG_2021	-	-	hypothetical protein
+2001883..2002941	-	1059	ACB91274.1	adh	SPCG_2022	-	-	alcohol dehydrogenase, zinc-containing
+2003104..2004255	-	1152	ACB91275.1	nagA	SPCG_2023	-	-	N-acetylglucosamine-6-phosphate deacetylase
+2004408..2006225	-	1818	ACB91276.1	-	SPCG_2024	-	-	hypothetical protein
+2006326..2007468	-	1143	ACB91277.1	tgt	SPCG_2025	-	-	queuine tRNA-ribosyltransferase
+2007598..2008455	+	858	ACB91278.1	-	SPCG_2026	-	-	hypothetical protein
+2008483..2009127	-	645	ACB91279.1	-	SPCG_2027	-	-	pyrrolidone-carboxylate peptidase
+2009234..2009593	-	360	ACB91280.1	-	SPCG_2028	-	-	hypothetical protein
+2009604..2010029	-	426	ACB91281.1	marR	SPCG_2029	-	-	transcriptional regulator, MarR family
+2010349..2011461	-	1113	ACB91282.1	-	SPCG_2030	-	-	lysM domain-containing protein
+2011627..2012247	-	621	ACB91283.1	-	SPCG_2031	-	-	hydrolase, haloacid dehalogenase-like family
+2012251..2013531	-	1281	ACB91284.1	-	SPCG_2032	-	-	MATE efflux family protein
+2013592..2015076	-	1485	ACB91285.1	thrC	SPCG_2033	-	-	threonine synthase
+2015152..2016429	-	1278	ACB91286.1	-	SPCG_2034	-	-	hypothetical protein
+2022891..2023325	-	435	ACB91287.1	-	SPCG_2035	-	-	cytidine/deoxycytidylate deaminase family protein
+2023339..2024799	-	1461	ACB91288.1	gltX	SPCG_2036	-	-	glutamyl-tRNA synthetase
+2024923..2026272	-	1350	ACB91289.1	gpi	SPCG_2037	-	-	glucose-6-phosphate isomerase
+2026259..2026438	-	180	ACB91290.1	-	SPCG_2038	-	-	hypothetical protein
+2026442..2027179	-	738	ACB91291.1	guaA	SPCG_2039	-	-	glutamine amidotransferase, class-I
+2027270..2029081	-	1812	ACB91292.1	-	SPCG_2040	-	-	ABC transporter, ATP-binding/permease protein
+2029183..2029497	+	315	ACB91293.1	-	SPCG_2041	-	-	degenerate transposase
+2029828..2031522	-	1695	ACB91294.1	-	SPCG_2042	-	-	ABC transporter, ATP-binding/permease protein
+2031669..2034242	-	2574	ACB91295.1	hexA	SPCG_2043	-	-	DNA mismatch repair protein HexA
+2034254..2034700	-	447	ACB91296.1	argR	SPCG_2044	-	-	transcriptional repressor, putative
+2034836..2036527	+	1692	ACB91297.1	argS	SPCG_2045	-	-	arginyl-tRNA synthetase
+2036842..2037231	-	390	ACB91298.1	-	SPCG_2046	-	-	IS1381 transposase protein B
+2037362..2037871	+	510	ACB91299.1	-	SPCG_2047	-	-	hypothetical protein
+2037955..2038665	+	711	ACB91300.1	-	SPCG_2048	-	-	response regulator
+2038662..2039993	+	1332	ACB91301.1	-	SPCG_2049	-	-	sensor histidine kinase PnpS
+2040097..2041035	+	939	ACB91302.1	-	SPCG_2050	-	-	phosphate ABC transporter, phosphate-binding protein
+2041153..2042016	+	864	ACB91303.1	-	SPCG_2051	-	-	phosphate ABC transporter, permease protein
+2042009..2042824	+	816	ACB91304.1	-	SPCG_2052	-	-	phosphate ABC transporter, permease protein
+2042826..2043578	+	753	ACB91305.1	-	SPCG_2053	-	-	phosphate ABC transporter, ATP-binding protein
+2043593..2044243	+	651	ACB91306.1	phoU	SPCG_2054	-	-	phosphate transport system regulatory protein PhoU
+2044311..2044736	+	426	ACB91307.1	-	SPCG_2055	-	-	degenerate transposase
+2044910..2045368	-	459	ACB91308.1	-	SPCG_2056	-	-	transcriptional regulator
+2045502..2046518	+	1017	ACB91309.1	gpsA	SPCG_2057	-	-	NAD(P)H-dependent glycerol-3-phosphate dehydrogenase
+2046540..2047439	+	900	ACB91310.1	galU	SPCG_2058	-	-	UTP-glucose-1-phosphate uridylyltransferase
+2047506..2048186	-	681	ACB91311.1	-	SPCG_2059	-	-	hypothetical protein
+2048167..2048712	-	546	ACB91312.1	-	SPCG_2060	-	-	5-formyltetrahydrofolate cyclo-ligase family protein
+2048718..2049848	-	1131	ACB91313.1	-	SPCG_2061	-	-	peptidase, M20/M25/M40 family
+2049916..2050614	-	699	ACB91314.1	-	SPCG_2062	-	-	2,3,4,5-tetrahydropyridine-2-carboxylate N-succinyltransferase, putative
+2050844..2051929	-	1086	ACB91315.1	-	SPCG_2063	-	-	hypothetical protein
+2051820..2054297	-	2478	ACB91316.1	pbp1B	SPCG_2064	-	-	penicillin-binding protein 1B
+2054427..2055683	+	1257	ACB91317.1	tyrS	SPCG_2065	-	-	tyrosyl-tRNA synthetase
+2055761..2057833	-	2073	ACB91318.1	ctpC	SPCG_2066	-	-	cation-transporting ATPase, EI-E2 family
+2057826..2058137	-	312	ACB91319.1	-	SPCG_2067	-	-	hypothetical protein
+2058256..2059104	+	849	ACB91320.1	rrmA	SPCG_2068	-	-	rRNA (guanine-N1-)-methyltransferase
+2059727..2060299	+	573	ACB91321.1	-	SPCG_2069	-	-	hypothetical protein
+2061344..2063602	-	2259	ACB91322.1	malP	SPCG_2070	-	-	glycogen phosphorylase family protein
+2063628..2065145	-	1518	ACB91323.1	malM	SPCG_2071	-	-	4-alpha-glucanotransferase
+2065614..2066966	+	1353	ACB91324.1	-	SPCG_2072	-	-	maltose/maltodextrin ABC transporter, maltose/maltodextrin-binding protein
+2067062..2068369	+	1308	ACB91325.1	-	SPCG_2073	-	-	maltodextrin ABC transporter, permease protein
+2068350..2069213	+	864	ACB91326.1	-	SPCG_2074	-	-	maltodextrin ABC transporter, permease protein
+2069466..2070266	+	801	ACB91327.1	malA	SPCG_2075	-	-	malA protein
+2070276..2071262	+	987	ACB91328.1	malR	SPCG_2076	-	-	maltose operon transcriptional repressor
+2071311..2071646	+	336	ACB91329.1	-	SPCG_2077	-	-	hypothetical protein
+2071688..2072629	-	942	ACB91330.1	-	SPCG_2078	-	-	hypothetical protein
+2072607..2074370	-	1764	ACB91331.1	aspS	SPCG_2079	-	-	aspartyl-tRNA synthetase
+2074489..2074680	-	192	ACB91332.1	-	SPCG_2080	-	-	hypothetical protein
+2074722..2074952	-	231	ACB91333.1	-	SPCG_2081	-	-	hypothetical protein
+2074970..2075611	-	642	ACB91334.1	-	SPCG_2082	-	-	hypothetical protein
+2075623..2076351	-	729	ACB91335.1	-	SPCG_2083	-	-	hypothetical protein
+2076348..2076548	-	201	ACB91336.1	-	SPCG_2084	-	-	hypothetical protein
+2076545..2076760	-	216	ACB91337.1	-	SPCG_2085	-	-	transcriptional regulator, putative
+2076761..2077228	-	468	ACB91338.1	-	SPCG_2086	-	-	hypothetical protein
+2077228..2077401	-	174	ACB91339.1	-	SPCG_2087	-	-	hypothetical protein
+2077461..2078750	-	1290	ACB91340.1	hisS	SPCG_2088	-	-	histidyl-tRNA synthetase
+2078828..2080075	-	1248	ACB91341.1	-	SPCG_2089	-	-	hypothetical protein
+2080292..2081638	+	1347	ACB91342.1	-	SPCG_2090	-	-	IS1380-Spn1 transposase
+2081974..2082825	-	852	ACB91343.1	-	SPCG_2091	-	-	transcriptional regulator MutR, putative
+2082800..2082934	-	135	ACB91344.1	-	SPCG_2092	-	-	hypothetical protein
+2082949..2083290	+	342	ACB91345.1	-	SPCG_2093	-	-	hypothetical protein
+2083354..2083518	+	165	ACB91346.1	-	SPCG_2094	-	-	histidyl-tRNA synthetase
+2083544..2085247	-	1704	ACB91347.1	ilvD	SPCG_2095	-	-	dihydroxy-acid dehydratase
+2085480..2086412	-	933	ACB91348.1	tktC	SPCG_2096	-	-	transketolase, C-terminal subunit
+2086409..2087266	-	858	ACB91349.1	tktN	SPCG_2097	-	-	transketolase, N-terminal subunit
+2087270..2088616	-	1347	ACB91350.1	ulaA	SPCG_2098	-	-	ascorbate-specific PTS system enzyme IIC
+2088629..2088913	-	285	ACB91351.1	-	SPCG_2099	-	-	PTS system, IIB component, putative
+2088917..2090947	-	2031	ACB91352.1	-	SPCG_2100	-	-	transcriptional regulator, BglG family
+2091138..2092145	+	1008	ACB91353.1	-	SPCG_2101	-	-	hypothetical protein
+2092148..2092348	+	201	ACB91354.1	-	SPCG_2102	-	-	hypothetical protein
+2092500..2092682	+	183	ACB91355.1	rpmF	SPCG_2103	-	-	50S ribosomal protein L32
+2092698..2092847	+	150	ACB91356.1	rpmG	SPCG_2104	-	-	50S ribosomal protein L33
+2093339..2095324	-	1986	ACB91357.1	pcpA	SPCG_2105	-	-	choline binding protein PcpA
+2095659..2095841	+	183	ACB91358.1	-	SPCG_2106	-	-	degenerate transposase
+2095912..2096229	+	318	ACB91359.1	-	SPCG_2107	-	-	degenerate transposase
+2096234..2096497	+	264	ACB91360.1	-	SPCG_2108	-	-	degenerate transposase
+2096567..2096893	-	327	ACB91361.1	-	SPCG_2109	-	-	hypothetical protein
+2097128..2097223	+	96	ACB91362.1	-	SPCG_2110	-	-	hypothetical protein
+2097307..2099187	-	1881	ACB91363.1	-	SPCG_2111	-	-	glycosyl hydrolase-related protein
+2099181..2100062	-	882	ACB91364.1	-	SPCG_2112	-	-	ROK family protein
+2100134..2102794	-	2661	ACB91365.1	-	SPCG_2113	-	-	hypothetical protein
+2102870..2104174	-	1305	ACB91367.1	-	SPCG_2114	-	-	hypothetical protein
+2104152..2104247	+	96	ACB91366.1	-	SPCG_2115	-	-	hypothetical protein
+2104321..2106405	+	2085	ACB91368.1	-	SPCG_2116	-	-	antigen, cell wall surface anchor family
+2106445..2108196	-	1752	ACB91369.1	-	SPCG_2117	-	-	hypothetical protein
+2108880..2110109	+	1230	ACB91370.1	-	SPCG_2118	-	-	arginine deiminase
+2110167..2111183	+	1017	ACB91371.1	arcB	SPCG_2119	-	-	ornithine carbamoyltransferase
+2111348..2112295	+	948	ACB91372.1	arcC	SPCG_2120	-	-	carbamate kinase
+2112506..2114017	+	1512	ACB91373.1	-	SPCG_2121	-	-	hypothetical protein
+2114039..2115370	+	1332	ACB91374.1	-	SPCG_2122	-	-	hypothetical protein
+2115978..2116244	-	267	ACB91375.1	-	SPCG_2123	-	-	hypothetical protein
+2116583..2117482	-	900	ACB91376.1	-	SPCG_2124	-	-	SPFH domain/Band 7 family
+2117612..2118763	-	1152	ACB91377.1	adh2	SPCG_2125	-	-	alcohol dehydrogenase, iron-containing
+2118909..2120675	-	1767	ACB91378.1	fucI	SPCG_2126	-	-	L-fucose isomerase
+2120688..2121416	-	729	ACB91379.1	fucA	SPCG_2127	-	-	L-fuculose phosphate aldolase
+2121431..2124517	-	3087	ACB91380.1	-	SPCG_2128	-	-	hypothetical protein
+2124459..2126675	-	2217	ACB91381.1	-	SPCG_2129	-	-	alpha-galactosidase
+2126697..2128568	-	1872	ACB91382.1	-	SPCG_2130	-	-	hypothetical protein
+2128574..2129893	-	1320	ACB91383.1	-	SPCG_2131	-	-	probable glycosyl hydrolase
+2129890..2130735	-	846	ACB91384.1	-	SPCG_2132	-	-	sugar ABC transporter permease
+2130732..2131718	-	987	ACB91385.1	-	SPCG_2133	-	-	putative ABC-type sugar transport system, permease component
+2131748..2133040	-	1293	ACB91386.1	-	SPCG_2134	-	-	probable sugar ABC transporter, sugar-binding protein
+2133069..2134517	-	1449	ACB91387.1	fucK	SPCG_2135	-	-	L-fuculose kinase fucK, putative
+2134648..2135421	+	774	ACB91388.1	fcsR	SPCG_2136	-	-	fucose operon repressor, putative
+2136592..2138097	-	1506	ACB91389.1	-	SPCG_2137	-	-	zinc ABC transporter, zinc-binding lipoprotein
+2138107..2138937	-	831	ACB91390.1	-	SPCG_2138	-	-	zinc ABC transporter, permease protein
+2138906..2139610	-	705	ACB91391.1	-	SPCG_2139	-	-	zinc ABC transporter, ATP-binding protein
+2139610..2140110	-	501	ACB91392.1	adcR	SPCG_2140	-	-	adc operon repressor AdcR
+2140205..2141488	-	1284	ACB91393.1	dltD	SPCG_2141	-	-	dltD protein
+2141466..2141705	-	240	ACB91394.1	dltC	SPCG_2142	-	-	D-alanine--poly(phosphoribitol) ligase subunit 2
+2141719..2142963	-	1245	ACB91395.1	dltB	SPCG_2143	-	-	dltB protein
+2142960..2144690	-	1731	ACB91396.1	dltA	SPCG_2144	-	-	D-alanine--D-alanyl carrier protein ligase
+2144711..2144845	-	135	ACB91397.1	-	SPCG_2145	-	-	hypothetical protein
+2145156..2146334	-	1179	ACB91398.1	-	SPCG_2146	-	-	hypothetical protein
+2146794..2147786	-	993	ACB91399.1	-	SPCG_2147	-	-	transposase, uncharacterized, truncation
+2147790..2148071	-	282	ACB91400.1	-	SPCG_2148	-	-	hypothetical protein
+2149111..2149770	+	660	ACB91401.1	-	SPCG_2149	-	-	hypothetical protein
+2149857..2150060	-	204	ACB91402.1	-	SPCG_2150	-	-	hypothetical protein
+2150153..2150254	+	102	ACB91403.1	-	SPCG_2151	-	-	hypothetical protein
+2150251..2151009	-	759	ACB91404.1	glpF	SPCG_2152	-	-	glycerol uptake facilitator protein
+2151025..2152851	-	1827	ACB91405.1	-	SPCG_2153	-	-	hypothetical protein
+2152893..2154401	-	1509	ACB91406.1	glpK	SPCG_2154	-	-	glycerol kinase
+2154560..2155987	-	1428	ACB91407.1	-	SPCG_2155	-	-	hypothetical protein
+2156152..2157024	+	873	ACB91408.1	hslO	SPCG_2156	-	-	hsp33-like chaperonin
+2156981..2157991	+	1011	ACB91409.1	-	SPCG_2157	-	-	TIM-barrel protein, putative, NifR3 family
+2158221..2160383	-	2163	ACB91410.1	pspC	SPCG_2158	-	-	choline binding protein A
+2160462..2160989	-	528	ACB91411.1	-	SPCG_2159	-	-	hypothetical protein
+2161084..2162415	-	1332	ACB91412.1	-	SPCG_2160	-	-	sensor histidine kinase
+2162412..2163065	-	654	ACB91413.1	-	SPCG_2161	-	-	DNA-binding response regulator
+2163707..2166139	-	2433	ACB91414.1	-	SPCG_2162	-	-	ATP-dependent Clp protease, ATP-binding subunit
+2166141..2166662	-	522	ACB91415.1	ctsR	SPCG_2163	-	-	transcriptional regulator CtsR
+2166718..2167446	-	729	ACB91416.1	-	SPCG_2164	-	-	ABC transporter, ATP-binding protein
+2167446..2168453	-	1008	ACB91417.1	-	SPCG_2165	-	-	ABC transporter, substrate-binding protein, putative
+2168492..2169241	-	750	ACB91418.1	-	SPCG_2166	-	-	ABC transporter, permease protein
+2169213..2169503	-	291	ACB91419.1	-	SPCG_2167	-	-	hypothetical protein
+2169759..2171105	-	1347	ACB91420.1	cbpD	SPCG_2168	-	-	choline binding protein D
+2171194..2171460	-	267	ACB91421.1	-	SPCG_2169	-	-	hypothetical protein
+2171462..2172814	-	1353	ACB91422.1	dnaC	SPCG_2170	-	-	replicative DNA helicase
+2172858..2173310	-	453	ACB91423.1	rplI	SPCG_2171	-	-	50S ribosomal protein L9
+2173307..2175280	-	1974	ACB91424.1	-	SPCG_2172	-	-	DHH subfamily 1 protein
+2175416..2175964	-	549	ACB91425.1	-	SPCG_2173	-	-	ribosomal subunit interface protein
+2176044..2176706	-	663	ACB91426.1	comFC	SPCG_2174	-	-	competence protein ComF, putative
+2176703..2178001	-	1299	ACB91427.1	comFA	SPCG_2175	-	-	helicase, putative
+2178057..2178692	+	636	ACB91428.1	-	SPCG_2176	-	-	hypothetical protein
+2178977..2179897	+	921	ACB91429.1	cycK	SPCG_2177	-	-	cysteine synthase
+2180094..2180492	-	399	ACB91430.1	-	SPCG_2178	-	-	transposase
+2180932..2181255	-	324	ACB91431.1	-	SPCG_2179	-	-	IS66 family element, Orf2
+2181501..2182541	-	1041	ACB91432.1	tsf	SPCG_2180	-	-	elongation factor Ts
+2182620..2183447	-	828	ACB91433.1	rpsB	SPCG_2181	-	-	30S ribosomal protein S2
+2183622..2184800	-	1179	ACB91434.1	-	SPCG_2182	-	-	secreted 45 kd protein
+2184894..2185388	-	495	ACB91435.1	mreD	SPCG_2183	-	-	rod shpae-determining protein MreD, putative
+2185388..2186206	-	819	ACB91436.1	mreC	SPCG_2184	-	-	rod shape-determining protein MreC
+2186265..2187059	-	795	ACB91437.1	-	SPCG_2185	-	-	hypothetical protein
+2187052..2187891	-	840	ACB91438.1	-	SPCG_2186	-	-	ABC transporter, ATP-binding protein
+2187876..2188703	-	828	ACB91439.1	-	SPCG_2187	-	-	ABC transporter, ATP-binding protein
+2188700..2189245	-	546	ACB91440.1	-	SPCG_2188	-	-	CDP-diacylglycerol--glycerol-3-phosphate 3-phosphatidyltransferase
+2189256..2190086	-	831	ACB91441.1	-	SPCG_2189	-	-	hypothetical protein
+2190119..2191402	-	1284	ACB91442.1	-	SPCG_2190	-	-	peptidase, M16 family
+2191399..2192649	-	1251	ACB91443.1	-	SPCG_2191	-	-	hypothetical protein
+2192808..2193176	+	369	ACB91444.1	-	SPCG_2192	-	-	hypothetical protein
+2193179..2194276	+	1098	ACB91445.1	recF	SPCG_2193	-	-	recombination protein F
+2194327..2195805	-	1479	ACB91446.1	imdH	SPCG_2194	-	-	inositol-5-monophosphate dehydrogenase
+2195957..2196982	-	1026	ACB91447.1	trpS	SPCG_2195	-	-	tryptophanyl-tRNA synthetase
+2197188..2198810	+	1623	ACB91448.1	-	SPCG_2196	-	-	ABC transporter, ATP-binding protein
+2198872..2201424	+	2553	ACB91449.1	-	SPCG_2197	-	-	ABC transporter, permease protein, putative
+2201867..2202205	-	339	ACB91450.1	-	SPCG_2198	-	-	Conserved hypothetical protein, truncation
+2202290..2203057	-	768	ACB91451.1	-	SPCG_2199	-	-	hypothetical protein
+2203236..2203778	+	543	ACB91452.1	-	SPCG_2200	-	-	transcriptional regulator, TetR family
+2204021..2204773	-	753	ACB91453.1	comE	SPCG_2201	-	-	response regulator ComE
+2204770..2206095	-	1326	ACB91454.1	comD	SPCG_2202	-	-	putative sensor histidine kinase ComD
+2206116..2206241	-	126	ACB91455.1	comC	SPCG_2203	-	-	competence stimulating peptide 2
+2206523..2207002	-	480	ACB91456.1	-	SPCG_2204	-	-	hypothetical protein
+2207173..2208366	+	1194	ACB91457.1	sphtra	SPCG_2205	-	-	serine protease
+2208424..2209182	+	759	ACB91458.1	spo0J	SPCG_2206	-	-	spoJ protein
