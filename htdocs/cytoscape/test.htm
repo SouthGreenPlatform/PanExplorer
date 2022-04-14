@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="Pie_style/style.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+<title>Pie style</title>
+<script src="Pie_style/jquery.js"></script>
+<script src="Pie_style/cytoscape.js"></script>
+<script type="text/javascript">
+$(function(){ // on dom ready
+
+$('#cy').cytoscape({
+
+  style: cytoscape.stylesheet()
+    .selector(':selected')
+      .css({
+        'background-color': 'black',
+        'line-color': 'black',
+        'opacity': 1
+      })
+    .selector('.faded')
+      .css({
+        'opacity': 0.25,
+        'text-opacity': 0
+      })
+    .selector('edge')
+      .css({
+                'width': 1,
+                'line-color': 'black',
+      })
+    .selector('node')
+      .css({
+        'width': 'mapData(width, 0, 10, 0, 100)',
+        'height': 'mapData(width, 0, 10, 0, 100)',
+        'content': 'data(id)',
+        'pie-size': '98%',
+	'pie-1-background-color': '#ed292a',
+'pie-1-background-size': 'mapData(group1, 0, 10, 0, 100)',
+
+      }),
+elements: {
+    nodes: [
+{ data: { id: 'MV1', width: 0.2} },
+{ data: { id: 'MV2', width: 0.2} },
+{ data: { id: 'MV3', width: 0.2} },
+{ data: { id: 'h1', width: 0.8} },
+{ data: { id: 'h2', width: 1.6} },
+{ data: { id: 'h3', width: 0.8} },
+{ data: { id: 'h4', width: 0.8} },
+{ data: { id: 'h5', width: 0.8} },
+{ data: { id: 'h6', width: 0.8} },
+{ data: { id: 'h7', width: 0.8} },
+],
+edges: [
+{ data: { id: 'h6MV2', weight: 1, source: 'h6', target: 'MV2'} },
+{ data: { id: 'h5MV1', weight: 1, source: 'h5', target: 'MV1'} },
+{ data: { id: 'h1h3', weight: 1, source: 'h1', target: 'h3'} },
+{ data: { id: 'h4MV3', weight: 1, source: 'h4', target: 'MV3'} },
+{ data: { id: 'h1MV1', weight: 1, source: 'h1', target: 'MV1'} },
+{ data: { id: 'h7MV2', weight: 1, source: 'h7', target: 'MV2'} },
+{ data: { id: 'MV1MV3', weight: 1, source: 'MV1', target: 'MV3'} },
+{ data: { id: 'MV2MV3', weight: 1, source: 'MV2', target: 'MV3'} },
+{ data: { id: 'h2h3', weight: 1, source: 'h2', target: 'h3'} },
+{ data: { id: 'h3h5', weight: 1, source: 'h3', target: 'h5'} },
+
+]
+  },
+layout: {
+        name: 'cose',
+    padding: 10
+  },
+
+  ready: function(){
+    window.cy = this;
+  }
+});
+
+});
+
+</script>
+</head>
+<body>
+<div id="cy">
+</div>
+<font color='#ed292a'></font><br></html>

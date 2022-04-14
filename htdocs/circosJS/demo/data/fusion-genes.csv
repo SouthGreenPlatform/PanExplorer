@@ -1,0 +1,6 @@
+source_id,source_breakpoint,target_id,target_breakpoint,source_label,target_label
+chr4,76807187,chr1,91852878,AC110615.1,HFM1
+chr1,91852783,chr2,133036705,HFM1,AC097532.1
+chr1,91852783,chr2,88124673,UNC45B,RGPD2
+chr3,33478116,chr1,237766312,UNC45B,RYR2
+chr1,33478116,chr3,91853039,UNC45B,HFM1

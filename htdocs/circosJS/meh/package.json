@@ -1,0 +1,53 @@
+{
+  "name": "circos",
+  "version": "2.0.3",
+  "description": "A d3js library to build circos graphs",
+  "main": "dist/circos.min.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha --compilers js:babel-register  --require ignore-styles --reporter spec src/**/*.test.js src/*.test.js",
+    "test:tdd": "NODE_ENV=test mocha --compilers js:babel-register --require ignore-styles --reporter nyan --watch src/*.test.js src/**/*.test.js",
+    "coveralls": "CIRCOSJS_COVERAGE=1 mocha test --reporter mocha-lcov-reporter src/**/*.test.js | ./node_modules/coveralls/bin/coveralls.js",
+    "start": "webpack --watch",
+    "build": "NODE_ENV=prod webpack --optimize-minimize --optimize-dedupe"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicgirault/circosJS.git"
+  },
+  "author": "Nicolas Girault",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicgirault/circosJS/issues"
+  },
+  "homepage": "https://github.com/nicgirault/circosJS",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-es2015-modules-umd": "^6.18.0",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-es2015": "^6.18.0",
+    "chai": "~1.10.0",
+    "coffee-coverage": "~0.4.5",
+    "coffee-script": "~1.8.0",
+    "coveralls": "^2.11.16",
+    "css-loader": "^0.26.1",
+    "ignore-styles": "^5.0.1",
+    "mocha": "~2.5.3",
+    "mocha-lcov-reporter": "^1.2.0",
+    "sinon": "~1.17.4",
+    "sinon-chai": "^2.8.0",
+    "jsdom": "^9.11.0",
+    "babel-register": "^6.23.0",
+    "mocha-jsdom": "^1.1.0",
+    "standard": "^9.0.1",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.14.0"
+  },
+  "dependencies": {
+    "clipboard-js": "^0.3.3",
+    "d3": "^4.4.4",
+    "d3-scale-chromatic": "^1.1.0",
+    "lodash": "^4.17.3"
+  }
+}
