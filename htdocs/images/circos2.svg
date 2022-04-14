@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="3000px" height="3000px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="bg">
+<rect x="0" y="0" width="3000px" height="3000px" style="fill:rgb(255,255,255);"/>
+</g>
+<g id="ideograms">
+<path d="M1500.000,325.000 A1175.000,1175.000 40.000 1,1 1483.003,325.123 L1482.641,300.126 A1200.000,1200.000 0.000 1,0 1500.000,300.000 Z" style="stroke-linecap:round;fill:rgb(153,102,0);" />
+<text x="1510.7" y="2973.0" font-size="31.2px" font-family="CMUBright-Roman" style="text-anchor:middle;fill:rgb(0,0,0);" transform="rotate(-0.4,1510.7,2973.0)" >1</text>
+</g>
+<g id="plot0">
+<g id="plot0-axis">
+</g>
+<path d="M 1500.29,889.00 L 1500.31,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1500.59,889.00 L 1500.61,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1500.88,889.00 L 1500.92,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1501.18,889.00 L 1501.22,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1501.47,889.00 L 1501.53,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1501.77,889.00 L 1501.84,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1502.06,889.00 L 1502.14,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1502.36,889.00 L 1502.45,865.50 " style="stroke-width:1.0;stroke:rgb(107,174,214);stroke-linecap:round;fill:rgb(107,174,214);" />
+<path d="M 1172.49,494.49 L 1165.21,472.15 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1172.97,494.34 L 1165.70,471.99 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1173.46,494.18 L 1166.20,471.83 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1173.94,494.02 L 1166.70,471.67 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1174.43,493.86 L 1167.19,471.51 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1174.91,493.71 L 1167.69,471.35 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1175.40,493.55 L 1168.18,471.19 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1175.88,493.39 L 1168.68,471.03 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1176.37,493.24 L 1169.18,470.87 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1176.85,493.08 L 1169.67,470.71 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1177.34,492.93 L 1170.17,470.55 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1177.83,492.77 L 1170.67,470.39 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1178.31,492.62 L 1171.16,470.23 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1178.80,492.46 L 1171.66,470.07 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1179.28,492.31 L 1172.16,469.91 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1179.77,492.15 L 1172.65,469.76 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1180.25,492.00 L 1173.15,469.60 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1180.74,491.84 L 1173.65,469.44 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1181.23,491.69 L 1174.14,469.28 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1181.71,491.54 L 1174.64,469.13 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1182.20,491.38 L 1175.14,468.97 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1194.38,487.62 L 1187.59,135.13 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+
+<path d="M 1194.38,487.62 L 1087.59,465.13 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+
+<path d="M 1194.87,487.48 L 1188.09,464.98 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1195.36,487.33 L 1188.59,464.83 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1195.85,487.18 L 1189.09,464.68 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1196.33,487.04 L 1189.59,464.53 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1196.82,486.89 L 1190.09,464.38 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1197.31,486.74 L 1190.59,464.23 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1197.80,486.60 L 1191.08,464.08 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1198.29,486.45 L 1191.58,463.93 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1198.78,486.31 L 1192.08,463.78 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1199.27,486.16 L 1192.58,463.63 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1199.76,486.02 L 1193.08,463.49 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1200.24,485.87 L 1193.58,463.34 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1200.73,485.73 L 1194.08,463.19 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1201.22,485.58 L 1194.58,463.04 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+<path d="M 1201.71,485.44 L 1195.08,462.89 " style="stroke-width:1.0;stroke:rgb(255,255,255);stroke-linecap:round;fill:rgb(255,255,255);" />
+</g>
+<defs>
+<pattern id="hline-sparse" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:2" /></pattern>
+<pattern id="checker" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:2" /><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:2" /></pattern>
+<pattern id="checker" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:5" /><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:4" /></pattern>
+<pattern id="hline" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:5" /></pattern>
+<pattern id="vline-sparse" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:2" /></pattern>
+<pattern id="vline" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:5" /></pattern>
+</defs>
+</svg>
