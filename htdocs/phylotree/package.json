@@ -1,0 +1,35 @@
+{
+  "name": "phylotree",
+  "version": "0.1.10",
+  "main": "phylotree.js",
+  "keywords": [
+    "phylogenetics",
+    "phylogeny",
+    "d3",
+    "branching",
+    "tree"
+  ],
+  "ignore": [
+    "index.html"
+  ],
+  "dependencies": {
+    "bootstrap": "3.x",
+    "d3": "3.x",
+    "font-awesome": "4.x",
+    "jquery": "1.x",
+    "underscore": "1.x",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "concurrently": "^3.6.1",
+    "http-server": "^0.11.1",
+    "jsdom": "9.12.x",
+    "should": "^11.2.1",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^3.1.2"
+  },
+  "scripts": {
+    "docs": "sphinx-build -b html docs documentation",
+    "develop": "concurrently \"webpack --watch --mode=development\" \"http-server\""
+  }
+}
