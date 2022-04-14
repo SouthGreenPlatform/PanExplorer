@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "id": "haplo1", "size":70,
+      "pieChart" : [
+        { "color": "blue", "percent": 5 },
+        { "color": "red", "percent": 5 }
+      ]
+    },
+    {
+      "id": "haplo2", "size":43,
+      "pieChart" : [
+        { "color": "yellow", "percent": 33.33 },
+        { "color": "green", "percent": 33.34 },
+        { "color": 3, "percent": 33.33 }
+      ]
+    },
+    {
+      "id": "haplo3", "size":17,
+      "pieChart" : [
+        { "color": 1, "percent": 25 },
+        { "color": 2, "percent": 25 },
+        { "color": 3, "percent": 25 },
+        { "color": 4, "percent": 25 }
+      ]
+    },
+    {
+      "id": "d", "size":17,
+      "pieChart" : [
+        { "color": 1, "percent": 33.33 },
+        { "color": 3, "percent": 33.33 },
+        { "color": 4, "percent": 33.34 }
+      ]
+    },
+    {
+      "id": "e", "size":17,
+      "pieChart" : [
+        { "color": 1, "percent": 100 }
+      ]
+    },
+    {
+      "id": "f", "group": 1,"size":17,
+      "pieChart" : [
+        { "color": 2, "percent": 100 }
+      ]
+    },
+    {
+      "id": "g", "group": 2,"size":17,
+      "pieChart" : [
+        { "color": 2, "percent": 50 },
+        { "color": 3, "percent": 50 }
+      ]
+    },
+    {
+      "id": "h", "group": 3,"size":17,
+      "pieChart" : [
+        { "color": 2, "percent": 50 },
+        { "color": 3, "percent": 50 }
+      ]
+    },
+    {
+      "id": "i", "group": 4,"size":17,
+      "pieChart" : [
+        { "color": 0, "percent": 100 }
+      ]
+    }
+  ],
+  "links": [
+    {"source": "haplo1", "target": "haplo2", "value": 1},
+    {"source": "haplo1", "target": "haplo3", "value": 1},
+    {"source": "haplo1", "target": "d", "value": 1},
+    {"source": "haplo1", "target": "e", "value": 1},
+    {"source": "haplo1", "target": "f", "value": 1},
+    {"source": "haplo2", "target": "haplo3", "value": 1},
+    {"source": "haplo2", "target": "g", "value": 1},
+    {"source": "haplo3", "target": "d", "value": 1},
+    {"source": "haplo3", "target": "h", "value": 1},
+    {"source": "d", "target": "i", "value": 1},
+    {"source": "e", "target": "f", "value": 1},
+    {"source": "h", "target": "g", "value": 1}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "nodes": [
+{"id": "MV1", "group": 4,"size":14,"color":"red"},
+{"id": "MV2", "group": 4,"size":4,"color":"blue"}
+
+],
+  "links": [
+{"source": "MV1", "target": "MV2", "value": 1}
+]
+}

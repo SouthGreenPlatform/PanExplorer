@@ -1,0 +1,166 @@
+{
+  "nodes": [
+{"id": "MV1",  "size": 1 , "color" : "grey"},
+{"id": "MV2",  "size": 0.8, "color": "grey"},
+{"id": "MV3",  "size": 0.8, "color": "grey"},
+{"id": "MV4",  "size": 0.8, "color": "grey"},
+{"id": "haplo1",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "brown", "percent": 66.6666666666667 },
+{ "color": "grey", "percent": 33.3333333333333 }
+]
+},
+{"id": "haplo2",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "red", "percent": 27.4590163934426 },
+{ "color": "grey", "percent": 72.5409836065574 }
+]
+},
+{"id": "haplo3",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "yellow", "percent": 42.8571428571429 },
+{ "color": "grey", "percent": 57.1428571428571 }
+]
+},
+{"id": "haplo4",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "orange", "percent": 75 },
+{ "color": "grey", "percent": 25 }
+]
+},
+{"id": "haplo5",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "green", "percent": 35 },
+{ "color": "grey", "percent": 65 }
+]
+},
+{"id": "haplo6",  "size": 12.8, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo7",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "turquoise", "percent": 44.4444444444444 },
+{ "color": "grey", "percent": 55.5555555555556 }
+]
+},
+{"id": "haplo8",  "size": 25.6, "color": "grey",
+"pieChart" : [
+{ "color": "purple", "percent": 50 },
+{ "color": "grey", "percent": 50 }
+]
+},
+{"id": "haplo9",  "size": 40, "color": "grey",
+"pieChart" : [
+{ "color": "blue", "percent": 50.4504504504504 },
+{ "color": "grey", "percent": 49.5495495495496 }
+]
+},
+{"id": "haplo10",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo11",  "size": 9.6, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo12",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo13",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo14",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo15",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo16",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo17",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo18",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo19",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo20",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo21",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo22",  "size": 9.6, "color": "grey",
+"pieChart" : [
+{ "color": "orange", "percent": 33.3333333333333 },
+{ "color": "grey", "percent": 66.6666666666667 }
+]
+},
+{"id": "haplo23",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo24",  "size": 6.4, "color": "grey",
+"pieChart" : [
+{ "color": "grey", "percent": 100 }
+]
+},
+{"id": "haplo25",  "size": 6.4, "color": "grey"}],"links": [
+{"source": "haplo3", "target": "haplo11", "value": 5},
+{"source": "haplo2", "target": "haplo15", "value": 5},
+{"source": "haplo5", "target": "haplo23", "value": 5},
+{"source": "haplo9", "target": "MV4", "value": 5},
+{"source": "haplo1", "target": "MV2", "value": 5},
+{"source": "haplo5", "target": "haplo18", "value": 5},
+{"source": "haplo4", "target": "haplo22", "value": 5},
+{"source": "haplo11", "target": "MV3", "value": 5},
+{"source": "haplo13", "target": "MV1", "value": 5},
+{"source": "haplo7", "target": "MV1", "value": 5},
+{"source": "haplo1", "target": "haplo24", "value": 5},
+{"source": "haplo2", "target": "haplo20", "value": 5},
+{"source": "haplo21", "target": "MV4", "value": 5},
+{"source": "haplo3", "target": "haplo10", "value": 5},
+{"source": "haplo3", "target": "haplo17", "value": 5},
+{"source": "haplo5", "target": "haplo25", "value": 5},
+{"source": "haplo2", "target": "haplo16", "value": 5},
+{"source": "haplo5", "target": "MV2", "value": 5},
+{"source": "MV1", "target": "MV2", "value": 5},
+{"source": "haplo14", "target": "MV3", "value": 5},
+{"source": "haplo19", "target": "MV3", "value": 5},
+{"source": "haplo12", "target": "haplo23", "value": 5},
+{"source": "haplo15", "target": "MV2", "value": 5},
+{"source": "MV2", "target": "MV4", "value": 5},
+{"source": "haplo4", "target": "MV2", "value": 5},
+{"source": "haplo19", "target": "haplo25", "value": 5},
+{"source": "haplo6", "target": "MV2", "value": 5},
+{"source": "haplo8", "target": "MV2", "value": 5},
+{"source": "haplo12", "target": "haplo17", "value": 5}]
+}
