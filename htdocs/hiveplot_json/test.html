@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+ 
+.axis {
+  stroke: #2E2E2E;
+  stroke-width: 1px;
+}
+
+.link {
+  fill: none;
+  stroke: #999;
+  //stroke: #32FC06;
+  stroke-opacity: .3;
+  stroke-width: 10px;
+}
+
+.link.active {
+  stroke: red;
+  stroke-width: 10px; 
+  stroke-opacity: .5;
+}
+
+.node.active {
+  //stroke: #00BFFF !important;
+  stroke: blue;
+  stroke-width: 3px;
+}
+
+.text {
+  font-family: sans-serif;
+  font-size: 10px;
+  fill: #999;
+  opacity: 1;
+}
+
+.text.active {
+  fill: #000;
+  opacity: 1;
+}
+
+ 
+</style>
+<body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://d3js.org/d3.hive.v0.min.js"></script>
+<div id="info"></div>
+<!--<input type="txt" id="cl"/><input type="button" value="highlight" onclick="highlight2();"> -->
+<script>
+
+function calcColor(min, max, val)
+{
+    var minHue = 240, maxHue=0;
+    var curPercent = (val - min) / (max-min);
+    var colString = "hsl(" + ((curPercent * (maxHue-minHue) ) + minHue) + ",100%,50%)";
+    return colString;
+}
+
+
+var info = d3.select("#info").text("Nothing selected");
+
+var width = 860,
+    height = 800,
+    innerRadius = 40,
+    outerRadius = 340; // axis length
+
+var angle = d3.scale.ordinal().domain(d3.range(4)).rangePoints([0, 2 * Math.PI]),
+    radius = d3.scale.linear().range([innerRadius, outerRadius]);
+ 
+
+var color = d3.scale.linear()
+              .range(["#8A0868", "#FA58D0"])
+              .domain([1,3])
+
+var r = d3.scale.linear()
+              .range([5, 5])
+              .domain([3, 1]);
+ 
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+svg.selectAll(".axis")
+  .data(d3.range(3))
+.enter().append("line")
+  .attr("class", "axis")
+  .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+  .attr("x1", radius.range()[0])
+  .attr("x2", radius.range()[1]+20);
+
+var nodes = [];
+var links = [];
+
+d3.json("data.444444444444444.json", function(error, graph) {
+  nodes = graph;
+  
+  var maxy = 0;
+  graph.forEach(function(node) {
+    if (node.y > maxy){maxy = node.y;}  
+    if (node.targets !== undefined) {
+      node.targets.forEach(function(target){
+        links.push({source: {group: node.group, y: node.y}, 
+                    target: {group: graph[target.node].group, y: graph[target.node].y},
+                    value: target.value});
+      });
+    }
+  });
+  radius.domain([0, d3.max(graph, function(d) {return d.y;})]);
+
+  
+  svg.selectAll(".link")
+    .data(links)
+  .enter().append("path")
+    .attr("class", "link")
+    .attr("d", d3.hive.link()
+    .angle(function(d) { return angle(d.group); })
+    .radius(function(d) { return radius(d.y); }))
+    .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+    .style("stroke",function(d) { 
+		var color = calcColor(0, maxy, d.source.y);
+		return color;
+	})
+    .on("mouseover", linkMouseover)
+    .on("mouseout", mouseout);
+
+        
+
+  svg.selectAll(".node")
+      .data(graph)
+    .enter().append("circle")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "rotate(" + degrees(angle(d.group)) + ")"; })
+      .attr("cx", function(d) { return radius(d.y); })
+      .attr("r", function(d) {return r(d.group)})
+       .style("fill", function(d) { return d.color;})
+      //.style("stroke", function(d) { return d3.rgb(color(d.group)).darker(1); })
+      .style("stroke", function(d) {return d.color;})
+      .on("mouseover", nodeMouseover)
+      .on("mouseout", mouseout);
+
+  svg.selectAll(".text")
+      .data(graph)
+      .enter()
+      .append("text")
+      .attr("class", "text")
+      .text("")
+      .attr("y", function(d) { 
+        if (d.group === 3) {
+          return -radius(d.y);
+        } else {
+          return radius(d.y);
+        }
+      })
+      //.attr("y","-350")
+      //.attr("x","-350")
+      .attr("transform", function(d) {
+        if (d.group !== 3) {
+          return "rotate(" + (degrees(angle(d.group)) - 90) + ")";
+        }
+      })
+      .attr("dx", function(d) {return r(d.group)});
+      
+
+
+  // Highlight the link and connected nodes on mouseover.
+  function linkMouseover(d,i) {
+    svg.selectAll(".link").classed("active", function(p) { return p === d; });
+   info.text(d.target.y);
+    //svg.selectAll(".node, .text").classed("active", function(p) { 
+    //   return p.group === d.source.group && p.y === d.source.y || p.group === d.target.group && p.y === d.target.y; } );
+   //info.text(d.source.node.name + " → " + d.target.node.name);
+  }
+
+  // Highlight the node and connected links on mouseover.
+  function nodeMouseover(d, i) {
+    info.text(d.name);
+    svg.selectAll(".link").classed("active", function(p) { return p.target.group === d.group && p.target.y === d.y || p.source.group === d.group && p.source.y === d.y; });
+
+    svg.selectAll(".node, .text").classed("active", function(q,j) { 
+      var sources = [];
+      if (q.targets !== undefined) {
+        q.targets.forEach(function(y) {
+          sources.push(y.node);
+        })
+      }
+      if (sources.indexOf(i) !== -1) {
+        return d; 
+      }
+
+      var targets = [];
+      if (d.targets !== undefined) {  
+        d.targets.forEach(function(x) {
+          targets.push(x.node);
+        });
+      }
+      if (targets.indexOf(j) !== -1) {
+        return q; 
+      }
+      
+      return d.name === q.name;
+    });
+    d3.select(this).classed("active", true);
+ };
+
+
+  // Clear any highlighted nodes or links.
+  function mouseout() {
+   info.text("Nothing selected");
+
+
+    svg.selectAll(".active").classed("active", false);
+   } 
+
+  });
+function degrees(radians) {
+    return radians / Math.PI * 180 - 90;
+  }
+</script>
+

@@ -1,0 +1,10 @@
+[
+{"name":"categorie1.gene1wolbachia","size":1,"imports":["categorie2.gene10ehrlichia","categorie3.gene3ehrlichia"]},
+{"name":"categorie2.gene10wolbachia","size":2,"imports":["categorie3.gene3ehrlichia"]},
+{"name":"categorie3.gene3ehrlichia","size":3,"imports":["categorie1.gene10anaplasma"]},
+{"name":"categorie2.gene10ehrlichia","size":4,"imports":[]},
+{"name":"categorie1.gene10anaplasma","size":5,"imports":["categorie2.gene10ricketsia","categorie1.gene3ricketsia"]},
+{"name":"categorie2.gene10ricketsia","size":6,"imports":["categorie1.gene1wolbachia"]},
+{"name":"categorie1.gene3ricketsia","size":7,"imports":["categorie1.gene1wolbachia"]}
+
+]

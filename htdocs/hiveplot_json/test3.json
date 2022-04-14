@@ -1,0 +1,13 @@
+[
+{"name":"species.wolbachia.gene1","size":1,"imports":["species.ehrlichia.gene1","species.ricketsia.gene2"]},
+{"name":"species.wolbachia.gene2","size":1,"imports":["species.ehrlichia.gene2","species.ricketsia.gene1"]},
+{"name":"species.ehrlichia.gene1","size":2,"imports":["species.ricketsia.gene2"]},
+{"name":"species.ehrlichia.gene2","size":2,"imports":["species.ricketsia.gene1"]},
+{"name":"species.ricketsia.gene1","size":2,"imports":["species.ehrlichia.gene2"]},
+{"name":"species.ricketsia.gene2","size":2,"imports":["species.anaplasma.gene1"]},
+{"name":"species.anaplasma.gene1","size":3,"imports":["species.ricketsia.gene2"]},
+{"name":"species.anaplasma.gene2","size":3,"imports":[]},
+{"name":"species.ricketsia.gene1","size":4,"imports":[]},
+{"name":"species.ricketsia.gene2","size":4,"imports":["species.wolbachia.gene1"]}
+
+]

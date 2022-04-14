@@ -1,0 +1,4 @@
+[
+{"name":"categorie1.gene1wolbachia","size":3938,"imports":["categorie2.gene10ehrlichia"]},
+{"name":"categorie2.gene10ehrlichia","size":393,"imports":[]}
+]
