@@ -1,0 +1,85 @@
+#!/bin/sh
+
+# ===========================================================================
+#
+#                            PUBLIC DOMAIN NOTICE
+#            National Center for Biotechnology Information (NCBI)
+#
+#  This software/database is a "United States Government Work" under the
+#  terms of the United States Copyright Act.  It was written as part of
+#  the author's official duties as a United States Government employee and
+#  thus cannot be copyrighted.  This software/database is freely available
+#  to the public for use. The National Library of Medicine and the U.S.
+#  Government do not place any restriction on its use or reproduction.
+#  We would, however, appreciate having the NCBI and the author cited in
+#  any work or product based on this material.
+#
+#  Although all reasonable efforts have been taken to ensure the accuracy
+#  and reliability of the software and data, the NLM and the U.S.
+#  Government do not and cannot warrant the performance or results that
+#  may be obtained by using this software or data. The NLM and the U.S.
+#  Government disclaim all warranties, express or implied, including
+#  warranties of performance, merchantability or fitness for any particular
+#  purpose.
+#
+# ===========================================================================
+#
+# File Name:  efilter
+#
+# Author:  Jonathan Kans, Aaron Ucko
+#
+# Version Creation Date:   06/21/20
+#
+# ==========================================================================
+
+for x in "$@"
+do
+  if [ "x$x" = "x-newmode" ]
+  then
+    USE_NEW_EDIRECT=1
+    break
+  fi
+done
+
+pth=$( dirname "$0" )
+
+PERL=""
+
+if [ ! -f "$pth"/ecommon.sh ]
+then
+  USE_NEW_EDIRECT=false
+fi
+
+# set PERL path if using old EDirect
+
+case "${USE_NEW_EDIRECT}" in
+  "" | [FfNn]* | 0 | [Oo][Ff][Ff] )
+    PERL=perl
+    case "$( uname -s )" in
+      CYGWIN_NT*)
+        # Use a negative match here because the shell treats 0 as success.
+        if perl -e 'exit $^O !~ /^MSWin/'; then
+           pth=$( cygpath -w "$pth" )
+        fi
+        ;;
+      Darwin )
+        PERL="/usr/bin/perl"
+        ;;
+    esac
+    ;;
+  * )
+    ;;
+esac
+
+# conditionally execute original Perl implementation
+
+if [ -n "${PERL}" ]
+then
+  exec "${PERL}" "$pth"/edirect.pl -filter "$@"
+  exit 0
+fi
+
+# otherwise call esearch -filter
+
+esearch -filter "$@"
+

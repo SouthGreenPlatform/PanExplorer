@@ -1,0 +1,347 @@
+#!/bin/sh
+
+startat=0
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -collect )
+      startat=1
+      shift
+      ;;
+    -index )
+      startat=2
+      shift
+      ;;
+    -invert )
+      startat=3
+      shift
+      ;;
+    -merge )
+      startat=4
+      shift
+      ;;
+    -promote )
+      startat=5
+      shift
+      ;;
+    * )
+      break
+      ;;
+  esac
+done
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -path )
+      shift
+      ;;
+    -* )
+      exec >&2
+      echo "$0: Unrecognized option $1"
+      exit 1
+      ;;
+    * )
+      break
+      ;;
+  esac
+done
+
+if [ "$#" -gt 0 ]
+then
+  target="$1"
+  MASTER=$(cd "$target" && pwd)
+  CONFIG=${MASTER}
+  shift
+else
+  if [ -z "${EDIRECT_PUBMED_MASTER}" ]
+  then
+    echo "Must supply path to master archive area or set EDIRECT_PUBMED_MASTER environment variable"
+    exit 1
+  else
+    MASTER="${EDIRECT_PUBMED_MASTER}"
+    MASTER=${MASTER%/}
+  fi
+fi
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -temp | -work | -working )
+      shift
+      ;;
+    -* )
+      exec >&2
+      echo "$0: Unrecognized option $1"
+      exit 1
+      ;;
+    * )
+      break
+      ;;
+  esac
+done
+
+if [ "$#" -gt 0 ]
+then
+  working="$1"
+  WORKING=$(cd "$working" && pwd)
+  shift
+else
+  if [ -z "${EDIRECT_PUBMED_WORKING}" ]
+  then
+    WORKING=${MASTER}
+  else
+    WORKING="${EDIRECT_PUBMED_WORKING}"
+    WORKING=${WORKING%/}
+  fi
+fi
+
+echo "MASTER $MASTER"
+
+echo "WORKING $WORKING"
+
+osname=`uname -s | sed -e 's/_NT-.*$/_NT/; s/^MINGW[0-9]*/CYGWIN/'`
+
+if [ "$osname" = "Darwin" ]
+then
+  MASTER_ROOT=$(df $MASTER | awk 'END { print $NF }')
+  sdst=$(diskutil info -plist $MASTER_ROOT | plutil -extract SolidState xml1 - -o - |  sed -ne 's,<,,pg' | sed -ne 's,/>,,pg')
+  if [ "$sdst" != "true" ]
+  then
+    echo ""
+    echo "$MASTER IS A HARD DISK DRIVE, NOT THE EXPECTED SOLID-STATE DRIVE."
+    echo ""
+    echo "WOULD YOU LIKE TO PROCEED WITH ARCHIVING EVEN THOUGH IT IS NOT RECOMMENDED? [y/N]"
+    read response
+    case "$response" in
+      [Yy]*      ) echo "OK, PROCEEDING." ;;
+      [Nn]* | '' ) echo "Holding off, then."; exit 1 ;;
+      *          ) echo "Conservatively taking that as a no."; exit 1 ;;
+    esac
+  fi
+  ftyp=$(diskutil info -plist $MASTER_ROOT | plutil -extract FilesystemType xml1 - -o - | sed -ne 's,</*string>,,pg')
+  if [ "$ftyp" != "apfs" ]
+  then
+    echo ""
+    echo "$MASTER IS OF TYPE '$ftyp'"
+    echo ""
+    echo "IT NEEDS TO BE REFORMATTED AS APFS BEFORE YOU CAN PROCEED:"
+    echo ""
+    echo "  Run Utilities -> Disk Utility"
+    echo ""
+    echo "  Switch the View option to 'Show All Devices'."
+    echo ""
+    echo "  Select the entry named 'PCIe SSD Media' (not the two entries indented below it)."
+    echo ""
+    echo "  Click on 'Erase'."
+    echo ""
+    echo "  Change the Scheme to 'GUID Partition Map' (which will expand the Format choices)."
+    echo ""
+    echo "  Set the Format to 'APFS'."
+    echo ""
+    echo "  Press Erase."
+    echo ""
+    echo "ALSO RUN:"
+    echo ""
+    echo "  sudo trimforce enable"
+    echo ""
+    echo "IF NECESSARY TO ENABLE TRIM SUPPORT ON THE SOLID STATE DRIVE."
+    echo ""
+    echo "WOULD YOU LIKE TO PROCEED WITH ARCHIVING ON THE NON-APFS VOLUME ANYWAY? [y/N]"
+    read response
+    case "$response" in
+      [Yy]*      ) echo "OK, PROCEEDING." ;;
+      [Nn]* | '' ) echo "Holding off, then."; exit 1 ;;
+      *          ) echo "Conservatively taking that as a no."; exit 1 ;;
+    esac
+  fi
+fi
+
+for dir in Archive Postings
+do
+  mkdir -p "$MASTER/$dir"
+done
+
+for dir in Current Data Indexed Inverted Merged Pubmed
+do
+  mkdir -p "$WORKING/$dir"
+done
+
+if [ ! -f "$MASTER/Archive/CACHEDIR.TAG" ]
+then
+  pm-prepare "$MASTER/Archive"
+fi
+
+date
+
+DWN=0
+POP=0
+REF=0
+CLR=0
+COL=0
+IDX=0
+INV=0
+MRG=0
+PST=0
+
+if [ "$startat" -lt 1 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Downloading PubMed Files"
+  cd "$WORKING/Pubmed"
+  download-pubmed baseline updatefiles
+  echo "Downloading MeSH Tree"
+  cd "$WORKING/Data"
+  download-ncbi-data meshtree
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  DWN=$seconds
+
+  seconds_start=$(date "+%s")
+  echo "Populating PubMed Archive"
+  cd "$WORKING/Pubmed"
+  pm-stash "$MASTER/Archive"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  POP=$seconds
+
+  seconds_start=$(date "+%s")
+  echo "Refreshing Versioned Records"
+  pm-refresh "$MASTER/Archive"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  REF=$seconds
+fi
+
+if [ "$startat" -lt 5 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Removing Previous Indices"
+  if [ "$startat" -lt 2 ]
+  then
+    cd "$WORKING/Indexed"
+    target="$WORKING/Indexed"
+    find "$target" -name "*.e2x" -delete
+    find "$target" -name "*.e2x.gz" -delete
+  fi
+  if [ "$startat" -lt 3 ]
+  then
+    cd "$WORKING/Inverted"
+    target="$WORKING/Inverted"
+    find "$target" -name "*.inv" -delete
+    find "$target" -name "*.inv.gz" -delete
+  fi
+  if [ "$startat" -lt 4 ]
+  then
+    cd "$WORKING/Merged"
+    target="$WORKING/Merged"
+    find "$target" -name "*.mrg" -delete
+    find "$target" -name "*.mrg.gz" -delete
+  fi
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  CLR=$seconds
+fi
+
+if [ "$startat" -lt 2 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Collecting PubMed Records"
+  cd "$WORKING/Pubmed"
+  pm-collect "$MASTER/Archive" "$WORKING/Current"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  COL=$seconds
+fi
+
+if [ "$startat" -lt 3 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Indexing PubMed Records"
+  cd "$WORKING/Current"
+  pm-index "$WORKING/Indexed" "$WORKING/Data"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  IDX=$seconds
+fi
+
+if [ "$startat" -lt 4 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Inverting PubMed Indices"
+  cd "$WORKING/Indexed"
+  pm-invert "$WORKING/Inverted"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  INV=$seconds
+fi
+
+if [ "$startat" -lt 5 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Merging Inverted Indices"
+  cd "$WORKING/Inverted"
+  pm-merge "$WORKING/Merged"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  MRG=$seconds
+fi
+
+if [ "$startat" -lt 6 ]
+then
+  seconds_start=$(date "+%s")
+  echo "Producing Postings Files"
+  cd "$WORKING/Merged"
+  pm-promote "$MASTER/Postings"
+  seconds_end=$(date "+%s")
+  seconds=$((seconds_end - seconds_start))
+  echo "$seconds seconds"
+  PST=$seconds
+fi
+
+echo "DWN $DWN seconds"
+echo "POP $POP seconds"
+echo "REF $REF seconds"
+echo "CLR $CLR seconds"
+echo "COL $COL seconds"
+echo "IDX $IDX seconds"
+echo "INV $INV seconds"
+echo "MRG $MRG seconds"
+echo "PST $PST seconds"
+
+echo ""
+
+phrase-search -path "$MASTER/Postings" -query "mapping of spatio-temporal pollution status AND 2008 [YEAR]" |
+fetch-pubmed -path "$MASTER/Archive" |
+xtract -pattern Author -if Affiliation -contains Medicine \
+  -pfx "Archive and Index are " -element Initials
+
+echo ""
+
+date
+
+if [ -n "$CONFIG" ]
+then
+  target=bash_profile
+  if ! grep "$target" "$HOME/.bashrc" >/dev/null 2>&1
+  then
+    if [ ! -f $HOME/.$target ] || grep 'bashrc' "$HOME/.$target" >/dev/null 2>&1
+    then
+      target=bashrc
+    fi
+  fi
+  echo ""
+  echo "For convenience, please execute the following to save the archive path to a variable:"
+  echo ""
+  echo "  echo \"export EDIRECT_PUBMED_MASTER='${CONFIG}'\" >>" "\$HOME/.$target"
+  echo ""
+fi

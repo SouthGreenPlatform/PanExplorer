@@ -1,0 +1,8 @@
+#!/bin/bash -norc
+while IFS=$'\t' read fl
+do
+  if [ ! -f "$fl" ]
+  then
+    echo "$fl"
+  fi
+done

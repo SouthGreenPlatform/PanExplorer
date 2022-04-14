@@ -1,0 +1,334 @@
+#!/bin/sh
+
+# ===========================================================================
+#
+#                            PUBLIC DOMAIN NOTICE
+#            National Center for Biotechnology Information (NCBI)
+#
+#  This software/database is a "United States Government Work" under the
+#  terms of the United States Copyright Act.  It was written as part of
+#  the author's official duties as a United States Government employee and
+#  thus cannot be copyrighted.  This software/database is freely available
+#  to the public for use. The National Library of Medicine and the U.S.
+#  Government do not place any restriction on its use or reproduction.
+#  We would, however, appreciate having the NCBI and the author cited in
+#  any work or product based on this material.
+#
+#  Although all reasonable efforts have been taken to ensure the accuracy
+#  and reliability of the software and data, the NLM and the U.S.
+#  Government do not and cannot warrant the performance or results that
+#  may be obtained by using this software or data. The NLM and the U.S.
+#  Government disclaim all warranties, express or implied, including
+#  warranties of performance, merchantability or fitness for any particular
+#  purpose.
+#
+# ===========================================================================
+#
+# File Name:  einfo
+#
+# Author:  Jonathan Kans, Aaron Ucko
+#
+# Version Creation Date:   04/04/20
+#
+# ==========================================================================
+
+for x in "$@"
+do
+  if [ "x$x" = "x-newmode" ]
+  then
+    USE_NEW_EDIRECT=1
+    break
+  fi
+done
+
+pth=$( dirname "$0" )
+
+PERL=""
+
+if [ ! -f "$pth"/ecommon.sh ]
+then
+  USE_NEW_EDIRECT=false
+fi
+
+# set PERL path if using old EDirect
+
+case "${USE_NEW_EDIRECT}" in
+  "" | [FfNn]* | 0 | [Oo][Ff][Ff] )
+    PERL=perl
+    case "$( uname -s )" in
+      CYGWIN_NT*)
+        # Use a negative match here because the shell treats 0 as success.
+        if perl -e 'exit $^O !~ /^MSWin/'; then
+           pth=$( cygpath -w "$pth" )
+        fi
+        ;;
+      Darwin )
+        PERL="/usr/bin/perl"
+        ;;
+    esac
+    ;;
+  * )
+    ;;
+esac
+
+# conditionally execute original Perl implementation
+
+if [ -n "${PERL}" ]
+then
+  exec "${PERL}" "$pth"/edirect.pl -info "$@"
+  exit 0
+fi
+
+# handle common flags - dot command is equivalent of "source"
+
+. "$pth"/ecommon.sh
+
+# help text
+
+PrintHelp() {
+
+  echo "einfo $version"
+  cat << "EOF"
+
+Database Selection
+
+  -dbs       Print all database names
+  -db        Database name (or "all")
+
+Data Summaries
+
+  -fields    Print field names
+  -links     Print link names
+
+Field Example
+
+  <Field>
+    <Name>ALL</Name>
+    <FullName>All Fields</FullName>
+    <Description>All terms from all searchable fields</Description>
+    <TermCount>245340803</TermCount>
+    <IsDate>N</IsDate>
+    <IsNumerical>N</IsNumerical>
+    <SingleToken>N</SingleToken>
+    <Hierarchy>N</Hierarchy>
+    <IsHidden>N</IsHidden>
+    <IsTruncatable>Y</IsTruncatable>
+    <IsRangable>N</IsRangable>
+  </Field>
+
+Link Example
+
+  <Link>
+    <Name>pubmed_protein</Name>
+    <Menu>Protein Links</Menu>
+    <Description>Published protein sequences</Description>
+    <DbTo>protein</DbTo>
+  </Link>
+  <Link>
+    <Name>pubmed_protein_refseq</Name>
+    <Menu>Protein (RefSeq) Links</Menu>
+    <Description>Link to Protein RefSeqs</Description>
+    <DbTo>protein</DbTo>
+  </Link>
+
+Error Positive Controls
+
+  nquire -url http://api.geonames.org/countryCode -lat 41.796 -lng "\-87.577"
+
+  einfo -db NONE
+
+  esearch -db pubmed -query "1233456789 [NONE]"
+
+  elink -db pubmed -id 123456789 -related
+
+  efetch -db pubmed -id 123456789 -format docsum
+
+  efetch -db nuccore -id U1234567890 -format acc
+
+EOF
+}
+
+# initialize specific flags
+
+db=""
+dbs=false
+fields=false
+links=false
+test=false
+repeats=1
+
+# read command-line arguments
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -db )
+      shift
+      if [ $# -gt 0 ]
+      then
+        db="$1"
+        shift
+      else
+        echo "ERROR: Missing -db argument" >&2
+        exit 1
+      fi
+      ;;
+    -dbs )
+      dbs=true
+      shift
+      ;;
+    -fields )
+      fields=true
+      shift
+      ;;
+    -links )
+      links=true
+      shift
+      ;;
+    -test | -tests )
+      test=true
+      shift
+      ;;
+    -repeat | -repeats )
+      shift
+      if [ $# -gt 0 ]
+      then
+        repeats="$1"
+        shift
+        if [ "$repeats" -lt 1 ] || [ "$repeats" -gt 20 ]
+        then
+          repeats=1
+        fi
+      fi
+      ;;
+    -h | -help | --help )
+      PrintHelp
+      exit 0
+      ;;
+    -* )
+      ParseCommonArgs "$@"
+      if [ "$argsConsumed" -gt 0 ]
+      then
+        shift "$argsConsumed"
+      else
+        echo "ERROR: Unrecognized option $1" >&2
+        exit 1
+      fi
+      ;;
+    * )
+      # allows while loop to check for multiple flags
+      break
+      ;;
+  esac
+done
+
+FinishSetup
+
+# take database from WebEnv value (not expected for einfo) or -db argument
+
+if [ -z "$dbase" ]
+then
+  dbase="$db"
+fi
+
+# -dbs
+
+if [ "$dbs" = true ]
+then
+  res=$( RunWithCommonArgs nquire -get "$base" einfo.fcgi )
+  echo "$res" |
+  xtract -pattern DbList -sep "\n" -element DbName |
+  sort -f
+
+  exit 0
+fi
+
+# -db
+
+if [ -n "$dbase" ]
+then
+  res=$( RunWithCommonArgs nquire -get "$base" einfo.fcgi -db "$dbase" -version "2.0" )
+
+  # shortcut for fields
+
+  if [ "$fields" = true ]
+  then
+    echo "$res" |
+    xtract -pattern DbInfo -block Field -tab "\n" -element Name,FullName |
+    sort -f
+  fi
+
+  # shortcut for links
+
+  if [ "$links" = true ]
+  then
+    echo "$res" |
+    xtract -pattern DbInfo -block Link -tab "\n" -element Name,Menu |
+    sort -f
+  fi
+
+  # if neither -fields nor -links, print cleaned-up XML result, keeping original DOCTYPE line
+
+  if [ "$fields" = false ] && [ "$links" = false ]
+  then
+    echo "$res" | xtract -format -doctype ""
+  fi
+
+  exit 0
+fi
+
+# -test (undocumented)
+
+RunTests() {
+
+  res=$(
+    nquire -get https://eutils.ncbi.nlm.nih.gov/entrez/eutils esummary.fcgi -db pubmed -id 2539356 -version 2.0 | tr '\n' ' '
+  )
+  case "$res" in
+    *"Nucleotide sequences required for Tn3 transposition immunity"* )
+      ;;
+    * )
+      echo "FAIL: esummary.fcgi -db pubmed -id 2539356 -version 2.0" >&2
+      ;;
+  esac
+
+  res=$(
+    nquire -get https://eutils.ncbi.nlm.nih.gov/entrez/eutils esearch.fcgi -db pubmed -term "tn3 transposition immunity" | tr '\n' ' '
+  )
+  case "$res" in
+    *"QueryTranslation>tn3"* )
+      ;;
+    * )
+      echo "FAIL: esearch.fcgi -db pubmed -term \"tn3 transposition immunity\"" >&2
+      ;;
+  esac
+
+  for sym in ATP6 ATP7B CBD DMD HFE PAH PRNP TTN
+  do
+    res=$( esearch -db gene -query "$sym [GENE]" -organism human |
+           efetch -format docsum |
+           xtract -pattern DocumentSummary -def "-" -lbl "${sym}" \
+             -element NomenclatureSymbol Id Description CommonName )
+    if [ -z "$res" ]
+    then
+      echo "FAIL: $sym" >&2
+    fi
+  done
+}
+
+if [ "$test" = true ]
+then
+  for i in $(seq 1 $repeats)
+  do
+    RunTests
+
+    sleep 5
+  done
+
+  exit 0
+fi
+
+# warn on insufficient arguments
+
+echo "ERROR: einfo requires either -db or -dbs on command line" >&2
+exit 1

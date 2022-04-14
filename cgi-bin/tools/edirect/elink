@@ -1,0 +1,644 @@
+#!/bin/sh
+
+# ===========================================================================
+#
+#                            PUBLIC DOMAIN NOTICE
+#            National Center for Biotechnology Information (NCBI)
+#
+#  This software/database is a "United States Government Work" under the
+#  terms of the United States Copyright Act.  It was written as part of
+#  the author's official duties as a United States Government employee and
+#  thus cannot be copyrighted.  This software/database is freely available
+#  to the public for use. The National Library of Medicine and the U.S.
+#  Government do not place any restriction on its use or reproduction.
+#  We would, however, appreciate having the NCBI and the author cited in
+#  any work or product based on this material.
+#
+#  Although all reasonable efforts have been taken to ensure the accuracy
+#  and reliability of the software and data, the NLM and the U.S.
+#  Government do not and cannot warrant the performance or results that
+#  may be obtained by using this software or data. The NLM and the U.S.
+#  Government disclaim all warranties, express or implied, including
+#  warranties of performance, merchantability or fitness for any particular
+#  purpose.
+#
+# ===========================================================================
+#
+# File Name:  elink
+#
+# Author:  Jonathan Kans, Aaron Ucko
+#
+# Version Creation Date:   06/03/20
+#
+# ==========================================================================
+
+for x in "$@"
+do
+  if [ "x$x" = "x-newmode" ]
+  then
+    USE_NEW_EDIRECT=1
+    break
+  fi
+done
+
+pth=$( dirname "$0" )
+
+PERL=""
+
+if [ ! -f "$pth"/ecommon.sh ]
+then
+  USE_NEW_EDIRECT=false
+fi
+
+# set PERL path if using old EDirect
+
+case "${USE_NEW_EDIRECT}" in
+  "" | [FfNn]* | 0 | [Oo][Ff][Ff] )
+    PERL=perl
+    case "$( uname -s )" in
+      CYGWIN_NT*)
+        # Use a negative match here because the shell treats 0 as success.
+        if perl -e 'exit $^O !~ /^MSWin/'; then
+           pth=$( cygpath -w "$pth" )
+        fi
+        ;;
+      Darwin )
+        PERL="/usr/bin/perl"
+        ;;
+    esac
+    ;;
+  * )
+    ;;
+esac
+
+# conditionally execute original Perl implementation
+
+if [ -n "${PERL}" ]
+then
+  exec "${PERL}" "$pth"/edirect.pl -link "$@"
+  exit 0
+fi
+
+# handle common flags - dot command is equivalent of "source"
+
+. "$pth"/ecommon.sh
+
+# help text
+
+PrintHelp() {
+
+  echo "elink $version"
+  cat << "EOF"
+
+Destination Database
+
+  -related    Neighbors in same database
+  -target     Links in different database
+
+Direct Record Selection
+
+  -db         Database name
+  -id         Unique identifier(s)
+  -input      Read identifier(s) from file instead of stdin
+
+PubMed Citation Lookup
+
+  -cited      References to this paper
+  -cites      Publication reference list
+
+Command Mode
+
+  -cmd        Command type
+
+-cmd Options
+
+  history     Save results in Entrez history server
+  neighbor    Neighbors or links
+  score       Neighbors with computed similarity scores
+  acheck      All links available
+  ncheck      Existence of neighbors
+  lcheck      Existence of external links (LinkOuts)
+  llinks      Non-library LinkOut providers
+  llibs       All LinkOut providers
+  prlinks     Primary LinkOut provider
+
+Restrict Neighbor Links
+
+  -name       Link name (e.g., pubmed_protein_refseq, pubmed_pubmed_citedin)
+
+Examples
+
+  esearch -db pubmed -query "lycopene cyclase" |
+  elink -related |
+  elink -target protein |
+  efilter -organism rodents -source refseq |
+  efetch -format docsum |
+  xtract -pattern DocumentSummary -element AccessionVersion Title |
+  grep -i carotene
+
+  esearch -db pubmed -query "Beadle GW [AUTH] AND Tatum EL [AUTH]" |
+  elink -cited |
+  efilter -days 365 |
+  efetch -format abstract
+
+  esearch -db pubmed -query "conotoxin AND dopamine [MAJR]" |
+  elink -target protein -cmd neighbor |
+  xtract -pattern LinkSet -if Link/Id -element IdList/Id Link/Id
+
+  esearch -db pubmed -query "conotoxin AND dopamine [MAJR]" |
+  elink -target protein -cmd neighbor |
+  xtract -pattern LinkSet -if Link/Id -element IdList/Id Link/Id
+
+  elink -db pubmed -id 20210808 -cmd score |
+  xtract -pattern LinkSet -max Link/Score
+
+  elink -db pubmed -id 2539356 -cmd acheck |
+  xtract -pattern LinkInfo -element LinkName
+
+  elink -db pubmed -id 19880848 -cmd prlinks |
+  xtract -pattern LinkSet -first Id -element ObjUrl/Url
+
+EOF
+}
+
+# initialize specific flags
+
+target=""
+name=""
+cmmd=""
+mode=""
+idtype=""
+related=false
+cited=false
+cites=false
+
+# read command-line arguments
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -db )
+      shift
+      if [ $# -gt 0 ]
+      then
+        db="$1"
+        shift
+      else
+        echo "ERROR: Missing -db argument" >&2
+        exit 1
+      fi
+      ;;
+    -id )
+      shift
+      if [ $# -gt 0 ]
+      then
+        ids="$1"
+        shift
+      else
+        echo "ERROR: Missing -id argument" >&2
+        exit 1
+      fi
+      while [ $# -gt 0 ]
+      do
+        case "$1" in
+          -* )
+            break
+            ;;
+          * )
+            # concatenate run of UIDs with commas
+            ids="$ids,$1"
+            shift
+            ;;
+        esac
+      done
+      ;;
+    -format )
+      shift
+      if [ $# -gt 0 ]
+      then
+        shift
+        if [ "$1" = "acc" ] || [ "$1" = "accn" ]
+        then
+          idtype=acc
+        fi
+      else
+        echo "ERROR: Missing -format argument" >&2
+        exit 1
+      fi
+      ;;
+    -target )
+      shift
+      if [ $# -gt 0 ]
+      then
+        target="$1"
+        shift
+      else
+        echo "ERROR: Missing -target argument" >&2
+        exit 1
+      fi
+      ;;
+    -name )
+      shift
+      if [ $# -gt 0 ]
+      then
+        name="$1"
+        shift
+      else
+        echo "ERROR: Missing -name argument" >&2
+        exit 1
+      fi
+      ;;
+    -cmd )
+      shift
+      if [ $# -gt 0 ]
+      then
+        cmmd="$1"
+        shift
+      else
+        echo "ERROR: Missing -cmd argument" >&2
+        exit 1
+      fi
+      ;;
+    -mode )
+      shift
+      if [ $# -gt 0 ]
+      then
+        mode="$1"
+        shift
+      else
+        echo "ERROR: Missing -mode argument" >&2
+        exit 1
+      fi
+      ;;
+    -related )
+      related=true
+      shift
+      ;;
+    -neighbor )
+      related=true
+      shift
+      ;;
+    -cited )
+      cited=true
+      shift
+      ;;
+    -cites )
+      cites=true
+      shift
+      ;;
+    -h | -help | --help )
+      PrintHelp
+      exit 0
+      ;;
+    -* )
+      ParseCommonArgs "$@"
+      if [ "$argsConsumed" -gt 0 ]
+      then
+        shift "$argsConsumed"
+      else
+        echo "ERROR: Unrecognized option $1" >&2
+        exit 1
+      fi
+      ;;
+    * )
+      # allows while loop to check for multiple flags
+      break
+      ;;
+  esac
+done
+
+FinishSetup
+
+# check for ENTREZ_DIRECT message or piped UIDs unless database and UIDs provided in command line
+
+if [ -z "$db" ]
+then
+  ParseStdin
+elif [ -z "$ids" ] && [ -z "$input" ]
+then
+  ParseStdin
+fi
+
+# needHistory allows reuse of GenerateUidList
+
+if [ -z "$ids$rest$input" ]
+then
+  needHistory=true
+fi
+
+# take database from WebEnv value or -db argument
+
+if [ -z "$dbase" ]
+then
+  dbase="$db"
+fi
+
+# check for missing required arguments
+
+if [ -z "$dbase" ]
+then
+  echo "ERROR: Missing -db argument" >&2
+  exit 1
+fi
+
+# convert spaces between UIDs to commas
+
+ids=$( echo "$ids" | sed -e "s/ /,/g; s/,,*/,/g" )
+
+# cmd aliases
+
+case "$cmmd" in
+  history )
+    cmmd="neighbor_history"
+    ;;
+  score )
+    cmmd="neighbor_score"
+    if [ -z "$target" ]
+    then
+      target="$dbase"
+    fi
+    ;;
+  llibs )
+    cmmd="llinkslib"
+    ;;
+esac
+
+# special cases for target and cmd
+
+case "$cmmd" in
+  acheck )
+    ;;
+  ncheck | lcheck | llinks | llinkslib | prlinks )
+    target=""
+    ;;
+  * )
+    if [ -z "$target" ] && [ "$related" = false ] && [ "$cited" = false ] && [ "$cites" = false ]
+    then
+      echo "ERROR: Must supply -target or -related on command line" >&2
+      exit 1
+    fi
+    if [ -z "$target" ]
+    then
+      target="$dbase"
+    fi
+
+    if [ -z "$name" ]
+    then
+      name="${dbase}_${target}"
+    fi
+    ;;
+esac
+
+if [ -z "$cmmd" ]
+then
+  cmmd="neighbor_history"
+fi
+
+if [ "$dbase" = "nlmcatalog" ]
+then
+  echo "ERROR: Entrez Direct does not support links for the nlmcatalog database" >&2
+  exit 1
+fi
+
+# input reality checks
+
+if [ "$needHistory" = true ]
+then
+  if [ -t 0 ]
+  then
+    echo "ERROR: ENTREZ_DIRECT message not piped from stdin" >&2
+    exit 1
+  fi
+  if [ -z "$web_env" ]
+  then
+    echo "ERROR: WebEnv value not found in elink input" >&2
+    exit 1
+  fi
+  if [ -z "$qry_key" ]
+  then
+    echo "ERROR: QueryKey value not found in elink input" >&2
+    exit 1
+  fi
+  if [ "$num" -lt 1 ]
+  then
+    # silently exit if no results to process
+    exit 0
+  fi
+fi
+
+if [ "$cited" = true ] || [ "$cites" = true ]
+then
+  if [ "$dbase" != "pubmed" ]
+  then
+    echo "ERROR: -cited or -cites can only be used with -db pubmed" >&2
+    exit 1
+  fi
+fi
+
+# -cited or -cites access the NIH Open Citation Collection dataset (see PMID 31600197)
+
+iciteElement=""
+
+if [ "$cited" = true ]
+then
+  # equivalent of -name pubmed_pubmed_citedin (for pubmed records also in pmc)
+  iciteElement="cited_by"
+fi
+
+if [ "$cites" = true ]
+then
+  # equivalent of -name pubmed_pubmed_refs (for pubmed records also in pmc)
+  iciteElement="references"
+fi
+
+LinkInIcite() {
+
+  GenerateUidList "$dbase" |
+  join-into-groups-of 100 |
+  while read uids
+  do
+    nquire -get https://icite.od.nih.gov/api/pubs -pmids "$uids" |
+    xtract -j2x |
+    xtract -pattern opt -sep "\n" -element "$iciteElement"
+  done |
+  accn-at-a-time |
+  sort -n | uniq |
+  epost -db pubmed -log "$log"
+}
+
+if [ -n "$iciteElement" ]
+then
+  cits=$( LinkInIcite )
+
+  if [ -n "$cits" ]
+  then
+    ParseMessage "$cits" ENTREZ_DIRECT \
+                  dbase Db web_env WebEnv qry_key QueryKey \
+                  num Count stp Step
+  fi
+
+  WriteEDirect "$dbase" "$web_env" "$qry_key" "$num" "$stp" "$err"
+
+  exit 0
+fi
+
+# helper function adds link-specific arguments (if set)
+
+RunWithLinkArgs() {
+
+  if [ "$log" = true ]
+  then
+    printf "." >&2
+  fi
+
+  AddIfNotEmpty -dbfrom "$dbase" \
+  AddIfNotEmpty -db "$target" \
+  AddIfNotEmpty -cmd "$cmmd" \
+  AddIfNotEmpty -linkname "$name" \
+  AddIfNotEmpty -retmode "$mode" \
+  AddIfNotEmpty -idtype "$idtype" \
+  RunWithCommonArgs "$@"
+}
+
+# non-history link requests generate XML results
+
+if [ "$cmmd" != "neighbor_history" ]
+then
+  GenerateUidList |
+  join-into-groups-of 500 |
+  while read uids
+  do
+    uids=$( echo "$uids" | tr ',' ' ' )
+    set nquire -url "$base" elink.fcgi
+    # $uids is unquoted so the shell will perform word splitting on it
+    for uid in $uids
+    do
+      # individual -id arguments get a separate set of link results for each uid
+      set "$@" -id "$uid"
+    done
+    RunWithLinkArgs "$@" |
+    xtract -format -doctype ""
+  done
+
+  exit 0
+fi
+
+# helper function adds web environment argument for history (if set)
+
+RunWithLinkHistoryArgs() {
+
+  AddIfNotEmpty -WebEnv "$web_env" \
+  RunWithLinkArgs "$@"
+}
+
+# -cmd neighbor_history
+
+wb="$web_env"
+
+LinkInGroups() {
+
+  if [ "$log" = true ]
+  then
+    printf "ELink\n" >&2
+  fi
+
+  GenerateUidList "$dbase" |
+  join-into-groups-of 500 |
+  while read uids
+  do
+    err=""
+    res=$( RunWithLinkHistoryArgs nquire -url "$base" elink.fcgi -id "$uids" )
+
+    if [ -n "$res" ]
+    then
+      dt=""
+      ParseMessage "$res" eLinkResult dt DbTo web_env WebEnv qry_key QueryKey
+
+      if [ -n "$err" ]
+      then
+        echo "ERROR: elink failed - $err" >&2
+        exit 1
+      fi
+      if [ -z "$web_env" ]
+      then
+        echo "WebEnv value not found in elink output - WebEnv1 $wb"
+        exit 1
+      fi
+      if [ -n "$wb" ] && [ "$web_env" != "$wb" ]
+      then
+        echo "WebEnv mismatch in elink output - WebEnv1 $wb, WebEnv2 $web_env"
+        exit 1
+      fi
+
+      WriteEDirectStep "$dt" "$web_env" "$qry_key" "$err"
+    fi
+  done
+
+  if [ "$log" = true ]
+  then
+    printf "\n" >&2
+  fi
+}
+
+lnks=$( LinkInGroups )
+
+if [ -n "$lnks" ]
+then
+  # extract first database and webenv values, and all key numbers
+  comps=$( echo "$lnks" | xtract -wrp Set,Rec -pattern ENTREZ_DIRECT \
+           -wrp Web -element WebEnv -wrp Key -element QueryKey )
+
+  wbnv=$( echo "$comps" | xtract -pattern Set -first Web )
+  qrry=$( echo "$comps" | xtract -pattern Set -block Rec -pfx "(#" -sfx ")" -tab " OR " -element Key )
+
+  err=""
+  num=""
+  if [ -z "$qrry" ]
+  then
+    # no neighbors or links can be a normal response,
+    # e.g., elink -db gene -id 496376 -target medgen
+    WriteEDirect "$target" "$web_env" "$qry_key" "0" "$stp" "$err"
+    exit 0
+  fi
+
+  # send search command, e.g, "(#1) OR (#2)", along with database and web environment
+  srch=$( RunWithCommonArgs nquire -get "$base" esearch.fcgi -db "$target" \
+          -WebEnv "$wbnv" -term "$qrry" -retmax 0 -usehistory y )
+
+  if [ -n "$srch" ]
+  then
+    res=$( echo "$srch" | sed -e 's|<TranslationStack>.*</TranslationStack>||' )
+    ParseMessage "$srch" eSearchResult web_env WebEnv qry_key QueryKey num Count
+  fi
+
+  if [ -n "$num" ] && [ "$num" -lt 1 ]
+  then
+    res=$( RunWithCommonArgs nquire -url "$base" elink.fcgi -dbfrom "$target" \
+           -query_key "$qry_key" -WebEnv "$wbnv" -cmd "acheck" )
+
+    if [ -n "$res" ]
+    then
+      ParseMessage "$res" eLinkResult ignore DbFrom
+
+      if [ -z "$err" ]
+      then
+        tst=$( echo "$res" | xtract -pattern LinkInfo -if LinkName -equals "$name" -element LinkName )
+        if [ -n "$tst" ]
+        then
+          echo "ERROR: acheck test indicates non-zero count expected" >&2
+        fi
+      else
+        echo "ERROR: acheck test failed - $err" >&2
+      fi
+    fi
+  fi
+
+  WriteEDirect "$target" "$web_env" "$qry_key" "$num" "$stp" "$err"
+
+  exit 0
+fi
+
+# warn on error
+
+echo "ERROR: ELink failure" >&2
+exit 1

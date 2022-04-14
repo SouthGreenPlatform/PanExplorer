@@ -1,0 +1,2 @@
+Can't locate Module/Loaded.pm in @INC (@INC contains: /gs7k1/home/dereeper/edirect/_cpan /gs7k1/home/dereeper/edirect/aux/lib/perl5 /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5 /gs7k1/home/dereeper/edirect) at setup-deps.pl line 8.
+BEGIN failed--compilation aborted at setup-deps.pl line 8.

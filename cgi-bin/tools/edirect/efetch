@@ -1,0 +1,1055 @@
+#!/bin/sh
+
+# ===========================================================================
+#
+#                            PUBLIC DOMAIN NOTICE
+#            National Center for Biotechnology Information (NCBI)
+#
+#  This software/database is a "United States Government Work" under the
+#  terms of the United States Copyright Act.  It was written as part of
+#  the author's official duties as a United States Government employee and
+#  thus cannot be copyrighted.  This software/database is freely available
+#  to the public for use. The National Library of Medicine and the U.S.
+#  Government do not place any restriction on its use or reproduction.
+#  We would, however, appreciate having the NCBI and the author cited in
+#  any work or product based on this material.
+#
+#  Although all reasonable efforts have been taken to ensure the accuracy
+#  and reliability of the software and data, the NLM and the U.S.
+#  Government do not and cannot warrant the performance or results that
+#  may be obtained by using this software or data. The NLM and the U.S.
+#  Government disclaim all warranties, express or implied, including
+#  warranties of performance, merchantability or fitness for any particular
+#  purpose.
+#
+# ===========================================================================
+#
+# File Name:  efetch
+#
+# Author:  Jonathan Kans, Aaron Ucko
+#
+# Version Creation Date:   04/08/20
+#
+# ==========================================================================
+
+for x in "$@"
+do
+  if [ "x$x" = "x-newmode" ]
+  then
+    USE_NEW_EDIRECT=1
+    break
+  fi
+done
+
+pth=$( dirname "$0" )
+
+PERL=""
+
+if [ ! -f "$pth"/ecommon.sh ]
+then
+  USE_NEW_EDIRECT=false
+fi
+
+# set PERL path if using old EDirect
+
+case "${USE_NEW_EDIRECT}" in
+  "" | [FfNn]* | 0 | [Oo][Ff][Ff] )
+    PERL=perl
+    case "$( uname -s )" in
+      CYGWIN_NT*)
+        # Use a negative match here because the shell treats 0 as success.
+        if perl -e 'exit $^O !~ /^MSWin/'; then
+           pth=$( cygpath -w "$pth" )
+        fi
+        ;;
+      Darwin )
+        PERL="/usr/bin/perl"
+        ;;
+    esac
+    ;;
+  * )
+    ;;
+esac
+
+# conditionally execute original Perl implementation
+
+if [ -n "${PERL}" ]
+then
+  exec "${PERL}" "$pth"/edirect.pl -fetch "$@"
+  exit 0
+fi
+
+# handle common flags - dot command is equivalent of "source"
+
+. "$pth"/ecommon.sh
+
+# help text
+
+PrintHelp() {
+
+  echo "efetch $version"
+  cat << "EOF"
+
+Format Selection
+
+  -format        Format of record or report
+  -mode          text, xml, asn.1, json
+  -style         master, withparts, conwithfeat
+
+Direct Record Selection
+
+  -db            Database name
+  -id            Unique identifier or accession number
+  -input         Read identifier(s) from file instead of stdin
+
+Sequence Range
+
+  -seq_start     First sequence position to retrieve
+  -seq_stop      Last sequence position to retrieve
+  -strand        1 = forward DNA strand, 2 = reverse complement
+                   (otherwise strand minus is set if start > stop)
+  -forward       Force strand 1
+  -revcomp       Force strand 2
+
+Gene Range
+
+  -chr_start     Sequence range from 0-based coordinates
+  -chr_stop        in gene docsum GenomicInfoType object
+
+Sequence Flags
+
+  -complexity    0 = default, 1 = bioseq, 3 = nuc-prot set
+  -extend        Extend sequence retrieval in both directions
+  -extrafeat     Bit flag specifying extra features
+  -showgaps      Propagate component gaps
+
+Subset Retrieval
+
+  -start         First record to fetch
+  -stop          Last record to fetch
+
+Miscellaneous
+
+  -raw           Skip database-specific XML modifications
+
+Format Examples
+
+  -db            -format            -mode    Report Type
+  ___            _______            _____    ___________
+
+  (all)
+                 docsum                      DocumentSummarySet XML
+                 docsum             json     DocumentSummarySet JSON
+                 full                        Same as native except for mesh
+                 uid                         Unique Identifier List
+                 url                         Entrez URL
+                 xml                         Same as -format full -mode xml
+
+  bioproject
+                 native                      BioProject Report
+                 native             xml      RecordSet XML
+
+  biosample
+                 native                      BioSample Report
+                 native             xml      BioSampleSet XML
+
+  biosystems
+                 native             xml      Sys-set XML
+
+  clinvar
+                 variation                   Older Format
+                 variationid                 Transition Format
+                 vcv                         VCV Report
+                 clinvarset                  RCV Report
+
+  gds
+                 native             xml      RecordSet XML
+                 summary                     Summary
+
+  gene
+                 full_report                 Detailed Report
+                 gene_table                  Gene Table
+                 native                      Gene Report
+                 native             asn.1    Entrezgene ASN.1
+                 native             xml      Entrezgene-Set XML
+                 tabular                     Tabular Report
+
+  homologene
+                 alignmentscores             Alignment Scores
+                 fasta                       FASTA
+                 homologene                  Homologene Report
+                 native                      Homologene List
+                 native             asn.1    HG-Entry ASN.1
+                 native             xml      Entrez-Homologene-Set XML
+
+  mesh
+                 full                        Full Record
+                 native                      MeSH Report
+                 native             xml      RecordSet XML
+
+  nlmcatalog
+                 native                      Full Record
+                 native             xml      NLMCatalogRecordSet XML
+
+  pmc
+                 bioc                        PubTator Central BioC XML
+                 medline                     MEDLINE
+                 native             xml      pmc-articleset XML
+
+  pubmed
+                 abstract                    Abstract
+                 bioc                        PubTator Central BioC XML
+                 medline                     MEDLINE
+                 native             asn.1    Pubmed-entry ASN.1
+                 native             xml      PubmedArticleSet XML
+
+  (sequences)
+                 acc                         Accession Number
+                 est                         EST Report
+                 fasta                       FASTA
+                 fasta              xml      TinySeq XML
+                 fasta_cds_aa                FASTA of CDS Products
+                 fasta_cds_na                FASTA of Coding Regions
+                 ft                          Feature Table
+                 gb                          GenBank Flatfile
+                 gb                 xml      GBSet XML
+                 gbc                xml      INSDSet XML
+                 gene_fasta                  FASTA of Gene
+                 gp                          GenPept Flatfile
+                 gp                 xml      GBSet XML
+                 gpc                xml      INSDSet XML
+                 gss                         GSS Report
+                 ipg                         Identical Protein Report
+                 ipg                xml      IPGReportSet XML
+                 native             text     Seq-entry ASN.1
+                 native             xml      Bioseq-set XML
+                 seqid                       Seq-id ASN.1
+
+  snp
+                 json                        Reference SNP Report
+
+  sra
+                 native             xml      EXPERIMENT_PACKAGE_SET XML
+                 runinfo            xml      SraRunInfo XML
+
+  structure
+                 mmdb                        Ncbi-mime-asn1 strucseq ASN.1
+                 native                      MMDB Report
+                 native             xml      RecordSet XML
+
+  taxonomy
+                 native                      Taxonomy List
+                 native             xml      TaxaSet XML
+
+Examples
+
+  efetch -db pubmed -id 6271474,5685784,4882854,6243420 -format xml |
+  xtract -pattern PubmedArticle -element MedlineCitation/PMID "#Author" \
+    -block Author -position first -sep " " -element Initials,LastName \
+    -block Article -element ArticleTitle
+
+  efetch -db nuccore -id CM000177.6 -format gb -style conwithfeat -showgaps
+
+  esearch -db protein -query "conotoxin AND mat_peptide [FKEY]" |
+  efetch -format gpc |
+  xtract -insd complete mat_peptide "%peptide" product mol_wt peptide |
+  grep -i conotoxin | sort -t $'\t' -u -k 2,2n | head -n 8
+
+  esearch -db gene -query "DDT [GENE] AND mouse [ORGN]" |
+  efetch -format docsum |
+  xtract -pattern GenomicInfoType -element ChrAccVer ChrStart ChrStop |
+  xargs -n 3 sh -c 'efetch -db nuccore -format gb \
+    -id "$0" -chr_start "$1" -chr_stop "$2"'
+
+EOF
+}
+
+# initialize specific flags
+
+format=""
+mode=""
+style=""
+
+chunk=1
+min=0
+max=0
+
+seq_start=0
+seq_stop=0
+strand=0
+complexity=0
+extend=-1
+extrafeat=-1
+showgaps=""
+
+# read command-line arguments
+
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    -db )
+      shift
+      if [ $# -gt 0 ]
+      then
+        db="$1"
+        shift
+      else
+        echo "ERROR: Missing -db argument" >&2
+        exit 1
+      fi
+      ;;
+    -id )
+      shift
+      if [ $# -gt 0 ]
+      then
+        ids="$1"
+        shift
+      else
+        echo "ERROR: Missing -id argument" >&2
+        exit 1
+      fi
+      while [ $# -gt 0 ]
+      do
+        case "$1" in
+          -* )
+            break
+            ;;
+          * )
+            # concatenate run of UIDs with commas
+            ids="$ids,$1"
+            shift
+            ;;
+        esac
+      done
+      ;;
+    -format )
+      shift
+      if [ $# -gt 0 ]
+      then
+        format="$1"
+        shift
+      else
+        echo "ERROR: Missing -format argument" >&2
+        exit 1
+      fi
+      ;;
+    -docsum )
+      # esummary is implemented as efetch -docsum "$@"
+      format="docsum"
+      shift
+      ;;
+    -mode )
+      shift
+      if [ $# -gt 0 ]
+      then
+        mode="$1"
+        shift
+      else
+        echo "ERROR: Missing -mode argument" >&2
+        exit 1
+      fi
+      ;;
+    -style )
+      shift
+      if [ $# -gt 0 ]
+      then
+        style="$1"
+        shift
+      else
+        echo "ERROR: Missing -style argument" >&2
+        exit 1
+      fi
+      ;;
+    -seq_start )
+      shift
+      if [ $# -gt 0 ]
+      then
+        # 1-based
+        seq_start=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -seq_start argument" >&2
+        exit 1
+      fi
+      ;;
+    -chr_start )
+      shift
+      if [ $# -gt 0 ]
+      then
+        # 0-based
+        seq_start=$(( $1 + 1 ))
+        shift
+      else
+        echo "ERROR: Missing -chr_start argument" >&2
+        exit 1
+      fi
+      ;;
+    -seq_stop )
+      shift
+      if [ $# -gt 0 ]
+      then
+        # 1-based
+        seq_stop=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -seq_stop argument" >&2
+        exit 1
+      fi
+      ;;
+    -chr_stop )
+      shift
+      if [ $# -gt 0 ]
+      then
+        # 0-based
+        seq_stop=$(( $1 + 1 ))
+        shift
+      else
+        echo "ERROR: Missing -chr_stop argument" >&2
+        exit 1
+      fi
+      ;;
+    -strand )
+      shift
+      if [ $# -gt 0 ]
+      then
+        case "$1" in
+          forward | plus | 1 )
+            strand=1
+            ;;
+          revcomp | reverse | minus | 2 )
+            strand=2
+            ;;
+          * )
+            echo "ERROR: Unrecognized -strand argument '$strand'" >&2
+            exit 1
+            ;;
+        esac
+        shift
+      else
+        echo "ERROR: Missing -strand argument" >&2
+        exit 1
+      fi
+      ;;
+    -forward | -plus )
+      strand=1
+      shift
+      ;;
+    -revcomp | -reverse | -minus )
+      strand=2
+      shift
+      ;;
+    -h | -help | --help )
+      PrintHelp
+      exit 0
+      ;;
+    -start )
+      shift
+      if [ $# -gt 0 ]
+      then
+        min=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -start argument" >&2
+        exit 1
+      fi
+      ;;
+    -stop )
+      shift
+      if [ $# -gt 0 ]
+      then
+        max=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -stop argument" >&2
+        exit 1
+      fi
+      ;;
+    -complexity )
+      shift
+      if [ $# -gt 0 ]
+      then
+        complexity=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -complexity argument" >&2
+        exit 1
+      fi
+      ;;
+    -extend )
+      shift
+      if [ $# -gt 0 ]
+      then
+        extend=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -extend argument" >&2
+        exit 1
+      fi
+      ;;
+    -extrafeat )
+      shift
+      if [ $# -gt 0 ]
+      then
+        extrafeat=$(( $1 ))
+        shift
+      else
+        echo "ERROR: Missing -extrafeat argument" >&2
+        exit 1
+      fi
+      ;;
+    -showgaps | -show-gaps )
+      showgaps="on"
+      shift
+      ;;
+    -* )
+      ParseCommonArgs "$@"
+      if [ "$argsConsumed" -gt 0 ]
+      then
+        shift "$argsConsumed"
+      else
+        echo "ERROR: Unrecognized option $1" >&2
+        exit 1
+      fi
+      ;;
+    * )
+      # allows while loop to check for multiple flags
+      break
+      ;;
+  esac
+done
+
+FinishSetup
+
+# check for ENTREZ_DIRECT message or piped UIDs unless database and UIDs provided in command line
+
+if [ -z "$db" ]
+then
+  ParseStdin
+elif [ -z "$ids" ] && [ -z "$input" ]
+then
+  ParseStdin
+fi
+
+# needHistory allows reuse of GenerateUidList
+
+if [ -z "$ids$rest$input" ]
+then
+  needHistory=true
+fi
+
+# take database from WebEnv value or -db argument
+
+if [ -z "$dbase" ]
+then
+  dbase="$db"
+fi
+
+# check for missing required arguments
+
+if [ -z "$dbase" ]
+then
+  echo "ERROR: Missing -db argument" >&2
+  exit 1
+fi
+
+# convert spaces between UIDs to commas
+
+ids=$( echo "$ids" | sed -e "s/ /,/g; s/,,*/,/g" )
+
+# database and format class flags
+
+isSequence=false
+isFasta=false
+
+case "$dbase" in
+  nucleotide | nuccore | est | gss | protein )
+    isSequence=true
+    ;;
+esac
+
+case "$format" in
+  *fasta* )
+    isFasta=true
+    ;;
+esac
+
+# special cases for format, mode, and style
+
+case "$format:$mode:$isSequence" in
+  xml::* )
+    format=full
+    mode=xml
+    ;;
+  accn:*:true )
+    format=acc
+    ;;
+  asn:* )
+    format=asn.1
+    ;;
+esac
+
+case "$style" in
+  normal | none | contig )
+    style=""
+    ;;
+  master )
+    style=master
+    ;;
+  conwithfeat | conwithfeats | contigwithfeat | gbconwithfeat | gbconwithfeats )
+    format=gb
+    style=conwithfeat
+    ;;
+  withpart | withparts | gbwithpart | gbwithparts )
+    format="gbwithparts"
+    style=""
+    ;;
+  "" )
+    ;;
+  * )
+    echo "ERROR: Unrecognized -style argument '$style'" >&2
+    exit 1
+    ;;
+esac
+
+case "$format:$mode" in
+  gbconwithfeat:* | gbconwithfeats:* )
+    format=gb
+    style=conwithfeat
+    ;; 
+  gbwithpart:* | gbwithparts:* )
+    format="gbwithparts"
+    style=""
+    ;;
+  gbc: | gpc: )
+    mode=xml
+    ;;
+  "" )
+    format=native
+    ;;
+  docsum:json )
+    ;;
+  docsum:* )
+    mode=xml
+    ;;
+esac
+
+if [ "$format" = "" ]
+then
+  format="native"
+fi
+
+if [ "$mode" = "" ]
+then
+  mode="text"
+fi
+
+# adjust for -db clinvar
+
+is_variationid=false
+
+if [ "$dbase" = "clinvar" ] && [ "$format" = "variationid" ]
+then
+  format="vcv"
+  is_variationid=true
+fi
+
+# input reality checks
+
+if [ "$needHistory" = true ]
+then
+  if [ -t 0 ]
+  then
+    echo "ERROR: ENTREZ_DIRECT message not piped from stdin" >&2
+    exit 1
+  fi
+  if [ "$empty" = true ]
+  then
+    # silently exit if explicit count of "0"
+    exit 0
+  fi
+  if [ -z "$web_env" ]
+  then
+    echo "ERROR: WebEnv value not found in efetch input" >&2
+    exit 1
+  fi
+  if [ -z "$qry_key" ]
+  then
+    echo "ERROR: QueryKey value not found in efetch input" >&2
+    exit 1
+  fi
+  if [ "$num" -lt 1 ]
+  then
+    # silently exit if no results to fetch
+    exit 0
+  fi
+fi
+
+# -id 0 looks up default record for each database
+
+GetZero() {
+
+  case "$dbase" in
+    annotinfo       ) ids="122134" ;;
+    assembly        ) ids="443538" ;;
+    biocollections  ) ids="7370" ;;
+    bioproject      ) ids="146229" ;;
+    biosample       ) ids="3737421" ;;
+    biosystems      ) ids="1223165" ;;
+    blastdbinfo     ) ids="998664" ;;
+    books           ) ids="1371014" ;;
+    cdd             ) ids="274590" ;;
+    clinvar         ) ids="10510" ;;
+    clone           ) ids="18646800" ;;
+    dbvar           ) ids="6173073" ;;
+    gap             ) ids="872875" ;;
+    gapplus         ) ids="136686" ;;
+    gds             ) ids="200022309" ;;
+    gencoll         ) ids="398148" ;;
+    gene            ) ids="3667" ;;
+    genome          ) ids="52" ;;
+    geoprofiles     ) ids="16029743" ;;
+    grasp           ) ids="2852486" ;;
+    gtr             ) ids="559277" ;;
+    homologene      ) ids="510" ;;
+    ipg             ) ids="422234" ;;
+    medgen          ) ids="162753" ;;
+    mesh            ) ids="68007328" ;;
+    ncbisearch      ) ids="3158" ;;
+    nlmcatalog      ) ids="0404511" ;;
+    nuccore         ) ids="1322283" ;;
+    nucleotide      ) ids="1322283" ;;
+    omim            ) ids="176730" ;;
+    orgtrack        ) ids="319950" ;;
+    pcassay         ) ids="1901" ;;
+    pccompound      ) ids="16132302" ;;
+    pcsubstance     ) ids="126522451" ;;
+    pmc             ) ids="209839" ;;
+    popset          ) ids="27228303" ;;
+    protein         ) ids="4557671" ;;
+    proteinclusters ) ids="2945638" ;;
+    pubmed          ) ids="2539356" ;;
+    seqannot        ) ids="9561" ;;
+    snp             ) ids="137853337" ;;
+    sparcle         ) ids="10022454" ;;
+    sra             ) ids="190091" ;;
+    structure       ) ids="61024" ;;
+    taxonomy        ) ids="562" ;;
+    unigene         ) ids="1132160" ;;
+  esac
+}
+
+if [ "$ids" = "0" ]
+then
+  GetZero
+fi
+
+# reality checks and adjustments on sequence variables
+
+if [ "$isSequence" = true ]
+then
+  if [ "$extend" -gt 0 ]
+  then
+    seq_start=$(( $seq_start - $extend ))
+    seq_stop=$(( $seq_stop + $extend ))
+  fi
+else
+  if [ "$seq_start" -ne 0 ]
+  then
+    echo "ERROR: Only sequence formats may use -seq_start" >&2
+    exit 1
+  fi
+  if [ "$seq_stop" -ne 0 ]
+  then
+    echo "ERROR: Only sequence formats may use -seq_stop" >&2
+    exit 1
+  fi
+  if [ "$strand" -ne 0 ]
+  then
+    echo "ERROR: Only sequence formats may use -strand" >&2
+    exit 1
+  fi
+  if [ "$complexity" -ne 0 ]
+  then
+    echo "ERROR: Only sequence formats may use -complexity" >&2
+    exit 1
+  fi
+  if [ "$extrafeat" -ne -1 ]
+  then
+    echo "ERROR: Only sequence formats may use -extrafeat" >&2
+    exit 1
+  fi
+  if [ -n "$showgaps" ]
+  then
+    echo "ERROR: Only sequence formats may use -showgaps" >&2
+    exit 1
+  fi
+fi
+
+if [ "$isSequence" = true ]
+then
+  if [ "$seq_start" -gt 0 ] && [ "$seq_stop" -gt 0 ]
+  then
+    if [ "$seq_start" -gt "$seq_stop" ]
+    then
+      tmp="$seq_start"
+      seq_start="$seq_stop"
+      seq_stop="$tmp"
+      if [ "$strand" -eq 0 ]
+      then
+        strand=2
+      fi
+    fi
+  else
+    seq_start=""
+    seq_stop=""
+  fi
+  if [ "$strand" -lt 1 ]
+  then
+    strand=""
+  fi
+  if [ "$complexity" -lt 1 ]
+  then
+    complexity=""
+  fi
+  if [ "$extrafeat" -lt 1 ]
+  then
+    extrafeat=""
+  fi
+else
+  # otherwise clear all sequence-related flags, will be ignored by AddIfNotEmpty
+  seq_start=""
+  seq_stop=""
+  strand=""
+  complexity=""
+  extrafeat=""
+  showgaps=""
+fi
+
+# determine size of individual requests
+
+case "$format:$dbase:$mode:$isSequence" in
+  uid:*             ) chunk=25000 ;;
+  acc:*:true        ) chunk=10000 ;;
+  url:*             ) chunk=50    ;;
+  docsum:gtr:json:* ) chunk=50    ;;
+  docsum:*:json:*   ) chunk=500   ;;
+  bioc:*            ) chunk=100   ;;
+  json:snp:*        ) chunk=10    ;;
+  *                 ) chunk=1000  ;;
+esac
+
+if [ "$format" = "gbwithparts" ] || [ "$style" = "conwithfeat" ]
+then
+  chunk=1
+fi
+
+# -format uid
+
+if [ "$format" = "uid" ]
+then
+  GenerateUidList
+
+  exit 0
+fi
+
+# -format url
+
+if [ "$format" = "url" ]
+then
+  GenerateUidList |
+  join-into-groups-of "$chunk" |
+  while read uids
+  do
+    echo "https://www.ncbi.nlm.nih.gov/$dbase/$uids"
+  done
+
+  exit 0
+fi
+
+# -format urls
+
+if [ "$format" = "urls" ]
+then
+  GenerateUidList |
+  while read uid
+  do
+    echo "https://www.ncbi.nlm.nih.gov/$dbase/$uid"
+  done
+
+  exit 0
+fi
+
+# -format xids
+
+if [ "$format" = "xids" ]
+then
+  echo "<ENTREZ_DIRECT>"
+  if [ -n "$dbase" ]
+  then
+    echo "  <Db>${dbase}</Db>"
+  fi
+  if [ -n "$num" ]
+  then
+    echo "  <Count>${num}</Count>"
+  fi
+  # instantiate UIDs within ENTREZ_DIRECT message
+  GenerateUidList |
+  while read uid
+  do
+    echo "  <Id>${uid}</Id>"
+  done
+  if [ -n "$err" ]
+  then
+    echo "  <Error>${err}</Error>"
+  fi
+  echo "</ENTREZ_DIRECT>"
+
+  exit 0
+fi
+
+# -format docsum
+
+if [ "$format" = "docsum" ]
+then
+  if [ "$needHistory" = false ]
+  then
+    GenerateUidList "$dbase" |
+    join-into-groups-of "$chunk" |
+    while read uids
+    do
+      RunWithCommonArgs nquire -url "$base" esummary.fcgi \
+        -db "$dbase" -id "$uids" -version "2.0" -retmode "$mode"
+    done
+  else
+    GenerateHistoryChunks "$chunk" "$min" "$max" |
+    while read fr chnk
+    do
+      RunWithCommonArgs nquire -url "$base" esummary.fcgi \
+        -query_key "$qry_key" -WebEnv "$web_env" -retstart "$fr" -retmax "$chnk" \
+        -db "$dbase" -version "2.0" -retmode "$mode"
+    done
+  fi |
+  if [ "$mode" = "json" ]
+  then
+    grep "."
+  elif [ "$raw" = true ]
+  then
+    xtract -mixed -format -doctype ""
+  else
+    xtract -normalize "$dbase" |
+    sed -e 's/<!DOCTYPE eSummaryResult PUBLIC/<!DOCTYPE DocumentSummarySet PUBLIC/g; s/<eSummaryResult>//g; s/<\/eSummaryResult>//g' |
+    xtract -format -doctype ""
+  fi
+
+  exit 0
+fi
+
+# -format bioc
+
+biocbase="https://www.ncbi.nlm.nih.gov/research/pubtator-api/publications/export/biocxml"
+idtype=""
+prefix=""
+
+if [ "$format" = "bioc" ]
+then
+  if [ "$dbase" = "pubmed" ]
+  then
+    idtype="-pmids"
+  elif [ "$dbase" = "pmc" ]
+  then
+    idtype="-pmcids"
+    prefix="PMC"
+  else
+    echo "ERROR: BioC format must use -db pubmed or pmc" >&2
+    exit 1
+  fi
+
+  GenerateUidList "$dbase" |
+  while read uid
+  do
+    echo "$prefix${uid#PMC}"
+  done |
+  join-into-groups-of "$chunk" |
+  while read uids
+  do
+    nquire -get $biocbase $idtype $uids |
+    if [ "$raw" = true ]
+    then
+      xtract -format -doctype ""
+    else
+      xtract -normalize bioc | xtract -format -doctype ""
+    fi
+  done
+
+  exit 0
+fi
+
+# helper function adds sequence-specific arguments (if set)
+
+RunWithFetchArgs() {
+
+  AddIfNotEmpty -style "$style" \
+  AddIfNotEmpty -seq_start "$seq_start" \
+  AddIfNotEmpty -seq_stop "$seq_stop" \
+  AddIfNotEmpty -strand "$strand" \
+  AddIfNotEmpty -complexity "$complexity" \
+  AddIfNotEmpty -extrafeat "$extrafeat" \
+  AddIfNotEmpty -show-gaps "$showgaps" \
+  FlagIfNotEmpty -is_variationid "$is_variationid" \
+  RunWithCommonArgs "$@"
+}
+
+# other -format choices
+
+if [ -n "$format" ]
+then
+  if [ "$needHistory" = false ]
+  then
+    GenerateUidList "$dbase" |
+    join-into-groups-of "$chunk" |
+    while read uids
+    do
+      RunWithFetchArgs nquire -url "$base" efetch.fcgi \
+        -db "$dbase" -id "$uids" -rettype "$format" -retmode "$mode"
+    done
+  else
+   GenerateHistoryChunks "$chunk" "0" "0" |
+    while read fr chnk
+    do
+      RunWithFetchArgs nquire -url "$base" efetch.fcgi \
+        -query_key "$qry_key" -WebEnv "$web_env" -retstart "$fr" -retmax "$chnk" \
+        -db "$dbase" -rettype "$format" -retmode "$mode"
+    done
+  fi |
+  if [ "$mode" = "json" ] || [ "$raw" = true ]
+  then
+    grep '.'
+  elif [ "$isFasta" = true ]
+  then
+    grep '.'
+  elif [ "$format" = "full" ] && [ "$mode" = "xml" ]
+  then
+    if [ "$dbase" = "pubmed" ] || [ "$dbase" = "sra" ]
+    then
+      xtract -normalize "$dbase" | xtract -format -doctype ""
+    elif [ "$dbase" = "pmc" ]
+    then
+      grep '.'
+    elif [ "$dbase" = "pccompound" ] || [ "$dbase" = "pcsubstance" ]
+    then
+      xtract -mixed -normalize "$dbase"
+    else
+      xtract -format -doctype ""
+    fi
+  else
+    grep ''
+  fi
+
+  exit 0
+fi
+
+# warn if no format recognized
+
+echo "ERROR: Unrecognized format" >&2
+exit 1
+
