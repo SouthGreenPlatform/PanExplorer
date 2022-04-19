@@ -11,4 +11,11 @@ Web application to explore bacterial pangenomes
 
 ## Running
 
+1- Git clone
+
+```
+git clone https://github.com/SouthGreenPlatform/PanExplorer.git
+cd PanExplorer
+```
+
 ## Deployment
