@@ -7,8 +7,8 @@ Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://pa
 ## Table of contents
 
 - [Introduction](#introduction)
-- [Run the workflow](#run the workflow)
-- [Deploy the Web application](#Deploy the web application)
+- [Run the workflow](#run)
+- [Deploy the Web application](#Deploy)
 
 ## Introduction
 
