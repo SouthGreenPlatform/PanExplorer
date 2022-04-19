@@ -1,5 +1,7 @@
 # PanExplorer
+
 Web application to explore bacterial pangenomes
+
 Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
 
 ## Table of contents
