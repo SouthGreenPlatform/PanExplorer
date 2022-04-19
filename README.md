@@ -7,8 +7,8 @@ Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://pa
 ## Table of contents
 
 - [Introduction](#introduction)
-- [Running the workflow](#running)
-- [Web application deployment](#deployment)
+- [Run the workflow](#run the workflow)
+- [Deploy the Web application](#Deploy the web application)
 
 ## Introduction
 
@@ -24,7 +24,7 @@ The application allows interactive data exploration at different levels :
 
 (iv) Visual inspection of a specific cluster.
 
-## Running the workflow
+## Run the workflow
 
 1- Git clone
 
@@ -33,7 +33,7 @@ git clone https://github.com/SouthGreenPlatform/PanExplorer.git
 cd PanExplorer
 ```
 
-## Web application deployment
+## Deploy the Web application
 
 1- Git clone
 
