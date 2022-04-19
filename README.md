@@ -12,6 +12,18 @@ Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://pa
 
 ## Introduction
 
+PanExplorer performs pan-genome analysis (using PGAP or Roary) and exposes resulting information as a comprehensive and easy way, through several modules facilitating the exploration gene clusters and interpretation of data.
+
+The application allows interactive data exploration at different levels :
+
+(i) Pan-genome visualization as a presence/absence heatmap. This overview allows to easily identify and distinguish core-genes (present in all strains), cloud genes (genes from the accessory genome) and genome-specific genes.
+
+(ii) Physical map of core-genes and strain-specific genes can be displayed as a circular genomic representation (Circos), for each genome taken independently.
+
+(iii) Synteny analysis. The conservation of gene order between genomes can be investigated using graphical representations
+
+(iv) Visual inspection of a specific cluster.
+
 ## Running the workflow
 
 1- Git clone
