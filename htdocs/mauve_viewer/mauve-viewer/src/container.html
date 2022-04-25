@@ -1,0 +1,86 @@
+<div class="mauve-viewer" style="position: relative;">
+    <div class="mv-header" style="text-align: left;">
+        <h4 class="title">Mauve Viewer <sup>(beta)</sup></h4>
+
+        <div class="help-text">
+            <b>Tips:</b> click and drag to pan; use ctrl-scroll to zoom.
+        </div><br>
+
+        <div class="options pull-left">
+
+            <button class="reset-btn" title="Reset display">Reset</button>
+
+            <div class="dropdown">
+                <button class="opts-btn dd-btn">Options <i class="caret-down"></i></button>
+                <div class="dd-content">
+                    <div>
+                        <label>
+                            <input type="checkbox" name="showGenomeID" checked />
+                            Show Genome ID
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="showLCBLines" checked />
+                            LCB Connecting Lines
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="showFeatures" checked />
+                            Show Features (zoomed)
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" name="showContigs" checked />
+                            Show Contigs
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+
+            <button class="pan pan-left" title="Shift display left"></button>
+            <button class="zoom zoom-in" title="Zoom in (ctrl+scroll-up)"></button>
+            <button class="zoom zoom-out" title="Zoom out (ctrl+scroll-down)"></button>
+            <button class="pan pan-right" title="Shift display right"></button>
+        </div>
+
+
+        <table class="cursor-info pull-right" style="visibility: hidden;">
+            <thead>
+                <tr>
+                    <th class="align-right">Position</th>
+                    <th class="align-right">LCB Length</th>
+                    <th class="align-right">Contig</th>
+                    <th class="align-right">Contig Length</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="nt-pos align-right">-</td>
+                    <td class="lcb-length align-right">-</td>
+                    <td class="contig-id align-right">-</td>
+                    <td class="contig-length align-right">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+    </div>
+    <br>
+    <div class="mv-chart">
+        <svg></svg>
+
+        <div style="position: relative;">
+            <div class="mv-context-menu" style="display: none;">
+                <ul>
+                    <li id="nucleotide-align">Align by nucleotide</li>
+                    <li>Another item</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
