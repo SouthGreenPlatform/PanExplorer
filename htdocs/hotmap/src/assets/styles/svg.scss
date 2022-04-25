@@ -1,0 +1,18 @@
+
+.svg-canvas text.hover {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+tspan.highlight {
+  background-color: yellow;
+}
+
+.muted {
+  color: #666;
+}
+
+g {
+  pointer-events: all;
+}

@@ -1,0 +1,72 @@
+$highlight-color: #1187f1;
+$toolbar-height: 56px;
+
+.hotmap {
+  font-family: sans-serif;
+  height: 100%;
+  position: relative;
+
+  .chart {
+    position: relative;
+  }
+
+  .webgl-canvas {
+    /* must be z-indexed and absolute for safari*/
+    z-index: -1;
+    position: absolute;
+  }
+
+  .tree {
+    position: absolute;
+  }
+
+  .logo {
+    position: absolute;
+    text-decoration: none;
+    padding: 10px;
+    right: 20px;
+    bottom: 5px;
+  }
+
+  .version {
+    position: absolute;
+    padding: 10px;
+    text-decoration: none;
+    background: $highlight-color;
+    color: #fff;
+    font-size: .8em;
+    height: 15px;
+    right: 50px;
+    top: $toolbar-height;
+  }
+
+
+  @import "./styles.scss";
+  @import "./header.scss";
+  @import "./forms.scss";
+  @import "./legend.scss";
+  @import "./scale-ctrl.scss";
+  @import "./options.scss";
+  @import "./scrollbar.scss";
+  @import "./svg.scss";
+  @import "./axis-events.scss";
+}
+
+
+/* force fullscreen mode */
+.hmap-fullscreen {
+  z-index: 9999 !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: #fff;
+  transition: all .5s linear;
+}
+
+.hmap-force-z-index {
+  z-index: 0 !important;
+}

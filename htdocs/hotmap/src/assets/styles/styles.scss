@@ -1,0 +1,70 @@
+/**
+ * general
+ */
+
+.hidden {
+  display: none !important;
+}
+
+.caret-down {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #222;
+  display: inline-block;
+}
+
+
+.select-count,
+.search-count {
+  position: absolute;
+  z-index: 2000;
+  padding: 5px;
+  font-size: .9em;
+  color: #fff;
+  top: 60px;
+  left: 80px;
+}
+
+.select-count:empty,
+.search-count:empty {
+  display: none;
+}
+
+.select-count {
+  background: #888;
+}
+.search-count {
+  background: $highlight-color;
+}
+
+/**
+  * tooltip
+  */
+.hmap-tt {
+  position: absolute;
+  background: #444;
+  color: #fff;
+  padding: 10px;
+  font-size: .8em;
+  border-radius: 5px;
+  z-index: 11; /* greater than scroll container */
+}
+
+.hmap-tt:empty {
+  display: none;
+}
+
+/**
+ * svg related stuff
+ */
+
+.cat-label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.cat-label:hover {
+  font-weight: bold;
+}

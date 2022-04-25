@@ -1,0 +1,72 @@
+<div class="hotmap">
+
+    <div class="header">
+        <button class="btn fullscreen-btn" title="Enter fullscreen mode"></button>
+
+        <div class="search-container">
+            <i>${require('./assets/icons/search.svg')}</i>
+            <input type="text" class="search" placeholder="Search columns..." />
+            <button class="reset-btn hidden" type="reset"></button>
+        </div>
+
+        <button class="btn opts-btn">
+            <span class="opts-label">Options</span> <span class="caret-down"></span>
+        </button>
+
+        <div class="legend-container">
+            <div class="legend"></div>
+            <button class="btn color-btn" title="change color scheme">${require('./assets/icons/color-lens.svg')}</button>
+        </div>
+    </div>
+
+    <div class="options">
+        <button class="close-btn btn">&times;</button>
+
+        <div class="colors option-set hidden">
+            <div class="option-title">Color Scheme</div>
+            <div class="option-group">
+                <a data-id="bins" class="active">Bins</a>
+                <a data-id="gradient">Gradient</a>
+            </div>
+        </div>
+
+        <div class="download option-set">
+            <div class="option-title">Download SVG</div>
+            <div class="option-group">
+                <a data-id="snapshot">Snapshot</a>
+                <a data-id="full-chart">Entire Chart</a>
+            </div>
+            <small class="download-progress muted"></small>
+        </div>
+
+    </div>
+
+    <div class="chart">
+
+        <div class="scale-ctrls">
+            <button class="btn lock-btn" title="Lock x and y scaling"></button>
+            <input type="range" min="1" max="50" class="slider y-slider">
+            <!--<span class="y-slider-label">y</span>-->
+            <input type="range" min="1" max="50" class="slider x-slider">
+            <!--<span class="x-slider-label">x</span>-->
+        </div>
+
+        <div class="search-count"></div>
+        <div class="select-count"></div>
+        <div class="tree"></div>
+        <div class="webgl-canvas"></div>
+        <div class="svg-canvas"></div>
+        <div class="hmap-tt"></div>
+        <div class="scroll-container"></div>
+
+        <div class="y-drag-box" draggable="true" ondragstart="event.dataTransfer.setData('text/plain',null)"></div>
+        <div class="x-drag-box" draggable="true" ondragstart="event.dataTransfer.setData('text/plain',null)"></div>
+        <i class="y-drag-icon" style="display: none;">${require('./assets/icons/drag-indicator.svg')}</i>
+        <i class="x-drag-icon" style="display: none;">${require('./assets/icons/drag-indicator.svg')}</i>
+    </div>
+
+    <a class="version hidden" href="https://github.com/nconrad/hotmap.git" target="_blank">
+        [AIV]v{version}[/AIV]
+    </a>
+
+</div>

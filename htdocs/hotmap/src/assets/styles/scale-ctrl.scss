@@ -1,0 +1,107 @@
+
+$border-radius: 20px;
+
+/**
+ * scale control components
+ */
+
+.scale-ctrls {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  z-index: 10;
+}
+
+.slider {
+  position: absolute;
+  -webkit-appearance: none;
+  height: 5px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  outline: none;
+}
+
+.slider::-moz-focus-outer {
+  border: 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border-radius: $border-radius;
+  background: $highlight-color;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border-radius: $border-radius;
+  background: $highlight-color;
+  cursor: pointer;
+}
+
+.y-slider {
+  height: 5px;
+  left: -40px;
+  top: 98px;
+  transform: rotate(90deg);
+}
+
+.x-slider {
+  width: 130px;
+  position: absolute;
+  top: 10px;
+  left: 48px;
+}
+
+.y-slider-label,
+.x-slider-label {
+  position: absolute;
+  color: #666;
+  font-weight: bold;
+}
+
+.y-slider-label {
+  top: 88px;
+  left: 28px;
+}
+
+.x-slider-label {
+  top: -15px;
+  left: 136px;
+}
+
+
+.lock-btn {
+  position: absolute;
+  top: 0;
+  left: 13px;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+}
+
+.lock-btn svg {
+  margin-left: -5px;
+}
+
+.fullscreen-btn:empty {
+  display: none;
+}
+
+.fullscreen-btn svg {
+  width: 18px;
+}
+
+.exit-fs-btn svg {
+  width: 18px;
+  margin-left: -2px;
+}
+

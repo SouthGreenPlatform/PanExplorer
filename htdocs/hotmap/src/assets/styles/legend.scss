@@ -1,0 +1,74 @@
+/**
+ * legend
+ */
+
+.legend-container {
+  padding-right: 30px;
+}
+
+.legend-container .color-btn {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  background: $toolbar-color;
+  border: none;
+  display: none;
+  position: relative;
+}
+
+.legend-container:hover .color-btn.enabled  {
+  display: inline-block;
+}
+
+.legend-container .color-btn svg {
+  fill: #fff;
+}
+
+.header.light .legend-container .color-btn {
+  background: $toolbar-light-color;
+}
+
+.header.light .legend-container .color-btn svg {
+  fill: $toolbar-light-text-color;
+}
+
+.legend {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.header.light .color-btn {
+  color: #333;
+}
+
+.legend > * {
+  display: inline-block;
+  user-select: none;
+}
+
+.legend .item {
+  padding: 0 5px;
+  color: #d8d8d8;
+  font-size: .9em;
+}
+
+.legend .item .box {
+  display: inline-block;
+  border: 1px solid #ddd;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  cursor: pointer;
+}
+
+.legend .gradient {
+  margin: 0 4px;
+}
+
+.header.light .legend .item {
+  color: #333;
+}
+
+.header.light .legend .item .box {
+  border: 1px solid #ccc;
+}
