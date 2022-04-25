@@ -522,7 +522,7 @@ if ($genename){
 	
 	system("cp -rf $execution_dir/snp.align.fa $Configuration::HOME_DIR/alignments/$session.snps.align.fa");
 
-	system("/opt/java/bin/java -jar $Configuration::TOOLS_DIR/haplophyle/NetworkCreator_fat.jar -in $execution_dir/snp.align.fa -out $execution_dir/snp.network.dot >> $execution_dir/haplophyle.log 2>&1");
+	system("$Configuration::HAPLOPHYLE_EXE -in $execution_dir/snp.align.fa -out $execution_dir/snp.network.dot >> $execution_dir/haplophyle.log 2>&1");
 	system("perl $Configuration::TOOLS_DIR/haplophyle/dot2Cytoscape.pl -i $execution_dir/snp.network.dot -h $Configuration::HOME_DIR/cytoscape/$session.snp.network.html >> $execution_dir/dot2cytoscape.log 2>&1");
 	system("cp -rf $Configuration::HOME_DIR/cytoscape/$session.snp.network.html.d3.json $Configuration::HOME_DIR/d3/$session.snp.network.json");
 
