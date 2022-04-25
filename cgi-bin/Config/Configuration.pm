@@ -61,18 +61,18 @@ B<HOME_DIR>:  String, public
 =cut
 
 ########################### URL #########################
-our $HOMEPAGE = "https://panexplorer.southgreen.fr/";
-our $WEB_DIR = "https://panexplorer.southgreen.fr";
+our $HOMEPAGE = "https://bioinfo-web.mpl.ird.fr/panexplorer";
+our $WEB_DIR = "https://bioinfo-web.mpl.ird.fr/panexplorer";
 
 
 ######################## directories ####################
 # Absolute path of html public directory, $HOME_DIR must be HTML_DIR (htdocs or public_html folder)
-our $HOME_DIR = "/opt/projects/panexplorer.southgreen.fr/prod/htdocs";
+our $HOME_DIR = "/data/www/html/php53/panexplorer/";
 # Absolute path of cgi directory
-our $CGI_DIR = "/opt/projects/panexplorer.southgreen.fr/prod/cgi-bin";
+our $CGI_DIR = "/data/www/cgi-bin/panexplorer/PanExplorer/cgi-bin";
 
 #All analysis are pocessed in this folder (need to make a specific cron job to remove analysis files periodically)
-our $TEMP_EXECUTION_DIR = "/opt/projects/panexplorer.southgreen.fr/tmp";
+our $TEMP_EXECUTION_DIR = "/data/www/html/php53/panexplorer/tmp";
 
 our $NETWORK_IMAGES_DIR = $HOME_DIR . "/network_images/";
 
@@ -80,22 +80,23 @@ our $R_DIR          = $HOME_DIR . "/R";
 our $JAVASCRIPT_DIR = $WEB_DIR . "/javascript";
 our $IMAGES_DIR     = $WEB_DIR . "/images";
 our $STYLE_DIR      = $WEB_DIR . "/styles";
-our $CGI_WEB_DIR    = "https://panexplorer.southgreen.fr/cgi-bin";
+our $CGI_WEB_DIR    = "https://bioinfo-web.mpl.ird.fr/cgi-bin2/panexplorer/PanExplorer/cgi-bin";
 
 our $EXAMPLES_DIR = $HOME_DIR . "/examples";
 
-our $DATA_DIR = "/opt/projects/panexplorer.southgreen.fr/data";
+our $DATA_DIR = "$CGI_DIR/data";
 
 our $ADMIN_MAIL = "";
 
 our $BUG_REPORT_PAGE = "";
 
-our $TOOLS_DIR = "/www/panexplorer.southgreen.fr/tools";
-our $DNADIST_EXE ="/opt/projects/sniplay.southgreen.fr/tools/PHYLIP/phylip-3.69/exe/dnadist";
-our $READSEQ_EXE = "/opt/java/bin/java -jar /opt/projects/sniplay.southgreen.fr/tools/readseq/readseq.jar";
-our $FASTME_EXE = "/opt/projects/sniplay.southgreen.fr/tools/fastme/FastME_2.07/fastme_linux64";
-our $MUSCLE_EXE = "/www/panexplorer.southgreen.fr/tools/muscle3.8.31_i86linux64";
-our $ROOTING_EXE = "/opt/java/bin/java -jar /www/panexplorer.southgreen.fr/tools/rooting/Rootings_54.jar";
+our $TOOLS_DIR = "$CGI_DIR/tools";
+our $DNADIST_EXE ="$TOOLS_DIR/PHYLIP/phylip-3.69/exe/dnadist";
+our $READSEQ_EXE = "java -jar $TOOLS_DIR/readseq/readseq.jar";
+our $FASTME_EXE = "$TOOLS_DIR/fastme/FastME_2.07/fastme_linux64";
+our $MUSCLE_EXE = "$TOOLS_DIR/muscle3.8.31_i86linux64";
+our $ROOTING_EXE = "java -jar $TOOLS_DIR/rooting/Rootings_54.jar";
+our $HAPLOPHYLE_EXE = "java -jar $TOOLS_DIR/haplophyle/NetworkCreator_fat.jar"; 
 
 our %COLORS = (
 	"Ehrlichia" => "red",
