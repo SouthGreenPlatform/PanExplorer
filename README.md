@@ -77,6 +77,8 @@ singularity exec PanExplorer/singularity/panexplorer.sif snakemake --cores 1 -s 
 
 In both cases, you should a new directory named "outputs" containing all output files.
 
+ <img src="upsetr.svg" align="center" width="20%" style="display: block; margin: auto;"/>
+
 ## Deploy the Web application
 
 1- Git clone
