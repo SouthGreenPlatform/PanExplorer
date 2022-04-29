@@ -18,7 +18,8 @@ The application allows interactive data exploration at different levels :
 
 (iv) Visual inspection of a specific cluster.
 
-## Run the workflow
+
+## Install
 
 1- Git clone
 
@@ -26,6 +27,17 @@ The application allows interactive data exploration at different levels :
 git clone https://github.com/SouthGreenPlatform/PanExplorer.git
 cd PanExplorer
 ```
+
+2- Build the singularity container
+
+```
+cd singularity
+sudo singularity build panexplorer.sif panexplorer.def
+```
+
+## Run the workflow as command line
+
+
 
 ## Deploy the Web application
 
