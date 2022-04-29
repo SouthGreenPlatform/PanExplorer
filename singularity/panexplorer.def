@@ -1,0 +1,70 @@
+BootStrap: debootstrap
+OSVersion: stable
+MirrorURL: http://ftp.us.debian.org/debian/
+
+%runscript
+    echo "This is what happens when you run the container..."
+
+%post
+    echo "Hello from inside the container"
+    apt-get update
+    apt-get install -y bash wget r-base-core r-cran-svglite r-cran-upsetr r-cran-optparse r-cran-dendextend r-cran-gplots ncbi-blast+ ncbi-blast+-legacy roary prokka snakemake python3 cd-hit mafft mcl phylip python3-pip libstatistics-linefit-perl bioperl libstatistics-distributions-perl pdf2svg python3-biopython 
+    git clone https://github.com/aleimba/bac-genomics-scripts.git
+    cp -rf bac-genomics-scripts /usr/local/bin
+
+    pip3 install git+https://github.com/gtonkinhill/panaroo
+
+    wget http://downloads.sourceforge.net/project/pgap/PGAP-1.2.1/PGAP-1.2.1.tar.gz
+    tar -xzvf PGAP-1.2.1.tar.gz
+    cp -rf PGAP-1.2.1 /usr/local/bin
+    sed -i "s/\/home\/zhaoyb\/work\/PGAP\/PGAP\/Programs\/ExtraBin\/mcl/\/usr\/bin\/mcl/g" /usr/local/bin/PGAP-1.2.1/PGAP.pl
+    sed -i "s/\/home\/zhaoyb\/work\/PGAP\/PGAP\/Programs\/ExtraBin\//\/usr\/bin\//g" /usr/local/bin/PGAP-1.2.1/PGAP.pl
+    sed -i "s/\/share\/ibm-1\/bin\//\/usr\/bin\//g" /usr/local/bin/PGAP-1.2.1/PGAP.pl
+
+    git clone https://github.com/SouthGreenPlatform/PanExplorer_workflow.git
+
+    export PANEX_PATH=/usr/local/bin/PanExplorer_workflow    
+    cp -rf PanExplorer_workflow /usr/local/bin
+    wget https://ftp.ncbi.nlm.nih.gov/pub/mmdb/cdd/little_endian/Cog_LE.tar.gz
+    tar -xzvf Cog_LE.tar.gz
+    cp -rf Cog.* $PANEX_PATH/COG    
+
+    echo "#!/bin/bash" >/usr/bin/consense
+    echo "phylip consense $*" >>/usr/bin/consense
+    chmod 755 /usr/bin/consense 
+    echo "#!/bin/bash" >/usr/bin/neighbor
+    echo "phylip neighbor $*" >>/usr/bin/neighbor
+    chmod 755 /usr/bin/neighbor
+    echo "#!/bin/bash" >/usr/bin/seqboot
+    echo "phylip seqboot $*" >>/usr/bin/seqboot
+    chmod 755 /usr/bin/seqboot
+    echo "#!/bin/bash" >/usr/bin/dnadist
+    echo "phylip dnadist $*" >>/usr/bin/dnadist
+    chmod 755 /usr/bin/dnadist
+    echo "#!/bin/bash" >/usr/bin/dnapars
+    echo "phylip dnapars $*" >>/usr/bin/dnapars
+    chmod 755 /usr/bin/dnapars
+    echo "#!/bin/bash" >/usr/bin/dnaml
+    echo "phylip dnaml $*" >>/usr/bin/dnaml
+    chmod 755 /usr/bin/dnaml
+
+#    pip3 install panacota
+#    pip3 install panacota --upgrade
+
+
+#    apt-get -y install build-essential bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1
+#    rm -rf /var/lib/apt/lists/*
+#    #Installing Anaconda 2 and Conda 4.5.11
+#    wget -c https://repo.continuum.io/archive/Anaconda2-5.3.0-Linux-x86_64.sh
+#    /bin/bash Anaconda2-5.3.0-Linux-x86_64.sh -bfp /usr/local
+#    #Conda configuration of channels from .condarc file
+#    conda config --file /.condarc --add channels defaults
+#    conda config --file /.condarc --add channels conda-forge
+#    conda config --file /.condarc --add channels bioconda
+#    conda update conda
+#    #List installed environments
+#    conda list
+
+
+%environment
+    export PATH=$PATH:/usr/games
