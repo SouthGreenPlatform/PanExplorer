@@ -264,7 +264,10 @@ while(<LS>){
 		if ($organism =~/ORGANISM  (.*)/){$organism = $1;}
 		$organisms{$strain}= $organism;
 		my $country = `grep country $file`;
-		if ($country =~/country=\"(.*)\"/){$country = $1;}
+		$country =~s/^\s+//g;
+                $country =~s/\/country=//g;
+                $country =~s/\"//g;
+                $country =~s/\n//g;$country =~s/\r//g;
 		if ($country =~/:/){
 			my $city;
 			($country,$city) = split(/:/,$country);
