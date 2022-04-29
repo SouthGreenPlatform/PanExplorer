@@ -69,6 +69,12 @@ Creating a pangenome using Roary
 singularity exec PanExplorer/singularity/panexplorer.sif snakemake --cores 1 -s $PANEX_PATH/Snakemake_files/Snakefile_wget_roary_heatmap_upset_COG
 ```
 
+Creating a pangenome using PGAP
+
+```
+singularity exec PanExplorer/singularity/panexplorer.sif snakemake --cores 1 -s $PANEX_PATH/Snakemake_files/Snakefile_wget_PGAP_heatmap_upset_COG
+```
+
 ## Deploy the Web application
 
 1- Git clone
