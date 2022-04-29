@@ -89,14 +89,7 @@ UpsetR Diagram
 
 ## Deploy the Web application
 
-1- Git clone
-
-```
-git clone https://github.com/SouthGreenPlatform/PanExplorer.git
-cd PanExplorer
-```
-
-2- Copy directories into dedicated HTML and CGI directories
+1- Copy directories into dedicated HTML and CGI directories
 
 ```
 mkdir <PANEXPLORER_HTML_DIR>
@@ -110,7 +103,7 @@ cd <PANEXPLORER_PATH>/cgi-bin
 cp * <PANEXPLORER_CGI_BIN_DIR>
 ```
 
-3- Edit the Configuration file and javascript
+2- Edit the Configuration file and javascript
 
 ```
 cd <PANEXPLORER_CGI_BIN_DIR>/Config
