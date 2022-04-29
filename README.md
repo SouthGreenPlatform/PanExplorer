@@ -41,7 +41,33 @@ sudo singularity build panexplorer.sif panexplorer.def
 
 ## Run the workflow as command line
 
+1- Define the PANEX_PATH environnement variable
 
+```
+export PANEX_PATH=/usr/local/bin/PanExplorer_workflow
+```
+
+2- Prepare your input dataset (list of genomes to be analyzed)
+
+Edit a new file names "genbank_ids" listing the Genbank identifiers of complete assembled and annotated genomes. 
+
+The file should look like this
+
+```
+cat genbank_ids
+CP000235.1
+CP001079.1
+CP001759.1
+CP015994.2
+```
+
+3- Run the workflow
+
+Creating a pangenome using Roary
+
+```
+singularity exec PanExplorer/singularity/panexplorer.sif snakemake --cores 1 -s $PANEX_PATH/Snakemake_files/Snakefile_wget_roary_heatmap_upset_COG
+```
 
 ## Deploy the Web application
 
