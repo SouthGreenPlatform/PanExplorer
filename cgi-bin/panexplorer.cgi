@@ -343,8 +343,8 @@ open(C,"$Configuration::DATA_DIR/pangenome_data/$project/cog_of_clusters.txt");
 while(<C>){
         my $line = $_;$line =~s/\n//g;$line =~s/\r//g;
         my ($cluster,$cog,$cogcat) = split("\t",$line);
-        $cogs_of_clusters{$cluster} = $cog;
-        $cogcats_of_clusters{$cluster} = $cogcat;
+	$cogs_of_clusters{$cluster}{$cog} = 1;
+	$cogcats_of_clusters{$cluster}{$cogcat} = 1;
 }
 close(C);
 
