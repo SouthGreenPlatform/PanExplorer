@@ -535,9 +535,17 @@ while(<F>){
                 if (join(",",keys(%cogs_of_cluster))){
                         $cogs_concat = join(",",keys(%cogs_of_cluster));
                 }
+		if ($cogs_of_clusters{$cluster_num}){
+                        my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
+                        $cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
+                }
                 my $cogcats_concat = "#";
                 if (join(",",keys(%cogcats_of_cluster))){
                         $cogcats_concat  = join(",",keys(%cogcats_of_cluster));
+                }
+		if ($cogcats_of_clusters{$cluster_num}){
+                        my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};
+                        $cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
                 }
 		my $functions_concat = "#";
                 my %reverse_functions = reverse(%functions_of_genes);
@@ -564,9 +572,17 @@ while(<F>){
 		if (join(",",keys(%cogs_of_cluster))){
 			$cogs_concat = join(",",keys(%cogs_of_cluster));
 		}
+		if ($cogs_of_clusters{$cluster_num}){
+                        my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
+                        $cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
+                }
 		my $cogcats_concat = "#";
 		if (join(",",keys(%cogcats_of_cluster))){
                         $cogcats_concat  = join(",",keys(%cogcats_of_cluster));
+                }
+		if ($cogcats_of_clusters{$cluster_num}){
+                        my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};
+                        $cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
                 }
 		my $functions_concat = "#";
                 my %reverse_functions = reverse(%functions_of_genes);
