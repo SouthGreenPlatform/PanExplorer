@@ -445,7 +445,7 @@ while(<F>){
 			my @genes = split(",",$val);
 			foreach my $gene(@genes){
 				my $function = $functions{$gene};
-				$functions_of_genes{$function}++;
+				if ($function =~/\w+/){$functions_of_genes{$function}++;}
 				$cluster_of_gene{$gene} = $name;
 				$genes_of_cluster{$name}.=",$gene";
 			}
@@ -512,7 +512,7 @@ while(<F>){
                 }
 		my $functions_concat = "#";
 		my %reverse_functions = reverse(%functions_of_genes);
-		foreach my $nb(sort {$b<=>$b} keys(%reverse_functions)){ 
+		foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){ 
 			$functions_concat = $reverse_functions{$nb};last;
 		}
 		my $cogs_concat_truncated = substr($cogs_concat,0,24);
@@ -549,7 +549,7 @@ while(<F>){
                 }
 		my $functions_concat = "#";
                 my %reverse_functions = reverse(%functions_of_genes);
-                foreach my $nb(sort {$b<=>$b} keys(%reverse_functions)){
+                foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
                         $functions_concat = $reverse_functions{$nb};last;
                 }
 		my $cogs_concat_truncated = substr($cogs_concat,0,24);
@@ -586,7 +586,7 @@ while(<F>){
                 }
 		my $functions_concat = "#";
                 my %reverse_functions = reverse(%functions_of_genes);
-                foreach my $nb(sort {$b<=>$b} keys(%reverse_functions)){
+                foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
                         $functions_concat = $reverse_functions{$nb};last;
                 }
 		if ($functions_concat !~/\w/){$functions_concat="unknown";}
