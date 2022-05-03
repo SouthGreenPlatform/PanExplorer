@@ -431,7 +431,6 @@ while(<F>){
 	my $name = "CLUSTER".$clnb;
 	print O $name;
 	print U $name;
-	$genes_line .= "{\"meta\":[\"1\"],\"name\":\"$name\"},\n";
 	my $nb_found = 0;
 	my $concatenate_samples = "";
 	my $strain_found = 0;
@@ -463,6 +462,23 @@ while(<F>){
 			$hash_matrix{$j} .= "0,";
 		}
 	}
+	
+	my $functions_concat = "#";
+        my %reverse_functions = reverse(%functions_of_genes);
+        foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
+                $functions_concat = $reverse_functions{$nb};last;
+        }
+        my $cogs_concat = "#";
+        if ($cogs_of_clusters{$cluster_num}){
+                my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
+                $cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
+        }
+        my $cogcats_concat = "#";
+        if ($cogcats_of_clusters{$cluster_num}){
+                my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};
+                $cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
+        }
+        $genes_line .= "{\"meta\":[\"$cogs_concat\",\"$cogcats_concat\",\"$functions_concat\"],\"name\":\"$name\"},\n";
 	print O "\n";
 	print U "\n";
 	print P "\n";
