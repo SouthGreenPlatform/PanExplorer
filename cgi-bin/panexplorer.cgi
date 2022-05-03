@@ -337,6 +337,17 @@ while(<C>){
 }
 close(C);
 
+my %cogs_of_clusters;
+my %cogcats_of_clusters;
+open(C,"$Configuration::DATA_DIR/pangenome_data/$project/cog_of_clusters.txt");
+while(<C>){
+        my $line = $_;$line =~s/\n//g;$line =~s/\r//g;
+        my ($cluster,$cog,$cogcat) = split("\t",$line);
+        $cogs_of_clusters{$cluster} = $cog;
+        $cogcats_of_clusters{$cluster} = $cogcat;
+}
+close(C);
+
 my $t = gmtime();
 print TEST "$t\n";
 
