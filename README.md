@@ -28,15 +28,11 @@ git clone https://github.com/SouthGreenPlatform/PanExplorer.git
 cd PanExplorer
 ```
 
-2- Build the singularity container
-
-This step assumes you have singularity installed.
-
-If singularity is not installed, have a look first to this: https://singularity-tutorial.github.io/01-installation/
+2- Get the singularity container
 
 ```
 cd singularity
-sudo singularity build panexplorer.sif panexplorer.def
+wget https://panexplorer.southgreen.fr/singularity/panexplorer.sif
 ```
 
 ## Run the workflow as command line
@@ -62,6 +58,10 @@ CP015994.2
 ```
 
 3- Run the workflow
+
+This step assumes you have singularity installed.
+
+If singularity is not installed, have a look first to this: https://singularity-tutorial.github.io/01-installation/
 
 Creating a pangenome using Roary
 
