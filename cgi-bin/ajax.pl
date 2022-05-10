@@ -186,14 +186,14 @@ if ($action eq "upload"){
         close(LS);
 
         my $options = join(",",keys(%strains));
-        my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/GetSequences.pl -i $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes";
+        my $cmd = "perl $Configuration::CGI_DIR/GetSequences.pl -i $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes";
         system($cmd);
         if ($software eq 'roary'){
-                my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/Run_Roary_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
+                my $cmd = "perl $Configuration::CGI_DIR/Run_Roary_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
                 system($cmd);
         }
         else{
-                my $cmd = "perl /www/panexplorer.southgreen.fr/prod/cgi-bin/Run_PGAP_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
+                my $cmd = "perl $Configuration::CGI_DIR/Run_PGAP_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
                 system($cmd);
         }
 } 
