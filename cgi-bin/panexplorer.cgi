@@ -862,6 +862,51 @@ print $table_part;
 ##################################################################################
 my $execution_dir2 = $execution_dir."2";
 mkdir($execution_dir2);
+if (-e "$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt"){
+
+        open(COG,">$execution_dir/cog.txt");
+        open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt");
+        my $first = <F>;
+        print COG $first;
+        while(<F>){
+                my @infos = split(/\t/,$_);
+                my $sample = $infos[0];
+                my @words = split(/_/,$sample);
+                my $genus = $words[0];
+                my $species = $words[1];
+                my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
+                for (my $j = 2; $j <= $#words; $j++){
+                        $shortname.="_".$words[$j];
+                }
+                $shortname = substr($shortname,0,15);
+                $_=~s/$sample/$shortname/g;
+                print COG $_;
+        }
+        close(F);
+        close(COG);
+
+        open(BIGCOG,">$execution_dir/bigcog.txt");
+        open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_2_counts.txt");
+        my $first = <F>;
+        print BIGCOG $first;
+        while(<F>){
+                my @infos = split(/\t/,$_);
+                my $sample = $infos[0];
+                my @words = split(/_/,$sample);
+                my $genus = $words[0];
+                my $species = $words[1];
+                my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
+                for (my $j = 2; $j <= $#words; $j++){
+                        $shortname.="_".$words[$j];
+                }
+                $shortname = substr($shortname,0,15);
+                $_=~s/$sample/$shortname/g;
+                print BIGCOG $_;
+        }
+        close(F);
+        close(BIGCOG);
+}
+else{
 open(COG,">$execution_dir/cog.txt");
 open(BIGCOG,">$execution_dir/bigcog.txt");
 print COG "Sample	".join("\t",keys(%cogcategories))."\n";
@@ -894,6 +939,7 @@ foreach my $sample(sort keys(%cog_by_species)){
 }
 close(COG);
 close(BIGCOG);
+}
 
 my $config = qq~
 'cogall1'=>
