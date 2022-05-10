@@ -82,6 +82,7 @@ if ($action eq "check_id"){
 				$strain =~s/ chromosome//g;
 				$strain =~s/ genome//g;
 				$strain =~s/str\. //g;
+				$strain =~s/\=//g;
 				$strain =~s/ /_/g;
 				$strain =~s/\(//g;
 				$strain =~s/\)//g;
