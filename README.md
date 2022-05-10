@@ -171,6 +171,13 @@ our $CGI_WEB_DIR    = "http://localhost/cgi-bin/panexplorer";
 our $TEMP_EXECUTION_DIR = "/var/www/html/panexplorer/tmp";
 ```
 
-5- Access to your application using the URL defined in Configuration.pm
+5- Get up-to-date genomes available at genbank
+
+```
+wget https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
+sudo cp -rf prokaryotes.txt /var/www/cgi-bin/panexplorer/data/
+```
+
+6- Access to your application using the URL defined in Configuration.pm
 
 http://localhost/panexplorer/
