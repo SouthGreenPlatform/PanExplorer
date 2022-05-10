@@ -4,6 +4,10 @@ Web application to explore bacterial pangenomes
 
 Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
 
+Dependencies:
+- singularity
+- java
+
 ## Introduction
 
 PanExplorer performs pan-genome analysis (using PGAP or Roary) and exposes resulting information as a comprehensive and easy way, through several modules facilitating the exploration gene clusters and interpretation of data.
