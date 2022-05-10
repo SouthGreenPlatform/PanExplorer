@@ -122,9 +122,14 @@ systemctl restart apache2
 
 2- Install Perl modules
 
+```
+sudo perl -MCPAN -e shell
 
+>install CGI::Session
 
-1- Copy directories into dedicated HTML and CGI directories
+```
+
+3- Copy directories into dedicated HTML and CGI directories
 
 ```
 mkdir <PANEXPLORER_HTML_DIR>
@@ -138,7 +143,7 @@ cd <PANEXPLORER_PATH>/cgi-bin
 cp * <PANEXPLORER_CGI_BIN_DIR>
 ```
 
-2- Edit the Configuration file and javascript
+4- Edit the Configuration file and javascript
 
 ```
 cd <PANEXPLORER_CGI_BIN_DIR>/Config
