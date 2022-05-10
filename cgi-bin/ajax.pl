@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use lib ".";
+
 use strict;
 
 use Config::Configuration;
@@ -48,7 +50,7 @@ if ($action eq "check_id"){
 				if ($genbank =~/^(ASM\d+v)\d+$/){
 					$genbank = $1;
 				}
-				my $grep = `grep $genbank /www/panexplorer.southgreen.fr/data/NCBI_prokaryotes/prokaryotes.txt`;
+				my $grep = `grep $genbank $Configuration::DATA_DIR/prokaryotes.txt`;
 				my @infos = split(/\t/,$grep);
 				my $status = $infos[15];
 				if ($status !~/Complete Genome/ && $status !~/Chromosome/){
