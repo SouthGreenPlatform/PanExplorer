@@ -95,7 +95,7 @@ As an example, we assume that files will be placed as follows:
 - HTML documents under the folder "/var/www/HTML"
 - CGI scripts under the folder "/var/www/cgi-bin"
 
-1- Configure apache
+1- Configure Apache for CGI
 
 In ubuntu, the CGI module must be first enabled using this command
 
