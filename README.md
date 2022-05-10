@@ -167,4 +167,6 @@ our $CGI_WEB_DIR    = "http://localhost/cgi-bin/panexplorer";
 our $TEMP_EXECUTION_DIR = "/tmp/panexplorer";
 ```
 
+5- Access to your database using the URL defined in Configuration.pm
 
+http://localhost/panexplorer/
