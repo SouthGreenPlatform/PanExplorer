@@ -90,6 +90,7 @@ UpsetR Diagram
 ## Deploy the Web application
 
 This section describes how to deploy the web application on a Ubuntu running with Apache2.
+
 As an example, we assume that HTML documents will be placed under the folder "/var/www/HTML" and CGI scripts under the folder "/var/www/cgi-bin"
 
 1- Configure apache
@@ -100,7 +101,22 @@ In ubuntu, the CGI module must be first enabled using this command
 sudo a2enmod cgid
 ```
 
-Add the following 
+Add the following lines in the Apache configuration file /etc/apache2/apache2.conf
+
+```
+LoadModule cgid_module modules/mod_cgid.so
+
+ScriptAlias "/cgi-bin/" "/var/www/cgi-bin/"
+<Directory "/var/www/cgi-bin">
+    Options +ExecCGI
+</Directory>
+```
+
+Restart apache
+
+```
+systemctl restart apache2
+```
 
 2- Install Perl modules
 
