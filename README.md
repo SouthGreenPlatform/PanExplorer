@@ -133,10 +133,12 @@ sudo perl -MCPAN -e shell
 
 ```
 sudo cp -rf PanExplorer/htdocs /var/www/html/panexplorer
+sudo chown -R www-data /var/www/html/panexplorer/*
 ```
 
 ```
 sudo cp -rf PanExplorer/cgi-bin /var/www/cgi-bin/panexplorer
+sudo chown -R www-data /var/www/cgi-bin/panexplorer/*
 ```
 
 4- Edit the Configuration file and javascript
