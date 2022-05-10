@@ -7,8 +7,6 @@ use CGI::BaseCGI2;
 use strict;
 use File::Copy "cp";
 use File::Basename;
-use LWP::Simple;
-use Template;
 
 use Time::localtime;
 use Time::Local;
