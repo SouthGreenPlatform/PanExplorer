@@ -143,6 +143,13 @@ sudo chown -R www-data /var/www/cgi-bin/panexplorer/*
 sudo chmod -R 755 /var/www/cgi-bin/panexplorer/*
 ```
 
+Create a directory for storing temporary outputs
+
+```
+sudo mkdir /tmp/panexplorer
+sudo chown -R www-data /tmp/panexplorer
+```
+
 4- Edit the Configuration file and javascript
 
 ```
@@ -152,7 +159,12 @@ sudo vi /var/www/cgi-bin/panexplorer/Config/Configuration.pm
 Modify the following lines depending on your environnement
 
 ```
-
+our $HOMEPAGE = "http://localhost/panexplorer";
+our $WEB_DIR = "http://localhost/panexplorer";
+our $HOME_DIR = "/var/www/html/panexplorer/";
+our $CGI_DIR = "/var/www/cgi-bin/panexplorer/";
+our $CGI_WEB_DIR    = "http://localhost/cgi-bin/panexplorer";
+our $TEMP_EXECUTION_DIR = "/tmp/panexplorer";
 ```
 
 
