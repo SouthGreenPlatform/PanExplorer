@@ -60,19 +60,15 @@ B<HOME_DIR>:  String, public
                    used to define the directory of the web server
 =cut
 
-########################### URL #########################
-our $HOMEPAGE = "https://bioinfo-web.mpl.ird.fr/panexplorer";
-our $WEB_DIR = "https://bioinfo-web.mpl.ird.fr/panexplorer";
 
+########################### URL and paths #########################
+our $HOMEPAGE = "http://localhost/panexplorer";
+our $WEB_DIR = "http://localhost/panexplorer";
+our $HOME_DIR = "/var/www/html/panexplorer/";
+our $CGI_DIR = "/var/www/cgi-bin/panexplorer/";
+our $CGI_WEB_DIR    = "https://localhost/cgi-bin/panexplorer";
+our $TEMP_EXECUTION_DIR = "/var/www/html/panexplorer/tmp";
 
-######################## directories ####################
-# Absolute path of html public directory, $HOME_DIR must be HTML_DIR (htdocs or public_html folder)
-our $HOME_DIR = "/data/www/html/php53/panexplorer/";
-# Absolute path of cgi directory
-our $CGI_DIR = "/data/www/cgi-bin/panexplorer/PanExplorer/cgi-bin";
-
-#All analysis are pocessed in this folder (need to make a specific cron job to remove analysis files periodically)
-our $TEMP_EXECUTION_DIR = "/data/www/html/php53/panexplorer/tmp";
 
 our $NETWORK_IMAGES_DIR = $HOME_DIR . "/network_images/";
 
@@ -80,7 +76,6 @@ our $R_DIR          = $HOME_DIR . "/R";
 our $JAVASCRIPT_DIR = $WEB_DIR . "/javascript";
 our $IMAGES_DIR     = $WEB_DIR . "/images";
 our $STYLE_DIR      = $WEB_DIR . "/styles";
-our $CGI_WEB_DIR    = "https://bioinfo-web.mpl.ird.fr/cgi-bin2/panexplorer/PanExplorer/cgi-bin";
 
 our $EXAMPLES_DIR = $HOME_DIR . "/examples";
 
