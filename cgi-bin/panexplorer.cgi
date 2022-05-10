@@ -388,7 +388,17 @@ my %samples_displayed;
 my $sample_line = "";
 foreach my $sample(@samples){
 	if ($sample =~/ClutserID/){next;}
-	my $first_letters = substr($sample,0,20);
+	
+	my @words = split(/_/,$sample);
+        my $genus = $words[0];
+        my $species = $words[1];
+        my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
+        for (my $j = 2; $j <= $#words; $j++){
+                $shortname.="_".$words[$j];
+        }
+        $shortname = substr($shortname,0,25);
+	
+	#my $first_letters = substr($sample,0,20);
 	my $organism = $organisms{$sample};
 	my $country = $countries{$sample};
 	my $continent = "unresolved";
@@ -396,7 +406,7 @@ foreach my $sample(@samples){
 		$continent = $continents{$country};
 	}
 	$continent =~s/Africa/africa/g;
-	$sample_line .= "{\"meta\":[\"$organism\",\"$country\",\"$continent\"],\"name\":\"$first_letters\"},\n";
+	$sample_line .= "{\"meta\":[\"$organism\",\"$country\",\"$continent\"],\"name\":\"$shortname\"},\n";
 	my $substr = substr($sample,0,40);
 	push(@samples2,$substr);
 	$samples_displayed{$substr}=1;
