@@ -144,8 +144,13 @@ sudo chown -R www-data /var/www/cgi-bin/panexplorer/*
 4- Edit the Configuration file and javascript
 
 ```
-cd <PANEXPLORER_CGI_BIN_DIR>/Config
-vi Configuration.pm
+sudo vi /var/www/cgi-bin/panexplorer/Config/Configuration.pm
+```
+
+Modify the following lines depending on your environnement
+
+```
+
 ```
 
 
