@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Carp qw (cluck confess croak);
 
-use DBI;
 use CGI;
 
 use Config::Configuration;
