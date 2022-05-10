@@ -132,15 +132,11 @@ sudo perl -MCPAN -e shell
 3- Copy directories into dedicated HTML and CGI directories
 
 ```
-mkdir <PANEXPLORER_HTML_DIR>
-cd <PANEXPLORER_PATH>/html
-cp * <PANEXPLORER_HTML_DIR>
+sudo cp -rf PanExplorer/htdocs /var/www/html/panexplorer
 ```
 
 ```
-mkdir <PANEXPLORER_CGI_BIN_DIR>
-cd <PANEXPLORER_PATH>/cgi-bin
-cp * <PANEXPLORER_CGI_BIN_DIR>
+sudo cp -rf PanExplorer/cgi-bin /var/www/cgi-bin/panexplorer
 ```
 
 4- Edit the Configuration file and javascript
