@@ -91,7 +91,9 @@ UpsetR Diagram
 
 This section describes how to deploy the web application on a Ubuntu running with Apache2.
 
-As an example, we assume that HTML documents will be placed under the folder "/var/www/HTML" and CGI scripts under the folder "/var/www/cgi-bin"
+As an example, we assume that files will be placed as follows:
+- HTML documents under the folder "/var/www/HTML"
+- CGI scripts under the folder "/var/www/cgi-bin"
 
 1- Configure apache
 
