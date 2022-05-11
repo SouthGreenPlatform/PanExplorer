@@ -445,7 +445,7 @@ sub headHTML($$$$)
 <link rel="stylesheet" href="$Configuration::WEB_DIR/javascript/EasyAutocomplete-1.3.5/easy-autocomplete.themes.min.css"> 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>~;
 	print $call2;
-	if ($0 =~/search.cgi/ or $0 =~/synteny.cgi/ or $0 =~/circos.cgi/){
+	if ($0 =~/search.cgi/ or $0 =~/synteny.cgi/ or $0 =~/circos.cgi/ or $0 =~/clusters.cgi/){
 		print "<script src=\"$Configuration::WEB_DIR/javascript/ajax.js\"></script>";
 	}
 	my $login_status = "";
