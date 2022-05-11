@@ -406,7 +406,7 @@ foreach my $sample(@samples){
 		$continent = $continents{$country};
 	}
 	$continent =~s/Africa/africa/g;
-	$sample_line .= "{\"meta\":[\"$genus\",\"$organism\",\"$country\",\"$continent\"],\"name\":\"$shortname\"},\n";
+	$sample_line .= "{\"meta\":[\"$genus\",\"$organism\",\"$country\",\"$continent\"],\"name\":\"$shortname\", \"project\":\"$project\"},\n";
 	my $substr = substr($sample,0,40);
 	push(@samples2,$substr);
 	$samples_displayed{$substr}=1;
