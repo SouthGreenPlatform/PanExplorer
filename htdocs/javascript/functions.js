@@ -266,6 +266,15 @@ function SearchStrain(cgi_dir,session)
 	var myAjax = new Ajax.Request(url,{method:'post',postBody:params,onLoading:loading_search,onSuccess:success_search,onFailure:failure_search});
 }
 
+function SearchCluster(cgi_dir,session)
+{
+        var url = cgi_dir + "/display_ajax.cgi";
+        var params = "action=search_cluster";
+        params = params + '&genename=' + document.getElementById("genename").value + '&session=' + session;
+        params = params + '&project=' + document.getElementById("project").value;
+        var myAjax = new Ajax.Request(url,{method:'post',postBody:params,onLoading:loading_search,onSuccess:success_search,onFailure:failure_search});
+}
+
 function Circos(cgi_dir,session)
 {
         var url = cgi_dir + "/display_ajax.cgi";
