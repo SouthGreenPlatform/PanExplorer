@@ -130,6 +130,7 @@ systemctl restart apache2
 sudo perl -MCPAN -e shell
 
 >install CGI::Session
+>install MIME::Lite
 
 ```
 
