@@ -75,25 +75,8 @@ if ($base_cgi -> param('session') =~/(\d+)/)
 {
 	$session = $1;
 }
-if (!$session){
-	if ($project){
-		my @letters = split(//,uc($project));
-		foreach my $letter(@letters){
-			$session .= $alphabet{$letter};
-		}		
-	}
-	#$session = int(rand(10000000000000));
-}
 
-if ($session && $session !~/^\d+$/)
-{
-	$base_cgi -> headHTML("2");
-	print "<b><font color=red>Error: Session parameter must be an integer</font></b><br/><br/>\n";
-	$base_cgi -> endHTML();
-	exit;
-}
 
-my $execution_dir = "$Configuration::TEMP_EXECUTION_DIR/$session";
 $base_cgi -> headHTML("pangenomexplorer");
 
 
@@ -131,6 +114,24 @@ else{
 	}
 	closedir(DIR);
 }
+
+if (!$session){
+	if ($project){
+		my @letters = split(//,uc($project));
+		foreach my $letter(@letters){
+			$session .= $alphabet{$letter};
+		}		
+	}
+}
+
+if ($session && $session !~/^\d+$/)
+{
+	$base_cgi -> headHTML("2");
+	print "<b><font color=red>Error: Session parameter must be an integer</font></b><br/><br/>\n";
+	$base_cgi -> endHTML();
+	exit;
+}
+my $execution_dir = "$Configuration::TEMP_EXECUTION_DIR/$session";
 
 
 my $menu = qq~
