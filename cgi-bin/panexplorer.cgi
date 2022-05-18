@@ -728,9 +728,17 @@ if (-e "$Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clust
 	print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/upsetr_pdf/$session.Accessory_heatmap.svg\"/>";
 }
 if (-e "$Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg"){
-	print "<b>Accessory genes: Upset diagram</b><br/>";
-	system("cp -rf $Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg $Configuration::HOME_DIR/upsetr_pdf/$session.UpsetDiagram.svg");
-	print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/upsetr_pdf/$session.UpsetDiagram.svg\"/>";
+	print "<br/><br/><b>Accessory genes: Upset diagram</b> (<i>This SVG image is zoomable by mouse scroll or double-click</i>)<br/>";
+
+        my $svg_content = `grep -v '<svg' $Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg | grep -v '<?xml'`;
+        open(HTML,">$Configuration::HOME_DIR/svg-pan-zoom/demo/$session.html");
+        open(H,"$Configuration::HOME_DIR/svg-pan-zoom/demo/template.html");
+        while(<H>){
+                if (/SVG_CONTENT/){print HTML $svg_content;}
+                else{print HTML $_;}
+        }
+        close(HTML);
+        print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/svg-pan-zoom/demo/$session.html\"/>";
 }
 
 print "</div>";
