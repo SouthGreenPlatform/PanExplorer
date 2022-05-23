@@ -95,11 +95,16 @@ UpsetR Diagram
 
 This section describes how to deploy the web application on a Ubuntu running with Apache2.
 
-As an example, we assume that files will be placed as follows:
-- HTML documents under the folder "/var/www/HTML"
-- CGI scripts under the folder "/var/www/cgi-bin"
+As an example, we assume that files will be placed as follows in the following folder /var/www
 
-1- Configure Apache for CGI
+1- Copy your panexplorer folder into /var/www
+
+```
+mkdir /var/www/panexplorer
+cp -rf PanExplorer/* /var/www/panexplorer
+```
+
+2- Configure Apache
 
 In ubuntu, the CGI module must be first enabled using this command
 
@@ -139,7 +144,7 @@ Restart apache
 systemctl restart apache2
 ```
 
-2- Install Perl modules
+3- Install Perl modules
 
 ```
 sudo perl -MCPAN -e shell
@@ -149,31 +154,29 @@ sudo perl -MCPAN -e shell
 
 ```
 
-3- Copy directories into dedicated HTML and CGI directories
+4- Copy directories into dedicated HTML and CGI directories
 
 ```
-sudo cp -rf PanExplorer/htdocs /var/www/html/panexplorer
-sudo chown -R www-data /var/www/html/panexplorer/*
-sudo chmod -R 755 /var/www/html/panexplorer/*
+sudo chown -R www-data /var/www/panexplorer/*
+sudo chmod -R 755 /var/www/panexplorer/*
 ```
 
 ```
-sudo cp -rf PanExplorer/cgi-bin /var/www/cgi-bin/panexplorer
-sudo chown -R www-data /var/www/cgi-bin/panexplorer/*
-sudo chmod -R 755 /var/www/cgi-bin/panexplorer/*
+sudo chown -R www-data /var/www/panexplorer/cgi-bin/*
+sudo chmod -R 755 /var/www/panexplorer/cgi-bin/*
 ```
 
 Create a directory for storing temporary outputs
 
 ```
-sudo mkdir /var/www/html/panexplorer/tmp
-sudo chown -R www-data /var/www/html/panexplorer/tmp
+sudo mkdir /var/www/panexplorer/htdocs/tmp
+sudo chown -R www-data /var/www/panexplorer/htdocs/tmp
 ```
 
 4- Edit the Configuration file and javascript
 
 ```
-sudo vi /var/www/cgi-bin/panexplorer/Config/Configuration.pm
+sudo vi /var/www/panexplorer/cgi-bin/Config/Configuration.pm
 ```
 
 Modify the following lines depending on your environnement
@@ -181,19 +184,19 @@ Modify the following lines depending on your environnement
 ```
 our $HOMEPAGE = "http://localhost/panexplorer";
 our $WEB_DIR = "http://localhost/panexplorer";
-our $HOME_DIR = "/var/www/html/panexplorer/";
-our $CGI_DIR = "/var/www/cgi-bin/panexplorer/";
-our $CGI_WEB_DIR    = "http://localhost/cgi-bin/panexplorer";
-our $TEMP_EXECUTION_DIR = "/var/www/html/panexplorer/tmp";
+our $HOME_DIR = "/var/www/panexplorer/htdocs/";
+our $CGI_DIR = "/var/www/panexplorer/cgi-bin/";
+our $CGI_WEB_DIR    = "http://localhost/cgi-bin";
+our $TEMP_EXECUTION_DIR = "/var/www/panexplorer/htdocs/tmp";
 ```
 
 5- Get up-to-date genomes available at genbank
 
 ```
 wget https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
-sudo cp -rf prokaryotes.txt /var/www/cgi-bin/panexplorer/data/
+sudo cp -rf prokaryotes.txt /var/www/panexplorer/cgi-bin/data/
 ```
 
 6- Access to your application using the URL defined in Configuration.pm
 
-http://localhost/panexplorer/
+http://localhost/cgi-bin/home.cgi
