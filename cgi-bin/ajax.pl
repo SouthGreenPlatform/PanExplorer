@@ -188,13 +188,8 @@ if ($action eq "upload"){
 
         my $options = join(",",keys(%strains));
         my $cmd = "perl $Configuration::CGI_DIR/GetSequences.pl -i $Configuration::DATA_DIR/pangenome_data/$session.$projectnew/genomes/genomes";
-        system($cmd);
-        if ($software eq 'roary'){
-                my $cmd = "perl $Configuration::CGI_DIR/Run_Roary_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
-                system($cmd);
-        }
-        else{
-                my $cmd = "perl $Configuration::CGI_DIR/Run_PGAP_bioblend.pl -i $options -p $projectnew -e $email -o $execution_dir ";
-                system($cmd);
-        }
+        #system($cmd);
+	my $cmd = "perl $Configuration::CGI_DIR/Run_Panexplorer_workflow.pl -i $options -p $projectnew -e $email -o $execution_dir -s $software";
+	system($cmd);
+        
 } 
