@@ -45,13 +45,13 @@ elsif ($pid2 == 0 ){
 	print G join("\n",@ids);
 	close(G);
 	if ($software eq "roary"){
-		system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_roary_heatmap_upset_COG >>log.txt 2>&1");
+		system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/../singularity/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_roary_heatmap_upset_COG >>log.txt 2>&1");
 	}
 	elsif ($software eq "pgap"){
-                system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_PGAP_heatmap_upset_COG >>log.txt 2>&1");
+                system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/../singularity/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_PGAP_heatmap_upset_COG >>log.txt 2>&1");
         }
 	else{
-		system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_panacota_heatmap_upset_COG >>log.txt 2>&1");
+		system("export PANEX_PATH=/usr/local/bin/PanExplorer_workflow;singularity exec $Configuration::CGI_DIR/../singularity/panexplorer.sif snakemake --cores 1 -s \$PANEX_PATH/Snakemake_files/Snakefile_wget_panacota_heatmap_upset_COG >>log.txt 2>&1");
 	}
 	my @tab = split(/\//,$outdir);
 	my $session = $tab[$#tab];
