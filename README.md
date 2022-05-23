@@ -173,7 +173,7 @@ sudo mkdir /var/www/panexplorer/htdocs/tmp
 sudo chown -R www-data /var/www/panexplorer/htdocs/tmp
 ```
 
-4- Edit the Configuration file and javascript
+5- Edit the Configuration file and javascript
 
 ```
 sudo vi /var/www/panexplorer/cgi-bin/Config/Configuration.pm
@@ -190,13 +190,13 @@ our $CGI_WEB_DIR    = "http://localhost/cgi-bin";
 our $TEMP_EXECUTION_DIR = "/var/www/panexplorer/htdocs/tmp";
 ```
 
-5- Get up-to-date genomes available at genbank
+6- Get up-to-date genomes available at genbank
 
 ```
 wget https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
 sudo cp -rf prokaryotes.txt /var/www/panexplorer/cgi-bin/data/
 ```
 
-6- Access to your application using the URL defined in Configuration.pm
+7- Access to your application using the URL defined in Configuration.pm
 
 http://localhost/cgi-bin/home.cgi
