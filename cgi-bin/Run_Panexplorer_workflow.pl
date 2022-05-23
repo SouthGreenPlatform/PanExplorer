@@ -18,19 +18,20 @@ where <args> are:
 ~;
 $usage .= "\n";
 
-my ($input,$project,$email,$outdir);
+my ($input,$project,$email,$outdir,$software);
 
 
 GetOptions(
 	"input=s"      => \$input,
 	"project=s"    => \$project,
 	"email=s"      => \$email,
+	"software=s"   => \$software,
 	"outdir=s"     => \$outdir
 );
 
 
 die $usage
-  if ( !$input || !$project || !$email ||!$outdir);
+  if ( !$input || !$project || !$email ||!$outdir ||!$software);
 
 $|++;
 my $pid2 = fork;
