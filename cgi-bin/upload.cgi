@@ -171,7 +171,7 @@ print "<tr><td>Enter a list of Genbank accessions:<br/>(up to 200 genomes) </td>
 print "<tr><td>&nbsp;</td><td></td></tr>";
 print "<tr><td>Enter a valid email address: </td><td><input type=\"text\" name=\"email\" id=\"email\" value=\"$email\" size=50></td><td><i> To be informed of data availability</i></td></tr>";
 print "<tr><td>&nbsp;</td><td></td></tr>";
-print "<tr><td>Choose the pan-genome software &nbsp;&nbsp; </td><td><select name='software' id='software'><option value='roary'>Roary (more stringent: comparison of strains in the same genus)</option><option value='pgap'>PGAP (more relaxed: comparison of strains in different species or genus)</option></select></td></tr>";
+print "<tr><td>Choose the pan-genome software &nbsp;&nbsp; </td><td><select name='software' id='software'><option value='panacota'>PanACoTA (New)(faster)</option><option value='roary'>Roary (more stringent: comparison of strains in the same genus)</option><option value='pgap'>PGAP (more relaxed: comparison of strains in different species or genus)</option></select></td></tr>";
 #print "<p>Upload zip of Genbank files: <input type=\"file\" name=\"genbanks\" /></p> ";
 print "</table><br/>";
 
