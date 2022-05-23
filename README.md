@@ -107,15 +107,30 @@ In ubuntu, the CGI module must be first enabled using this command
 sudo a2enmod cgid
 ```
 
-Add the following lines in the Apache configuration file /etc/apache2/apache2.conf
+Add the following lines in the Apache configuration file /etc/apache2/apache2.conf or create a new VirtualHost containinf the following lines
 
 ```
-LoadModule cgid_module modules/mod_cgid.so
+        DocumentRoot /var/www/panexplorer/htdocs
+        Alias   /panexplorer /var/www/panexplorer/htdocs
 
-ScriptAlias "/cgi-bin/" "/var/www/cgi-bin/"
-<Directory "/var/www/cgi-bin">
-    Options +ExecCGI
-</Directory>
+        <Directory "/var/www/panexplorer/htdocs/">
+                AllowOverride All
+                Options +FollowSymLinks +Indexes
+                Require all granted
+        </Directory>
+
+        LoadModule cgid_module modules/mod_cgid.so
+
+        ScriptAlias /cgi-bin/ /var/www/panexplorer/cgi-bin/
+
+        <Directory "/var/www/panexplorer/cgi-bin/">
+
+                Options +Indexes +FollowSymLinks +MultiViews +Includes +ExecCGI
+                AllowOverride All
+                SetHandler cgi-script
+                Require all granted
+        </Directory>
+        
 ```
 
 Restart apache
