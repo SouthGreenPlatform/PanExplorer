@@ -16,12 +16,11 @@ Displays an an html page for ajax.
 
 =cut
 
-use lib ".";
-
 use strict;
 use warnings;
 use Carp qw (cluck confess);
 
+use DBI;
 use CGI;
 #use CGI::Session;
 use Config::Configuration;
@@ -105,6 +104,10 @@ if ($cgi -> param('cluster') =~/([\w]+)/){
 my $genbanks;
 if ($cgi -> param('genbanks') =~/([\w\.,]+)/){
         $genbanks = $cgi -> param('genbanks');
+}
+my $genename;
+if ($cgi -> param('genename') =~/([\w\.,]+)/){
+	$genename = $cgi -> param('genename');
 }
 my $software = $cgi -> param('software');
 my $projectnew;
@@ -485,6 +488,7 @@ if ($action eq "check_idsii"){
 # Search strain-specific strains
 #############################################################
 if ($action eq "search"){
+
 	my @strains2 = split(",",$strains);
 	my $concatenate_strains = join(",",sort @strains2);
 	my %cluster_of_gene;
@@ -845,8 +849,6 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 		print "<br/><iframe src='$Configuration::WEB_DIR/mauve_viewer/mauve-viewer/demo/$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>";
 	}
 	
-	
-	
 	if ($action eq "circos"){
 		$legend_circos .= "\n\nCore-Genes and strain-specific genes are colored according to COG category:\n";
 		foreach my $cogtype(keys(%colors1)){
@@ -929,6 +931,9 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 		print "<br/><b>Legend:</b><br/><pre>$legend_circos</pre>";
 	}
 }
+elsif ($action eq "search_cluster"){
+	search_cluster();
+}
 	
 sub rgbToHex {
     my $red=$_[0];
@@ -937,5 +942,686 @@ sub rgbToHex {
     my $string=sprintf (" #%2.2X%2.2X%2.2X\n",$red,$green,$blue);
     return ($string);
 }
+
+sub search_cluster{
+
+	my $tabs = qq~
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 10px;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+</head>
+<body>
+
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Genes')" id="defaultOpen">Genes</button>
+  <button class="tablinks" onclick="openCity(event, 'Sequences')">Sequences</button>
+  <button class="tablinks" onclick="openCity(event, 'Phylogeny')">Phylogeny</button>
+  <button class="tablinks" onclick="openCity(event, 'Cytoscape')">Cytoscape network</button>
+</div>
+
+~;
+
+	my $nb_found = 0;
+	my %strains;
+	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/1.Orthologs_Cluster.txt");
+	my $first_line = <F>;
+	$first_line =~s/\n//g;$first_line =~s/\r//g;
+	my @speciesinfo = split("\t",$first_line);
+	my $sequences = "";
+	my $dnasequences = "";
+	my $cluster;
+	my $ngenes = 0;
+	my $is_core = 0;
+	my %list_of_genes;
+	my @list_of_species;
+	open(C,">$Configuration::HOME_DIR/tables/$session.genes.txt");
+	print C "Cluster\tGenes\tPositions\tSynonym\tFunction\tCOG\tSpecies\n";
+	while(<F>){
+		my $line = $_;
+		$line =~s/\n//g;$line =~s/\r//g;
+		my @i = split("\t",$line);
+		my $clnb = $i[0];
+		if (length($clnb) == 1){$clnb = "000".$clnb;}
+		elsif (length($clnb) == 2){$clnb = "00".$clnb;}
+		elsif (length($clnb) == 3){$clnb = "0".$clnb;}
+		my $clustername = "CLUSTER".$clnb;
+		
+		if ($clustername eq $genename or $line =~/$genename/){
+			
+			for (my $j = 1; $j <= $#i; $j++){
+				if ($i[$j] =~/\w+/){
+					$nb_found++;
+					my $gene = $i[$j];
+					my $species = $speciesinfo[$j];
+					push(@list_of_species,$species);
+					my @genes = split(",",$gene);
+					foreach my $gene(@genes){
+						if ($gene eq ""){next;}
+						$ngenes++;
+						#my $grep = `grep $gene $Configuration::DATA_DIR/pangenome_data/$project/genomes/genes.txt`;
+						my $grep;
+						$list_of_genes{$gene} = $species;
+						my $function = "#";
+						if ($grep =~/$gene (.*) \[/){
+							$function = $1;
+						}
+						my $grep2;	
+						#my $grep2 = `grep $gene $Configuration::DATA_DIR/pangenome_data/$project/COG_assignation.txt`;
+						my $cog = "#";
+						if ($grep2 =~/\w+/){
+							my %cogs;
+							my @cogids = split("COG",$grep2);
+							foreach my $cogid(@cogids){
+								if ($cogid =~/(\d+)\s(\w+)/){
+									$cogs{"COG$1"}=1;
+								}
+							}
+							$cog = join(", ",keys(%cogs));
+						}
+						
+						if ($clustername =~/\w+/ && $gene=~/\w+/){
+							$cluster = $clustername;
+							#my $grep4 = `grep $gene $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.ptt`;
+							my $grep4;
+							my @infos = split("\t",$grep4);
+							my $positions = $infos[0];
+							my $synonym = $infos[4];
+							
+							#my $grep3 = `grep -A 40 $gene $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.faa`;
+							my $grep3;
+							#print C "$clustername\t$gene\t$positions\t$synonym\t$function\t$cog\t$species\n";
+							$strains{$gene} = $species;
+							my @lines = split("\n",$grep3);
+							my $locustag;
+							foreach my $line(@lines){
+								if ($line =~/>(.*) /){
+									my $g = $1;
+									if ($g =~/locus_tag=([^\]]+)/){
+										$locustag = $1;
+									}
+									if ($g !~/$gene/){last;}
+								}
+								$sequences .= $line."\n";
+							}
+							my $grep4;
+							if ($locustag){
+								#$grep4 = `grep -A 40 $locustag $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.fna`;
+							}
+							else{
+								#$grep4 = `grep -A 40 $gene $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.fna`;
+							}
+							#if (!$grep4){print "error: $species.fna $gene<br/>";}
+							my @lines = split("\n",$grep4);
+							foreach my $line(@lines){
+								if ($line =~/>(.*) /){
+									my $g = $1;
+									if ($g !~/$gene/ && $g !~$locustag){last;}
+									my $strain = $strains{$gene};
+									$line = ">$species"."_".$gene;
+								}
+								$dnasequences .= $line."\n";
+							}
+
+						}
+					}
+				}
+			}
+			if ($nb_found == $#i){
+				$is_core = 1;
+			}
+		}
+	}
+	close(F);
+
+
+	my %results;
+	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/COG_assignation.txt");
+	while(<F>){
+		my $line = $_;
+		$line =~s/\n//g;$line =~s/\r//g;
+		my @infos = split(/\t/,$line);
+		my $gene = $infos[0];
+		my $cog = $infos[1];
+		if ($list_of_genes{$gene}){
+			$results{$gene}{"cog"} = $cog;
+		}	
+	}
+	close(F);
+
+	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/genomes/genes.txt");
+	while(<F>){
+		my $line = $_;
+		$line =~s/\n//g;$line =~s/\r//g;
+		my @infos = split(/ /,$line);
+		my $gene = $infos[0];
+		my $function = "#";
+		if ($list_of_genes{$gene}){
+			if ($line =~/$gene (.*) \[/){
+				$function = $1;
+			}
+			$results{$gene}{"function"} = $function;
+		}
+	}
+	close(F);
+	
+
+
+	foreach my $species(@list_of_species){
+		my $go = 0;
+	
+		open(F,"$Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.ptt");
+		while(<F>){
+			my $line = $_;
+			$line =~s/\n//g;$line =~s/\r//g;
+			my @infos = split(/\t/,$line);
+			my $gene = $infos[3];
+			if ($list_of_genes{$gene}){
+				$results{$gene}{"location"} = $infos[0];
+				$results{$gene}{"synonym"} = $infos[4];
+			}
+		}
+		close(F);
+
+		my %locus_tags;
+		open(F,"$Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.faa");
+		while(<F>){
+			if (/^>/){
+				if ($go ==1){$go = 0;}
+				if (/protein_id=([\w\.]+)\]/){
+					my $id = $1;
+					my $locus_tag;
+					if (/locus_tag=([\w\.]+)\]/){
+						$locus_tag = $1;
+					}	
+					if ($list_of_genes{$id}){
+						$locus_tags{$locus_tag} = $id;
+						$go = 1;
+						$sequences .= ">$species"."_"."$id\n";
+					}
+				}
+				else{$go = 0;}	
+			}
+			else{
+				
+				if ($go == 1){
+					$sequences .= $_;
+				}
+			}
+		}
+		close(F);
+
+		$go = 0;
+		open(F,"$Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/$species.fna");
+		while(<F>){
+			if (/^>/){
+				if ($go ==1){$go = 0;}
+				if (/locus_tag=([\w\.]+)\]/){
+					my $locus_tag = $1;
+					if ($locus_tags{$locus_tag}){
+						$go = 1;
+						my $protein_id = $locus_tags{$locus_tag};
+						
+						$dnasequences .= ">$species"."_"."$protein_id\n";
+					}
+				}
+				else{$go = 0;}
+			}
+			else{
+				if ($go == 1){
+					$dnasequences .= $_;
+				}
+			}
+		}
+		close(F);
+	}
+
+	foreach my $gene(keys(%results)){
+                my $positions = $results{$gene}{"location"};
+                my $synonym = $results{$gene}{"synonym"};
+                my $function = $results{$gene}{"function"};
+                my $cog = $results{$gene}{"cog"};
+                my $species = $list_of_genes{$gene};
+                print C "$genename\t$gene\t$positions\t$synonym\t$function\t$cog\t$species\n";
+        }
+        close(C);
+	
+	my $config_table = "";
+        $config_table .= qq~
+                                        'dispensable-genes'=>
+                                        {
+                                                        "select_title" => "Genes",
+                                                        "file" => "$Configuration::HOME_DIR/tables/$session.genes.txt",
+                                        },
+                        ~;
+        open(T,">$execution_dir/tables.conf");
+        print T $config_table;
+        close(T);
+
+        my $table_part = qq~
+        <br/> <a href='$Configuration::WEB_DIR/tables/$session.genes.txt'>Download table</a>
+        <br/><iframe src='$Configuration::CGI_WEB_DIR/table_viewer.cgi?session=$session' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>~;
+
+
+	
+	my $t = gmtime();
+	print TEST "1 $t\n";
+
+	open(FASTA,">$execution_dir/genes.fa");
+	print FASTA $sequences;
+	close(FASTA);
+
+	open(FASTA,">$execution_dir/genes_dna.fa");
+	print FASTA $dnasequences;
+	close(FASTA);
+
+	print "<b>$cluster ($ngenes genes) (".scalar @list_of_species." strains)";
+	if ($is_core == 1){print " (Core)";}
+	elsif ($nb_found == 1){print " (Strain-specific)";}
+	else{print " (Dispensable)";}
+
+	print "<br/><br/></b>";	
+	
+	my $alignment = "";
+	my %hash;
+	my %hash2;
+	print $tabs;
+
+	###############################
+	# MUSCLE
+	###############################
+
+	if ($ngenes < 160){
+	system("$Configuration::MUSCLE_EXE -in $execution_dir/genes_dna.fa -out $execution_dir/genes_dna.align.fa");
+	my $t = gmtime();
+        print TEST "2 $t\n";
+	system("$Configuration::MUSCLE_EXE -in $execution_dir/genes.fa -out $execution_dir/proteins.align.fa");
+
+	my $t = gmtime();
+        print TEST "2 $t\n";
+
+	###############################
+	# Discover SNPs
+	###############################
+	my %SNPs;
+	my $strain;
+	my %alignments;
+	open(A,"$execution_dir/genes_dna.align.fa");
+	while(<A>){
+		my $line = $_;
+		$line =~s/\n//g;$line =~s/\r//g;
+		if ($line=~/>(.*)/){
+			$strain = $1;
+		}
+		else{
+			my @nt = split("",$line);
+			$alignments{$strain} .= $line;
+		}
+	}
+	close(A);
+
+	
+	foreach my $strain(keys(%alignments)){
+		my $seq = $alignments{$strain};
+		my @nt = split("",$seq);
+		for (my $i = 0; $i <=$#nt; $i++){
+			$hash{$strain}{$i}= $nt[$i];
+			$SNPs{$i}{$nt[$i]}++;
+			if ($nt[$i] eq "-"){
+				delete($hash2{$i});next;
+			}
+			if ($hash2{$i} && $hash2{$i} ne $nt[$i]){
+				$hash2{$i} .= $nt[$i];
+			}
+			elsif (!$hash2{$i}){
+				$hash2{$i} = $nt[$i];
+			}
+		}
+	}
+
+	my @snps;
+	foreach my $position(sort {$a<=>$b} keys(%hash2)){
+		my $alleles = $hash2{$position};
+		if (length($alleles) > 1){
+			push(@snps,$position);
+		}
+	}
+
+	my $snp_alignment = "";	
+	foreach my $strain(keys(%hash)){
+		
+		my $strainname = $strains{$strain};
+		my $strain2 = $strainname."_"."$strain";
+		$snp_alignment .= ">$strain2\n";
+		my $n=0;
+		foreach my $position(sort {$a<=>$b} @snps){
+						
+			# do not print tri-allelic SNP because it will block network
+			my $refsnp = $SNPs{$position};
+			my %hashsnp = %$refsnp;
+			if (scalar keys %hashsnp > 2){next;}
+			
+			my $allele = $hash{$strain}{$position};
+			$snp_alignment .= $allele;
+		}
+		$snp_alignment .= "\n";
+	}
+	open(A,">$execution_dir/snp.align.fa");
+	print A $snp_alignment;
+	close(A);
+	
+	
+	system("cp -rf $execution_dir/genes_dna.align.fa $Configuration::HOME_DIR/alignments/$session.genes.align.fa");
+	system("cp -rf $execution_dir/proteins.align.fa $Configuration::HOME_DIR/alignments/$session.proteins.align.fa");
+	
+	
+	
+	###########################################
+	# readseq
+	###########################################
+	my $input = "$execution_dir/genes_dna.align.fa";
+
+	# replace by number to avoid truncation of long names
+	my %correspondance;
+	my $numseq = 0;
+	open(F,"$input");
+	open(O,">$input.with_number");
+	while(<F>){
+		if (/>(.*)$/){
+			$numseq++;
+			my $new_name = "seq".$numseq."end";
+			print O ">$new_name\n";
+			$correspondance{$numseq} = $1;
+		}
+		else{
+			print O $_;
+		}
+	}
+	close(F);
+	close(O);
+	my $phylip_file = "$execution_dir/genes_dna.align.fa.with_number.phylip";
+	my $readseq_command = $Configuration::READSEQ_EXE . " $input.with_number -f 12 >>$execution_dir/readseq.log 2>&1";
+	system($readseq_command);
+
+	###########################################
+	# DnaDist
+	###########################################
+	open(F,">$execution_dir/dnadist_script");
+	print F "$phylip_file\n";
+	print F "Y\n";
+	close(F);
+
+	my $matrix_file = "$execution_dir/gene.matrix";
+	chdir($execution_dir);
+	my $dnadist_command = $Configuration::DNADIST_EXE . " < $execution_dir/dnadist_script >>$execution_dir/dnadist.log 2>&1";
+	system($dnadist_command);
+
+	my $t = gmtime();
+        print TEST "3 $t\n";
+
+	rename("$execution_dir/outfile",$matrix_file);
+
+	# replace -1.000000 par 9.999999
+	open(M,$matrix_file);
+	open(M2,">$matrix_file.2");
+	while(<M>)
+	{
+		my $line = $_;
+		$line =~s/\-1\.000000/9\.999999/g;
+		print M2 $line;
+		}
+	close(M);
+	close(M2);
+
+	###########################################
+	# FastMe
+	###########################################
+	my $treefile = "$execution_dir/gene.align_for_tree.ph";
+	my $fastme_command = $Configuration::FASTME_EXE . " -i $matrix_file.2 -o $treefile >>$execution_dir/fastme.log 2>&1";
+	system($fastme_command);
+	
+	# replace negative values by 0
+	open(T,$treefile);
+	open(T2,">$treefile.2");
+	while(<T>){
+		my $line = $_;
+		$line =~s/\-\d+\.*\d*\,/0,/g;
+		$line =~s/\-\d+\.*\d*\)/0\)/g;
+		print T2 $line;
+	}
+	close(T);
+	close(T2);
+
+	my $t = gmtime();
+        print TEST "4 $t\n";
+
+	###########################################
+	# ROOTING TREE
+	###########################################
+	my $rooting_command = $Configuration::ROOTING_EXE . " -input $treefile.2 -output $treefile.all -midpoint $treefile.midpoint >>$execution_dir/rooting.log 2>&1";
+	system($rooting_command);
+	
+	
+	my $newick = "";
+	open(N,"$treefile.midpoint");
+	while(<N>){
+		foreach my $seqnumber(keys(%correspondance)){
+			my $name = $correspondance{$seqnumber};
+			my $to_be_replaced = "seq".$seqnumber."end";
+			$_ =~s/$to_be_replaced/$name/g;
+		}
+		$newick .= $_;
+	}
+	close(N);
+	
+	my $prot_alignment = "";
+	open(A,"$execution_dir/genes.align.fa");
+	while(<A>){
+		$prot_alignment .= $_;
+	}
+	close(A);
+	
+	
+	#####################################################
+	# Generate HTML pages (MSAViewer and phylotree)
+	#####################################################
+	system("sed \"s/session/$session/g\" $Configuration::HOME_DIR/MSAViewer/template.html >$Configuration::HOME_DIR/MSAViewer/$session.genes.html");
+	system("sed \"s/genes/proteins/g\" $Configuration::HOME_DIR/MSAViewer/$session.genes.html >$Configuration::HOME_DIR/MSAViewer/$session.proteins.html");
+	system("sed \"s/genes/snps/g\" $Configuration::HOME_DIR/MSAViewer/$session.genes.html >$Configuration::HOME_DIR/MSAViewer/$session.snps.html");
+	system("sed \"s/MYSESSION/$session/g\" $Configuration::HOME_DIR/d3/template2.html >$Configuration::HOME_DIR/d3/$session.snp.d3.network.html");
+	open(H,"$Configuration::HOME_DIR/phylotree/template.html");
+	open(H2,">$Configuration::HOME_DIR/phylotree/$session.html");
+	while(<H>){
+		if (/MY_NEWICK_TREE/){
+			chomp($newick);
+			print H2 "var test_string = \"$newick\";\n";
+		}
+		else{
+			print H2 $_;
+		}
+	}
+	close(H);
+	close(H2);
+
+	
+	system("cp -rf $execution_dir/snp.align.fa $Configuration::HOME_DIR/alignments/$session.snps.align.fa");
+
+	my %different_sequences;
+	open(F,"$execution_dir/snp.align.fa");
+	while(<F>){
+		if (/>/){
+
+		}
+		else{
+			my $different_seq = $_;
+			$different_sequences{$different_seq}++;
+		}
+	}
+	close(F);
+
+	open(O,">$execution_dir/haplotypes.fna");
+	my $num_seq = 0;
+	foreach my $seq(keys(%different_sequences)){
+		$num_seq++;
+		my $size = $different_sequences{$seq};
+		print O ">haplo$num_seq|$size\n";
+		print O "$seq";
+	}
+	close(O);
+
+	
+	#print "Number of different sequences: " . scalar keys(%different_sequences)."<br>";
+
+	if ($num_seq < 70){
+		system("$Configuration::HAPLOPHYLE_EXE -in $execution_dir/haplotypes.fna -out $execution_dir/snp.network.dot >> $execution_dir/haplophyle.log 2>&1");
+		system("perl $Configuration::TOOLS_DIR/haplophyle/dot2Cytoscape.pl -i $execution_dir/snp.network.dot -h $Configuration::HOME_DIR/cytoscape/$session.snp.network.html >> $execution_dir/dot2cytoscape.log 2>&1");
+		system("cp -rf $Configuration::HOME_DIR/cytoscape/$session.snp.network.html.d3.json $Configuration::HOME_DIR/d3/$session.snp.network.json");
+
+		# add colors and increase node size in HTML cytoscape
+		open(H,"$Configuration::HOME_DIR/d3/$session.snp.network.json");
+		open(H2,">$Configuration::HOME_DIR/d3/$session.snp.network.json.2");
+		while(<H>){
+			my $line = $_;
+			if (/color/ && /id\": \"([^"]+)\"/){
+				my $id = $1;
+				my ($null,$species) = split("_",$id);
+				my $color = $Configuration::COLORS{$species};
+				if ($color =~/\w+/){
+					$_ =~s/grey/$color/;
+				}
+				my $size = 1;
+				if (/size\": (\d+)/){
+					if ($1 > 1){$size = $1;}
+				}
+				my $coma = ",";
+				if ($line =~/]/){
+					$coma = "],";
+				}
+				$line = "{\"id\": \"$id\", \"group\": 4, \"size\":$size, \"color\":\"$color\"}$coma\n";
+			}
+			print H2 $line;
+		}
+		close(H);
+		close(H2);
+		rename("$Configuration::HOME_DIR/d3/$session.snp.network.json.2","$Configuration::HOME_DIR/d3/$session.snp.network.json");
+		}
+	}
+
+	my $config_table = "";
+	$config_table .= qq~
+					'dispensable-genes'=>
+					{
+							"select_title" => "Genes",
+							"file" => "$Configuration::HOME_DIR/tables/$session.genes.txt",
+					},
+			~;
+	open(T,">$execution_dir/tables.conf");
+	print T $config_table;
+	close(T);
+
+	my $table_part = qq~
+	 <div id="Genes" class="tabcontent">
+
+	<br/><iframe src='$Configuration::CGI_WEB_DIR/table_viewer.cgi?session=$session' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>
+	</div>
+	~;
+	
+
+	print $table_part;
+
+	print "<div id=\"Sequences\" class=\"tabcontent\">";	
+	print "<br/><b>DNA sequences</b><br/>";
+	print "<pre>$dnasequences</pre>";
+	print "<br/><b>Protein sequences</b><br/>";
+	print "<pre>$sequences</pre>";
+	print "<br/>";
+	print "</div>";
+
+	#print "<br/><b>Alignment of genes</b><br/>";	
+	#print "<iframe src='$Configuration::WEB_DIR/MSAViewer/$session.genes.html' width='950' height='200' style='border:solid 1px black;'></iframe>";
+
+	#print "<br/><br/><b>Alignment of SNPs</b><br/>";
+	
+	#print "<iframe src='$Configuration::WEB_DIR/MSAViewer/$session.snps.html' width='950' height='200' style='border:solid 1px black;'></iframe>";
+
+	#print "<br/><br/><b>Alignment of proteins</b><br/>";
+	
+	#print "<iframe src='$Configuration::WEB_DIR/MSAViewer/$session.proteins.html' width='950' height='200' style='border:solid 1px black;'></iframe>";
+
+	#print "</div>";	
+	
+	print "<div id=\"Phylogeny\" class=\"tabcontent\">";	
+	if (-e "$Configuration::HOME_DIR/phylotree/$session.html"){
+		print "<iframe src=\"$Configuration::WEB_DIR/phylotree/$session.html\" width=\"1000\" height=\"900\" style='border:solid 0px black;'></iframe>";	
+	}
+	else{
+                print "<br/>Couldn't compute because too many sequences";
+        }
+	print "</div>";	
+
+
+	print "<div id=\"Cytoscape\" class=\"tabcontent\">";
+	if (-e "$execution_dir/snp.network.dot"){
+		print "<br/><iframe src='$Configuration::WEB_DIR/d3/$session.snp.d3.network.html' width='950' height='900' style='border:solid 1px black;'></iframe>";
+	}
+	else{
+		print "<br/>Couldn't compute because too many sequences";
+	}
+	print "</div>";
+	print qq~
+<script>
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>	
+~;	
+	
+}
+
+
+
+
+
+
 
 

@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib ".";
-
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;
@@ -127,6 +125,7 @@ my $menu = qq~
       <ul class="nav navbar-nav">
 	<li><a href="#" onClick="window.location='./home.cgi?project='+document.getElementById('project').value;">Home</a></li>
         <li><a href="#" onClick="window.location='./upload.cgi?project='+document.getElementById('project').value;">Import genomes</a></li>
+        <li><a href="#" onClick="window.location='./doc.cgi?project='+document.getElementById('project').value;">Doc</a></li>
         <li><a href="#">Project: <select id="project" name="project" onchange="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">$options</select></a></li>
         <li><a href="#" onClick="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">Overview</a></li>
         <li><a href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search</a></li>
@@ -170,15 +169,28 @@ print "<form name=\"query_form\" id=\"query_form\" action=\"./clusters.cgi\" met
 print "<table><tr><td><b>Enter a gene or cluster name </b><i>(ex: CLUSTER1736, AGJ99558.1)</i>: &nbsp;&nbsp;&nbsp;";
 print "<input type=\"text\" name=\"genename\" id=\"genename\" value=\"$genename\"><br/><br/>";
 print "<input type=\"hidden\" name=\"project\" id=\"project\" value=\"$project\"><br/><br/>";
-print "<input class=\"btn btn-primary\" type=\"submit\" value=\"Submit\" onclick=\"GeneSearch('$Configuration::CGI_WEB_DIR','$session');\"></td>";
+print "<input class=\"btn btn-primary\" type=\"button\" value=\"Submit\" onclick=\"SearchCluster('$Configuration::CGI_WEB_DIR','$session');\">";
 print "</tr></table>";
 print "<br/>";
 print "</form>\n";
 
+print "</div>";
+print "<div id=results_div>";
+print "</div>";
+my $footer = qq~
+<footer>
+<hr>
+<div class="container" style="text-align: center;">
+                    <p>Copyright &copy; 2021, CIRAD | Designed by <a target="_blank" href="https://www.southgreen.fr/">South Green Bioinformatics platform</a>.</p>
+                </div>
+</footer>~;
+
+print $footer;
+
 
 my $nb_found = 0;
 if ($genename){
-
+exit;
 	my %strains;
 	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/1.Orthologs_Cluster.txt");
 	my $first_line = <F>;
@@ -641,19 +653,6 @@ if ($genename){
 	
 	
 }
-print "</div>";
-my $footer = qq~
-<footer>
-<hr>
-<div class="container" style="text-align: center;">
-                    <p>Copyright &copy; 2021, CIRAD | Designed by <a target="_blank" href="https://www.southgreen.fr/">South Green Bioinformatics platform</a>.</p>
-                </div>
-</footer>~;
-
-print $footer;
-#print "<div id=results_div>";
-
-
 
 
 

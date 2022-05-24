@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib ".";
-
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;
@@ -127,6 +125,7 @@ my $menu = qq~
       <ul class="nav navbar-nav">
         <li><a href="#" onClick="window.location='./home.cgi?project='+document.getElementById('project').value;">Home</a></li>
         <li><a href="#" onClick="window.location='./upload.cgi?project='+document.getElementById('project').value;">Import genomes</a></li>
+        <li><a href="#" onClick="window.location='./doc.cgi?project='+document.getElementById('project').value;">Doc</a></li>
         <li><a href="#">Project: <select id="project" name="project" onchange="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">$options</select></a></li>
         <li><a href="#" onClick="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">Overview</a></li>
         <li><a href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search</a></li>

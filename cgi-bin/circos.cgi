@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib ".";
-
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;
@@ -128,6 +126,7 @@ my $menu = qq~
       <ul class="nav navbar-nav">
 	<li><a href="#" onClick="window.location='./home.cgi?project='+document.getElementById('project').value;">Home</a></li>
         <li><a href="#" onClick="window.location='./upload.cgi?project='+document.getElementById('project').value;">Import genomes</a></li>
+        <li><a href="#" onClick="window.location='./doc.cgi?project='+document.getElementById('project').value;">Doc</a></li>
         <li><a href="#">Project: <select id="project" name="project" onchange="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">$options</select></a></li>
         <li><a href="#" onClick="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">Overview</a></li>
         <li><a href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search</a></li>
@@ -142,21 +141,6 @@ my $menu = qq~
 print "<div class=\"container\">";
 print $menu;
 
-if (!-d $execution_dir){
-	mkdir($execution_dir);
-}
-my $execution_dir2 = $execution_dir."2";
-if (!-d $execution_dir2){
-        mkdir($execution_dir2);
-}
-my $execution_dir3 = $execution_dir."3";
-if (!-d $execution_dir3){
-        mkdir($execution_dir3);
-}
-my $execution_dir4 = $execution_dir."4";
-if (!-d $execution_dir4){
-        mkdir($execution_dir4);
-}
 
 
 
@@ -165,7 +149,6 @@ if (!-d $execution_dir4){
 ################################################################################
 # Pan genome overview
 #################################################################################
-#system("cp -rf /www/panexplorer.southgreen.fr/pangenome_data/1.Orthologs_Cluster.txt $execution_dir/1.Orthologs_Cluster.txt");
 my %cluster_of_gene;
 my %genes_of_cluster;
 my %core_genes;

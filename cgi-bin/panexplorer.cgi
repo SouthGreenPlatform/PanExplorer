@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib ".";
-
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;
@@ -76,7 +74,6 @@ if ($base_cgi -> param('session') =~/(\d+)/)
 	$session = $1;
 }
 
-
 $base_cgi -> headHTML("pangenomexplorer");
 
 
@@ -116,23 +113,27 @@ else{
 }
 
 if (!$session){
-	if ($project){
-		my @letters = split(//,uc($project));
-		foreach my $letter(@letters){
-			$session .= $alphabet{$letter};
-		}		
-	}
+        if ($project){
+                my @letters = split(//,uc($project));
+                foreach my $letter(@letters){
+			if ($letter =~/\d/){
+				$session.=$letter;
+			}
+			elsif ($letter =~/[A-Z]/){
+	                        $session .= $alphabet{$letter};
+			}
+                }
+        }
 }
 
 if ($session && $session !~/^\d+$/)
 {
-	$base_cgi -> headHTML("2");
-	print "<b><font color=red>Error: Session parameter must be an integer</font></b><br/><br/>\n";
-	$base_cgi -> endHTML();
-	exit;
+        $base_cgi -> headHTML("2");
+        print "<b><font color=red>Error: Session parameter must be an integer</font></b><br/><br/>\n";
+        $base_cgi -> endHTML();
+        exit;
 }
 my $execution_dir = "$Configuration::TEMP_EXECUTION_DIR/$session";
-
 
 my $menu = qq~
 <nav class="navbar navbar-default">
@@ -150,10 +151,24 @@ my $menu = qq~
       <ul class="nav navbar-nav">
         <li><a href="#" onClick="window.location='./home.cgi?project='+document.getElementById('project').value;">Home</a></li>
         <li><a href="#" onClick="window.location='./upload.cgi?project='+document.getElementById('project').value;">Import genomes</a></li>
+        <li><a href="#" onClick="window.location='./doc.cgi?project='+document.getElementById('project').value;">Doc</a></li>
         <li><a href="#">Project: <select id="project" name="project" onchange="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">$options</select></a></li>	
         <li class="active"><a href="#" onClick="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">Overview</a></li>
 	<li><a href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search</a></li>
 	<li><a href="#" onClick="window.location='./synteny.cgi?project='+document.getElementById('project').value;">Synteny</a></li>
+
+<!--
+	<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Search
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#" onClick="window.location='./genes.cgi?project='+document.getElementById('project').value;">Search genes</a><br/>
+          <a class="dropdown-item" href="#" onClick="window.location='./clusters.cgi?project='+document.getElementById('project').value;">Search cluster</a><br/>
+          <a class="dropdown-item" href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search intersection</a><br/>
+        </div>
+</li>-->
+
 	<li><a href="#" onClick="window.location='./clusters.cgi?project='+document.getElementById('project').value;">Cluster Search</a></li>
         <li><a href="#" onClick="window.location='./genes.cgi?project='+document.getElementById('project').value;">Gene Search</a></li>
 	<li><a href="#" onClick="window.location='./circos.cgi?project='+document.getElementById('project').value;">Circos</a></li>
@@ -193,6 +208,7 @@ $config_table .= qq~
 my $tabs = qq~
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#pangenome">Pan-genome</a></li>
+<!--  <li><a data-toggle="tab" href="#matrix">Presence/Absence Matrix</a></li>-->
   <li><a data-toggle="tab" href="#clusters">Core-Genes</a></li>
   <li><a data-toggle="tab" href="#dispensable">Dispensable Genes</a></li>
   <li><a data-toggle="tab" href="#specific">Strain-Specific Genes</a></li>
@@ -206,7 +222,7 @@ print $tabs;
 
 open(TEST,">$execution_dir/test");
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "1 $t\n";
 ###########################################
 # parsing and filtering 
 ############################################
@@ -237,7 +253,7 @@ while(<LS>){
 close(LS);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "2 $t\n";
 
 
 my %continents;
@@ -254,6 +270,7 @@ close(F);
 
 my %organisms;
 my %countries;
+my $nb_genomes = 0;
 open(LS,"ls $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/*.gb |");
 while(<LS>){
 	my $file = $_;
@@ -261,14 +278,15 @@ while(<LS>){
 	if ($file =~/\/([^\/]+)\.gb/){
 		open(F,$file);
 		my $strain = $1;
+		$nb_genomes++;
 		my $organism = `grep ORGANISM $file`;
 		if ($organism =~/ORGANISM  (.*)/){$organism = $1;}
 		$organisms{$strain}= $organism;
 		my $country = `grep country $file`;
 		$country =~s/^\s+//g;
-                $country =~s/\/country=//g;
-                $country =~s/\"//g;
-                $country =~s/\n//g;$country =~s/\r//g;
+		$country =~s/\/country=//g;
+		$country =~s/\"//g;
+		$country =~s/\n//g;$country =~s/\r//g;
 		if ($country =~/:/){
 			my $city;
 			($country,$city) = split(/:/,$country);
@@ -279,7 +297,7 @@ while(<LS>){
 close(LS);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "3 $t\n";
 
 
 my %functions;
@@ -304,7 +322,7 @@ while(<F>){
 close(F);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "4 $t\n";
 
 
 my %sites;
@@ -324,13 +342,14 @@ close(L);
 close(L2);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "5 $t\n";
 
 
 my %cogs;
 my %cog_categories;
 open(C,"$Configuration::DATA_DIR/pangenome_data/$project/COG_assignation.txt");
 while(<C>){
+	if ($nb_genomes > 40){last;}
 	my $line = $_;$line =~s/\n//g;$line =~s/\r//g;
 	my ($gene,$cog,$cogcat) = split("\t",$line);
 	$cogs{$gene} = $cog;
@@ -344,13 +363,14 @@ open(C,"$Configuration::DATA_DIR/pangenome_data/$project/cog_of_clusters.txt");
 while(<C>){
         my $line = $_;$line =~s/\n//g;$line =~s/\r//g;
         my ($cluster,$cog,$cogcat) = split("\t",$line);
-	$cogs_of_clusters{$cluster}{$cog} = 1;
+	#print "$cluster $cog<br>";
+        $cogs_of_clusters{$cluster}{$cog} = 1;
 	$cogcats_of_clusters{$cluster}{$cogcat} = 1;
 }
 close(C);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "6 $t\n";
 
 ##############################################################################
 # Prepare files for graphics
@@ -398,7 +418,7 @@ foreach my $sample(@samples){
                 $shortname.="_".$words[$j];
         }
         $shortname = substr($shortname,0,25);
-	
+
 	#my $first_letters = substr($sample,0,20);
 	my $organism = $organisms{$sample};
 	my $country = $countries{$sample};
@@ -407,13 +427,14 @@ foreach my $sample(@samples){
 		$continent = $continents{$country};
 	}
 	$continent =~s/Africa/africa/g;
+	
 	$sample_line .= "{\"meta\":[\"$genus\",\"$organism\",\"$country\",\"$continent\"],\"name\":\"$shortname\", \"project\":\"$project\"},\n";
 	my $substr = substr($sample,0,40);
 	push(@samples2,$substr);
 	$samples_displayed{$substr}=1;
 }
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "7 $t\n";
 
 
 chop($sample_line);chop($sample_line);
@@ -473,13 +494,12 @@ while(<F>){
 			$hash_matrix{$j} .= "0,";
 		}
 	}
-	
 	my $functions_concat = "#";
-        my %reverse_functions = reverse(%functions_of_genes);
-        foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
-                $functions_concat = $reverse_functions{$nb};last;
-        }
-        my $cogs_concat = "#";
+	my %reverse_functions = reverse(%functions_of_genes);
+	foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
+		$functions_concat = $reverse_functions{$nb};last;
+	}
+	my $cogs_concat = "#";
         if ($cogs_of_clusters{$cluster_num}){
                 my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
                 $cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
@@ -489,7 +509,8 @@ while(<F>){
                 my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};
                 $cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
         }
-        $genes_line .= "{\"meta\":[\"$cogs_concat\",\"$cogcats_concat\",\"$functions_concat\"],\"name\":\"$name\"},\n";
+
+	$genes_line .= "{\"meta\":[\"$cogs_concat\",\"$cogcats_concat\",\"$functions_concat\"],\"name\":\"$name\"},\n";
 	print O "\n";
 	print U "\n";
 	print P "\n";
@@ -526,20 +547,20 @@ while(<F>){
 			$cogs_concat = join(",",keys(%cogs_of_cluster));
 		}
 		if ($cogs_of_clusters{$cluster_num}){
-                        my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
-                        $cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
-                }
+			my $ref_cogs_of_clusters = $cogs_of_clusters{$cluster_num};
+			$cogs_concat = join(",",keys(%$ref_cogs_of_clusters));
+		}
 		my $cogcats_concat = "#";
 		if (join(",",keys(%cogcats_of_cluster))){
 			$cogcats_concat  = join(",",keys(%cogcats_of_cluster));
 		}
 		if ($cogcats_of_clusters{$cluster_num}){
-                        my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};
-                        $cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
-                }
+			my $ref_cogcats_of_clusters = $cogcats_of_clusters{$cluster_num};	
+			$cogcats_concat  = join(",",keys(%$ref_cogcats_of_clusters));
+		}
 		my $functions_concat = "#";
 		my %reverse_functions = reverse(%functions_of_genes);
-		foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){ 
+		foreach my $nb(sort {$b<=>$a} keys(%reverse_functions)){
 			$functions_concat = $reverse_functions{$nb};last;
 		}
 		my $cogs_concat_truncated = substr($cogs_concat,0,24);
@@ -584,7 +605,6 @@ while(<F>){
 	}
 	else{
 		$nb_dispensable_genes++;
-
 		my %cogs_of_cluster;
 		my %cogcats_of_cluster;
 		foreach my $gene(@genes){
@@ -645,17 +665,20 @@ print H "$matrix\n]}";
 close(H);
 
 my $t = gmtime();
-print TEST "$t\n";
+print TEST "8 $t\n";
 close(TEST);
 
+
+#open(H,">$Configuration::HOME_DIR/treemap/$session.treemap.html");
 open(S,">$execution_dir/pie.txt");
 print S "Core-genes	$nb_core_genes\n";
 print S "Dispensable genes	$nb_dispensable_genes\n";
 print S "Strain-specific genes	$nb_specific_genes\n";
 close(S);
-
+#close(H);
 my $config_specific = "";
 open(S,">$execution_dir/pie_specific.txt");
+#print S "Strain\tNumber of specific genes\n";
 foreach my $sample(sort keys(%specific)){
 	open(L,">$execution_dir3/$sample.specific.txt");
 	print L "Cluster\tFunction\tCOG\tCOG categories\n";
@@ -674,6 +697,9 @@ foreach my $sample(sort keys(%specific)){
 }
 close(S);
 
+system("echo 'Strain\tNumber' >$execution_dir/pie_specific.2.txt");
+system("sort -k 2nr $execution_dir/pie_specific.txt >>$execution_dir/pie_specific.2.txt");
+
 open(T,">$execution_dir3/tables.conf");
 print T $config_specific;
 close(T);
@@ -690,7 +716,7 @@ foreach my $concatenate_samples(keys(%hash_concatenate_samples)){
 
 
 my $config = qq~
-'pie'=>
+'1-pie'=>
 	{
 	        "select_title" => "Distribution of core-genome and accessory genome",
                 "per_chrom" => "off",
@@ -699,46 +725,59 @@ my $config = qq~
                 "stacking" => "off",	
 		"file" => "$execution_dir/pie.txt"
 },
-'pie_specific'=>
+#'pie_specific'=>
+#        {
+#                "select_title" => "Distribution of strain-specific genes",
+#                "per_chrom" => "off",
+#                "title" => "Distribution of strain-specific genes",
+#                "type" => "pie",
+#                "stacking" => "off",
+#                "file" => "$execution_dir/pie_specific.txt"
+#},
+'2-barplot'=>
         {
                 "select_title" => "Distribution of strain-specific genes",
                 "per_chrom" => "off",
                 "title" => "Distribution of strain-specific genes",
-                "type" => "pie",
+                "type" => "column",
                 "stacking" => "off",
-                "file" => "$execution_dir/pie_specific.txt"
-}
+                "file" => "$execution_dir/pie_specific.2.txt"
+},
 ~;
 open(F,">$execution_dir/chrom_viewer.conf");
 print F $config;
 close(F);
 
+my $software = `cat $Configuration::DATA_DIR/pangenome_data/$project/software.txt`;
+$software =~s/\n//g;$software =~s/\r//g;
+
 my $graph_part = qq~
   <div id="pangenome" class="tab-pane active">
-<br/><b>Number of genomes processed: $nb_genomes</b></br>
-  <br/><iframe src='$Configuration::CGI_WEB_DIR/chrom_viewer.cgi?session=$session' width='950' height='500' style='border:solid 0px black;'></iframe>
-<!--<br/><iframe src='$Configuration::CGI_WEB_DIR/chrom_viewer.cgi?session=$session' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>-->
-<br><b>Presence/Absence matrix</b></br> <iframe src='$Configuration::WEB_DIR/hotmap/$session/' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>
-  ~;
+<br/><b>Number of genomes (processed by $software): $nb_genomes</b></br>
+  <br/><iframe src='$Configuration::CGI_WEB_DIR/chrom_viewer.cgi?session=$session' width='950' height='500' style='border:solid 0px black;'></iframe>~;
+
 print $graph_part;
 
-if (-e "$Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clusterized.svg"){
-	print "<br/><b>Accessory genes: Presence/absence matrix</b> (<i>Clusters and strains have been preliminarily clusterized (Hierarchical clustering)</i>)<br/>";
-	system("cp -rf $Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clusterized.svg $Configuration::HOME_DIR/upsetr_pdf/$session.Accessory_heatmap.svg");
-	print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/upsetr_pdf/$session.Accessory_heatmap.svg\"/>";
+if (-e "$Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clusterized.html"){
+	print "<br/><b>Accessory genes: Presence/absence matrix</b> (<i>Clusters and strains have been preliminarily clusterized (Hierarchical clustering)</i>)<br/><br/>";
+	system("cp -rf $Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clusterized.html $Configuration::HOME_DIR/upsetr_pdf/$session.Accessory_heatmap.html");
+	#print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/upsetr_pdf/$session.Accessory_heatmap.html\"/><br/>";
 }
+#else{
+	print "<br><b>Presence/Absence matrix</b></br> <iframe src='$Configuration::WEB_DIR/hotmap/$session/' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>";
+#}
 if (-e "$Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg"){
 	print "<br/><br/><b>Accessory genes: Upset diagram</b> (<i>This SVG image is zoomable by mouse scroll or double-click</i>)<br/>";
 
-        my $svg_content = `grep -v '<svg' $Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg | grep -v '<?xml'`;
-        open(HTML,">$Configuration::HOME_DIR/svg-pan-zoom/demo/$session.html");
-        open(H,"$Configuration::HOME_DIR/svg-pan-zoom/demo/template.html");
-        while(<H>){
-                if (/SVG_CONTENT/){print HTML $svg_content;}
-                else{print HTML $_;}
-        }
-        close(HTML);
-        print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/svg-pan-zoom/demo/$session.html\"/>";
+	my $svg_content = `grep -v '<svg' $Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg | grep -v '<?xml'`;
+	open(HTML,">$Configuration::HOME_DIR/svg-pan-zoom/demo/$session.html");
+	open(H,"$Configuration::HOME_DIR/svg-pan-zoom/demo/template.html");
+	while(<H>){
+		if (/SVG_CONTENT/){print HTML $svg_content;}
+		else{print HTML $_;}
+	}
+	close(HTML);
+	print "<embed width='100%' height='1000px' src=\"$Configuration::WEB_DIR/svg-pan-zoom/demo/$session.html\"/>";
 }
 
 print "</div>";
@@ -873,32 +912,32 @@ my $execution_dir2 = $execution_dir."2";
 mkdir($execution_dir2);
 if (-e "$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt"){
 
-        open(COG,">$execution_dir/cog.txt");
-        open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt");
-        my $first = <F>;
-        print COG $first;
-        while(<F>){
-                my @infos = split(/\t/,$_);
-                my $sample = $infos[0];
-                my @words = split(/_/,$sample);
-                my $genus = $words[0];
-                my $species = $words[1];
-                my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
-                for (my $j = 2; $j <= $#words; $j++){
-                        $shortname.="_".$words[$j];
-                }
-                $shortname = substr($shortname,0,15);
-                $_=~s/$sample/$shortname/g;
-                print COG $_;
-        }
-        close(F);
-        close(COG);
+	open(COG,">$execution_dir/cog.txt");
+	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt");
+	my $first = <F>;
+	print COG $first;
+	while(<F>){
+		my @infos = split(/\t/,$_);
+		my $sample = $infos[0];
+		my @words = split(/_/,$sample);
+		my $genus = $words[0];
+		my $species = $words[1];
+		my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
+		for (my $j = 2; $j <= $#words; $j++){
+			$shortname.="_".$words[$j];
+		}
+		$shortname = substr($shortname,0,15);
+		$_=~s/$sample/$shortname/g;
+		print COG $_;
+	}
+	close(F);
+	close(COG);
 
-        open(BIGCOG,">$execution_dir/bigcog.txt");
-        open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_2_counts.txt");
-        my $first = <F>;
+	open(BIGCOG,">$execution_dir/bigcog.txt");
+	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/cog_category_2_counts.txt");
+	my $first = <F>;
         print BIGCOG $first;
-        while(<F>){
+	while(<F>){
                 my @infos = split(/\t/,$_);
                 my $sample = $infos[0];
                 my @words = split(/_/,$sample);
@@ -913,7 +952,7 @@ if (-e "$Configuration::DATA_DIR/pangenome_data/$project/cog_category_counts.txt
                 print BIGCOG $_;
         }
         close(F);
-        close(BIGCOG);
+	close(BIGCOG);
 }
 else{
 open(COG,">$execution_dir/cog.txt");
@@ -921,12 +960,23 @@ open(BIGCOG,">$execution_dir/bigcog.txt");
 print COG "Sample	".join("\t",keys(%cogcategories))."\n";
 print BIGCOG "Sample	".join("\t",keys(%cogs_categories_reverse))."\n";
 foreach my $sample(sort keys(%cog_by_species)){
-	my $sample_short = substr($sample,0,20);
-	$sample_short =~s/ /_/g;
+
+	my @words = split(/_/,$sample);
+        my $genus = $words[0];
+        my $species = $words[1];
+        my $shortname = substr($genus,0,3) . "_". substr($species,0,2);
+        for (my $j = 2; $j <= $#words; $j++){
+                $shortname.="_".$words[$j];
+        }
+        $shortname = substr($shortname,0,10);
+
+
+	#my $sample_short = substr($sample,0,20);
+	#$sample_short =~s/ /_/g;
 	#print "a"."$sample\n";
 	#if (!$samples_displayed{substr($sample,0,40)}){next;}
 	#print "$sample\n";
-	print COG $sample_short;
+	print COG $shortname;
 	foreach my $cogcat(keys(%cogcategories)){
 		my $nb = 0;
 		if ($cog_by_species{$sample}{$cogcat}){
@@ -936,7 +986,7 @@ foreach my $sample(sort keys(%cog_by_species)){
 	}
 	print COG "\n";
 
-	print BIGCOG $sample_short;
+	print BIGCOG $shortname;
 	foreach my $cogcat(keys(%cogs_categories_reverse)){
 		my $nb = 0;
 		if ($cogbigcategory_by_species{$sample}{$cogcat}){
@@ -1061,6 +1111,12 @@ while(<H>){
 close(H);
 close(H2);
 
+#my $iframe = qq~
+#<div id="matrix" class="tab-pane fade">
+ #       <iframe width='100%' height='1000px' src=\"$Configuration::WEB_DIR/upsetr_pdf/$session.Accessory_heatmap.html\"/><br/>";
+#</div>
+#                ~;
+#print $iframe;
 
 my $iframe = qq~
 <div id="phylogeny" class="tab-pane fade">

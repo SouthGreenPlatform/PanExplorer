@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-use lib ".";
-
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;
@@ -130,6 +128,7 @@ my $menu = qq~
 
 	<li><a href="#" onClick="window.location='./home.cgi?project='+document.getElementById('project').value;">Home</a></li>
         <li class="active"><a href="#" onClick="window.location='./upload.cgi?project='+document.getElementById('project').value;">Import genomes</a></li>
+        <li><a href="#" onClick="window.location='./doc.cgi?project='+document.getElementById('project').value;">Doc</a></li>
         <li><a href="#">Project: <select id="project" name="project" onchange="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">$options</select></a></li>
         <li><a href="#" onClick="window.location='./panexplorer.cgi?project='+document.getElementById('project').value;">Overview</a></li>
         <li><a href="#" onClick="window.location='./search.cgi?project='+document.getElementById('project').value;">Search</a></li>
@@ -167,7 +166,7 @@ print "<input type=\"hidden\" name=\"project\" id=\"project\" value=\"$project\"
 print "<table border=0><tr><td>Enter a project name:</td><td>";
 print "<input type=\"text\" name=\"projectnew\" id=\"projectnew\" value=\"$projectnew\" size=50></td><td><i> Alphanumeric, no space</i></td></tr>";
 print "<tr><td>&nbsp;</td><td></td></tr>";
-print "<tr><td>Enter a list of Genbank accessions:<br/>(up to 200 genomes) </td><td valign=top><input type=\"text\" name=\"genbanks\" id=\"genbanks\" value=\"$genbanks\" size=50><br/></td><td><i> Coma separated list (ex: CP000235.1,CP001079.1,CP001759.1,CP015994.2)</i></td></tr>";
+print "<tr><td>Enter a list of Genbank accessions:<br/>(up to 200 genomes) </td><td valign=top><input type=\"text\" name=\"genbanks\" id=\"genbanks\" value=\"$genbanks\" size=50><br/></td><td><i> Coma separated list (ex: CP000235.1,CP001079.1,GCA_000011945,GCA_000024505)</i></td></tr>";
 print "<tr><td>&nbsp;</td><td></td></tr>";
 print "<tr><td>Enter a valid email address: </td><td><input type=\"text\" name=\"email\" id=\"email\" value=\"$email\" size=50></td><td><i> To be informed of data availability</i></td></tr>";
 print "<tr><td>&nbsp;</td><td></td></tr>";
