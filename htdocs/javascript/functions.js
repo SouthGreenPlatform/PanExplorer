@@ -86,14 +86,14 @@ async function CheckIDs2(cgi_dir,session)
                                 {
                                         var genbank_id = arrayOfStrings[i];
                                         var div = $("#"+(i+1));
-					div.html("<img height=20 src='"+images_location+"/waiting-icon-gif-23.jpg'>"+i + " " +genbank_id+" pending...");
+					div.html("<img height=20 src=\"https://panexplorer.southgreen.fr/images/waiting-icon-gif-23.jpg\">"+i + " " +genbank_id+" pending...");
                                 }
 				var nb_found = 0;
                                 for(var i= 0; i < arrayOfStrings.length; i++)
 {
                                         var genbank_id = arrayOfStrings[i];
 					var div = $("#"+(i+1));
-					div.html("<img height=20 src='"+images_location+"/please-wait-animated-gif-7-gif-images-download_63.gif'>Checking "+ genbank_id + "...");
+					div.html("<img height=20 src=\"https://panexplorer.southgreen.fr/images/please-wait-animated-gif-7-gif-images-download_63.gif\">Checking "+ genbank_id + "...");
 					$.ajax({
                             type: 'GET',
                             url: url,
@@ -164,7 +164,7 @@ async function CheckIDs(cgi_dir,session)
 				for(var i= 0; i < arrayOfStrings.length; i++)
 				{
 					var genbank_id = arrayOfStrings[i];
-					list += "<div id='"+genbank_id+"'><img height=20 src='"+images_location+"/waiting-icon-gif-23.jpg'>"+genbank_id+" pending...</div>";
+					list += "<div id='"+genbank_id+"'><img height=20 src=\"https://panexplorer.southgreen.fr/images/waiting-icon-gif-23.jpg\">"+genbank_id+" pending...</div>";
 				}
 			
 				var thediv= $('check_div') ;
@@ -272,8 +272,25 @@ function SearchCluster(cgi_dir,session)
         var params = "action=search_cluster";
         params = params + '&genename=' + document.getElementById("genename").value + '&session=' + session;
         params = params + '&project=' + document.getElementById("project").value;
+	//alert('okkk'+params);
+	//window.open(url+"?"+params);
         var myAjax = new Ajax.Request(url,{method:'post',postBody:params,onLoading:loading_search,onSuccess:success_search,onFailure:failure_search});
 }
+
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
 
 function Circos(cgi_dir,session)
 {
