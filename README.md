@@ -100,8 +100,8 @@ As an example, we assume that files will be placed as follows in the following f
 1- Copy your panexplorer folder into /var/www
 
 ```
-mkdir /var/www/panexplorer
-cp -rf PanExplorer/* /var/www/panexplorer
+sudo mkdir /var/www/panexplorer
+sudo cp -rf PanExplorer/* /var/www/panexplorer
 ```
 
 2- Configure Apache
