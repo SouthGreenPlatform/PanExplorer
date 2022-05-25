@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use lib ".";
+
 use CGI;
 use CGI::Carp qw(carpout fatalsToBrowser);
 use CGI::Session;

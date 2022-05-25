@@ -16,6 +16,8 @@ Displays an an html page for ajax.
 
 =cut
 
+use lib ".";
+
 use strict;
 use warnings;
 use Carp qw (cluck confess);

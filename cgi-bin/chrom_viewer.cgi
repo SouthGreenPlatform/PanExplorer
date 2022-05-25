@@ -1,11 +1,12 @@
 #!/usr/bin/perl
 
+use lib ".";
+
 use strict;
 use warnings;
 use Carp qw (cluck confess croak);
 
-use lib ".";
-
+use DBI;
 use CGI;
 
 use Config::Configuration;
@@ -396,7 +397,8 @@ my $html = qq~
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/heatmap.js"></script>
 <script src="https://code.highcharts.com/highcharts-3d.js"></script>
-
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 
 <!-- Additional files for the Highslide popup effect -->
@@ -532,7 +534,77 @@ if ($split_per_chrom eq "on")
 	
 #type: '$CONFIG{$display}{"type"}',
 
-if ($type_display eq 'pie')
+if ($type_display eq 'treemap'){
+	my $javascript = qq~
+        <script type='text/javascript'>
+Highcharts.chart('container', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Browser market shares in January, 2018'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+        }
+    },
+    series: [{
+        name: 'Brands',
+        colorByPoint: true,
+        data: [{
+            name: 'Chrome',
+            y: 61.41,
+            sliced: true,
+            selected: true
+        }, {
+            name: 'Internet Explorer',
+            y: 11.84
+        }, {
+            name: 'Firefox',
+            y: 10.85
+        }, {
+            name: 'Edge',
+            y: 4.67
+        }, {
+            name: 'Safari',
+            y: 4.18
+        }, {
+            name: 'Sogou Explorer',
+            y: 1.64
+        }, {
+            name: 'Opera',
+            y: 1.6
+        }, {
+            name: 'QQ',
+            y: 1.2
+        }, {
+            name: 'Other',
+            y: 2.61
+        }]
+    }]
+});
+	</script>
+~;
+        print $javascript;
+}
+elsif ($type_display eq 'pie')
 {
 	my $javascript = qq~
 	<script type='text/javascript'>

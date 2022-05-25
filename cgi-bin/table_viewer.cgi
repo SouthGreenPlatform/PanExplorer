@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use Carp qw (cluck confess croak);
 
+use DBI;
 use CGI;
 
 use Config::Configuration;
@@ -121,7 +122,9 @@ chomp($header);
 my @infos_header = split(/\t/,$header);
 $header = join("<\/th><th>",@infos_header);
 open(my $F,$file) or print "Can not open file $file<br>";
-<$F>;
+my $first_line = <$F>;
+open(D,">$Configuration::HOME_DIR/tables/$session.table.xls");
+print D $first_line;
 my @table_fields;
 while(<$F>)
 {
@@ -129,6 +132,23 @@ while(<$F>)
 	chomp($line);
 	if ($line !~/\w/){next;}
 	my @infos_line = split(/\t/,$line);
+
+	# remove links for downloadable table
+	if ($line =~/<a/){
+		my @infos_line2;
+		foreach my $cell(@infos_line){
+			if ($cell =~/>(.*)</){
+				push(@infos_line2,$1);
+			}
+			else{
+				push(@infos_line2,$cell);
+			}
+		}		
+		print D join("\t",@infos_line2)."\n";
+	}
+	else{
+		print D "$line\n";
+	}
 	my $field = "[\n\"";
 	if ($link){
 		my $id = shift(@infos_line);
@@ -164,8 +184,10 @@ close($F);
 print $JSON join(",\n",@table_fields);
 print $JSON "]\n}";
 close($JSON);
+close(D);
 print "<br/><br/>";
 
+print "<a href='$Configuration::WEB_DIR/tables/$session.table.xls'>Download table</a><br/><br/>";
 print $init;
 my $table = qq~
 <table id="example" class="display" cellspacing="0" width="100%">
