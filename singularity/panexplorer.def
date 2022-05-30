@@ -48,8 +48,8 @@ MirrorURL: http://ftp.us.debian.org/debian/
     echo "phylip dnaml $*" >>/usr/bin/dnaml
     chmod 755 /usr/bin/dnaml
 
-    wget https://mmseqs.com/latest/mmseqs-linux-avx2.tar.gz --no-check-certificate
-    tar xvfz mmseqs-linux-avx2.tar.gz
+    wget https://mmseqs.com/latest/mmseqs-linux-sse41.tar.gz --no-check-certificate
+    tar xvfz mmseqs-linux-sse41.tar.gz
     cp -rf mmseqs/bin/mmseqs /usr/bin/
     
     pip3 install panacota
