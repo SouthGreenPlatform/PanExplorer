@@ -90,6 +90,7 @@ if ($action eq "check_id"){
 				$strain =~s/\(//g;
 				$strain =~s/\)//g;
 				$strain =~s/\-/_/g;
+				$strain =~s/\:/_/g;
 				my ($info1,$info2 ) = split(",",$strain);
 				$strain = $info1;
 				$strain =~s/\.//g;
