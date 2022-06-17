@@ -543,7 +543,9 @@ if ($action eq "search"){
                         my @gene_list = split(",",$genes_of_cluster{$name});
                         my $function;
                         foreach my $gene(@gene_list){
-                                $function = $functions{$gene};
+                                if ($functions{$gene} =~/\w+/){
+                                        $function = $functions{$gene};
+                                }
                         }
                         my $list_to_displayed = substr($genes_of_cluster{$name},0,50);
                         # exclude if several reprensentant by strain (if restriction is checked)
@@ -560,7 +562,9 @@ if ($action eq "search"){
                         my @gene_list = split(",",$genes_of_cluster{$name});
                         my $function;
                         foreach my $gene(@gene_list){
-                                $function = $functions{$gene};
+                                if ($functions{$gene} =~/\w+/){
+                                        $function = $functions{$gene};
+                                }
                         }
 
                         my $list_to_displayed = substr($genes_of_cluster{$name},0,50);
