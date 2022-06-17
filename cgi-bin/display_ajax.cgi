@@ -491,83 +491,119 @@ if ($action eq "check_idsii"){
 if ($action eq "search"){
 
 	my @strains2 = split(",",$strains);
-	my $concatenate_strains = join(",",sort @strains2);
-	my %cluster_of_gene;
-	my %genes_of_cluster;
-	open(F,"$Configuration::DATA_DIR/pangenome_data/$project/1.Orthologs_Cluster.txt");
-	open(C,">$Configuration::HOME_DIR/tables/$session.dispensablegenes.txt");
-	print C "Cluster\tGenes\tFunction\n";
-	my $first_line = <F>;
-	$first_line =~s/\n//g;$first_line =~s/\r//g;
-	my @samples = split("\t",$first_line);
-	my $found = 0;
-	while(<F>){
-		my $line = $_;
-		$line =~s/\n//g;$line =~s/\r//g;
-		my @i = split("\t",$line);
-		my $clnb = $i[0];
-		if (length($clnb) == 1){$clnb = "000".$clnb;}
-		elsif (length($clnb) == 2){$clnb = "00".$clnb;}
-		elsif (length($clnb) == 3){$clnb = "0".$clnb;}
-		my $name = "CLUSTER".$clnb;
-		my $nb_found = 0;
-		my $concatenate_samples = "";
-		my @samples_specific;
-		for (my $j = 1; $j <= $#i; $j++){
-			my $val = $i[$j];
-			if ($val =~/\w+/){
-				my @genes = split(",",$val);
-				foreach my $gene(@genes){
-					$cluster_of_gene{$gene} = $name;
-					$genes_of_cluster{$name}.=",$gene";
-				}
-				$nb_found++;
-				$concatenate_samples .=",".$samples[$j];
-				push(@samples_specific,$samples[$j]);
-			}
-		}
-		my $concatenate_samples = join(",",sort @samples_specific);
-		if (scalar @strains2 == scalar @samples_specific && $concatenate_strains eq $concatenate_samples){
-			my @gene_list = split(",",$genes_of_cluster{$name});
-			my $function;
-			foreach my $gene(@gene_list){
-				$function = $functions{$gene};
-			}
-			
-			my $list_to_displayed = substr($genes_of_cluster{$name},0,50);
+        my $concatenate_strains = join(",",sort @strains2);
+        my $selection_size = scalar @strains2;
+        my %cluster_of_gene;
+        my %genes_of_cluster;
+        open(F,"$Configuration::DATA_DIR/pangenome_data/$project/1.Orthologs_Cluster.txt");
+        open(R,">$execution_dir/roary_matrix.txt");
+        open(A,">$Configuration::HOME_DIR/tables/$session.absent.txt");
+        open(C,">$Configuration::HOME_DIR/tables/$session.dispensablegenes.txt");
+        print C "Cluster\tGenes\tFunction\n";
+        print A "Cluster\tGenes\tFunction\n";
+        my $first_line = <F>;
+        $first_line =~s/\n//g;$first_line =~s/\r//g;
+        my @samples = split("\t",$first_line);
+        my $found = 0;
+        my $nb_found_absent = 0;
+        my $nb_total_strains = 0;
+        while(<F>){
+                my $line = $_;
+                $line =~s/\n//g;$line =~s/\r//g;
+                my @i = split("\t",$line);
+                my $clnb = $i[0];
+                if (length($clnb) == 1){$clnb = "000".$clnb;}
+                elsif (length($clnb) == 2){$clnb = "00".$clnb;}
+                elsif (length($clnb) == 3){$clnb = "0".$clnb;}
+                my $name = "CLUSTER".$clnb;
+                my $nb_found = 0;
+                my $concatenate_samples = "";
+                my @samples_specific;
+                my $cluster_is_found = 0;
+                $nb_total_strains = $#i;
+                for (my $j = 1; $j <= $#i; $j++){
+                        my $val = $i[$j];
+                        my $samp = $samples[$j];
+                        if ($val =~/\w+/){
+                                my @genes = split(",",$val);
+                                foreach my $gene(@genes){
+                                        $cluster_of_gene{$gene} = $name;
+                                        $genes_of_cluster{$name}.=",$gene";
+                                }
+                                $nb_found++;
+                                $concatenate_samples .=",".$samples[$j];
 
-			# exclude if several reprensentant by strain (if restriction is checked)
-			my $nb_genes = scalar split(",",$genes_of_cluster{$name})-1;
-			if ($nb_max_by_strain eq "one" && scalar @strains2 != $nb_genes){next;}
+                                if ($concatenate_strains =~/$samp/){$cluster_is_found = 1;}
+                                push(@samples_specific,$samples[$j]);
+                        }
+                }
+
+                # specifically absent
+                if ($cluster_is_found == 0 && $nb_found ==($nb_total_strains-$selection_size)){
+                        my @gene_list = split(",",$genes_of_cluster{$name});
+                        my $function;
+                        foreach my $gene(@gene_list){
+                                $function = $functions{$gene};
+                        }
+                        my $list_to_displayed = substr($genes_of_cluster{$name},0,50);
+                        # exclude if several reprensentant by strain (if restriction is checked)
+                        my $nb_genes = scalar split(",",$genes_of_cluster{$name})-1;
+                        if ($nb_max_by_strain eq "one" && scalar @strains2 != $nb_genes){next;}
+
+                        print A "<a href='./clusters.cgi?genename=$name&project=$project' target=_blank>$name</a>\t$list_to_displayed\t$function\n";
+                        $nb_found_absent++;
+                }
+
+                # specifically present
+                my $concatenate_samples = join(",",sort @samples_specific);
+                if (scalar @strains2 == scalar @samples_specific && $concatenate_strains eq $concatenate_samples){
+                        my @gene_list = split(",",$genes_of_cluster{$name});
+                        my $function;
+                        foreach my $gene(@gene_list){
+                                $function = $functions{$gene};
+                        }
+
+                        my $list_to_displayed = substr($genes_of_cluster{$name},0,50);
+
+                        # exclude if several reprensentant by strain (if restriction is checked)
+                        my $nb_genes = scalar split(",",$genes_of_cluster{$name})-1;
+                        if ($nb_max_by_strain eq "one" && scalar @strains2 != $nb_genes){next;}
 
 
-			print C "<a href='./clusters.cgi?genename=$name&project=$project' target=_blank>$name</a>\t$list_to_displayed\t$function\n";
-			$found++;
-		}
+                        print C "<a href='./clusters.cgi?genename=$name&project=$project' target=_blank>$name</a>\t$list_to_displayed\t$function\n";
+                        $found++;
+                }
 	}
-	close(F);
-	close(C);
+        close(F);
+        close(C);
+        close(R);
+        close(A);
 
 
-	print "<b>$found gene cluster(s) found</b></br>";
+        print "<b>Number of gene clusters specifically present in this subset: $found</b></br>";
+        print "<b>Number of gene clusters specifically absent in this subset: $nb_found_absent</b></br>";
+        my $config_table = "";
+        $config_table .= qq~
+                                        '0dispensable-genes'=>
+                                        {
+                                                        "select_title" => "Specifically present genes",
+                                                        "file" => "$Configuration::HOME_DIR/tables/$session.dispensablegenes.txt",
+                                        },
+                                        'absent'=>
+                                        {
+                                                        "select_title" => "Specifically absent genes",
+                                                        "file" => "$Configuration::HOME_DIR/tables/$session.absent.txt",
+                                        },
+                        ~;
+        open(T,">$execution_dir/tables.conf");
+        print T $config_table;
+        close(T);
 
-	my $config_table = "";
-	$config_table .= qq~
-					'dispensable-genes'=>
-					{
-							"select_title" => "Dispensable-Genes",
-							"file" => "$Configuration::HOME_DIR/tables/$session.dispensablegenes.txt",
-					},
-			~;
-	open(T,">$execution_dir/tables.conf");
-	print T $config_table;
-	close(T);
-
-	my $table_part = qq~
-	<br/><iframe src='$Configuration::CGI_WEB_DIR/table_viewer.cgi?session=$session' width='950' height='550' style='border:solid 0px black;'></iframe><br/><br/>
-	<a href='$Configuration::WEB_DIR/tables/$session.dispensablegenes.txt'>Download table</a><br/>
-	~;
-	print $table_part;
+        my $table_part = qq~
+        <br/><iframe src='$Configuration::CGI_WEB_DIR/table_viewer.cgi?session=$session' width='950' height='550' style='border:solid 0px black;'></iframe><br/><br/>
+        <a href='$Configuration::WEB_DIR/tables/$session.dispensablegenes.txt'>Download table</a><br/>
+        ~;
+        print $table_part;
 }
 
 ###############################################################################
