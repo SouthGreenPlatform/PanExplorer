@@ -1320,7 +1320,7 @@ document.getElementById("defaultOpen").click();
 	# MUSCLE
 	###############################
 
-	if ($ngenes < 160){
+	if ($ngenes < $Configuration::MAX_NUMBER_FOR_PHYLO){
 	system("$Configuration::MUSCLE_EXE -in $execution_dir/genes_dna.fa -out $execution_dir/genes_dna.align.fa");
 	my $t = gmtime();
         print TEST "2 $t\n";
@@ -1562,7 +1562,7 @@ document.getElementById("defaultOpen").click();
 	
 	#print "Number of different sequences: " . scalar keys(%different_sequences)."<br>";
 
-	if ($num_seq < 70){
+	if ($num_seq < $Configuration::MAX_NUMBER_FOR_NETWORK){
 		system("$Configuration::HAPLOPHYLE_EXE -in $execution_dir/haplotypes.fna -out $execution_dir/snp.network.dot >> $execution_dir/haplophyle.log 2>&1");
 		system("perl $Configuration::TOOLS_DIR/haplophyle/dot2Cytoscape.pl -i $execution_dir/snp.network.dot -h $Configuration::HOME_DIR/cytoscape/$session.snp.network.html >> $execution_dir/dot2cytoscape.log 2>&1");
 		system("cp -rf $Configuration::HOME_DIR/cytoscape/$session.snp.network.html.d3.json $Configuration::HOME_DIR/d3/$session.snp.network.json");
