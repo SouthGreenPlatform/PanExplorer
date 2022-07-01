@@ -1061,6 +1061,7 @@ document.getElementById("defaultOpen").click();
 	my $haplotype_sequences = "";
 	my $cluster;
 	my $ngenes = 0;
+	my $nb_haplo = 0;
 	my $is_core = 0;
 	my %list_of_genes;
 	my @list_of_species;
@@ -1562,6 +1563,7 @@ document.getElementById("defaultOpen").click();
 	
 	#print "Number of different sequences: " . scalar keys(%different_sequences)."<br>";
 
+	$nb_haplo = $num_seq;
 	if ($num_seq < $Configuration::MAX_NUMBER_FOR_NETWORK){
 		system("$Configuration::HAPLOPHYLE_EXE -in $execution_dir/haplotypes.fna -out $execution_dir/snp.network.dot >> $execution_dir/haplophyle.log 2>&1");
 		system("perl $Configuration::TOOLS_DIR/haplophyle/dot2Cytoscape.pl -i $execution_dir/snp.network.dot -h $Configuration::HOME_DIR/cytoscape/$session.snp.network.html >> $execution_dir/dot2cytoscape.log 2>&1");
@@ -1628,7 +1630,7 @@ document.getElementById("defaultOpen").click();
 	print "</div>";
 	
 	print "<div id=\"Haplotypes\" class=\"tabcontent\">";
-        print "<br/><b>Distinct haplotype sequences (only SNPs residues)</b><br/>";
+        print "<br/><b>$nb_haplo distinct haplotype sequences (only SNPs residues)</b><br/>";
         print "<pre>$haplotype_sequences</pre>";
         print "<br/>";
         print "</div>";
