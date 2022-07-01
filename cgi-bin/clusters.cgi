@@ -166,11 +166,12 @@ open(TEST,">$execution_dir/test");
 my $t = gmtime();
 print TEST "$t\n";
 
-
 print "<form name=\"query_form\" id=\"query_form\" action=\"./clusters.cgi\" method=\"get\">\n";
 print "<table><tr><td><b>Enter a gene or cluster name </b><i>(ex: CLUSTER1736, AGJ99558.1)</i>: &nbsp;&nbsp;&nbsp;";
 print "<input type=\"text\" name=\"genename\" id=\"genename\" value=\"$genename\"><br/><br/>";
-print "<input type=\"hidden\" name=\"project\" id=\"project\" value=\"$project\"><br/><br/>";
+print "<input type=\"hidden\" name=\"project\" id=\"project\" value=\"$project\">";
+print "<i>Note:<br/>Phylogeny can be reconstructed if the number of genes in the cluster is lower than $Configuration::MAX_NUMBER_FOR_PHYLO</i><br/>";
+print "<i>Network can be built if the number of distinct haplotype sequences is lower than $Configuration::MAX_NUMBER_FOR_NETWORK</i><br/><br/>";
 print "<input class=\"btn btn-primary\" type=\"button\" value=\"Submit\" onclick=\"SearchCluster('$Configuration::CGI_WEB_DIR','$session');\">";
 print "</tr></table>";
 print "<br/>";
