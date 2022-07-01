@@ -93,6 +93,9 @@ our $MUSCLE_EXE = "$TOOLS_DIR/muscle3.8.31_i86linux64";
 our $ROOTING_EXE = "java -jar $TOOLS_DIR/rooting/Rootings_54.jar";
 our $HAPLOPHYLE_EXE = "java -jar $TOOLS_DIR/haplophyle/NetworkCreator_fat.jar"; 
 
+our $MAX_NUMBER_FOR_PHYLO = 300;
+our $MAX_NUMBER_FOR_NETWORK = 75;
+
 our %COLORS = (
 	"Ehrlichia" => "red",
 	"Wolbachia" => "green",
