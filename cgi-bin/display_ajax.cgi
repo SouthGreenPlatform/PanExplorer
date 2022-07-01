@@ -882,7 +882,12 @@ elsif (($action eq "synteny" && $strain1 && $strain2 && $strain3) or ($action eq
 </ul>
 ~;
 		my $macrosynteny_part = qq~
-		Each node is a cluster of the core-genome.<br/>
+                <h3>Hive plot</h3>
+                It represents the physical location of core-genes on the three genomes, and allows to evaluate the conservation of gene order between genomes.<br>
+                Each node corresponds to a cluster defined as core-gene between the three genomes.<br/>
+                Links are colored with a color gradient in order to better estimate genomic rearrangements.<br/>
+                Passing the mouse cursor over nodes displays the name of the cluster and the corresponding gene of the strain genome.
+		
 		
 		<iframe src='$Configuration::WEB_DIR/hiveplot_json/hiveplot.$session.html' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>~;
 		print $macrosynteny_part;
