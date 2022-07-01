@@ -1044,6 +1044,7 @@ document.getElementById("defaultOpen").click();
   <button class="tablinks" onclick="openCity(event, 'Genes')" id="defaultOpen">Genes</button>
   <button class="tablinks" onclick="openCity(event, 'Sequences')">Sequences</button>
   <button class="tablinks" onclick="openCity(event, 'Phylogeny')">Phylogeny</button>
+  <button class="tablinks" onclick="openCity(event, 'Haplotypes')">SNPs/haplotypes</button>
   <button class="tablinks" onclick="openCity(event, 'Cytoscape')">Cytoscape network</button>
 </div>
 
@@ -1057,6 +1058,7 @@ document.getElementById("defaultOpen").click();
 	my @speciesinfo = split("\t",$first_line);
 	my $sequences = "";
 	my $dnasequences = "";
+	my $haplotype_sequences = "";
 	my $cluster;
 	my $ngenes = 0;
 	my $is_core = 0;
@@ -1551,9 +1553,10 @@ document.getElementById("defaultOpen").click();
 	foreach my $seq(keys(%different_sequences)){
 		$num_seq++;
 		my $size = $different_sequences{$seq};
-		print O ">haplo$num_seq|$size\n";
-		print O "$seq";
+		$haplotype_sequences .= ">haplo$num_seq|$size\n";
+                $haplotype_sequences .= "$seq";
 	}
+	print O $haplotype_sequences;
 	close(O);
 
 	
@@ -1623,6 +1626,12 @@ document.getElementById("defaultOpen").click();
 	print "<pre>$sequences</pre>";
 	print "<br/>";
 	print "</div>";
+	
+	print "<div id=\"Haplotypes\" class=\"tabcontent\">";
+        print "<br/><b>Distinct haplotype sequences (only SNPs residues)</b><br/>";
+        print "<pre>$haplotype_sequences</pre>";
+        print "<br/>";
+        print "</div>";
 
 	#print "<br/><b>Alignment of genes</b><br/>";	
 	#print "<iframe src='$Configuration::WEB_DIR/MSAViewer/$session.genes.html' width='950' height='200' style='border:solid 1px black;'></iframe>";
