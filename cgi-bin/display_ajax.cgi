@@ -1650,6 +1650,7 @@ document.getElementById("defaultOpen").click();
 	
 	print "<div id=\"Phylogeny\" class=\"tabcontent\">";	
 	if (-e "$Configuration::HOME_DIR/phylotree/$session.html"){
+		print "<br/><b>Distance tree (Muscle+DnaDist+FastME)</b> of the different genes of the cluster (across the different strains).";
 		print "<iframe src=\"$Configuration::WEB_DIR/phylotree/$session.html\" width=\"1000\" height=\"900\" style='border:solid 0px black;'></iframe>";	
 	}
 	else{
@@ -1660,6 +1661,7 @@ document.getElementById("defaultOpen").click();
 
 	print "<div id=\"Cytoscape\" class=\"tabcontent\">";
 	if (-e "$execution_dir/snp.network.dot"){
+		print "<br/><b>Median-Joining Network (MJN)</b> of the distinct haplotype sequences (only SNP positions) across the whole genes of the cluster.<br/>Each node corresponds to a specific haplotype sequence. If the sequence is the same for multiple strains, the node is represented only once.<br/>The size of the circle is proportional to the number of strains carrying this sequence.";
 		print "<br/><iframe src='$Configuration::WEB_DIR/d3/$session.snp.d3.network.html' width='950' height='900' style='border:solid 1px black;'></iframe>";
 	}
 	else{
