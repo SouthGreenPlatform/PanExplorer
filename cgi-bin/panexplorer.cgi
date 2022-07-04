@@ -769,7 +769,8 @@ if (-e "$Configuration::DATA_DIR/pangenome_data/$project/Accessory_heatmap.clust
 	print "<br><b>Presence/Absence matrix</b></br> <iframe src='$Configuration::WEB_DIR/hotmap/$session/' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>";
 #}
 if (-e "$Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg"){
-	print "<br/><br/><b>Accessory genes: Upset diagram</b> (<i>This SVG image is zoomable by mouse scroll or double-click</i>)<br/>";
+	print "<br/><br/><b>Upset diagram for accessory genes</b> (<i>This SVG image is zoomable by mouse scroll or double-click</i>)<br/>";
+        print "An Upset plot is an alternative to the Venn Diagram used to deal with more than 3 sets.<br/>The total size of each set is represented on the left barplot.<br/>Every possible intersection is represented by the bottom plot, and their occurence is shown on the top barplot.<br>Each row corresponds to a possible intersection: the filled-in cells show which set is part of an intersection.<br/>More information <a href='https://upset.app/' target='_blank'>here</a>.";
 
 	my $svg_content = `grep -v '<svg' $Configuration::DATA_DIR/pangenome_data/$project/UpsetDiagram.svg | grep -v '<?xml'`;
 	open(HTML,">$Configuration::HOME_DIR/svg-pan-zoom/demo/$session.html");
