@@ -18,7 +18,7 @@ The application allows interactive data exploration at different levels :
 
 (ii) Physical map of core-genes and strain-specific genes can be displayed as a circular genomic representation (Circos), for each genome taken independently.
 
-(iii) Synteny analysis. The conservation of gene order between genomes can be investigated using graphical representations
+(iii) Synteny analysis. The conservation of gene order between genomes can be investigated using graphical representations.
 
 (iv) Visual inspection of a specific cluster.
 
