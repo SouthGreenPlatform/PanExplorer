@@ -3,8 +3,7 @@
 
 Web application to explore bacterial pangenomes
 
-Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
-**Homepage:** `https://panexplorer.southgreen.fr <https://panexplorer.southgreen.fr>`_
+**Homepage:**: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
 
 Dependencies:
 - singularity
@@ -29,15 +28,10 @@ The application allows interactive data exploration at different levels :
 
 [https://doi.org/10.1093/bioinformatics/btac504] (https://doi.org/10.1093/bioinformatics/btac504)
 
-Authors
-_______
+## Authors
 
 * Alexis Dereeper (IRD)
 
-License
-=======
-
-Licencied under `CeCill-C <http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html>`_ and GPLv3.
 
 ## Install
 
@@ -216,3 +210,7 @@ sudo cp -rf prokaryotes.txt /var/www/panexplorer/cgi-bin/data/
 7- Access to your application using the URL defined in Configuration.pm
 
 http://localhost/cgi-bin/home.cgi
+
+## License
+
+Licencied under `CeCill-C <http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html>`_ and GPLv3.
