@@ -26,11 +26,12 @@ The application allows interactive data exploration at different levels :
 
 ## Citation
 
-[https://doi.org/10.1093/bioinformatics/btac504] (https://doi.org/10.1093/bioinformatics/btac504)
+[https://doi.org/10.1093/bioinformatics/btac504](https://doi.org/10.1093/bioinformatics/btac504)
 
 ## Authors
 
 * Alexis Dereeper (IRD)
+* Damien Meyer (Cirad)
 
 
 ## Install
