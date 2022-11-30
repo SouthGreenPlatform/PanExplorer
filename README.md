@@ -214,4 +214,4 @@ http://localhost/cgi-bin/home.cgi
 
 ## License
 
-Licencied under `CeCill-C <http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html>`_ and GPLv3.
+Licencied under GPLv3.
