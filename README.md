@@ -1,6 +1,5 @@
 
-PanExplorer
-===============
+# PanExplorer
 
 Web application to explore bacterial pangenomes
 
@@ -26,10 +25,9 @@ The application allows interactive data exploration at different levels :
 (iv) Visual inspection of a specific cluster.
 
 
-Citation
-________
+## Citation
 
-https://doi.org/10.1093/bioinformatics/btac504
+[https://doi.org/10.1093/bioinformatics/btac504] (https://doi.org/10.1093/bioinformatics/btac504)
 
 Authors
 _______
