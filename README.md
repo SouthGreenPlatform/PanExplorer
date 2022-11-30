@@ -1,11 +1,11 @@
-# PanExplorer
 
-About PanExplorer
+PanExplorer
 ===============
 
 Web application to explore bacterial pangenomes
 
 Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
+**Homepage:** `https://panexplorer.southgreen.fr <https://panexplorer.southgreen.fr>`_
 
 Dependencies:
 - singularity
@@ -25,6 +25,21 @@ The application allows interactive data exploration at different levels :
 
 (iv) Visual inspection of a specific cluster.
 
+
+Citation
+________
+
+https://doi.org/10.1093/bioinformatics/btac504
+
+Authors
+_______
+
+* Alexis Dereeper (IRD)
+
+License
+=======
+
+Licencied under `CeCill-C <http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html>`_ and GPLv3.
 
 ## Install
 
