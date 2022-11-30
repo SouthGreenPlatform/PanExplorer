@@ -1,6 +1,7 @@
 # PanExplorer
 
-|SnakemakeVersions| |Singularity|  |Downloads|
+About PanExplorer
+===============
 
 Web application to explore bacterial pangenomes
 
