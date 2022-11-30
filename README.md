@@ -1,5 +1,7 @@
 # PanExplorer
 
+|SnakemakeVersions| |Singularity|  |Downloads|
+
 Web application to explore bacterial pangenomes
 
 Official instance of PanExplorer: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
