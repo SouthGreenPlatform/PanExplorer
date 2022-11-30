@@ -214,4 +214,4 @@ http://localhost/cgi-bin/home.cgi
 
 ## License
 
-Licencied under GPLv3.
+GNU General Public GPLv3 License.
