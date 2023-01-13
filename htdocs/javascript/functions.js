@@ -250,6 +250,7 @@ function SearchStrain(cgi_dir,session)
 	var url = cgi_dir + "/display_ajax.cgi";
 	var params = "action=search";
 	var list_strains = "";
+	var list_strains2 = "";
 	if (document.query_form.strains.options)
         {
                 var strains = document.query_form.strains.options;
@@ -260,8 +261,20 @@ function SearchStrain(cgi_dir,session)
 			}
                 }
         }
+	else if (document.query_form.strains.value){
+                var strains = document.query_form.strains.value.split('\n');
+                for (var i = strains.length - 1; i>=0; i--)
+                {
+                        list_strains += strains[i] + ",";
+                }
+                var strains2 = document.query_form.strains2.value.split('\n');
+                for (var i = strains2.length - 1; i>=0; i--)
+                {
+                        list_strains2 += strains2[i] + ",";
+                }
+        }
 	var nb_max_by_strain = document.query_form.nb_max_by_strain.value;
-	params = params + '&strains=' + list_strains + '&nb_max_by_strain=' + nb_max_by_strain + '&session=' + session;
+	params = params + '&strains=' + list_strains + '&strains2=' + list_strains2 + '&nb_max_by_strain=' + nb_max_by_strain + '&session=' + session;
 	params = params + '&project=' + document.getElementById("project").value;
 	var myAjax = new Ajax.Request(url,{method:'post',postBody:params,onLoading:loading_search,onSuccess:success_search,onFailure:failure_search});
 }
