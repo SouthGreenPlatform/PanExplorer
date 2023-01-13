@@ -216,6 +216,7 @@ my $tabs = qq~
   <li><a data-toggle="tab" href="#specific">Strain-Specific Genes</a></li>
   <li><a data-toggle="tab" href="#cog">COGs</a></li>
   <li><a data-toggle="tab" href="#phylogeny">Phylogeny</a></li>
+  <li><a data-toggle="tab" href="#metadata">Metadata</a></li>
   <!--<li><a data-toggle="tab" href="#distribution">Distribution of core-genes</a></li>-->
 </ul>
 ~;
@@ -273,6 +274,8 @@ close(F);
 my %organisms;
 my %countries;
 my $nb_genomes = 0;
+open(METADATA,">$execution_dir/metadata.xls");
+print METADATA "Strain name\tCountry\tContinent\tOrganism\n";
 open(LS,"ls $Configuration::DATA_DIR/pangenome_data/$project/genomes/genomes/*.gb |");
 while(<LS>){
 	my $file = $_;
@@ -293,10 +296,12 @@ while(<LS>){
 			my $city;
 			($country,$city) = split(/:/,$country);
 		}
+		print METADATA $strain."\t".$country."\t".$continents{$country}."\t".$organism."\n";
 		$countries{$strain}= $country;
 	}
 }
 close(LS);
+close(METADATA);
 
 my $t = gmtime();
 print TEST "3 $t\n";
@@ -1124,6 +1129,31 @@ close(H2);
 my $iframe = qq~
 <div id="phylogeny" class="tab-pane fade">
 	<iframe src=\"$Configuration::WEB_DIR/phylotree/$session.html\" width=\"1000\" height=\"900\" style='border:solid 0px black;'></iframe>
+</div>
+                ~;
+print $iframe;
+
+
+###########################################################################
+# Metadata
+###########################################################################
+
+my $config_table = "";
+$config_table .= qq~
+                                'metadata'=>
+                {
+                        "select_title" => "Metadata",
+                        "file" => "$execution_dir/metadata.xls",
+                },
+        ~;
+open(T,">$execution_dir2/tables.conf");
+print T $config_table;
+close(T);
+
+
+my $iframe = qq~
+<div id="metadata" class="tab-pane fade">
+<br/><iframe src='$Configuration::CGI_WEB_DIR/table_viewer.cgi?session=$session2' width='950' height='900' style='border:solid 0px black;'></iframe><br/><br/>
 </div>
                 ~;
 print $iframe;
