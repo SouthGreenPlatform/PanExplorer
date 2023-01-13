@@ -70,6 +70,10 @@ my $strains;
 if ($cgi -> param('strains') =~/([\w\,\-\.]+)/){
 	$strains = $1;
 }
+my $strains2;
+if ($cgi -> param('strains2') =~/([\w\,\-\.]+)/){
+        $strains2 = $1;
+}
 my $strain1;
 if ($cgi -> param('strain1') =~/([\w\,\-\.]+)/){
 	$strain1 = $1;
@@ -493,6 +497,14 @@ if ($action eq "search"){
 	my @strains2 = split(",",$strains);
         my $concatenate_strains = join(",",sort @strains2);
         my $selection_size = scalar @strains2;
+
+	# in case of a second group to be compared
+	my @strains_to_be_compared = split(",",$strains2);
+        my $concatenate_strains_to_be_compared = join(",",sort @strains_to_be_compared);
+        my @all_strains_to_be_analyzed = @strains_to_be_compared;
+        push(@all_strains_to_be_analyzed, @strains2);
+        my $concat_all_strains_to_be_analyzed = join(",",sort @all_strains_to_be_analyzed);
+
         my %cluster_of_gene;
         my %genes_of_cluster;
         open(F,"$Configuration::DATA_DIR/pangenome_data/$project/1.Orthologs_Cluster.txt");
@@ -521,9 +533,14 @@ if ($action eq "search"){
                 my @samples_specific;
                 my $cluster_is_found = 0;
                 $nb_total_strains = $#i;
+		if ($strains2 =~/\w+/){$nb_total_strains = scalar @all_strains_to_be_analyzed - 1;}
                 for (my $j = 1; $j <= $#i; $j++){
                         my $val = $i[$j];
                         my $samp = $samples[$j];
+
+			# exclude strains that must not be considered
+			if ($strains2 =~/\w+/ && $concat_all_strains_to_be_analyzed !~/$samp/){next;}
+
                         if ($val =~/\w+/){
                                 my @genes = split(",",$val);
                                 foreach my $gene(@genes){
