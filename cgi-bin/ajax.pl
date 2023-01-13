@@ -53,9 +53,32 @@ if ($action eq "check_id"){
 				my $grep = `grep $genbank $Configuration::DATA_DIR/prokaryotes.txt`;
 				my @infos = split(/\t/,$grep);
 				my $status = $infos[15];
-				if ($status !~/Complete Genome/ && $status !~/Chromosome/){
-					print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: This identifier is not a genome available in Genbank (status: $status)";exit;
-				}
+
+				# discard plasmid
+				my $list_of_accessions = $infos[8];
+                                my @sub_accessions = split(/; /,$list_of_accessions);
+                                foreach my $sub_accession(@sub_accessions){
+                                        if ($sub_accession =~/$genbank/){
+                                                my ($typeseq) = split(/:/,$sub_accession);
+                                                if ($typeseq =~/plasmid/){
+                                                        $status = "plasmid";
+                                                }
+                                        }
+                                }
+                                if ($status =~/plasmid/){
+                                        print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: Recognized as plasmid sequence";
+                                        exit;
+                                }
+
+				my $is_draft = 0;
+                                if ($status eq ""){
+                                        print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: This identifier is not found among available genomes. Maybe not annotated genome...";exit;
+                                }
+                                elsif ($status !~/Complete Genome/ && $status !~/Chromosome/){
+                                        print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: Not recognized as a complete genome (draft genome)";
+                                        $is_draft = 1;exit;
+                                }
+
 				my $ftp_path = $infos[$#infos -2];
 				$ftp_path =~s/ftp:/http:/g;
 				my @table = split(/\//,$ftp_path);
@@ -120,8 +143,8 @@ if ($action eq "check_id"){
 				if ($contain_genes < 10){
 					print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: Genome is not annotated";exit;
 				}
-				if ($contain_genes >8000){
-                                        print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: Genome contains too many genes to be supported by the analysis (max:8000) ";exit;
+				if ($contain_genes >10000){
+                                        print "<img height=20 src='https://panexplorer.southgreen.fr/images/error-icon-4.png'>&nbsp;&nbsp; $genbank: ERROR: Genome contains too many genes to be supported by the analysis (max:10000) ";exit;
                                 }
 			if ($strain && $genus =~/\w+/){
                                         $strain_names{$strain}++;
