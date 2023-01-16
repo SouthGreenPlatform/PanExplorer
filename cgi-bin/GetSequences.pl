@@ -47,7 +47,9 @@ elsif ($pid2 == 0 ){
         foreach my $genbank(keys(%strains)){
                 my $strain = $strains{$genbank};
 		open(F,">$inputdir/$strain.gi");print F "$genbank\n";close(F);
-                my $get_genbank = `efetch -id $genbank -db nuccore -format gb >$inputdir/$strain.gb`;
+		system("cp -rf $inputdir/$strain.gbff.gz $inputdir/$strain.gb.gz");
+		system("gunzip $inputdir/$strain.gb.gz");
+                #my $get_genbank = `efetch -id $genbank -db nuccore -format gb >$inputdir/$strain.gb`;
                 my $get_prot = `efetch -id $genbank -db nuccore -format fasta_cds_aa >$inputdir/$strain.faa`;
                 my $get_gene = `efetch -id $genbank -db nuccore -format gene_fasta >$inputdir/$strain.fna`;
                 my $convert_ptt = `/www/panexplorer.southgreen.fr/tools/gb2ptt/bin/gb2ptt.pl --infile $inputdir/$strain.gb`;
