@@ -15,7 +15,7 @@ PanExplorer performs pan-genome analysis (using PGAP or Roary) and exposes resul
 
 The application allows interactive data exploration at different levels :
 
-(i) Pan-genome visualization as a presence/absence heatmap. This overview allows to easily identify and distinguish core-genes (present in all strains), cloud genes (genes from the accessory genome) and genome-specific genes.
+(i) Pan-genome visualizations as a presence/absence heatmap. This overview allows to easily identify and distinguish core-genes (present in all strains), cloud genes (genes from the accessory genome) and genome-specific genes.
 
 (ii) Physical map of core-genes and strain-specific genes can be displayed as a circular genomic representation (Circos), for each genome taken independently.
 
