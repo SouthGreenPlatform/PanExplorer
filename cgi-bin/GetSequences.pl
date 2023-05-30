@@ -44,6 +44,7 @@ elsif ($pid2 == 0 ){
                 }
         }
         close(LS);
+
         foreach my $genbank(keys(%strains)){
                 my $strain = $strains{$genbank};
 		open(F,">$inputdir/$strain.gi");print F "$genbank\n";close(F);
