@@ -1,6 +1,5 @@
-BootStrap: debootstrap
-OSVersion: stable
-MirrorURL: http://ftp.us.debian.org/debian/
+Bootstrap: docker
+From: debian:latest
 
 %runscript
     echo "This is what happens when you run the container..."
@@ -8,11 +7,11 @@ MirrorURL: http://ftp.us.debian.org/debian/
 %post
     echo "Hello from inside the container"
     apt-get update
-    apt-get install -y bash wget r-base-core r-cran-svglite r-cran-upsetr r-cran-optparse r-cran-dendextend r-cran-gplots ncbi-blast+ ncbi-blast+-legacy roary prokka snakemake python3 cd-hit mafft mcl phylip python3-pip libstatistics-linefit-perl bioperl libstatistics-distributions-perl pdf2svg python3-biopython 
+    apt-get install -y bash wget r-base-core r-cran-svglite r-cran-upsetr r-cran-optparse r-cran-dendextend r-cran-gplots ncbi-blast+ ncbi-blast+-legacy roary prokka snakemake python3 cd-hit mafft mcl phylip python3-pip libstatistics-linefit-perl bioperl libstatistics-distributions-perl pdf2svg python3-biopython r-cran-heatmaply python3-pandas python3-numpy python3-seaborn python3-xarray python3-plotly pipx 
     git clone https://github.com/aleimba/bac-genomics-scripts.git
     cp -rf bac-genomics-scripts /usr/local/bin
 
-    pip3 install git+https://github.com/gtonkinhill/panaroo
+    #pip3 install git+https://github.com/gtonkinhill/panaroo
 
     wget http://downloads.sourceforge.net/project/pgap/PGAP-1.2.1/PGAP-1.2.1.tar.gz
     tar -xzvf PGAP-1.2.1.tar.gz
@@ -51,10 +50,10 @@ MirrorURL: http://ftp.us.debian.org/debian/
     wget https://mmseqs.com/latest/mmseqs-linux-sse41.tar.gz --no-check-certificate
     tar xvfz mmseqs-linux-sse41.tar.gz
     cp -rf mmseqs/bin/mmseqs /usr/bin/
-    
-    pip3 install panacota
-    pip3 install panacota --upgrade
-
+   
+    export PIPX_HOME=/opt/pipx
+    export PIPX_BIN_DIR=/usr/local/bin 
+    pipx install panacota
 
 #    apt-get -y install build-essential bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1
 #    rm -rf /var/lib/apt/lists/*
@@ -69,6 +68,7 @@ MirrorURL: http://ftp.us.debian.org/debian/
 #    #List installed environments
 #    conda list
 
+#    conda install -c bioconda orthofinder
 
 %environment
     export PATH=$PATH:/usr/games
