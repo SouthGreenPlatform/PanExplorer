@@ -20,6 +20,14 @@ From: debian:latest
     sed -i "s/\/home\/zhaoyb\/work\/PGAP\/PGAP\/Programs\/ExtraBin\//\/usr\/bin\//g" /usr/local/bin/PGAP-1.2.1/PGAP.pl
     sed -i "s/\/share\/ibm-1\/bin\//\/usr\/bin\//g" /usr/local/bin/PGAP-1.2.1/PGAP.pl
 
+    wget https://github.com/davidemms/OrthoFinder/releases/latest/download/OrthoFinder.tar.gz
+    tar -xzvf OrthoFinder.tar.gz
+    cp -rf OrthoFinder /usr/bin/
+
+    wget http://github.com/bbuchfink/diamond/releases/download/v2.1.8/diamond-linux64.tar.gz
+    tar xzf diamond-linux64.tar.gz
+    cp -rf ./diamond /usr/bin/OrthoFinder/bin/
+
     git clone https://github.com/SouthGreenPlatform/PanExplorer_workflow.git
 
     export PANEX_PATH=/usr/local/bin/PanExplorer_workflow    
@@ -71,4 +79,4 @@ From: debian:latest
 #    conda install -c bioconda orthofinder
 
 %environment
-    export PATH=$PATH:/usr/games
+    export PATH=$PATH:/usr/games:/usr/bin/OrthoFinder:/usr/bin/OrthoFinder/bin
