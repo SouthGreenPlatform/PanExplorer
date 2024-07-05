@@ -122,9 +122,9 @@ Open the following URL: http://localhost:8050
 
 You should obtain the following rendering
 
-<img src="images/pav_dash_screenshot.PNG" align="center" width="70%" style="display: block; margin: auto;"/>
+<img src="dash/images/pav_dash_screenshot.PNG" align="center" width="70%" style="display: block; margin: auto;"/>
 
-![img](images/pav_dash_screenshot.PNG)
+![img](dash/images/pav_dash_screenshot.PNG)
 
 
 
