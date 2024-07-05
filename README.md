@@ -104,9 +104,9 @@ UpsetR Diagram
 
  ## Run the dash Web application
 
-This section describes how to run the dash web application 
+This section describes how to run the dash web application, allowing to interactively explore results of PanExplorer workflow 
 
-Edit the configuration to indicate the path to the data directory
+Edit the configuration to indicate the path to the data directory `dash/panexplorer_config.yaml`
 
 ```
 cd dash
