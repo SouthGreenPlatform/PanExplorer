@@ -108,13 +108,10 @@ This section describes how to run the dash web application, allowing to interact
 
 Edit the configuration to indicate the path to the data directory `dash/panexplorer_config.yaml`
 
-```
-cd dash
-```
-
 Run the application in debug mode
 
 ```
+cd dash
 python app.py
 ```
 
