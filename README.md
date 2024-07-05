@@ -102,6 +102,33 @@ UpsetR Diagram
  
  <img src="heatmap.svg" align="center" width="70%" style="display: block; margin: auto;"/>
 
+ ## Run the dash Web application
+
+This section describes how to run the dash web application 
+
+Edit the configuration to indicate the path to the data directory
+
+```
+cd dash
+```
+
+Run the application in debug mode
+
+```
+python app.py
+```
+
+Open the following URL: http://localhost:8050
+
+You should obtain the following rendering
+
+<img src="images/pav_dash_screenshot.PNG" align="center" width="70%" style="display: block; margin: auto;"/>
+
+![img](images/pav_dash_screenshot.PNG)
+
+
+
+
 ## Deploy the Web application
 
 This section describes how to deploy the web application on a Ubuntu running with Apache2.
@@ -201,14 +228,7 @@ our $CGI_WEB_DIR    = "http://localhost/cgi-bin";
 our $TEMP_EXECUTION_DIR = "/var/www/panexplorer/htdocs/tmp";
 ```
 
-6- Get up-to-date genomes available at genbank
-
-```
-wget https://ftp.ncbi.nlm.nih.gov/genomes/GENOME_REPORTS/prokaryotes.txt
-sudo cp -rf prokaryotes.txt /var/www/panexplorer/cgi-bin/data/
-```
-
-7- Access to your application using the URL defined in Configuration.pm
+6- Access to your application using the URL defined in Configuration.pm
 
 http://localhost/cgi-bin/home.cgi
 
