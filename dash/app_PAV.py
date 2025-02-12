@@ -277,11 +277,11 @@ app.layout = html.Div([
             html.Br(),
             html.Div(className="row", id='tables', children=[
                 html.Div(children=[
-                    html.H3("Pan-genes"),
+                    dcc.Loading(html.H3(id='nb_of_pangenes', style={'whiteSpace': 'pre-line'})),
                     dcc.Loading(
                         dag.AgGrid(
                                 id="table_pangenes",
-                                style={'width': '50vh', 'height': '50vh','margin-left': '15px'},
+                                style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
                                 rowData=[],
                                 columnDefs=[{"field": i} for i in ["ClutserID","COG","COGcat","type"]],
                                 #defaultColDef={"filter": True},
@@ -294,12 +294,12 @@ app.layout = html.Div([
                 
                 
                 html.Div(style={'marginLeft': 50}, children=[
-                    html.H3("Selected cluster"),
+                    dcc.Loading(html.H3(id='selected_cluster')),
                     #html.Div(id="cluster_info"),
                     dcc.Loading(
                         dag.AgGrid(
                                     id="genes_cluster",
-                                    style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
+                                    style={'width': '50vh', 'height': '50vh','margin-left': '15px'},
                                     rowData=[],
                                     columnDefs=[{"field": i} for i in ["Cluster","Species","Genes"] ],
                                     #defaultColDef={"filter": True},
@@ -311,7 +311,7 @@ app.layout = html.Div([
                 ]),
 
                 html.Div(style={'marginLeft': 50}, children=[
-                    html.H3("Cluster Search"),
+                    dcc.Loading(html.H3(id="clustersearch")),
                     dcc.Loading(
                         dag.AgGrid(
                                 id="table_of_search",
@@ -442,6 +442,7 @@ def display_sample_selection(pathname):
 #############################################################
 @app.callback(
     #Output('cluster_info', 'children'),
+    Output('selected_cluster', 'children'),
     Output('genes_cluster', 'rowData'),
     Output('my-default-alignment-viewer', 'data'),
     Input('PAV_graph', 'clickData'),
@@ -468,9 +469,14 @@ def display_click_data(clickData,pathname,metadata_table):
     
     nb_presence,dictionary,data = get_cluster_details(cluster,pathname,list_of_strains)
     rowData = dictionary
-    return dictionary,data
+    selected_cluster = "Selected cluster id: " + str(cluster)
+    return selected_cluster,dictionary,data
 
+##########################################
+# when clicking in the table of pangenes
+##########################################
 @app.callback(
+    Output('selected_cluster', 'children', allow_duplicate=True),
     Output('genes_cluster', 'rowData', allow_duplicate=True),
     Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
@@ -479,7 +485,6 @@ def display_click_data(clickData,pathname,metadata_table):
     prevent_initial_call=True
     #Input('url', 'hash')
 )
-
 def display_click_data(cell,pathname,metadata_table):
          
     cluster = 1
@@ -493,11 +498,42 @@ def display_click_data(cell,pathname,metadata_table):
         wjdata = json.loads(json.dumps(cell, indent=2))
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,pathname,list_of_strains)
-        return dictionary,data
+        selected_cluster = "Selected cluster id:" + str(cluster)
+        return selected_cluster,dictionary,data
     else:
-        return [],""
+        return "",[],""
 
+##########################################
+# when clicking in the table of selected cluster
+##########################################
 @app.callback(
+    Output('clustersearch', 'children', allow_duplicate=True),
+    Output("table_of_search",'rowData', allow_duplicate=True),
+    Input('genes_cluster', 'cellClicked'),
+    Input('url', 'hash'),
+    Input('metadata_table','selectedRows'),
+    prevent_initial_call=True
+    #Input('url', 'hash')
+)
+def display_specific_clusters(cell,pathname,metadata_table):
+    cluster = 1
+    list_of_strains = []
+    if metadata_table:
+        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata1:
+            strain_name = strain['Strain name']
+            list_of_strains.append(strain_name)  
+    if cell:
+        wjdata = json.loads(json.dumps(cell, indent=2))
+        cluster = wjdata['value']
+
+    #clustersearch = "Cluster Search: " + str(len(search_res2)) + " clusters"
+    nb_clusters,list_clusters = get_clusters_similar_to(cluster,pathname,list_of_strains)
+
+    return nb_clusters,list_clusters
+    
+@app.callback(
+    Output('selected_cluster', 'children', allow_duplicate=True),
     Output('genes_cluster', 'rowData', allow_duplicate=True),
     Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Input('table_of_search', 'cellClicked'),
@@ -521,9 +557,10 @@ def display_click_data(cell,pathname,metadata_table):
         wjdata = json.loads(json.dumps(cell, indent=2))
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,pathname,list_of_strains)
-        return dictionary,data
+        selected_cluster = "Selected cluster id:" + str(cluster)
+        return selected_cluster,dictionary,data
     else:
-        return [],""
+        return "",[],""
         
 
 
@@ -633,6 +670,7 @@ def set_reference_value(available_options):
 # callback for changing graphes
 #################################################
 @app.callback(
+    Output("nb_of_pangenes",'children'),
     Output('textarea-example-output', 'children'),
     Output('PAV_graph', 'figure'),
     Output('table_pangenes', 'rowData'),
@@ -648,6 +686,8 @@ def set_reference_value(available_options):
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
     Output("table_of_search",'rowData'),
+    Output("clustersearch",'children'),
+    
     
     
     #Output('graph_upset', 'figure'),
@@ -1194,7 +1234,10 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     dynamic_tree = html.Iframe(id='tree',src="assets/tree."+str(session)+".html",style={"height": "600px", "width": "100%"}),
     #dynamic_tree = cmd
 
-    return text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2#,fig_upset
+    nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
+    clustersearch = "Cluster Search: " + str(len(search_res2)) + " clusters"
+    
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch#,fig_upset
 
 
 
@@ -1260,10 +1303,14 @@ def init_dataframes(pathname):
 
     df['ClutserID'].replace(to_replace ='\d', value ='CLUSTER',regex = True,inplace=True)
     df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
-    cmd = "sed -i 's/^/CLUSTER/g' "+directory+"/1.Orthologs_Cluster.2.txt"
+    
+    #df.to_csv("sessions/pav_matrix."+str(session)+".txt",sep='\t',index=False)
+
+    cmd = "sed -i 's/^/CLUSTER/g' " + directory+"/1.Orthologs_Cluster.2.txt"
     returned_value = os.system(cmd)
 
     df = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
+
     df = df.rename(columns={'CLUSTERClutserID': 'ClutserID'})
     df = df.rename(columns={'CLUSTERCLUSTERClutserID': 'ClutserID'})
     #df = df.dropna()
@@ -1354,7 +1401,69 @@ def generate_html(dataframe: pd.DataFrame):
     # return the html
     return html
 
+###############################################
+# return list of clusters with the same combination as cluster given as argument
+###############################################
+def get_clusters_similar_to(cluster,pathname,list_of_strains):
+    
+    directory = "data/african_Xo"
+    with open("panexplorer_config.yaml", "r") as yaml_file:
+        conf = yaml.safe_load(yaml_file)
+        directory = conf["directory"]
 
+    df = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
+    df = df.rename(columns={'CLUSTERClutserID': 'ClutserID'})
+    df = df.rename(columns={'CLUSTERCLUSTERClutserID': 'ClutserID'})
+    mini_df = df[df["ClutserID"] == "CLUSTER"+str(int(cluster))]
+    print("similar to")
+    print(mini_df)
+    
+    
+    # generate a new dataframe from a list of list
+    list_of_list = []
+    nb_presence = 0
+    specific_to = []
+    for item in mini_df.columns:
+        if item != 'ClutserID' and item in list_of_strains:
+            genes = mini_df[item]
+            keep = True
+            
+            for gene in genes:
+                if gene == 0:
+                    keep = False
+            if keep:
+                list_genes = ','.join(map(str,genes)) 
+                list = [int(cluster),item,list_genes]
+                list_of_list.append(list)
+                nb_presence+=1
+                specific_to.append(str(item))
+
+    # 1) get clusters for which gene is present for these samples
+    specific_to.append("ClutserID")
+
+    df_specific_to = df
+    df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
+
+    # add information of sum
+    df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
+    df_specific_to.to_csv("df_specific_to.csv")
+    # keep only cluster with the correct number of genes across samples
+    df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
+    df_specific_to.to_csv("df_specific_to.2.csv")
+    df_specific_to = df_specific_to[specific_to]
+    df_specific_to.to_csv("df_specific_to.3.csv")
+    # keep only cluster with the correct number of genes across samples, within the selected samples
+    df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
+    df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
+    df_specific_to.to_csv("df_specific_to.4.csv")
+    
+    list_of_clusters = df_specific_to['ClutserID'].tolist()
+    df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+    search_res2 = df_search.to_dict('records')
+    #df_specific_to = df_specific_to["ClutserID"]
+
+    clustersearch = "Cluster Search: " + str(len(df_specific_to)) + " clusters"
+    return clustersearch,search_res2
 
 if __name__ == '__main__':
     #app.run_server(debug=True)
