@@ -664,7 +664,11 @@ def update_pivot(metadata_table,pathname):
     Input('reference', 'options')
 )
 def set_reference_value(available_options):
-    return available_options[-1]['value']
+    if available_options:
+        return available_options[0]['value']
+    else:
+        return ''
+
 
 #################################################
 # callback for changing graphes
