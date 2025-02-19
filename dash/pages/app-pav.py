@@ -825,8 +825,12 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     
     df_cog_of_clusters = pd.read_csv(directory+'/cog_of_clusters.2.txt',sep='\t')
     df2 = df2.astype({"ClutserID": int})
-    df_cog_of_clusters = df_cog_of_clusters.astype({"Cluster": int})
-    merged_with_cog = pd.merge(df2, df_cog_of_clusters, how="left", left_on='ClutserID', right_on='Cluster')
+    # get only the first COG assigned to a cluster
+    df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters.groupby('Cluster').first()
+    print(df_cog_of_clusters_grouped_by_cluster)
+
+    #df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters_grouped_by_cluster.astype({"Cluster": int})
+    merged_with_cog = pd.merge(df2, df_cog_of_clusters_grouped_by_cluster, how="left", left_on='ClutserID', right_on='Cluster')
     merged_with_cog.to_csv(directory+"/merged_with_cog.txt")
     core_df = merged_with_cog[merged_with_cog["sum"] == len(list_sp2)]
     specific_df = merged_with_cog[merged_with_cog["sum"] == 1]
@@ -839,6 +843,10 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     nb_specific_genes = len(specific_df)
     nb_coregenes = len(core_df)
     nb_accessory = nb_pangenes - nb_specific_genes - nb_coregenes
+
+    print("Nb specific: "+str(nb_specific_genes))
+
+    
     
     #################################################
     # pie chart
@@ -1247,6 +1255,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     ############################################################
     # Calculate coordinates of core-genes for macrosynteny
     ############################################################
+
     # print("Number of genes:")
     # df_core_genes = pd.merge(df_matrix, core_df, how='inner', on=['ClutserID', 'ClutserID']) 
     # genes_coordinates = {}
@@ -1279,6 +1288,35 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     #                 start = positions.split('..')[0]
     #                 concat = concat + start + ','
     #     fichier.write(concat + '\n')
+
+
+    fig_drawing = go.Figure()
+
+    fig_drawing.add_trace(go.Scatter(
+        x=[1.5, 4.5],
+        y=[0.75, 0.75],
+        text=["Unfilled Rectangle", "Filled Rectangle"],
+        mode="text",
+    ))
+
+    # Set axes properties
+    fig_drawing.update_xaxes(range=[0, 7], showgrid=False)
+    fig_drawing.update_yaxes(range=[0, 3.5])
+
+    # Add shapes
+    fig_drawing.add_shape(type="rect",
+        x0=1, y0=1, x1=2, y1=3,
+        line=dict(color="RoyalBlue"),
+    )
+    fig_drawing.add_shape(type="rect",
+        x0=3, y0=1, x1=6, y1=2,
+        line=dict(
+            color="RoyalBlue",
+            width=2,
+        ),
+        fillcolor="LightSkyBlue",
+    )
+    fig_drawing.update_shapes(dict(xref='x', yref='y'))
 
     
     return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch#,fig_upset
