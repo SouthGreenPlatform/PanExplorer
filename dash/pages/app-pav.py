@@ -56,6 +56,7 @@ with open("panexplorer_config.yaml", "r") as yaml_file:
 
 filtering = 'Continent'
 
+
 dash.register_page(__name__,path='/app-pav')
 
 tabs_styles = {
@@ -152,20 +153,19 @@ layout = html.Div([
     
     html.H1('PanExplorer: Pangene Atlas'),
     html.Div(id='sample_selection',children=[
-        
-        dag.AgGrid(
-            id="metadata_table",
-            style={'width': '100vh','margin-left': '15px'},
-            columnDefs=columnDefs,
-            rowData=[],
-            columnSize="sizeToFit",
-            selectAll=True,
-            defaultColDef={"filter": True},
-            dashGridOptions={
-                "rowSelection": "multiple",
-                "animateRows": False
-            },
-        ),
+            dag.AgGrid(
+                id="metadata_table",
+                style={'width': '100vh','margin-left': '15px'},
+                columnDefs=columnDefs,
+                rowData=[],
+                columnSize="sizeToFit",
+                selectAll=True,
+                defaultColDef={"filter": True},
+                dashGridOptions={
+                    "rowSelection": "multiple",
+                    "animateRows": False
+                },
+            ),
         html.Br(),
         html.Button('Apply the selection of samples', id='submit-samples', n_clicks=0),  
         html.Br(),
@@ -358,6 +358,10 @@ layout = html.Div([
             html.Br(),
             dcc.Loading(dcc.Graph(id='graph_ANI')),
             ]),
+        dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '200vh', 'height': '100vh','margin-left': '15px'})),
+        ]),
         dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             dcc.Loading(dash_bio.Circos(
@@ -691,6 +695,7 @@ def set_reference_value(available_options):
     Output("my-dashbio-default-circos", "tracks"),
     Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
+    Output("graph_macrosynteny", 'figure'),
     
     
     
@@ -1256,38 +1261,90 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     # Calculate coordinates of core-genes for macrosynteny
     ############################################################
 
-    # print("Number of genes:")
-    # df_core_genes = pd.merge(df_matrix, core_df, how='inner', on=['ClutserID', 'ClutserID']) 
-    # genes_coordinates = {}
-    # for sp in list_species:
-    #     cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+sp+".ptt >"+directory+"/genomes/genomes/"+sp+".2.ptt"
-    #     returned_value = os.system(cmd)
-    #     df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+sp+'.2.ptt',sep='\t')
-    #     for row in df_gene_positons.itertuples():
-    #         gene = row[4]
-    #         position = row[1]
-    #         chrom = row[5]
-    #         genes_coordinates[str(gene)]= str(chrom) + ":" + str(position)
-    # fichier = open('coregenes_coordinates.txt', 'w')
-    # c=0
-    # for specie in df_core_genes:
-    #     if (c >=1 and c <=7):
-    #         fichier.write(specie + ',')
-    #     c+=1
-    # fichier.write('\n')
-    # for row in df_core_genes.itertuples():
-    #     concat = ""
-    #     for i in range(2,6):
-    #         genes = row[i].split(',')
-    #         gene = genes[0]
-    #         if gene in genes_coordinates.keys():
-    #             position = genes_coordinates[str(gene)]
-    #             chrom = position.split(':')[0]
-    #             if chrom == '1':
-    #                 positions = position.split(':')[1]
-    #                 start = positions.split('..')[0]
-    #                 concat = concat + start + ','
-    #     fichier.write(concat + '\n')
+    print("Number of genes:")
+    # remove duplicates from a list
+    list_selected = list(dict.fromkeys(list_selected))
+    
+    df_matrix_filtered = df_matrix[list_selected]
+    df_core_genes = pd.merge(df_matrix_filtered, core_df, how='inner', on=['ClutserID', 'ClutserID']) 
+
+    list_selected.remove("ClutserID")
+
+    #df_core_genes2 = df_core_genes[list_species]
+    print(df_core_genes)
+    genes_coordinates = {}
+    for sp in list_selected:
+        cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+sp+".ptt >"+directory+"/genomes/genomes/"+sp+".2.ptt"
+        returned_value = os.system(cmd)
+        df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+sp+'.2.ptt',sep='\t')
+        
+        for row in df_gene_positons.itertuples():
+            gene = row[4]
+            position = row[1]
+            chrom = row[5]
+
+            # case bacteria 
+            if len(row) > 6:
+                chrom='1'
+
+            # case eukaryotes
+            else:
+                chrom_number = re.findall(r'\d+', str(chrom))
+                if len(chrom_number) > 0:
+                    chrom = chrom_number[0]  
+                
+            genes_coordinates[str(gene)]= str(chrom) + ":" + str(position)
+            
+
+
+
+    max_nb_strains_macrosynteny = 10
+    if len(list_selected) < max_nb_strains_macrosynteny:
+        max_nb_strains_macrosynteny = len(list_selected)
+            
+    fichier = open('coregenes_coordinates.txt', 'w')
+    c=0
+    list_of_species_macrosyneny = []
+    for specie in df_core_genes:
+        specie = specie[:-2]
+        print("specie:"+specie)
+        if (c >=1 and c <=(max_nb_strains_macrosynteny)):
+            fichier.write("," + specie)
+            list_of_species_macrosyneny.append(specie)
+        c+=1   
+    fichier.write('\n')
+    num_cores = 0
+    for row in df_core_genes.itertuples():
+        num_cores+=1
+        concat = ''
+        dict_chrom = {}
+        for i in range(2,max_nb_strains_macrosynteny+2):
+            genes = row[i].split(',')
+            gene = genes[0]
+            
+            if gene in genes_coordinates.keys():
+                position = genes_coordinates[str(gene)]
+                chrom = position.split(':')[0]
+                dict_chrom[chrom] = 1
+                if chrom == '1':
+                    positions = position.split(':')[1]
+                    start = positions.split('..')[0]
+                    if concat == '':
+                        concat = str(num_cores)
+                    concat = concat + ',' + start
+        # only print if the chrom is the same for each genome
+        if concat != '' and len(dict_chrom) == 1:
+            fichier.write(concat + '\n')
+
+
+    #df_macrosynteny = px.data.iris()
+    #df_macrosynteny.to_csv("iris.txt")
+    df_macrosynteny = pd.read_csv('coregenes_coordinates.txt',sep=',')
+    graph_macrosynteny = px.parallel_coordinates(df_macrosynteny,
+                              dimensions=list_of_species_macrosyneny,
+                              #color_continuous_scale=px.colors.diverging.Tealrose,
+                              color_continuous_midpoint=2)
+
 
 
     fig_drawing = go.Figure()
@@ -1319,7 +1376,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     fig_drawing.update_shapes(dict(xref='x', yref='y'))
 
     
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch#,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny#,fig_upset
 
 
 
