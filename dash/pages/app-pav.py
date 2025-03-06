@@ -129,7 +129,8 @@ highlight_config4 = {
   
 df_matrix = pd. DataFrame()
 
-#df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
+
+
 columnDefs = [
     {
         "field": "Strain name",
@@ -402,10 +403,15 @@ layout = html.Div([
 )
 
 def display_sample_selection(pathname):
-    df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(pathname)
+    #df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(pathname)
     
+    directory = get_directory(pathname)
     
-    df_metadata = df_metadata[df_metadata['Strain name'] != 'ClutserID']
+    df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
+    list_species = df_metadata['Strain name']
+    #print("display_sample_selection")
+    #print(df_metadata)
+    #df_metadata = df_metadata[df_metadata['Strain name'] != 'ClutserID']
     
     return html.Div([
         
@@ -614,7 +620,7 @@ def get_cluster_details(cluster,pathname,list_of_strains):
         concat = concat + ">"+genename + "_" + speciesname + "\n" + result
         
     data = concat
-    print(data)
+    #print(data)
     #data = ">test\nP\t>test2\nP"
     mydf.to_csv('export_cluster_details.txt')
     dictionary = mydf.to_dict('records')
@@ -1269,45 +1275,51 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     df_core_genes = pd.merge(df_matrix_filtered, core_df, how='inner', on=['ClutserID', 'ClutserID']) 
 
     list_selected.remove("ClutserID")
+    max_nb_strains_macrosynteny = 10
+    if len(list_selected) < max_nb_strains_macrosynteny:
+        max_nb_strains_macrosynteny = len(list_selected)
 
     #df_core_genes2 = df_core_genes[list_species]
-    print(df_core_genes)
+    #print(df_core_genes)
     genes_coordinates = {}
+    c=0
     for sp in list_selected:
-        cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+sp+".ptt >"+directory+"/genomes/genomes/"+sp+".2.ptt"
-        returned_value = os.system(cmd)
-        df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+sp+'.2.ptt',sep='\t')
-        
-        for row in df_gene_positons.itertuples():
-            gene = row[4]
-            position = row[1]
-            chrom = row[5]
 
-            # case bacteria 
-            if len(row) > 6:
-                chrom='1'
+        if (c >=1 and c <=(max_nb_strains_macrosynteny)):
+            cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+sp+".ptt >"+directory+"/genomes/genomes/"+sp+".2.ptt"
+            returned_value = os.system(cmd)
+            df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+sp+'.2.ptt',sep='\t')
+            
+            for row in df_gene_positons.itertuples():
+                gene = row[4]
+                position = row[1]
+                chrom = row[5]
 
-            # case eukaryotes
-            else:
-                chrom_number = re.findall(r'\d+', str(chrom))
-                if len(chrom_number) > 0:
-                    chrom = chrom_number[0]  
-                
-            genes_coordinates[str(gene)]= str(chrom) + ":" + str(position)
+                # case bacteria 
+                if len(row) > 6:
+                    chrom='1'
+
+                # case eukaryotes
+                else:
+                    chrom_number = re.findall(r'\d+', str(chrom))
+                    if len(chrom_number) > 0:
+                        chrom = chrom_number[0]  
+                    
+                genes_coordinates[str(gene)]= str(chrom) + ":" + str(position)
+        c+=1
             
 
 
 
-    max_nb_strains_macrosynteny = 10
-    if len(list_selected) < max_nb_strains_macrosynteny:
-        max_nb_strains_macrosynteny = len(list_selected)
+    
             
     fichier = open('coregenes_coordinates.txt', 'w')
     c=0
     list_of_species_macrosyneny = []
-    for specie in df_core_genes:
+    #for specie in df_core_genes:
+    for specie in list_selected:
         specie = specie[:-2]
-        print("specie:"+specie)
+        #print("specie:"+specie)
         if (c >=1 and c <=(max_nb_strains_macrosynteny)):
             fichier.write("," + specie)
             list_of_species_macrosyneny.append(specie)
@@ -1347,41 +1359,38 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
 
 
 
-    fig_drawing = go.Figure()
+    # fig_drawing = go.Figure()
 
-    fig_drawing.add_trace(go.Scatter(
-        x=[1.5, 4.5],
-        y=[0.75, 0.75],
-        text=["Unfilled Rectangle", "Filled Rectangle"],
-        mode="text",
-    ))
+    # fig_drawing.add_trace(go.Scatter(
+    #     x=[1.5, 4.5],
+    #     y=[0.75, 0.75],
+    #     text=["Unfilled Rectangle", "Filled Rectangle"],
+    #     mode="text",
+    # ))
 
-    # Set axes properties
-    fig_drawing.update_xaxes(range=[0, 7], showgrid=False)
-    fig_drawing.update_yaxes(range=[0, 3.5])
+    # # Set axes properties
+    # fig_drawing.update_xaxes(range=[0, 7], showgrid=False)
+    # fig_drawing.update_yaxes(range=[0, 3.5])
 
-    # Add shapes
-    fig_drawing.add_shape(type="rect",
-        x0=1, y0=1, x1=2, y1=3,
-        line=dict(color="RoyalBlue"),
-    )
-    fig_drawing.add_shape(type="rect",
-        x0=3, y0=1, x1=6, y1=2,
-        line=dict(
-            color="RoyalBlue",
-            width=2,
-        ),
-        fillcolor="LightSkyBlue",
-    )
-    fig_drawing.update_shapes(dict(xref='x', yref='y'))
+    # # Add shapes
+    # fig_drawing.add_shape(type="rect",
+    #     x0=1, y0=1, x1=2, y1=3,
+    #     line=dict(color="RoyalBlue"),
+    # )
+    # fig_drawing.add_shape(type="rect",
+    #     x0=3, y0=1, x1=6, y1=2,
+    #     line=dict(
+    #         color="RoyalBlue",
+    #         width=2,
+    #     ),
+    #     fillcolor="LightSkyBlue",
+    # )
+    # fig_drawing.update_shapes(dict(xref='x', yref='y'))
 
     
     return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny#,fig_upset
 
-
-
-def init_dataframes(pathname):
-    
+def get_directory(pathname):
     directory = "data/african_Xo"
     with open("panexplorer_config.yaml", "r") as yaml_file:
         conf = yaml.safe_load(yaml_file)
@@ -1411,8 +1420,7 @@ def init_dataframes(pathname):
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
             returned_value = os.system(cmd)
-            
-            
+
             df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
             df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
             df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
@@ -1424,7 +1432,11 @@ def init_dataframes(pathname):
                     cmd = "wget https://panexplorer.southgreen.fr/tables/"+col+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
                     returned_value = os.system(cmd)
 
-            #directory = "https://panexplorer.southgreen.fr/tmp/" + pathname.replace("#", "")
+    return directory
+
+def init_dataframes(pathname):
+    
+    directory = get_directory(pathname)
 
     #https://panexplorer.southgreen.fr/tmp/86740638254871261615/1.Orthologs_Cluster.txt
     myfile = directory+'/1.Orthologs_Cluster.txt'
