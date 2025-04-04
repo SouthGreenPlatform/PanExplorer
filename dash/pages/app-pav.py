@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html, dcc, Input, Output, State, callback, dash_table
+from dash import Dash, html, dcc, Input, Output, State, callback
 from IPython.display import HTML
 import plotly.express as px
 
@@ -18,9 +18,6 @@ import re
 
 import plotly.graph_objects as go
 
-import dash_table as dt
-import dash_html_components as html
-
 from dash.dependencies import Output, Input
 from dash.exceptions import PreventUpdate
 
@@ -30,6 +27,8 @@ import folium.plugins
 
 
 import dash_bio as dash_bio
+
+import dash_cytoscape as cyto
 
 #from plotly_upset.plotting import plot_upset
 #from upsetplot import plot
@@ -144,6 +143,14 @@ columnDefs = [
     {"field": "Organism"}
 ]
 
+columnDefs2 = [
+    {
+        "field": "Repeat",
+        "checkboxSelection": True,
+        "headerCheckboxSelection": True,
+    }
+]
+
 
 data = ""
 
@@ -152,7 +159,7 @@ data = ""
 PAGE_SIZE = 5
 layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    
+
     
     html.H1('PanExplorer: Pangene Atlas'),
     html.Div(id='sample_selection',children=[
@@ -386,6 +393,7 @@ layout = html.Div([
             html.Br(),
             dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
         ]),
+        
         dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             dcc.Loading(dash_bio.Circos(
@@ -416,6 +424,27 @@ layout = html.Div([
             ],
     )),
             ]),
+        dcc.Tab(label='MLVA', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            html.Div(className="row", children=[
+                dcc.Loading(
+                            dag.AgGrid(
+                                id="mlva_table",
+                                style={'width': '50vh','height': '50vh','margin-left': '15px'},
+                                columnDefs=columnDefs2,
+                                rowData=[],
+                                columnSize="sizeToFit",
+                                selectAll=True,
+                                defaultColDef={"filter": True},
+                                dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                            ),
+
+                            
+                        ),
+                dcc.Loading(dcc.Graph(id='graph_mlva',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
+            ]),
+        ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
 ])
@@ -741,7 +770,9 @@ def set_reference_value(available_options):
     Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
-    
+    Output('graph_mlva', 'figure'),
+    Output('mlva_table', 'rowData'),
+    Output('dynamic_network','srcDoc'),
     
     
     #Output('graph_upset', 'figure'),
@@ -943,6 +974,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         strain_index+=1
         for number in range(3):
             df_random = df01_only.sample(n=strain_index, axis='columns') 
+            
             df_random['sum'] = df_random.sum(axis=1)
             # get pangenes: keep only if at least one gene is present
             df_random = df_random[df_random["sum"] > 0]
@@ -1486,8 +1518,67 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
 
 
 
+
+    ###########################################################
+    # MLVA
+    ###########################################################
+    vntr_file = directory+'/vntr_matrix.tsv'
+
+    df_vntr = pd.DataFrame(columns=['Repeat'])
+    if os.path.exists(vntr_file):
+
+        # remove lines/markers with missing data
+        vntr_file_nomissing = directory+'/vntr_matrix.nomissing.tsv'
+        cmd = "grep -v '-' "+vntr_file+ " >"+vntr_file_nomissing
+        returned_value = os.system(cmd)
+
+        df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
+
+
+    repeat_names = df_vntr["Repeat"].astype(str).tolist()
+
+    newdf = df_vntr.drop("Repeat", axis='columns')
+    graph_mlva = px.imshow(newdf, 
+                           aspect="auto",
+                           labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
+                           #x=list_sp2,
+                           y=repeat_names,
+                           text_auto=True
+                           )
+    mlva_table = df_vntr.to_dict('records')
+
+
     
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny#,fig_upset
+    transposed_newdf = newdf.transpose()
+
+    # concatenate numbers of repeats as an haplotype value for each sample
+    transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
+
+    # put frequency of haplotypes into a dictionnary 
+    dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
+    haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
+
+    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f:
+        for i in range(len(df_vntr)):
+            f.write(","+str(i))
+        
+        f.write("\n")
+        i = 0
+        for row in haplotype_freq_df.itertuples():
+            i+=1
+            f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
+        
+
+    # add the prefix haplo to indexes
+    #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
+
+
+    #dynamic_network = html.Iframe(id='tree',src=tmp_dir+"/test_pie.html",style={"height": "1000px", "width": "100%"}),
+    dynamic_network = open(tmp_dir+"/test_pie.html", 'r').read()
+
+    
+
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table,dynamic_network #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
