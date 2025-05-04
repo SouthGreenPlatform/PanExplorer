@@ -338,9 +338,8 @@ layout = html.Div([
             ]),
            
             html.Br(),
-            html.Div(className="row", id='focus', children=[
-                dcc.Loading(html.H3(id='selected_cluster')),
-            ]),
+            
+            dcc.Loading(html.H3(id='selected_cluster')),
             html.Div(className="row", id='focus', children=[
             #html.Div(style={'marginLeft': 50}, children=[
                     #html.Div(className="row", children=[
