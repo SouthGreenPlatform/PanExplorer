@@ -28,8 +28,6 @@ import folium.plugins
 
 import dash_bio as dash_bio
 
-import dash_cytoscape as cyto
-
 #from plotly_upset.plotting import plot_upset
 #from upsetplot import plot
 #from upsetplot import generate_counts
@@ -242,29 +240,16 @@ layout = html.Div([
         
 
     ]),
-    html.H5("Search for a cluster"),
-    dcc.Dropdown(
-                [],
-                id='current_cluster',
-                value = '',
-                style ={'visibility': 'hidden'}
-            ),
+    html.H5("Search for clusters"),
 
     html.Div([
-            "Search for cluster by keyword:",
+            "Search for clusters by keyword or COG (comma separated):",
             dcc.Input(
                 id='cluster_search',
                 value = '',
             )
         ], style={'width': '400px', 'display': 'inline-block'}),
 
-    html.Br(),
-    html.Div([
-            "Search for clusters specific to these genomes",dcc.Dropdown(
-                id='specific_to',
-                multi=True
-            )
-        ], style={'width': '500px', 'display': 'inline-block'}),
     html.Br(),
     html.Div([
             "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
@@ -275,8 +260,20 @@ layout = html.Div([
 
 
         ], style={'width': '600px', 'display': 'inline-block'}),
-    html.Br(),
-    html.Br(),
+    html.H5("Pan-GWAS"),
+    html.Div([
+            "Search for clusters specific to these genomes",dcc.Dropdown(
+                id='specific_to',
+                multi=True
+            )
+        ], style={'width': '100%', 'display': 'inline-block'}),
+
+    dcc.Dropdown(
+                [],
+                id='current_cluster',
+                value = '',
+                style ={'visibility': 'hidden'}
+            ),
     html.Button('Submit', id='submit-val', n_clicks=0),  
 
     html.Br(),
@@ -321,10 +318,34 @@ layout = html.Div([
                 ]),
                 
                 
+                
+
                 html.Div(style={'marginLeft': 50}, children=[
+                    dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
+                    dcc.Loading(
+                        dag.AgGrid(
+                                id="table_of_search",
+                                style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
+                                rowData=[],
+                                columnDefs=[{"field": i} for i in ["ClutserID"]],
+                                defaultColDef={"filter": True},
+                                columnSize="sizeToFit",
+                                #getRowId="params.data.State",
+                                dashGridOptions={"pagination": True, "animateRows": False}
+                        ),
+                    ),
+                ]),
+            ]),
+           
+            html.Br(),
+            html.Div(className="row", id='focus', children=[
+                dcc.Loading(html.H3(id='selected_cluster')),
+            ]),
+            html.Div(className="row", id='focus', children=[
+            #html.Div(style={'marginLeft': 50}, children=[
                     #html.Div(className="row", children=[
-                    dcc.Loading(html.H3(id='selected_cluster')),
-                    html.Button('Search for similar clusters',id='search_similar'),
+                    
+                    
                     #    ]),
                     #html.Div(id="cluster_info"),
                     dcc.Loading(
@@ -339,39 +360,27 @@ layout = html.Div([
                                     dashGridOptions={"pagination": True, "animateRows": False}
                             )
                     ),
-                ]),
-
-                html.Div(style={'marginLeft': 50}, children=[
-                    dcc.Loading(html.H3(id="clustersearch")),
-                    dcc.Loading(
-                        dag.AgGrid(
-                                id="table_of_search",
-                                style={'width': '20vh', 'height': '50vh','margin-left': '15px'},
-                                rowData=[],
-                                columnDefs=[{"field": i} for i in ["ClutserID"]],
-                                defaultColDef={"filter": True},
-                                columnSize="sizeToFit",
-                                #getRowId="params.data.State",
-                                dashGridOptions={"pagination": True, "animateRows": False}
+                    html.Div(style={'marginLeft': 50}, children=[
+                        dcc.Loading(
+                            dash_bio.AlignmentChart(
+                                id='my-default-alignment-viewer',
+                                data=data,
+                                width=1000,
+                                height=600,
+                            ),
                         ),
-                    ),
+                    ]),
                 ]),
-            ]),
-           
-            html.Br(),
-            dcc.Loading(dash_bio.AlignmentChart(
-                id='my-default-alignment-viewer',
-                data=data,
-                width=1000,
-                height=600,
-            ),
-            ),
+                
+            
             
             html.Div(id='tbl_out'),
             
         ]),
 
         dcc.Tab(label='COG', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            dcc.Loading(dcc.Graph(id='graph_COG_all')),
             html.Br(),
             dcc.Loading(dcc.Graph(id='graph_COG1')),
             html.Br(),
@@ -382,6 +391,7 @@ layout = html.Div([
             #html.Iframe(id='tree',src="https://panexplorer.southgreen.fr/phylotree/38070424888018112151183211213515.html",style={"height": "600px", "width": "100%"}),
             #html.Iframe(id='tree',src="assets/tree.html",style={"height": "600px", "width": "100%"}),
             html.Div("Dynamic tree",id='dynamic_tree'),
+            
             html.Br(),
             ]),
         
@@ -442,8 +452,10 @@ layout = html.Div([
                             
                         ),
                 dcc.Loading(dcc.Graph(id='graph_mlva',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
-                html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
+                #html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
             ]),
+            html.Br(),
+            html.Iframe(id='dynamic_network',src="https://webphim.ird.fr/test_pie.html",style={"height": "600px", "width": "100%"}),
         ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
@@ -508,6 +520,7 @@ def display_sample_selection(pathname):
     Output('genes_cluster', 'rowData'),
     Output('my-default-alignment-viewer', 'data'),
     Output("current_cluster",'options'),
+    Output("specific_to",'value'),
     Input('PAV_graph', 'clickData'),
     Input('url', 'hash'),
     Input('metadata_table','selectedRows'),
@@ -528,12 +541,15 @@ def display_click_data(clickData,pathname,metadata_table):
     if clickData:
         wjdata = json.loads(json.dumps(clickData, indent=2))
         cluster = wjdata['points'][0]['x']
-
     
     nb_presence,dictionary,data = get_cluster_details(cluster,pathname,list_of_strains)
     rowData = dictionary
     selected_cluster = "Selected cluster id: " + str(cluster)
-    return selected_cluster,dictionary, data, [{'label': str(cluster), 'value': str(cluster)}]
+
+    list_strains = get_combination(cluster,pathname,list_of_strains)
+        
+    return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
+
 
 ##########################################
 # when clicking in the table of pangenes
@@ -581,33 +597,6 @@ def set_current_cluster(available_options):
         return ''
     
 
-
-@callback(
-    Output('clustersearch', 'children', allow_duplicate=True),
-    Output("table_of_search",'rowData', allow_duplicate=True),
-    Input('search_similar', 'n_clicks'),
-    Input('url', 'hash'),
-    Input('metadata_table','selectedRows'),
-    State('current_cluster', 'value'),
-    prevent_initial_call=True
-    #Input('url', 'hash')
-)
-def display_specific_clusters(cell,pathname,metadata_table,current_cluster):
-
-    list_of_strains = []
-    if metadata_table:
-        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
-        for strain in wjdata1:
-            strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)  
-
-    print("Clusterrr" + current_cluster)
-    print(list_of_strains)
-    print(pathname)
-    #clustersearch = "Cluster Search: " + str(len(search_res2)) + " clusters"
-    nb_clusters,list_clusters = get_clusters_similar_to(current_cluster,pathname,list_of_strains)
-
-    return nb_clusters,list_clusters
 
     
 @callback(
@@ -762,6 +751,7 @@ def set_reference_value(available_options):
     Output('graph_ANI', 'figure'),
     Output('graph_gene', 'figure'),
     Output('graph_pie', 'figure'),
+    Output('graph_COG_all', 'figure'),
     Output('graph_COG1', 'figure'),
     Output('graph_COG2', 'figure'),
     Output('rarefaction', 'figure'),
@@ -772,7 +762,7 @@ def set_reference_value(available_options):
     Output("graph_macrosynteny", 'figure'),
     Output('graph_mlva', 'figure'),
     Output('mlva_table', 'rowData'),
-    Output('dynamic_network','srcDoc'),
+    #Output('dynamic_network','srcDoc'),
     
     
     #Output('graph_upset', 'figure'),
@@ -1041,7 +1031,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif specific_to is not None:
+    elif specific_to is not None and len(specific_to) > 0:
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -1051,13 +1041,14 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         # get only if at least one gene is present
         df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
         # remove CLUSTER tag (TODO: to be removed)
-        df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
-        df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
-        df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
-        df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
+
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
         df_specific_to.to_csv("df_specific_to.csv")
         list1 = df_specific_to['ClutserID'].tolist()
-        list1bis = [eval(i) for i in list1]
+        #list1bis = [eval(i) for i in list1]
         
         
         # 2) get clusters for which the number of presence correspond to the number of selected samples
@@ -1066,9 +1057,13 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         list2 = same_number_df['ClutserID'].tolist()
         
         # 3) get overlapping clusters between the two dataframes
-        intersected_list = [value for value in list1bis if value in list2]
+        intersected_list = [value for value in list1 if value in list2]
         print(intersected_list)
+        print("Nb specific genes:")
+        print(specific_to)
         print(len(intersected_list))
+
+        
         
         df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
         search_res2 = df_search.to_dict('records')
@@ -1082,6 +1077,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
             
+        print(len(search_res2))
         print("specific to: "+str(specific_to))
     elif cluster_search != "":
         
@@ -1094,10 +1090,14 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         
         #COG1192
         
-        cmd = "grep -P '"+cluster_search+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
-        returned_value = os.popen(cmd).read()
-        cluster_search = returned_value
-        list_of_clusters = returned_value.split("\n")
+        list_of_clusters = []
+        list_of_COGs = cluster_search.split(",")
+        for cog in list_of_COGs:
+            cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
+            returned_value = os.popen(cmd).read()
+            list_of_clusters1 = returned_value.split("\n")
+            list_of_clusters.extend(list_of_clusters1)
+
         
         # remove empty values
         list_of_clusters = list(filter(None, list_of_clusters))
@@ -1107,11 +1107,13 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         search_res2 = df_search.to_dict('records')
 
         
+
+        
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
     
-
+    
     
  
 
@@ -1179,27 +1181,33 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     
     fig_gene = px.histogram(df2, x="sum")
 
-    if bedfile != "":
+    if bedfile is not None:
 
-        print(merged_with_positions2)
+        print("analysis of bedfile")
+        lines_of_bedfile = bedfile.split("\n")
 
         df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
         df_search['start'] = df_search['start'].astype(int)
         df_search['end'] = df_search['end'].astype(int)
 
-        df_search = df_search.loc[(df_search['start']>=100000) & (df_search['end']< 400000)]
+        list_of_clusters = []
+        for line in lines_of_bedfile:
+            elements_of_line = line.split("\t")
+            start = int(elements_of_line[1])
+            end = int(elements_of_line[2])
+            df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
+            df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
+            list_of_clusters1 = df_subset['ClutserID'].tolist()
+            list_of_clusters.extend(list_of_clusters1)
 
-
-        df_search.rename(columns={'name': 'ClutserID'}, inplace=True)
-        print(df_search)
+        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
         search_res2 = df_search.to_dict('records')
-        print(bedfile)
-    
-    
-    #html = generate_html(df2)
-    #open("data/table.html", "w").write(html)
-    
-    
+
+        for sample in list_sp2:
+            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+
+
+
     if ordering == "Hierarchical clustering":
         
         # remove sum and clutserID from the col
@@ -1321,6 +1329,14 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     data_COG2 = data_COG2.rename(columns={'COG': 'Genome'})
     data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
     data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
+
+    df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
+    df_count.to_csv("COG.count.txt")
+
+    #dftet = px.data.tips()
+    #dftet.to_csv("COG.count.txt")
+
+    fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
     
     #data_COG2_selected.to_csv("export_COG.tsv")
     
@@ -1383,6 +1399,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     dynamic_tree = html.Iframe(id='tree',src="../assets/taxonium."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
     #dynamic_tree = cmd
 
+    print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
     clustersearch = "Cluster Search: " + str(len(search_res2)) + " clusters"
 
@@ -1568,17 +1585,18 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
             i+=1
             f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
         
+    
 
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
 
     #dynamic_network = html.Iframe(id='tree',src=tmp_dir+"/test_pie.html",style={"height": "1000px", "width": "100%"}),
-    dynamic_network = open(tmp_dir+"/test_pie.html", 'r').read()
+    #dynamic_network = open("https://webphim.ird.fr/test_pie.html", 'r').read()
 
     
 
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table,dynamic_network #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table #,dynamic_network #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
@@ -1746,16 +1764,13 @@ def generate_html(dataframe: pd.DataFrame):
     return html
 
 ###############################################
-# return list of clusters with the same combination as cluster given as argument
+# return list of the same combination as a cluster given as argument
 ###############################################
-def get_clusters_similar_to(cluster,pathname,list_of_strains):
+def get_combination(cluster,pathname,list_of_strains):
     
     directory = get_directory(pathname)
 
     df = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
-
-    print("hey" + str(cluster))
-    print(list_of_strains)
 
     # convert cluster identifiers into string for filtering
     df = df.astype({'ClutserID': str})
@@ -1783,37 +1798,8 @@ def get_clusters_similar_to(cluster,pathname,list_of_strains):
                 nb_presence+=1
                 specific_to.append(str(item))
 
-    # 1) get clusters for which gene is present for these samples
-    specific_to.append("ClutserID")
-
-    df_specific_to = df
-
-    # add information of sum
-    df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
-    df_specific_to.to_csv("df_specific_to.csv")
-    # keep only cluster with the correct number of genes across samples
-    df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
-    df_specific_to.to_csv("df_specific_to.2.csv")
-    df_specific_to = df_specific_to[specific_to]
-    df_specific_to.to_csv("df_specific_to.3.csv")
-    # keep only cluster with the correct number of genes across samples, within the selected samples
-    df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
-    df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
-    df_specific_to.to_csv("df_specific_to.4.csv")
-
-    df_specific_to['ClutserID']= df_specific_to['ClutserID'].astype(int)
     
-    list_of_clusters = df_specific_to['ClutserID'].tolist()
-    
-    df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-    search_res2 = df_search.to_dict('records')
-    #print(search_res2)
-
-    
-    #df_specific_to = df_specific_to["ClutserID"]
-
-    clustersearch = "Cluster Search: " + str(len(df_specific_to)) + " clusters"
-    return clustersearch,search_res2
+    return specific_to
 
 if __name__ == '__main__':
     #app.run_server(debug=True)
