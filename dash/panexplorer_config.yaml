@@ -1,1 +1,3 @@
+data_dir: "PATH_TO_DATA_DIRECTORY"
 directory: "PATH_TO_DATA_DIRECTORY"
+tmp_dir: "PATH_TO_TMP_DIRECTORY"
