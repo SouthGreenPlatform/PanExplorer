@@ -325,9 +325,10 @@ layout = html.Div([
                     dcc.Loading(
                         dag.AgGrid(
                                 id="table_of_search",
-                                style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
+                                style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
+                                #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
                                 rowData=[],
-                                columnDefs=[{"field": i} for i in ["ClutserID"]],
+                                columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
                                 defaultColDef={"filter": True},
                                 columnSize="sizeToFit",
                                 #getRowId="params.data.State",
@@ -979,8 +980,8 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
 
     data = {'Number strains': list1,'Number genes': list2,"Type": list3}
     df_rarefaction = pd.DataFrame(data)
-    df_rarefaction.to_csv("rarefactiontest2.txt",index=False)
-    df_rarefaction2 = pd.read_csv('rarefactiontest2.txt',sep=',')
+    df_rarefaction.to_csv(tmp_dir + "/" +"rarefactiontest2.txt",index=False)
+    df_rarefaction2 = pd.read_csv(tmp_dir + "/" +'rarefactiontest2.txt',sep=',')
     fig_rarefaction = px.box(df_rarefaction2, title="Rarefaction curve",x="Number strains", y="Number genes",color="Type")
 
     
@@ -1071,6 +1072,10 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         list_of_clusters = intersected_list
 
         df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+
+        
+
+
         search_res2 = df_search.to_dict('records')
         
         for sample in list_sp2:
@@ -1114,7 +1119,6 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     
     
     
- 
 
     #################################################
     # manage Circos
@@ -1594,6 +1598,14 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     #dynamic_network = open("https://webphim.ird.fr/test_pie.html", 'r').read()
 
     
+    if (len(search_res2) > 1):
+        df_search = pd.DataFrame.from_dict(search_res2)
+        df_search.to_csv("test1")
+        merged_with_cog.to_csv("test2")
+        df_search = pd.merge(df_search,merged_with_cog, left_on='ClutserID', right_on='ClutserID')
+        search_res2 = df_search.to_dict('records')
+
+        df_search.to_csv("test")
 
     return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table #,dynamic_network #,fig_upset
 
