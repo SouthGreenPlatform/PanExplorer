@@ -389,7 +389,7 @@ layout = html.Div([
         dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             #html.Iframe(id='tree',src="https://panexplorer.southgreen.fr/phylotree/38070424888018112151183211213515.html",style={"height": "600px", "width": "100%"}),
-            #html.Iframe(id='tree',src="assets/tree.html",style={"height": "600px", "width": "100%"}),
+            html.Iframe(id='tree',src="assets/test_pie.html",style={"height": "600px", "width": "100%"}),
             html.Div("Dynamic tree",id='dynamic_tree'),
             
             html.Br(),
@@ -455,7 +455,7 @@ layout = html.Div([
                 #html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
             ]),
             html.Br(),
-            html.Iframe(id='dynamic_network',src="https://webphim.ird.fr/test_pie.html",style={"height": "600px", "width": "100%"}),
+            dcc.Loading(html.Div(id='dynamic_network')),
         ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
@@ -762,7 +762,7 @@ def set_reference_value(available_options):
     Output("graph_macrosynteny", 'figure'),
     Output('graph_mlva', 'figure'),
     Output('mlva_table', 'rowData'),
-    #Output('dynamic_network','srcDoc'),
+    Output('dynamic_network','children'),
     
     
     #Output('graph_upset', 'figure'),
@@ -1536,9 +1536,6 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
                               #color_continuous_midpoint=2
                               )
 
-
-
-
     ###########################################################
     # MLVA
     ###########################################################
@@ -1577,37 +1574,69 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     # put frequency of haplotypes into a dictionnary 
     dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
     haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
+    haplotype_freq_df.to_csv(tmp_dir+"/"+str(session)+".haplotype_frequency.txt")
 
-    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f:
+
+    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f, open("assets/network."+str(session)+".1.json", 'a') as j:
         for i in range(len(df_vntr)):
             f.write(","+str(i))
         
+        j.write("{\n")
+        j.write("  \"nodes\": [\n")
         f.write("\n")
         i = 0
+        concat = ""
         for row in haplotype_freq_df.itertuples():
             i+=1
+            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * row[1])+","
+            concat = concat + "\"pieChart\" : [{ \"color\": 0, \"percent\": 100 }]\n"
+            concat = concat + "},\n"
             f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
         
-    
+        concat = concat[:len(concat)-2]
+        j.write(concat+"\n")
+        j.write("],\n")
+
+    # run haplotype network
+    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session)
+    returned_value = os.system(cmd)
+
+    with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
+        j.write("  \"links\": [\n")
+
+        lines = n.readlines()[1:]
+        concat = ""
+        for line in lines:
+            informations = line.split(',')
+            concat = concat + "{\"source\": \""+informations[0]+"\", \"target\": \""+ informations[1] +"\", \"value\": "+ informations[2] +"},\n"
+
+        concat = concat[:len(concat)-2]
+        j.write(concat+"\n")
+        j.write("]\n")
+        j.write("}\n")
+
+    cmd = "cat assets/network."+str(session)+".1.json assets/network."+str(session)+".2.json > assets/network."+str(session)+".json"
+    returned_value = os.system(cmd)
 
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
+    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
+    returned_value = os.system(cmd)
 
-    #dynamic_network = html.Iframe(id='tree',src=tmp_dir+"/test_pie.html",style={"height": "1000px", "width": "100%"}),
-    #dynamic_network = open("https://webphim.ird.fr/test_pie.html", 'r').read()
+    dynamic_network = html.Iframe(id='dynamic_network',src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1000px"}),
 
     
+    ##############################################################################################
+    # merge main cluster table and cluster search in order to report the same columns
+    ##############################################################################################
     if (len(search_res2) > 1):
         df_search = pd.DataFrame.from_dict(search_res2)
-        df_search.to_csv("test1")
-        merged_with_cog.to_csv("test2")
         df_search = pd.merge(df_search,merged_with_cog, left_on='ClutserID', right_on='ClutserID')
         search_res2 = df_search.to_dict('records')
 
-        df_search.to_csv("test")
 
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table #,dynamic_network #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table, dynamic_network #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
