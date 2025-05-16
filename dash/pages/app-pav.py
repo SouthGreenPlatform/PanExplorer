@@ -389,7 +389,7 @@ layout = html.Div([
         dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             #html.Iframe(id='tree',src="https://panexplorer.southgreen.fr/phylotree/38070424888018112151183211213515.html",style={"height": "600px", "width": "100%"}),
-            html.Iframe(id='tree',src="assets/test_pie.html",style={"height": "600px", "width": "100%"}),
+            
             html.Div("Dynamic tree",id='dynamic_tree'),
             
             html.Br(),
@@ -1568,8 +1568,30 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     
     transposed_newdf = newdf.transpose()
 
+    
+
     # concatenate numbers of repeats as an haplotype value for each sample
     transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
+
+    # assign metadata to haplotype
+    df_metadata_tmp = pd.read_csv(directory+'/metadata.tmp.xls',sep='\t')
+    dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
+    dict_haplo = {}
+    dict_element_for_colorizing = {}
+    for strain, row in transposed_newdf.iterrows():
+        country = dict_metadata[strain]
+        dict_element_for_colorizing[country]=1
+        if row.haplotype in dict_haplo.keys():
+            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + country
+        else:
+            dict_haplo[row.haplotype] = country
+
+    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
+
+    #dictionary_haplotype_of_strain = transposed_newdf.set_index('strains')['haplotype'].to_dict()
+
+    
+
 
     # put frequency of haplotypes into a dictionnary 
     dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
@@ -1588,9 +1610,28 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         concat = ""
         for row in haplotype_freq_df.itertuples():
             i+=1
-            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * row[1])+","
-            concat = concat + "\"pieChart\" : [{ \"color\": 0, \"percent\": 100 }]\n"
-            concat = concat + "},\n"
+            haplotype = row[0]
+            size = row[1]
+            country = dict_haplo[haplotype]
+            print(haplotype)
+            print(country)
+            list_countries = dict_haplo[haplotype].split(",")
+            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * size)+","
+            color_nb = 0
+            concat = concat + "\"pieChart\" : ["
+            subconcat = ""
+            for country in dict_element_for_colorizing.keys():
+                nb_occurence = list_countries.count(country)
+                percentage = (nb_occurence / size) * 100
+                print(str(color_nb)+ " " + str(percentage))
+                print(str(i))
+                if nb_occurence > 0:
+                    subconcat = subconcat + "{ \"color\": " + str(color_nb) + ", \"percent\": " + str(percentage) + " },"
+
+                color_nb += 1
+            subconcat = subconcat[:len(subconcat)-1]
+
+            concat = concat + subconcat + "]},\n"
             f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
         
         concat = concat[:len(concat)-2]
@@ -1598,7 +1639,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         j.write("],\n")
 
     # run haplotype network
-    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session)
+    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session) + " >> " + tmp_dir+"/haplotype_network.log 2>&1"
     returned_value = os.system(cmd)
 
     with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
@@ -1624,7 +1665,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
     cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
     returned_value = os.system(cmd)
 
-    dynamic_network = html.Iframe(id='dynamic_network',src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1000px"}),
+    dynamic_network = html.Iframe(id='dynamic_network',src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1400px"}),
 
     
     ##############################################################################################
