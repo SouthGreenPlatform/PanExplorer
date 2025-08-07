@@ -508,7 +508,7 @@ def display_sample_selection(projets,url):
     return html.Div([
         
         dag.AgGrid(
-            id="metadata_tableee",
+            id="metadata_table",
             style={'width': '100vh','margin-left': '15px'},
             columnDefs=columnDefs,
             rowData=df_metadata.to_dict('records'),
