@@ -472,10 +472,9 @@ layout = html.Div([
             html.Br(),
             dcc.Loading(html.Div(id='dynamic_network')),
         ]),
-        dcc.Tab(label='SNPs/indels', style=tab_style, selected_style=tab_selected_style, children=[
+        dcc.Tab(label='SNP-based PCA', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
-            dcc.Markdown(id='SNP_info'),
-            dcc.Loading(dcc.Graph(id='SNPs')),
+            dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
@@ -955,7 +954,7 @@ def update_MLVA(submit_vntr,mlva_table):
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
     Output('mlva_table', 'rowData'),
-    Output('SNP_info','children'),
+    Output('PCA','figure'),
 
     
     
@@ -1766,10 +1765,20 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     # SNP
     ##############################################################################################
     vcf_file = directory+"/variants.vcf"
-    cmd = "wc -l "+vcf_file
-    returned_value = os.popen(cmd).read()
+    output_basename = tmp_dir+"/"+str(session)+".plink"
+    pca_output = output_basename + ".eigenvec"
 
-    SNP_info = returned_value + " variants"
+    cmd = "plink2 --vcf " + directory+"/variants.vcf --pca --out " + output_basename
+    returned_value = os.system(cmd)
+
+    cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
+    returned_value = os.system(cmd)
+
+    dftest = px.data.iris()
+    df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
+    fig_scatter = px.scatter_3d(df_pca, x='PC1', y='PC2', z='PC3', color='#IID')
+
+    SNP_info = pca_output
 
     
     ##############################################################################################
@@ -1781,7 +1790,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, SNP_info #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
