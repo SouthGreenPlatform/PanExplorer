@@ -41,13 +41,18 @@ import yaml
 
 directory = "data/african_Xo"
 tmp_dir = ""
+data_dir = ""
 with open("panexplorer_config.yaml", "r") as yaml_file:
     conf = yaml.safe_load(yaml_file)
     directory = conf["directory"]
     tmp_dir = conf["tmp_dir"]
+    data_dir = conf["data_dir"]
 
+subdirectories = [ f.name for f in os.scandir(data_dir) if f.is_dir() ]
 
-
+for subdir in subdirectories:
+    if subdir.startswith(('1','2','3','4','5','6','7','8','9','0')):
+        subdirectories.remove(subdir)
 
 #dftest = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
 #column_defs = [{"title": i, "data": i} for i in dftest.columns]
@@ -160,6 +165,16 @@ layout = html.Div([
 
     
     html.H1('PanExplorer: Pangene Atlas'),
+    html.Div([
+            "Choose a project:",dcc.Dropdown(
+                subdirectories,
+                id='projets',
+                value = subdirectories[0],
+                multi=False
+            )
+        ], style={'width': '400px', 'display': 'inline-block'}),
+    html.Br(),
+    html.Br(),
     html.Div(id='sample_selection',children=[
             dag.AgGrid(
                 id="metadata_table",
@@ -447,51 +462,65 @@ layout = html.Div([
                                 selectAll=True,
                                 defaultColDef={"filter": True},
                                 dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                            ),
-
-                            
+                            ), 
                         ),
+                html.Button('Show haplotypes', id='submit-vntr', n_clicks=0),
+
                 dcc.Loading(dcc.Graph(id='graph_mlva',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
                 #html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
             ]),
             html.Br(),
             dcc.Loading(html.Div(id='dynamic_network')),
         ]),
+        dcc.Tab(label='SNPs/indels', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            dcc.Markdown(id='SNP_info'),
+            dcc.Loading(dcc.Graph(id='SNPs')),
+            ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
 ])
 
+
 @callback(
     Output('sample_selection', 'children'), 
-    Input('url', 'hash')
+    Input('projets', 'value'),
+    Input('url','hash')
 )
 
-def display_sample_selection(pathname):
+def display_sample_selection(projets,url):
     #df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(pathname)
-    
+
+    pathname = "#"+projets
+    if url:
+        pathname=url
+
     directory = get_directory(pathname)
-    
     df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
+
     list_species = df_metadata['Strain name']
     #print("display_sample_selection")
     #print(df_metadata)
     #df_metadata = df_metadata[df_metadata['Strain name'] != 'ClutserID']
-    
+
+
+
     return html.Div([
         
         dag.AgGrid(
-            id="metadata_table",
+            id="metadata_tableee",
             style={'width': '100vh','margin-left': '15px'},
             columnDefs=columnDefs,
             rowData=df_metadata.to_dict('records'),
             columnSize="sizeToFit",
             selectAll=True,
-            defaultColDef={"filter": True},
+            #defaultColDef={"filter": True},
             dashGridOptions={
-                "rowSelection": "multiple",
-                "animateRows": False
-            },
+                    "rowSelection": "multiple",
+                    "animateRows": False
+                },
         ),
+
         html.Br(),
         html.Button('Apply the selection of samples', id='submit-samples', n_clicks=0),  
         html.Br(),
@@ -509,8 +538,6 @@ def display_sample_selection(pathname):
         
     ])
 
-    
-
 #############################################################
 # Callback for cluster selection from heatmap or from table
 #############################################################
@@ -522,15 +549,17 @@ def display_sample_selection(pathname):
     Output("current_cluster",'options'),
     Output("specific_to",'value'),
     Input('PAV_graph', 'clickData'),
-    Input('url', 'hash'),
     Input('metadata_table','selectedRows'),
-    #Input('table_core', 'cellClicked'),
-    #Input('url', 'hash')
+    Input('projets', 'value'),
+    Input('url','hash')
 )
 
-def display_click_data(clickData,pathname,metadata_table):
+def display_click_data(clickData,metadata_table,projets,url):
          
     cluster = 1
+    pathname = "#"+projets
+    if url:
+        pathname=url
     list_of_strains = []
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
@@ -560,13 +589,16 @@ def display_click_data(clickData,pathname,metadata_table):
     Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Output("current_cluster",'options', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
-    Input('url', 'hash'),
     Input('metadata_table','selectedRows'),
+    Input('projets', 'value'),
+    Input('url','hash'),
     prevent_initial_call=True
-    #Input('url', 'hash')
 )
-def display_click_data(cell,pathname,metadata_table):
+def display_click_data(cell,metadata_table,projets,url):
          
+    pathname = "#"+projets
+    if url:
+        pathname=url
     cluster = 1
     list_of_strains = []
 
@@ -604,14 +636,17 @@ def set_current_cluster(available_options):
     Output('genes_cluster', 'rowData', allow_duplicate=True),
     Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Input('table_of_search', 'cellClicked'),
-    Input('url', 'hash'),
     Input('metadata_table','selectedRows'),
+    Input('projets', 'value'),
+    Input('url','hash'),
     prevent_initial_call=True
-    #Input('url', 'hash')
 )
 
-def display_click_data(cell,pathname,metadata_table):
+def display_click_data(cell,metadata_table,projets,url):
          
+    pathname = "#"+projets
+    if url:
+        pathname=url
     cluster = 1
     list_of_strains = []
     if metadata_table:
@@ -695,12 +730,15 @@ def get_cluster_details(cluster,pathname,list_of_strains):
     #Input('continent', 'value'),
     #Input('organism', 'value'),
     Input('metadata_table','selectedRows'),
-    Input('url', 'hash'),
-    
+    Input('projets', 'value'),
+    Input('url','hash')
     #Input('datatable-paging', "page_current"),
     #Input('datatable-paging', "page_size"),
      )
-def update_pivot(metadata_table,pathname):
+def update_pivot(metadata_table,projets,url):
+    pathname = "#"+projets
+    if url:
+        pathname=url
     #df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(pathname)
     #df_metadata3 = df_metadata[(df_metadata["Continent"] != "none")]
     #df_metadata5 = df_metadata3[(df_metadata3["Organism"] != "none")]
@@ -736,6 +774,162 @@ def set_reference_value(available_options):
     else:
         return ''
 
+@callback(
+        Output('dynamic_network','children'),
+        Output('graph_mlva', 'figure'),
+        Input('submit-vntr', 'n_clicks'),
+        State('mlva_table','selectedRows'),
+        prevent_initial_call=True
+        
+)
+
+def update_MLVA(submit_vntr,mlva_table):
+
+    ###########################################################
+    # MLVA
+    ###########################################################
+    session = random.randint(1, 9000000)
+    vntr_file = directory+'/vntr_matrix.tsv.sample'
+
+    print("submit vntr button" + str(submit_vntr) + " "+str(session))
+
+    df_vntr = pd.DataFrame(columns=['Repeat'])
+    if os.path.exists(vntr_file):
+
+        # remove lines/markers with missing data
+        vntr_file_nomissing = directory+'/vntr_matrix.nomissing.tsv'
+        cmd = "grep -v '-' "+vntr_file+ " >"+vntr_file_nomissing
+        returned_value = os.system(cmd)
+
+        df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
+
+
+    repeat_names = df_vntr["Repeat"].astype(str).tolist()
+
+    repeats = []
+    if mlva_table:
+        wjdata1 = json.loads(json.dumps(mlva_table, indent=2))
+        for vntr in wjdata1:
+            print(vntr)
+            vntr_name = vntr['Repeat']
+            repeats.append(vntr_name) 
+
+    
+    print(repeats)
+    mask = df_vntr['Repeat'].isin(repeats)
+    testdf = df_vntr[mask]
+    newdf = testdf.drop("Repeat", axis='columns')
+    
+    graph_mlva = px.imshow(newdf, 
+                           aspect="auto",
+                           labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
+                           #x=list_sp2,
+                           y=repeats,
+                           text_auto=True
+                           )
+    mlva_table = df_vntr.to_dict('records')
+
+
+    
+    transposed_newdf = newdf.transpose()
+
+    
+
+    # concatenate numbers of repeats as an haplotype value for each sample
+    transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
+
+    # assign metadata to haplotype
+    colors = ["blue","yellow","green","red","brown","black"]
+    df_metadata_tmp = pd.read_csv(directory+'/metadata.tmp.xls',sep='\t')
+    dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
+    dict_haplo = {}
+    dict_element_for_colorizing = {}
+    for strain, row in transposed_newdf.iterrows():
+        country = dict_metadata[strain]
+        dict_element_for_colorizing[country]=1
+        if row.haplotype in dict_haplo.keys():
+            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + country
+        else:
+            dict_haplo[row.haplotype] = country
+
+    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
+
+    #dictionary_haplotype_of_strain = transposed_newdf.set_index('strains')['haplotype'].to_dict()
+
+    
+
+
+    # put frequency of haplotypes into a dictionnary 
+    dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
+    haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
+    haplotype_freq_df.to_csv(tmp_dir+"/"+str(session)+".haplotype_frequency.txt")
+
+
+    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f, open("assets/network."+str(session)+".1.json", 'a') as j:
+        for i in range(len(newdf)):
+            f.write(","+str(i))
+        
+        j.write("{\n")
+        j.write("  \"nodes\": [\n")
+        f.write("\n")
+        i = 0
+        concat = ""
+        for row in haplotype_freq_df.itertuples():
+            i+=1
+            haplotype = row[0]
+            size = row[1]
+            country = dict_haplo[haplotype]
+            list_countries = dict_haplo[haplotype].split(",")
+            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * size)+","
+            color_nb = 0
+            concat = concat + "\"pieChart\" : ["
+            subconcat = ""
+            for country in dict_element_for_colorizing.keys():
+                nb_occurence = list_countries.count(country)
+                percentage = (nb_occurence / size) * 100
+                if nb_occurence > 0:
+                    subconcat = subconcat + "{ \"color\": \"" + colors[color_nb] + "\", \"percent\": " + str(percentage) + " },"
+
+                color_nb += 1
+            subconcat = subconcat[:len(subconcat)-1]
+
+            concat = concat + subconcat + "]},\n"
+            f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
+        
+        concat = concat[:len(concat)-2]
+        j.write(concat+"\n")
+        j.write("],\n")
+
+    # run haplotype network
+    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session) + " >> " + tmp_dir+"/haplotype_network.log 2>&1"
+    returned_value = os.system(cmd)
+
+    with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
+        j.write("  \"links\": [\n")
+
+        lines = n.readlines()[1:]
+        concat = ""
+        for line in lines:
+            informations = line.split(',')
+            concat = concat + "{\"source\": \""+informations[0]+"\", \"target\": \""+ informations[1] +"\", \"value\": "+ informations[2] +"},\n"
+
+        concat = concat[:len(concat)-2]
+        j.write(concat+"\n")
+        j.write("]\n")
+        j.write("}\n")
+
+    cmd = "cat assets/network."+str(session)+".1.json assets/network."+str(session)+".2.json > assets/network."+str(session)+".json"
+    returned_value = os.system(cmd)
+
+    # add the prefix haplo to indexes
+    #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
+
+    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
+    returned_value = os.system(cmd)
+
+    dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1400px"}),
+
+    return dynamic_network, graph_mlva
 
 #################################################
 # callback for changing graphes
@@ -760,9 +954,9 @@ def set_reference_value(available_options):
     Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
-    Output('graph_mlva', 'figure'),
     Output('mlva_table', 'rowData'),
-    Output('dynamic_network','children'),
+    Output('SNP_info','children'),
+
     
     
     #Output('graph_upset', 'figure'),
@@ -773,7 +967,8 @@ def set_reference_value(available_options):
     State('ordering', 'value'),
     State('colorizing', 'value'),
     State('highlight', 'value'),
-    Input('url', 'hash'),
+    Input('projets', 'value'),
+    Input('url','hash'),
     Input('submit-val', 'n_clicks'),
     Input('submit-samples','n_clicks'),
     State('specific_to','value'),
@@ -787,8 +982,11 @@ def set_reference_value(available_options):
     #Input('datatable-paging', "page_current"),
     #Input('datatable-paging', "page_size"),
      )
-def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,submit_samples,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
+def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_button,submit_samples,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
     
+    pathname = "#"+projets
+    if url:
+        pathname=url
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(pathname)
     
     
@@ -1536,10 +1734,10 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
                               #color_continuous_midpoint=2
                               )
 
-    ###########################################################
-    # MLVA
-    ###########################################################
-    vntr_file = directory+'/vntr_matrix.tsv'
+    ##############################################################################################
+    # VNTR table / MLVA
+    ##############################################################################################
+    vntr_file = directory+'/vntr_matrix.tsv.sample'
 
     df_vntr = pd.DataFrame(columns=['Repeat'])
     if os.path.exists(vntr_file):
@@ -1564,108 +1762,14 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
                            )
     mlva_table = df_vntr.to_dict('records')
 
+    ##############################################################################################
+    # SNP
+    ##############################################################################################
+    vcf_file = directory+"/variants.vcf"
+    cmd = "wc -l "+vcf_file
+    returned_value = os.popen(cmd).read()
 
-    
-    transposed_newdf = newdf.transpose()
-
-    
-
-    # concatenate numbers of repeats as an haplotype value for each sample
-    transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
-
-    # assign metadata to haplotype
-    df_metadata_tmp = pd.read_csv(directory+'/metadata.tmp.xls',sep='\t')
-    dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
-    dict_haplo = {}
-    dict_element_for_colorizing = {}
-    for strain, row in transposed_newdf.iterrows():
-        country = dict_metadata[strain]
-        dict_element_for_colorizing[country]=1
-        if row.haplotype in dict_haplo.keys():
-            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + country
-        else:
-            dict_haplo[row.haplotype] = country
-
-    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
-
-    #dictionary_haplotype_of_strain = transposed_newdf.set_index('strains')['haplotype'].to_dict()
-
-    
-
-
-    # put frequency of haplotypes into a dictionnary 
-    dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
-    haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
-    haplotype_freq_df.to_csv(tmp_dir+"/"+str(session)+".haplotype_frequency.txt")
-
-
-    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f, open("assets/network."+str(session)+".1.json", 'a') as j:
-        for i in range(len(df_vntr)):
-            f.write(","+str(i))
-        
-        j.write("{\n")
-        j.write("  \"nodes\": [\n")
-        f.write("\n")
-        i = 0
-        concat = ""
-        for row in haplotype_freq_df.itertuples():
-            i+=1
-            haplotype = row[0]
-            size = row[1]
-            country = dict_haplo[haplotype]
-            print(haplotype)
-            print(country)
-            list_countries = dict_haplo[haplotype].split(",")
-            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * size)+","
-            color_nb = 0
-            concat = concat + "\"pieChart\" : ["
-            subconcat = ""
-            for country in dict_element_for_colorizing.keys():
-                nb_occurence = list_countries.count(country)
-                percentage = (nb_occurence / size) * 100
-                print(str(color_nb)+ " " + str(percentage))
-                print(str(i))
-                if nb_occurence > 0:
-                    subconcat = subconcat + "{ \"color\": " + str(color_nb) + ", \"percent\": " + str(percentage) + " },"
-
-                color_nb += 1
-            subconcat = subconcat[:len(subconcat)-1]
-
-            concat = concat + subconcat + "]},\n"
-            f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
-        
-        concat = concat[:len(concat)-2]
-        j.write(concat+"\n")
-        j.write("],\n")
-
-    # run haplotype network
-    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session) + " >> " + tmp_dir+"/haplotype_network.log 2>&1"
-    returned_value = os.system(cmd)
-
-    with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
-        j.write("  \"links\": [\n")
-
-        lines = n.readlines()[1:]
-        concat = ""
-        for line in lines:
-            informations = line.split(',')
-            concat = concat + "{\"source\": \""+informations[0]+"\", \"target\": \""+ informations[1] +"\", \"value\": "+ informations[2] +"},\n"
-
-        concat = concat[:len(concat)-2]
-        j.write(concat+"\n")
-        j.write("]\n")
-        j.write("}\n")
-
-    cmd = "cat assets/network."+str(session)+".1.json assets/network."+str(session)+".2.json > assets/network."+str(session)+".json"
-    returned_value = os.system(cmd)
-
-    # add the prefix haplo to indexes
-    #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
-
-    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
-    returned_value = os.system(cmd)
-
-    dynamic_network = html.Iframe(id='dynamic_network',src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1400px"}),
+    SNP_info = returned_value + " variants"
 
     
     ##############################################################################################
@@ -1677,7 +1781,7 @@ def update_graph(reference,ordering,colorizing,highlight,pathname,submit_button,
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, graph_mlva, mlva_table, dynamic_network #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, SNP_info #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
@@ -1687,6 +1791,7 @@ def get_directory(pathname):
     
     if len(pathname) > 1:
         directory = conf["data_dir"] + "/" + pathname.replace("#", "")
+        
         
         if os.path.isdir(directory):
             print("exists")
@@ -1756,7 +1861,6 @@ def init_dataframes(pathname):
     #df = df.rename(columns={'CLUSTERClutserID': 'ClutserID'})
     #df = df.rename(columns={'CLUSTERCLUSTERClutserID': 'ClutserID'})
     #df = df.dropna()
-
 
 
     df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
