@@ -6,6 +6,9 @@ import plotly.express as px
 import urllib.request as urlreq
 from urllib.request import Request, urlopen
 
+import dash_bootstrap_components as dbc
+
+
 import numpy as np
 import json
 import subprocess
@@ -31,7 +34,7 @@ import dash_bio as dash_bio
 #from plotly_upset.plotting import plot_upset
 #from upsetplot import plot
 #from upsetplot import generate_counts
-from matplotlib import pyplot
+#from matplotlib import pyplot
 
 #import dash_datatables as ddt
 
@@ -50,9 +53,11 @@ with open("panexplorer_config.yaml", "r") as yaml_file:
 
 subdirectories = [ f.name for f in os.scandir(data_dir) if f.is_dir() ]
 
+
 for subdir in subdirectories:
     if subdir.startswith(('1','2','3','4','5','6','7','8','9','0')):
         subdirectories.remove(subdir)
+
 
 #dftest = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
 #column_defs = [{"title": i, "data": i} for i in dftest.columns]
@@ -165,16 +170,24 @@ layout = html.Div([
 
     
     html.H1('PanExplorer: Pangene Atlas'),
-    html.Div([
-            "Choose a project:",dcc.Dropdown(
+    
+    dbc.Row([
+        dbc.Col(
+            html.H5('Choose a project: ', style={'margin-right': '15px'},),
+            
+            ),
+
+        dbc.Col(
+            dcc.Dropdown(
                 subdirectories,
                 id='projets',
                 value = subdirectories[0],
-                multi=False
-            )
-        ], style={'width': '400px', 'display': 'inline-block'}),
-    html.Br(),
-    html.Br(),
+                multi=False,
+                style={'width': '400px'}
+            ))
+    ]),
+
+
     html.Div(id='sample_selection',children=[
             dag.AgGrid(
                 id="metadata_table",
@@ -403,10 +416,12 @@ layout = html.Div([
             ]),
         dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
-            #html.Iframe(id='tree',src="https://panexplorer.southgreen.fr/phylotree/38070424888018112151183211213515.html",style={"height": "600px", "width": "100%"}),
-            
-            html.Div("Dynamic tree",id='dynamic_tree'),
-            
+            dbc.Row(
+                [
+                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
+                ],
+                align="center",
+            ),
             html.Br(),
             ]),
         
@@ -478,6 +493,8 @@ layout = html.Div([
             ]),
         ]),
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
+    
+    
 ])
 
 
@@ -938,7 +955,6 @@ def update_MLVA(submit_vntr,mlva_table):
     Output('textarea-example-output', 'children'),
     Output('PAV_graph', 'figure'),
     Output('table_pangenes', 'rowData'),
-    Output("dynamic_tree","children"),
     
     #Output('datatable-paging','srcDoc'),
     Output('graph_ANI', 'figure'),
@@ -955,6 +971,7 @@ def update_MLVA(submit_vntr,mlva_table):
     Output("graph_macrosynteny", 'figure'),
     Output('mlva_table', 'rowData'),
     Output('PCA','figure'),
+    Output('iframe-content', 'src'),
 
     
     
@@ -1765,20 +1782,58 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     # SNP
     ##############################################################################################
     vcf_file = directory+"/variants.vcf"
-    output_basename = tmp_dir+"/"+str(session)+".plink"
-    pca_output = output_basename + ".eigenvec"
+    df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2','PC3'])
+    if os.path.exists(vcf_file):
+        output_basename = tmp_dir+"/"+str(session)+".plink"
+        pca_output = output_basename + ".eigenvec"
 
-    cmd = "plink2 --vcf " + directory+"/variants.vcf --pca --out " + output_basename
-    returned_value = os.system(cmd)
+        cmd = "plink2 --vcf " + vcf_file +" --pca --out " + output_basename
+        returned_value = os.system(cmd)
 
-    cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
-    returned_value = os.system(cmd)
+        cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
+        returned_value = os.system(cmd)
 
-    dftest = px.data.iris()
-    df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
+        if os.path.exists(pca_output + ".tsv"):
+            df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
+
     fig_scatter = px.scatter_3d(df_pca, x='PC1', y='PC2', z='PC3', color='#IID')
 
-    SNP_info = pca_output
+
+    #tree = Phylo.read(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick", "newick")
+    #Phylo.draw(tree)
+
+    # from itolapi import Itol
+    # from pathlib import Path
+    # itol_uploader = Itol()
+    # itol_uploader.add_file(Path(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"))
+    # itol_uploader.params['treeName'] = 'apple'
+    # status = itol_uploader.upload()
+    # print("Status itol: " + str(status))
+    
+
+    # from phytreeviz import TreeViz, load_example_tree_file
+    # tree_file = directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"
+    # tv = TreeViz(tree_file)
+    # group1 = ["Genus_species_CIX4232gb"]
+    # group2 = ["Genus_species_CIX4476gb"]
+    # tv.highlight(group1, "orange")
+    # tv.highlight(group2, "lime")
+    # tv.annotate(group1, "group1")
+    # tv.annotate(group2, "group2")
+    # tv.marker(group1, marker="s", color="blue")
+    # tv.marker(group2, marker="D", color="purple", descendent=True)
+    # #tv.marker(["Genus_species_CIX4232gb"], marker="D", color="purple", descendent=True)
+    # tv.set_node_label_props("Genus_species_CIX4232gb", color="green", style="italic")
+    # tv.set_node_label_props("Genus_species_CIX4476gb", color="green")
+    # tv.show_scale_bar()
+    # buf = io.BytesIO() # in-memory files
+    # tv.savefig(buf)
+    # data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
+    # buf.close()
+    # dynamic_tree="data:image/png;base64,{}".format(data)
+
+    
+
 
     
     ##############################################################################################
@@ -1790,7 +1845,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,dynamic_tree,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html" #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
