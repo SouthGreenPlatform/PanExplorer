@@ -189,7 +189,7 @@ layout = html.Div([
             ))
     ]),
 
-
+    html.Br(),
     html.Div(id='sample_selection',children=[
             dag.AgGrid(
                 id="metadata_table",
@@ -230,49 +230,51 @@ layout = html.Div([
                     ['Presence/absence','Level of presence','Organism','Continent'],
                     id='colorizing',
                     value = 'Presence/absence',
+                    style={'width': '300px'},
+                    multi=False
+                ),
+            ),
+            dbc.Col(
+                html.Label('Highlight: ', style={'margin-right': '15px', 'margin-left': '50px'},),
+            ),
+            dbc.Col(
+                dcc.Dropdown(
+                    ['None','Reference genome','Core-genes','Strain-specific genes'],
+                    id='highlight',
+                    value = 'None',
+                    style={'width': '300px'},
+                    multi=False
+                )
+            ),
+            dbc.Col(
+                html.Label('Cluster ordering: ', style={'margin-right': '15px', 'margin-left': '50px'},),
+            ),
+            dbc.Col(
+                dcc.Dropdown(
+                    ['Hierarchical clustering','Position in genome used for projection'],
+                    value = 'Hierarchical clustering',
+                    id='ordering',
+                    style={'width': '300px'},
                     multi=False
                 )
             )
         ]),
 
-        html.Div(style={'width': '10px', 'display': 'inline-block'}),
-        html.Div([
-            "Highlight",dcc.Dropdown(
-                ['None','Reference genome','Core-genes','Strain-specific genes'],
-                id='highlight',
-                value = 'None',
-                multi=False
-            )
-        ], style={'width': '300px', 'display': 'inline-block'}),
-        
-        html.Div(style={'width': '10px', 'display': 'inline-block'}),
-        html.Div([
-            "Cluster ordering",dcc.Dropdown(
-                ['Hierarchical clustering','Position in genome used for projection'],
-                value = 'Hierarchical clustering',
-                id='ordering',
-                multi=False
-            )
-        ], style={'width': '300px', 'display': 'inline-block'}),
-
-        html.Div(style={'width': '10px', 'display': 'inline-block'}),
-
-
-
-        
-
     ]),
     html.H5("Search for clusters"),
 
-    html.Div([
-            "Search for clusters by keyword or COG (comma separated):",
-            dcc.Input(
-                id='cluster_search',
-                value = '',
+    dbc.Row([
+            dbc.Col(
+                html.Label('Search for clusters by keyword or COG (comma separated): ', style={'margin-right': '15px'},),
+            ),
+            dbc.Col(
+                dcc.Input(
+                    id='cluster_search',
+                    value = '',
+                )
             )
-        ], style={'width': '400px', 'display': 'inline-block'}),
+        ]), 
 
-    html.Br(),
     html.Div([
             "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
             dcc.Textarea(
@@ -1773,7 +1775,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################################################################
     # SNP
     ##############################################################################################
-    vcf_file = directory+"/variants.vcf"
+    vcf_file = directory+"/variants2.vcf"
     df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2','PC3'])
     if os.path.exists(vcf_file):
         output_basename = tmp_dir+"/"+str(session)+".plink"
