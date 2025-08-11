@@ -59,6 +59,8 @@ for subdir in subdirectories:
         subdirectories.remove(subdir)
 
 
+df_metadata = pd.read_csv(data_dir+"/"+subdirectories[0]+'/metadata.xls',sep='\t')
+
 #dftest = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
 #column_defs = [{"title": i, "data": i} for i in dftest.columns]
 
@@ -173,7 +175,7 @@ layout = html.Div([
     
     dbc.Row([
         dbc.Col(
-            html.H5('Choose a project: ', style={'margin-right': '15px'},),
+            html.Label('Choose a project: ', style={'margin-right': '15px'},),
             
             ),
 
@@ -193,7 +195,7 @@ layout = html.Div([
                 id="metadata_table",
                 style={'width': '100vh','margin-left': '15px'},
                 columnDefs=columnDefs,
-                rowData=[],
+                rowData=df_metadata.to_dict('records'),
                 columnSize="sizeToFit",
                 selectAll=True,
                 defaultColDef={"filter": True},
@@ -203,44 +205,36 @@ layout = html.Div([
                 },
             ),
         html.Br(),
-        html.Button('Apply the selection of samples', id='submit-samples', n_clicks=0),  
-        html.Br(),
-        html.Br(),
-        
-        #html.Div([
-        #    "Continent",dcc.Dropdown(
-        #        id='continent',
-        #        multi=False
-        #    )
-        #], style={'width': '300px', 'display': 'inline-block'}),
-        #html.Div(style={'width': '10px', 'display': 'inline-block'}),
-        #html.Div([
-        #    "Organism",dcc.Dropdown(
-        #        id='organism',
-        #        multi=False
-        #    )
-        #], style={'width': '300px', 'display': 'inline-block'}),
-        html.Div(style={'width': '10px', 'display': 'inline-block'}),
-        html.Div([
-            "Reference Genome for projection",dcc.Dropdown(
-                id='reference',
-                multi=False
-            )
-        ], style={'width': '500px', 'display': 'inline-block'}),
-        html.Div(style={'width': '10px', 'display': 'inline-block'}),
+        dbc.Row([
+            dbc.Col(
+                html.Label('Reference Genome for projection ', style={'margin-right': '15px'},),
+                ),
+            dbc.Col(
+                dcc.Dropdown(
+                    id='reference',
+                    style={'width': '500px'},
+                    multi=False
+                )) 
+        ]),
     ]),
 
     html.H5("PAV configuration"),        
     html.Div(id='PAV_config',children=[
         
-        html.Div([
-            "Colors",dcc.Dropdown(
-                ['Presence/absence','Level of presence','Organism','Continent'],
-                id='colorizing',
-                value = 'Presence/absence',
-                multi=False
+        dbc.Row([
+            dbc.Col(
+                html.Label('Colors: ', style={'margin-right': '15px'},),
+            ),
+            dbc.Col(
+                dcc.Dropdown(
+                    ['Presence/absence','Level of presence','Organism','Continent'],
+                    id='colorizing',
+                    value = 'Presence/absence',
+                    multi=False
+                )
             )
-        ], style={'width': '300px', 'display': 'inline-block'}),
+        ]),
+
         html.Div(style={'width': '10px', 'display': 'inline-block'}),
         html.Div([
             "Highlight",dcc.Dropdown(
@@ -302,13 +296,15 @@ layout = html.Div([
                 value = '',
                 style ={'visibility': 'hidden'}
             ),
-    html.Button('Submit', id='submit-val', n_clicks=0),  
+    html.Button('Update Graphes', id='submit-val', n_clicks=0),  
 
     html.Br(),
     html.Br(),
     
 
     # The Visuals
+    
+    dcc.Loading(html.Div(id='results', style={'display': 'none'}, children=[
     dcc.Tabs(id='tab', style=tabs_styles, children=[
         dcc.Tab(label='Stats and Overview', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
@@ -319,7 +315,7 @@ layout = html.Div([
                 dcc.Loading(dcc.Graph(id='rarefaction',style={'width': '50vh', 'height': '50vh','margin-left': '15px'})),
             ]),
         ]),
-        dcc.Tab(label='Presence/absence matrix', style=tab_style, selected_style=tab_selected_style, children=[
+        dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             
             html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
@@ -492,6 +488,8 @@ layout = html.Div([
             dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             ]),
         ]),
+
+    ]))
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
     
     
@@ -500,8 +498,10 @@ layout = html.Div([
 
 @callback(
     Output('sample_selection', 'children'), 
+    Output('results', 'style', allow_duplicate=True),
     Input('projets', 'value'),
-    Input('url','hash')
+    Input('url','hash'),
+    prevent_initial_call=True
 )
 
 def display_sample_selection(projets,url):
@@ -515,14 +515,8 @@ def display_sample_selection(projets,url):
     df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
 
     list_species = df_metadata['Strain name']
-    #print("display_sample_selection")
-    #print(df_metadata)
-    #df_metadata = df_metadata[df_metadata['Strain name'] != 'ClutserID']
 
-
-
-    return html.Div([
-        
+    html_div = html.Div(id='sample_selection',children=[
         dag.AgGrid(
             id="metadata_table",
             style={'width': '100vh','margin-left': '15px'},
@@ -536,23 +530,23 @@ def display_sample_selection(projets,url):
                     "animateRows": False
                 },
         ),
+        html.Br(),
+        dbc.Row([
+            dbc.Col(
+                html.Label('Reference Genome for projection ', style={'margin-right': '15px'},),
+                ),
+            dbc.Col(
+                dcc.Dropdown(
+                    id='reference',
+                    style={'width': '500px'},
+                    multi=False
+                )) 
+        ]),
 
-        html.Br(),
-        html.Button('Apply the selection of samples', id='submit-samples', n_clicks=0),  
-        html.Br(),
-        html.Br(),
         
-        
-        html.Div([
-            "Reference Genome for projection",dcc.Dropdown(
-                options = list_species,
-                value = list_species[0],
-                id='reference',
-                multi=False
-            )
-        ], style={'width': '500px', 'display': 'inline-block'}),
-        
-    ])
+    ]), 
+    print("yesss")
+    return html_div, {'display': 'none'}
 
 #############################################################
 # Callback for cluster selection from heatmap or from table
@@ -566,8 +560,8 @@ def display_sample_selection(projets,url):
     Output("specific_to",'value'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
-    Input('projets', 'value'),
-    Input('url','hash')
+    State('projets', 'value'),
+    State('url','hash')
 )
 
 def display_click_data(clickData,metadata_table,projets,url):
@@ -606,8 +600,8 @@ def display_click_data(clickData,metadata_table,projets,url):
     Output("current_cluster",'options', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
     Input('metadata_table','selectedRows'),
-    Input('projets', 'value'),
-    Input('url','hash'),
+    State('projets', 'value'),
+    State('url','hash'),
     prevent_initial_call=True
 )
 def display_click_data(cell,metadata_table,projets,url):
@@ -972,9 +966,7 @@ def update_MLVA(submit_vntr,mlva_table):
     Output('mlva_table', 'rowData'),
     Output('PCA','figure'),
     Output('iframe-content', 'src'),
-
-    
-    
+    Output('results', 'style'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
     #Input('continent', 'value'),
@@ -983,23 +975,23 @@ def update_MLVA(submit_vntr,mlva_table):
     State('ordering', 'value'),
     State('colorizing', 'value'),
     State('highlight', 'value'),
-    Input('projets', 'value'),
-    Input('url','hash'),
+    State('projets', 'value'),
+    State('url','hash'),
     Input('submit-val', 'n_clicks'),
-    Input('submit-samples','n_clicks'),
     State('specific_to','value'),
     State('cluster_search','value'),
     State('bedfile','value'),
     State('metadata_table','selectedRows'),
-    
-    
     State("my-dashbio-default-circos", "layout"),
     State("my-dashbio-default-circos", "tracks"),
+    prevent_initial_call=True
     #Input('datatable-paging', "page_current"),
     #Input('datatable-paging', "page_size"),
      )
-def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_button,submit_samples,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
+def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_button,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
     
+    print("================ Start Update graphes ===========")
+
     pathname = "#"+projets
     if url:
         pathname=url
@@ -1845,7 +1837,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html" #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'} #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
