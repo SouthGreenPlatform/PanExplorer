@@ -70,6 +70,8 @@ filtering = 'Continent'
 
 dash.register_page(__name__,path='/app-pav')
 
+colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#C0C0C0', '#808080']
+
 tabs_styles = {
     'height': '44px'
 }
@@ -1571,6 +1573,36 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     with open(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') as fp:
         newick = fp.read()
 
+    df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
+    metadata_csv = ""
+    with open(directory+'/metadata.csv') as fp:
+        metadata_csv = fp.read()
+
+    concat_for_hash = ""
+    list_metadata_color = df_metadata['Country'].unique().tolist()
+    dict_colors = {}
+    i = 0
+
+
+    legend = ""
+    legend += "<style>"
+    legend += ".legend div{display:flex;align-items:center;margin:4px 0}"
+    legend += ".legend span{width:16px;height:16px;margin-right:6px}"
+    legend += "</style>"
+    legend += "<div class=\"legend\">"
+    for country in list_metadata_color:
+        if country != "none" and country != "None" and str(country) != "nan" and country != "":
+            dict_colors[country] =  colors[i]
+            legend = legend + "<div><span style=\"background:" + str(colors[i]) + "\"></span>" + str(country) + "</div>"
+            i += 1
+    legend += "</div>"
+
+    for index, row in df_metadata.iterrows():
+        color = "black"
+        if str(row['Country']) in dict_colors:
+            color = dict_colors[str(row['Country'])]
+        concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
+
     # remove last caracter
     newick = newick.rstrip(newick[-1])
     f = open("assets/tree."+str(session)+".html", "w")
@@ -1578,17 +1610,17 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     for line in template:
         if re.search(r"NEWICK_TREE", line):
             f.write("var test_string = \""+newick+";\"\n")
-            #f.write("var test_string\n")
+        elif re.search(r"HASH_COLORS", line):
+            f.write(concat_for_hash+"\n")
+        elif re.search(r"LEGEND", line):
+            f.write(legend+"\n")
         else:
             f.write(line)
     template.close()
     f.close()
 
-    #df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
-    df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
-    metadata_csv = ""
-    with open(directory+'/metadata.csv') as fp:
-        metadata_csv = fp.read()
+
+
 
 
     f = open("assets/taxonium."+str(session)+".html", "w")
