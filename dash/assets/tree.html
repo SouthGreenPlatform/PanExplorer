@@ -767,9 +767,18 @@ function selection_handler_delete (e) {
 
     }}
 
+var hash_colors = new Object();
+HASH_COLORS
 
 $( document ).ready( function () {
     default_tree_settings();
+    tree.style_nodes (function (element, data) {
+        node_colorizer (element, data);
+        var m = (tree.branch_name () (data)).split (" ");	    		
+        if (hash_colors[m]){
+            element.style ("fill", hash_colors[m]);
+        }
+    }); 
     tree(test_string).svg (svg).layout();
     $("#selection_new").get(0).addEventListener(selection_menu_element_action,selection_handler_new,false);
     $("#selection_rename").get(0).addEventListener(selection_menu_element_action,selection_handler_rename,false);
@@ -783,6 +792,7 @@ $( document ).ready( function () {
 });
 
 </script>
+LEGEND
 
 </body>
 </html>
