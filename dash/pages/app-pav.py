@@ -487,8 +487,10 @@ layout = html.Div([
             html.Br(),
             dcc.Loading(html.Div(id='dynamic_network')),
         ]),
-        dcc.Tab(label='SNP-based PCA', style=tab_style, selected_style=tab_selected_style, children=[
+        dcc.Tab(label='SNP analysis', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
+            
+            dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             ]),
         ]),
@@ -517,6 +519,7 @@ def display_sample_selection(projets,url):
 
     directory = get_directory(pathname)
     df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
+
 
     list_species = df_metadata['Strain name']
 
@@ -971,6 +974,7 @@ def update_MLVA(submit_vntr,mlva_table):
     Output('PCA','figure'),
     Output('iframe-content', 'src'),
     Output('results', 'style'),
+    Output('sNMF', 'figure'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
     #Input('continent', 'value'),
@@ -1469,25 +1473,26 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
     
-    
-    df_ANI_selected = df_ANI[df_ANI["Genomes"].isin(list_sp2)]
-    df_ANI_selected = df_ANI_selected[list_sp2]
-    df_ANI_selected.to_csv("export_ani.tsv")
-    
-    fig_ANI = dash_bio.Clustergram(
-        data=df_ANI_selected,
-        column_labels=list(df_ANI_selected.columns.values),
-        row_labels=list(df_ANI_selected.index),
-        #row_labels=list(df_ANI_selected.columns.values),
-        height=1200,
-        width=1700,
-        center_values=False,
-        line_width=2,
-        color_map= [
-            [0.0, 'yellow'],
-            [1.0, 'red']
-        ]
-    )
+    fig_ANI = None
+    if os.path.exists(directory + "/fastani.out.matrix.complete.xls"):
+        df_ANI_selected = df_ANI[df_ANI["Genomes"].isin(list_sp2)]
+        df_ANI_selected = df_ANI_selected[list_sp2]
+        df_ANI_selected.to_csv("export_ani.tsv")
+        
+        fig_ANI = dash_bio.Clustergram(
+            data=df_ANI_selected,
+            column_labels=list(df_ANI_selected.columns.values),
+            row_labels=list(df_ANI_selected.index),
+            #row_labels=list(df_ANI_selected.columns.values),
+            height=1200,
+            width=1700,
+            center_values=False,
+            line_width=2,
+            color_map= [
+                [0.0, 'yellow'],
+                [1.0, 'red']
+            ]
+        )
     #fig_ANI.update_traces(showlegend=False) # does not work
 
     #df_ANI_selected.to_csv("export2.tsv")
@@ -1582,6 +1587,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     list_metadata_color = df_metadata['Country'].unique().tolist()
     dict_colors = {}
     i = 0
+
 
 
     legend = ""
@@ -1807,9 +1813,56 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################################################################
     # SNP
     ##############################################################################################
-    vcf_file = directory+"/variants2.vcf"
+    vcf_file = directory+"/variants.vcf"
     df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2','PC3'])
+    dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
     if os.path.exists(vcf_file):
+
+        #################################################################
+        # Population structure with sNMF
+        #################################################################
+        cmd = "vcf2geno " + vcf_file +" " + tmp_dir + "/" + str(session) + ".variants.geno"
+        returned_value = os.system(cmd)
+
+        cmd = "grep '#CHROM' " + vcf_file
+        result = os.popen(cmd).read()
+        list_sp2 = result.strip().split("\t")[9:]
+
+        with open(directory + "/1.Orthologs_Cluster.txt") as f:
+            ordered_ids = f.readline().strip().split("\t")
+
+        ordered_ids.remove("ClutserID")
+
+        results = []
+        for K in range(2, 6):
+            cmd = "sNMF -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -K " + str(K)
+            returned_value = os.system(cmd)
+
+            ancestry_cols = [f"Cluster_{i+1}" for i in range(K)]
+            #col_names = ["Individual"] + ancestry_cols
+            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None)
+            #qmat['Individual'] = pd.Categorical(qmat['Individual'],
+            #                            categories=ordered_ids,
+            #                            ordered=True)
+            
+            
+            qmat['Individual'] = list_sp2
+            qmat["Individual"] = pd.Categorical(qmat["Individual"], categories=ordered_ids, ordered=True)
+            qmat = qmat.sort_values("Individual")
+            print(qmat)
+
+            # Passage en format long
+            qmat_long = qmat.melt(id_vars=['Individual'], var_name='Cluster', value_name='Ancestry')
+            qmat_long['K'] = K
+            results.append(qmat_long)
+
+
+        dfsnmf = pd.concat(results)
+
+
+        #################################################################
+        # PCA with plink
+        #################################################################
         output_basename = tmp_dir+"/"+str(session)+".plink"
         pca_output = output_basename + ".eigenvec"
 
@@ -1822,8 +1875,25 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         if os.path.exists(pca_output + ".tsv"):
             df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
 
-    fig_scatter = px.scatter_3d(df_pca, x='PC1', y='PC2', z='PC3', color='#IID')
+        
+        
 
+    df_pca_metadata=pd.merge(df_pca,df_metadata, left_on='#IID', right_on='Strain name' )
+    fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country')
+
+    # Création des barcharts avec facettes
+    fig_snmf = px.bar(
+        dfsnmf, 
+        x="Individual", y="Ancestry", color="Cluster", 
+        facet_row="K",  # un graphique par valeur de K
+        height=800
+    )
+
+    fig_snmf.update_layout(
+        title="Population structure (by sNMF) for different K",
+        barmode='stack',
+        showlegend=True
+    )
 
     #tree = Phylo.read(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick", "newick")
     #Phylo.draw(tree)
@@ -1871,7 +1941,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'} #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
@@ -1892,6 +1962,8 @@ def get_directory(pathname):
             os.mkdir(directory)
             os.mkdir(directory+"/genomes")
             os.mkdir(directory+"/genomes/genomes")
+
+
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".pav.xls -O "+directory+"/1.Orthologs_Cluster.txt"
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".metadata.xls -O "+directory+"/metadata.xls"
@@ -1910,6 +1982,7 @@ def get_directory(pathname):
             df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
             df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
             df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
+            df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
             list_species = []
             for col in df.columns:
                 if col != "ClutserID":
@@ -1952,8 +2025,9 @@ def init_dataframes(pathname):
     #df = df.rename(columns={'CLUSTERCLUSTERClutserID': 'ClutserID'})
     #df = df.dropna()
 
-
-    df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
+    df_ANI = pd.DataFrame()  
+    if os.path.exists(directory + "/fastani.out.matrix.complete.xls"):
+        df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
 
     list_species = []
     for col in df.columns:
