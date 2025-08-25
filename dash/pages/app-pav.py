@@ -157,10 +157,12 @@ columnDefs = [
 
 columnDefs2 = [
     {
-        "field": "Repeat",
+        "field": "ID",
+        "width": 40,
         "checkboxSelection": True,
         "headerCheckboxSelection": True,
-    }
+    },
+    {"field": "Repeat","width": 100,},
 ]
 
 
@@ -470,7 +472,7 @@ layout = html.Div([
                 dcc.Loading(
                             dag.AgGrid(
                                 id="mlva_table",
-                                style={'width': '50vh','height': '50vh','margin-left': '15px'},
+                                style={'width': '40vh','height': '50vh','margin-left': '15px'},
                                 columnDefs=columnDefs2,
                                 rowData=[],
                                 columnSize="sizeToFit",
@@ -479,6 +481,13 @@ layout = html.Div([
                                 dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
                             ), 
                         ),
+                #html.Pre(id='flanking', style={'width': '60vh', "fontFamily": "Courier", "whiteSpace": "pre-wrap", "border": "1px solid #ccc", "padding": "10px"}),
+                
+                dcc.Textarea(
+                     id='flanking',
+                     value='scc',
+                     style={'width': '60vh', 'height': '50vh'},
+                ),
                 html.Button('Show haplotypes', id='submit-vntr', n_clicks=0),
 
                 dcc.Loading(dcc.Graph(id='graph_mlva',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
@@ -490,11 +499,17 @@ layout = html.Div([
         dcc.Tab(label='SNP analysis', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             
-            dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+            dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','margin-left': '15px'})),
+            dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
             ]),
-        ]),
+        dcc.Tab(label='Geographical map', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+                dcc.Loading(dcc.Graph(id='geo_map',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
+            ]),
 
+        ]),
+        
     ]))
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
     
@@ -806,11 +821,11 @@ def update_MLVA(submit_vntr,mlva_table):
     # MLVA
     ###########################################################
     session = random.randint(1, 9000000)
-    vntr_file = directory+'/vntr_matrix.tsv.sample'
+    vntr_file = directory+'/vntr_matrix.tsv'
 
     print("submit vntr button" + str(submit_vntr) + " "+str(session))
 
-    df_vntr = pd.DataFrame(columns=['Repeat'])
+    df_vntr = pd.DataFrame(columns=['ID'])
     if os.path.exists(vntr_file):
 
         # remove lines/markers with missing data
@@ -821,22 +836,22 @@ def update_MLVA(submit_vntr,mlva_table):
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
 
 
-    repeat_names = df_vntr["Repeat"].astype(str).tolist()
+    repeat_names = df_vntr["ID"].astype(str).tolist()
 
     repeats = []
     if mlva_table:
         wjdata1 = json.loads(json.dumps(mlva_table, indent=2))
         for vntr in wjdata1:
             print(vntr)
-            vntr_name = vntr['Repeat']
+            vntr_name = vntr['ID']
             repeats.append(vntr_name) 
 
     
     print(repeats)
-    mask = df_vntr['Repeat'].isin(repeats)
+    mask = df_vntr['ID'].isin(repeats)
     testdf = df_vntr[mask]
-    newdf = testdf.drop("Repeat", axis='columns')
-    
+    newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
+    print(df_vntr)
     graph_mlva = px.imshow(newdf, 
                            aspect="auto",
                            labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
@@ -856,7 +871,6 @@ def update_MLVA(submit_vntr,mlva_table):
     transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
 
     # assign metadata to haplotype
-    colors = ["blue","yellow","green","red","brown","black"]
     df_metadata_tmp = pd.read_csv(directory+'/metadata.tmp.xls',sep='\t')
     dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
     dict_haplo = {}
@@ -865,9 +879,9 @@ def update_MLVA(submit_vntr,mlva_table):
         country = dict_metadata[strain]
         dict_element_for_colorizing[country]=1
         if row.haplotype in dict_haplo.keys():
-            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + country
+            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + str(country)
         else:
-            dict_haplo[row.haplotype] = country
+            dict_haplo[row.haplotype] = str(country)
 
     transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
 
@@ -944,7 +958,7 @@ def update_MLVA(submit_vntr,mlva_table):
     cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
     returned_value = os.system(cmd)
 
-    dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "1400px"}),
+    dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
 
     return dynamic_network, graph_mlva
 
@@ -971,10 +985,13 @@ def update_MLVA(submit_vntr,mlva_table):
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
     Output('mlva_table', 'rowData'),
+    Output('flanking','value'),
     Output('PCA','figure'),
     Output('iframe-content', 'src'),
     Output('results', 'style'),
     Output('sNMF', 'figure'),
+    Output('sNMF_cross_entropy', 'figure'),
+    Output('geo_map', 'figure'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
     #Input('continent', 'value'),
@@ -1785,9 +1802,11 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################################################################
     # VNTR table / MLVA
     ##############################################################################################
-    vntr_file = directory+'/vntr_matrix.tsv.sample'
+    vntr_file = directory+'/vntr_matrix.tsv'
 
-    df_vntr = pd.DataFrame(columns=['Repeat'])
+
+    df_vntr = pd.DataFrame(columns=['ID','Repeat'])
+    flanking_sequences = ""
     if os.path.exists(vntr_file):
 
         # remove lines/markers with missing data
@@ -1797,10 +1816,18 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
 
+        for row in df_vntr.itertuples():
+            id = row[1]
+            flanking = row[3]
+            flanking_sequences = flanking_sequences + ">" + str(id) + "\n" + str(flanking) + "\n"
+            
 
-    repeat_names = df_vntr["Repeat"].astype(str).tolist()
+    
+    repeat_names = df_vntr["ID"].astype(str).tolist()
 
-    newdf = df_vntr.drop("Repeat", axis='columns')
+    
+
+    newdf = df_vntr.drop("ID", axis='columns')
     graph_mlva = px.imshow(newdf, 
                            aspect="auto",
                            labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
@@ -1815,8 +1842,50 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################################################################
     vcf_file = directory+"/variants.vcf"
     df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2','PC3'])
+    df_crossentropy = pd.DataFrame(columns=['K', 'Cross-entropy'])
     dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
+    individual_order = []
+    individual_order_by_Pop1 = []
+    col_names = []
     if os.path.exists(vcf_file):
+
+        #################################################################
+        # Phylogenetic tree from SNPs
+        #################################################################
+
+        cmd = "plink2 --vcf " + vcf_file +" --max-alleles 2 --min-alleles 2 --make-bed --out "+ tmp_dir + "/" + str(session) + ".dataset"
+        returned_value = os.system(cmd)
+
+        cmd = "plink --bfile " + tmp_dir + "/" + str(session) + ".dataset --distance square --allow-extra-chr --out "+ tmp_dir + "/" + str(session) + ".dataset"
+        returned_value = os.system(cmd)
+
+        cmd = "grep -v '#FID' " + tmp_dir + "/" + str(session) + ".dataset.dist.id >"+ tmp_dir + "/" + str(session) + ".dataset.dist.id.2"
+        returned_value = os.system(cmd)
+
+        from skbio import DistanceMatrix
+        from skbio.tree import nj
+
+        # Charger les identifiants
+        ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
+        ids = ids[1].tolist()
+
+        # Charger la matrice de distances
+        D = np.loadtxt(tmp_dir + "/" + str(session) + ".dataset.dist")
+
+        # Construire la matrice de distances scikit-bio
+        dm = DistanceMatrix(D, ids)
+
+        # Construire un arbre neighbor-joining
+        tree = nj(dm)
+
+        rooted_tree = tree.root_at_midpoint()
+
+        # Sauvegarder au format Newick
+        with open(tmp_dir + "/" + str(session) + ".dataset.tree", "w") as f:
+            f.write(str(rooted_tree))
+
+        # Extraire l'ordre des taxons dans l'arbre
+        individual_order_by_Pop1 = [tip.name for tip in rooted_tree.tips()]
 
         #################################################################
         # Population structure with sNMF
@@ -1833,31 +1902,187 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
 
         ordered_ids.remove("ClutserID")
 
+
         results = []
+        list_entropy = []
+        
+        # Launch sNMF for K from 2 to 5
         for K in range(2, 6):
-            cmd = "sNMF -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -K " + str(K)
-            returned_value = os.system(cmd)
+            cmd = "sNMF -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
+            returned_value = os.popen(cmd).read()
+            match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
+            if match:
+                valeur = float(match.group(1))
+                list_entropy.append(valeur)
 
-            ancestry_cols = [f"Cluster_{i+1}" for i in range(K)]
-            #col_names = ["Individual"] + ancestry_cols
-            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None)
-            #qmat['Individual'] = pd.Categorical(qmat['Individual'],
-            #                            categories=ordered_ids,
-            #                            ordered=True)
-            
-            
+        # get the assignation of individuals to populations
+        previous_dict_groups = {}
+        previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
+        for K in range(2, 6):
+            ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
+            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
             qmat['Individual'] = list_sp2
-            qmat["Individual"] = pd.Categorical(qmat["Individual"], categories=ordered_ids, ordered=True)
-            qmat = qmat.sort_values("Individual")
-            print(qmat)
+            qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+            qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
 
-            # Passage en format long
-            qmat_long = qmat.melt(id_vars=['Individual'], var_name='Cluster', value_name='Ancestry')
+            #print("\n\n")
+
+            groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
+            #print(groups)
+            #print(str(K))
+            dict_groups = {}
+            dict_renaming = {}
+            dict_renaming2 = {}
+            dict_done = {}
+            dict_splitted = {}
+
+            
+            # first assignment for population with exact same individuals
+            for row in groups.itertuples():
+                pop_name = row[1]
+                individuals = row[2]
+                dict_groups[individuals] = pop_name
+                #print(pop_name + " : " + individuals)
+                # keep the same name of population if it exists in previous dict
+                if individuals in previous_dict_groups:
+                    previous_pop_name = previous_dict_groups[individuals]
+                    dict_renaming[pop_name] = previous_pop_name
+                    dict_done[previous_pop_name] = 1
+                    #print("same as previous" + previous_pop_name)
+
+            for row in groups.itertuples():
+                pop_name = row[1]
+                individuals = row[2]
+                dict_groups[individuals] = pop_name
+                #print(pop_name + " : " + individuals)
+                # keep the same name of population if it exists in previous dict
+                if individuals in previous_dict_groups:
+                    print("do nothing here")
+                # else it means that the pop has been splitted into two populations
+                else:
+                    if len(previous_dict_groups) > 0:
+                        individuals_list = individuals.split(", ")
+                        dict_of_pop_in_previous = {}
+                        for ind in individuals_list:
+                            # get the pop in previous qmat
+                            pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
+                            
+                            if pop not in dict_of_pop_in_previous:
+                                dict_of_pop_in_previous[pop] = 1
+                            else:
+                                dict_of_pop_in_previous[pop] += 1
+                            if pop not in dict_splitted:
+                                dict_splitted[pop] = pop_name
+                            else:
+                                dict_splitted[pop] += ","+pop_name
+
+                                
+
+                        print("splitted")
+                        
+                        
+
+                        # renaming for all except the last one
+                        if len(dict_of_pop_in_previous) > 1:
+                            #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
+                            if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                            elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
+                                dict_done[list(dict_of_pop_in_previous)[1]] = 1
+                            
+                        else:
+                            if list(dict_of_pop_in_previous)[0] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                            else:
+                                new_pop_name = "Pop_" + str(K)
+                                if len(dict_of_pop_in_previous) > 1:
+                                    dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
+                                else:
+                                    dict_renaming[pop_name] = new_pop_name
+                                    dict_done[new_pop_name] = 1
+
+                        #print(dict_of_pop_in_previous.keys())
+                        #print(list(dict_of_pop_in_previous)[0])
+                    else:
+                        print("do nothing")
+
+            #print("Dict renaming before adjustment")
+            #print(dict_renaming)
+            #print("Dict renaming after adjustment")
+            #print(dict_renaming2)
+            #print("Dict splitted")
+            for key, value in dict_splitted.items():
+                listvalue = value.split(",")
+                dict_splitted[key] = list(dict.fromkeys(listvalue))
+            
+            #print(dict_splitted)
+            list_keys_to_removed = []
+            for key in dict_renaming.keys():
+                value = dict_renaming[key]
+                print("key: " + key + " => " + value)
+                list_values = value.split(",")
+                
+                if len(list_values) > 1:
+                    has_been_adjusted = 0
+                    for val in list_values:
+                        print("val: " + val)
+                        if val not in dict_done:
+                            print("to be adjusted :" + val + "=>" + key)
+                            has_been_adjusted = 1
+                            dict_renaming[key] = val
+                    if has_been_adjusted == 0:
+                        new_pop_name = "Pop_" + str(K)
+                        dict_renaming[key] = new_pop_name
+            
+
+            #print(dict_renaming)
+            # rename pop for keeping the same as previously
+            #qmat = qmat.rename(columns=dict_renaming)
+            #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
+            #qmat = qmat
+            #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
+            #print(qmat)
+            #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+
+            previous_dict_groups = dict_groups
+            previous_qmat = qmat
+            #print(dict_groups)
+            #print(previous_dict_groups)
+
+            qmat_sorted = qmat.sort_values(
+                by=['Assigned_to_pop', 'max_prop'],
+                ascending=[True, False]
+            )
+
+            individual_order = qmat_sorted['Individual'].tolist()
+
+            qmat['Individual'] = pd.Categorical(
+                qmat['Individual'],
+                categories=individual_order,
+                ordered=True
+            )
+
+            qmat_long = qmat.melt(id_vars=['Individual'],
+                          value_vars=ancestry_cols,
+                          var_name='Cluster', value_name='Ancestry')
+
+
             qmat_long['K'] = K
+
+            #print(qmat_long)
+
             results.append(qmat_long)
 
-
+        
         dfsnmf = pd.concat(results)
+        print(dfsnmf)
+
+        dict_cross_entropy = {'K': range(2, 6),'Cross-entropy': list_entropy}
+        df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
+
 
 
         #################################################################
@@ -1869,8 +2094,9 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         cmd = "plink2 --vcf " + vcf_file +" --pca --out " + output_basename
         returned_value = os.system(cmd)
 
-        cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
-        returned_value = os.system(cmd)
+        if os.path.exists(pca_output):
+            cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
+            returned_value = os.system(cmd)
 
         if os.path.exists(pca_output + ".tsv"):
             df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
@@ -1884,7 +2110,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     # Création des barcharts avec facettes
     fig_snmf = px.bar(
         dfsnmf, 
-        x="Individual", y="Ancestry", color="Cluster", 
+        x="Individual", y="Ancestry", color="Cluster", category_orders={"Individual": individual_order_by_Pop1}, 
         facet_row="K",  # un graphique par valeur de K
         height=800
     )
@@ -1894,6 +2120,8 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         barmode='stack',
         showlegend=True
     )
+
+    fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy", title='Values of the cross-entropy criterion for 4 sNMF runs (K=2 to K=5)')
 
     #tree = Phylo.read(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick", "newick")
     #Phylo.draw(tree)
@@ -1929,6 +2157,24 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     # dynamic_tree="data:image/png;base64,{}".format(data)
 
     
+    ##############################################################################################
+    # geographical map of strains
+    ##############################################################################################
+    print(df_metadata3)
+
+    counts = df_metadata3.groupby(["Country", "Continent"]).size().reset_index(name="number_strains")
+    
+    
+    # Créer la carte choroplèthe
+    fig_geomap = px.choropleth(
+        counts,
+        locations="Country",            # Colonne avec les noms des pays
+        locationmode="country names", # On utilise les noms de pays
+        color="number_strains",      # Couleur selon le nombre de souches
+        color_continuous_scale="Viridis",
+        title="Number of strains by country"
+    )
+
 
 
     
@@ -1941,7 +2187,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
