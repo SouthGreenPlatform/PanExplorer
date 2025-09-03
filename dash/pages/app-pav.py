@@ -433,7 +433,11 @@ layout = html.Div([
             ]),
         dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
+            dcc.Loading(html.Div(id='clinker'),style={'width': '150vh', 'height': '200vh','margin-left': '15px'}),
+            html.Br(),
+            html.Br(),
             dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
+            
         ]),
         
         dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
@@ -984,6 +988,7 @@ def update_MLVA(submit_vntr,mlva_table):
     Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
+    Output('clinker','children'),
     Output('mlva_table', 'rowData'),
     Output('flanking','value'),
     Output('PCA','figure'),
@@ -1684,7 +1689,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     df_core_genes.to_csv(tmp_dir + "/" + str(session) + ".core_genes.txt",sep="\t")
 
     list_selected.remove("ClutserID")
-    max_nb_strains_macrosynteny = 10
+    max_nb_strains_macrosynteny = 20
     if len(list_selected) < max_nb_strains_macrosynteny:
         max_nb_strains_macrosynteny = len(list_selected)
 
@@ -1713,8 +1718,16 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
             returned_value = os.system(cmd)
             list_of_species_macrosyneny.append(sp)
 
-    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt"
+    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt 10"
     returned_value = os.system(cmd)
+
+    # add the prefix haplo to indexes
+    #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
+
+    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
+    returned_value = os.system(cmd)
+
+    clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
 
     # #df_core_genes2 = df_core_genes[list_species]
     # #print(df_core_genes)
@@ -2187,7 +2200,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap #,fig_upset
 
 def get_directory(pathname):
     directory = "data/african_Xo"
