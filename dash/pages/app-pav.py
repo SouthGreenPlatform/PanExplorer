@@ -815,15 +815,30 @@ def set_reference_value(available_options):
         Output('graph_mlva', 'figure'),
         Input('submit-vntr', 'n_clicks'),
         State('mlva_table','selectedRows'),
+        State('metadata_table','selectedRows'),
         prevent_initial_call=True
         
 )
 
-def update_MLVA(submit_vntr,mlva_table):
+def update_MLVA(submit_vntr,mlva_table,metadata_table):
 
     ###########################################################
     # MLVA
     ###########################################################
+    list_selected = ['ID','Repeat','Flanking']
+    #if submit_samples:
+    if metadata_table:
+        wjdata = json.loads(json.dumps(metadata_table, indent=2))
+        val = wjdata
+        for strain in wjdata:
+            strain_name = strain['Strain name']
+            list_selected.append(strain_name)
+                
+    else:
+        for value in df_metadata2['Strain name']:
+            list_selected.append(value)
+
+
     session = random.randint(1, 9000000)
     vntr_file = directory+'/vntr_matrix.tsv'
 
@@ -838,24 +853,30 @@ def update_MLVA(submit_vntr,mlva_table):
         returned_value = os.system(cmd)
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
+        df_vntr_filtered = df_vntr[list_selected]
+        print(df_vntr_filtered.columns)
+        df_vntr = df_vntr_filtered
 
 
     repeat_names = df_vntr["ID"].astype(str).tolist()
+    print("Filtered vntr")
+    print(list_selected)
+    
 
     repeats = []
     if mlva_table:
         wjdata1 = json.loads(json.dumps(mlva_table, indent=2))
         for vntr in wjdata1:
-            print(vntr)
+            #print(vntr)
             vntr_name = vntr['ID']
             repeats.append(vntr_name) 
 
     
-    print(repeats)
+    #print(repeats)
     mask = df_vntr['ID'].isin(repeats)
     testdf = df_vntr[mask]
     newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
-    print(df_vntr)
+    #print(df_vntr)
     graph_mlva = px.imshow(newdf, 
                            aspect="auto",
                            labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
@@ -1828,6 +1849,9 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         returned_value = os.system(cmd)
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
+
+        df_vntr_filtered = df_vntr.drop(list_selected, axis=1)
+        df_vntr = df_vntr_filtered
 
         for row in df_vntr.itertuples():
             id = row[1]
