@@ -165,6 +165,12 @@ columnDefs2 = [
     {"field": "Repeat","width": 100,},
 ]
 
+columnDefs3 = [
+    {"field": "ClutserID","width": 10},
+    {"field": "COG term","width": 70},
+    {"field": "type","width": 50},
+]
+
 
 data = ""
 
@@ -310,7 +316,8 @@ layout = html.Div([
 
     # The Visuals
     
-    dcc.Loading(html.Div(id='results', style={'display': 'none'}, children=[
+    dcc.Loading(html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
+    html.Div(id='results', style={'display': 'none'}, children=[
     dcc.Tabs(id='tab', style=tabs_styles, children=[
         dcc.Tab(label='Stats and Overview', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
@@ -325,33 +332,65 @@ layout = html.Div([
             html.Br(),
             
             html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
-            dcc.Loading(html.Div(id='test', style={'whiteSpace': 'pre-line'})),
-            html.Div(id='test2'),
             dcc.Loading(dcc.Graph(id='PAV_graph')),
             html.Br(),
-            html.Div(className="row", id='tables', children=[
-                html.Div(children=[
-                    dcc.Loading(html.H3(id='nb_of_pangenes', style={'whiteSpace': 'pre-line'})),
-                    dcc.Loading(
+            html.Div(className="row", id='titles', children=[
+                dcc.Loading(html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'})),
+                dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
+            ]),
+            html.Div(className="row", id='manytables', children=[
+                dcc.Loading(
                         dag.AgGrid(
                                 id="table_pangenes",
-                                style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
+                                style={'width': '60vh', 'height': '50vh','margin-left': '1px'},
                                 rowData=[],
-                                columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
+                                columnDefs=columnDefs3,
                                 #defaultColDef={"filter": True},
                                 columnSize="sizeToFit",
                                 defaultColDef={"filter": "agTextColumnFilter"},
                                 #getRowId="params.data.State",
                                 dashGridOptions={"pagination": True, "animateRows": False}
                         ),
+                     ),
+                
+                 dcc.Loading(
+                        dag.AgGrid(
+                                    id="genes_cluster",
+                                    style={'width': '30vh', 'height': '50vh','margin-left': '15px'},
+                                    rowData=[],
+                                    columnDefs=[{"field": i} for i in ["Species","Genes"] ],
+                                    defaultColDef={"filter": True},
+                                    columnSize="sizeToFit",
+                                    #getRowId="params.data.State",
+                                    dashGridOptions={"pagination": True, "animateRows": False}
+                            )
                     ),
-                ]),
-                
-                
-                
-
-                html.Div(style={'marginLeft': 50}, children=[
-                    dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
+                dcc.Loading(
+                            dash_bio.AlignmentChart(
+                                id='my-default-alignment-viewer',
+                                data=data,
+                                width=1000,
+                                height=600,
+                            ),
+                        ),
+            ]),
+        ]),
+        dcc.Tab(label='Pan-GWAS', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            dcc.Loading(
+                            dag.AgGrid(
+                                id="scoary_table",
+                                style={'width': '100%','height': '50vh','margin-left': '15px'},
+                                columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Naive_p","Bonferroni_p","Benjamini_H_p"]],
+                                rowData=[],
+                                columnSize="sizeToFit",
+                                defaultColDef={"filter": True},
+                                dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                            ), 
+                        ),
+            html.Br(),
+            dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+            dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
                     dcc.Loading(
                         dag.AgGrid(
                                 id="table_of_search",
@@ -365,49 +404,8 @@ layout = html.Div([
                                 dashGridOptions={"pagination": True, "animateRows": False}
                         ),
                     ),
-                ]),
-            ]),
-           
-            html.Br(),
-            
-            dcc.Loading(html.H3(id='selected_cluster')),
-            html.Div(className="row", id='focus', children=[
-            #html.Div(style={'marginLeft': 50}, children=[
-                    #html.Div(className="row", children=[
-                    
-                    
-                    #    ]),
-                    #html.Div(id="cluster_info"),
-                    dcc.Loading(
-                        dag.AgGrid(
-                                    id="genes_cluster",
-                                    style={'width': '50vh', 'height': '50vh','margin-left': '15px'},
-                                    rowData=[],
-                                    columnDefs=[{"field": i} for i in ["Cluster","Species","Genes"] ],
-                                    defaultColDef={"filter": True},
-                                    columnSize="sizeToFit",
-                                    #getRowId="params.data.State",
-                                    dashGridOptions={"pagination": True, "animateRows": False}
-                            )
-                    ),
-                    html.Div(style={'marginLeft': 50}, children=[
-                        dcc.Loading(
-                            dash_bio.AlignmentChart(
-                                id='my-default-alignment-viewer',
-                                data=data,
-                                width=1000,
-                                height=600,
-                            ),
-                        ),
-                    ]),
-                ]),
-                
-            
-            
-            html.Div(id='tbl_out'),
-            
-        ]),
 
+            ]),
         dcc.Tab(label='COG', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             dcc.Loading(dcc.Graph(id='graph_COG_all')),
@@ -431,6 +429,7 @@ layout = html.Div([
             html.Br(),
             dcc.Loading(dcc.Graph(id='graph_ANI')),
             ]),
+        
         dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             dcc.Loading(html.Div(id='clinker'),style={'width': '150vh', 'height': '200vh','margin-left': '15px'}),
@@ -514,7 +513,7 @@ layout = html.Div([
 
         ]),
         
-    ]))
+    ])
     #html.Div(id='cluster_info', style={'whiteSpace': 'pre-line'}),
     
     
@@ -825,6 +824,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table):
     ###########################################################
     # MLVA
     ###########################################################
+
     list_selected = ['ID','Repeat','Flanking']
     #if submit_samples:
     if metadata_table:
@@ -1018,6 +1018,9 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table):
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
     Output('geo_map', 'figure'),
+    Output('scoary_table', 'rowData'),
+    Output('graph_pangwas', 'figure'),
+    Output('mainloading','children'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
     #Input('continent', 'value'),
@@ -1050,7 +1053,8 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     
     
     
-        
+    session = random.randint(1, 9000000)
+
     directory = "data/african_Xo"
     with open("panexplorer_config.yaml", "r") as yaml_file:
         conf = yaml.safe_load(yaml_file)
@@ -1374,17 +1378,13 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
     
-    
-    
-
     #################################################
     # manage Circos
     #################################################
-    #gene_position_file = 'data/Xo/'+reference+'.ptt'
+    
+    
     gene_position_file = directory+'/genomes/genomes/'+str(reference)+'.ptt'
     gene_position_file2 = directory+'/genomes/genomes/'+str(reference)+'.2.ptt'
-    
-    
     # Remove lines from ptt
     cmd = "grep -P 'Location|^\d+\.\.' "+ directory+"/genomes/genomes/"+reference+".ptt >"+directory+"/genomes/genomes/"+reference+".2.ptt"
     returned_value = os.system(cmd)
@@ -1515,6 +1515,68 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     text="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
+
+
+
+    #################################################
+    # pan-GWAS
+    #################################################
+    # write traits file for Scoary
+    with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
+        f.write(",Trait1\n")
+        for strain in list_selected:
+            if strain != "ClutserID":
+                f.write(str(strain))
+                f.write(",")
+                if strain in specific_to:
+                    f.write("1\n")
+                else:
+                    f.write("0\n")
+
+    # write input file for Scoary
+    with open(tmp_dir + "/" + str(session) + ".scoary_input.csv", "a") as i:
+        df_for_scoary = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
+        col_position = df.columns.get_loc("ClutserID") + 1
+        df_for_scoary.insert(col_position, "Non-unique Gene name", None)
+        df_for_scoary.insert(col_position + 1, "Annotation", None)
+        df_for_scoary.insert(col_position + 2, "No. isolates", None)
+        df_for_scoary.insert(col_position + 3, "No. sequences", None)
+        df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
+        df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
+        df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
+        df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
+        df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
+        df_for_scoary.insert(col_position + 9, "QC", None)
+        df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
+        df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
+        df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
+        df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
+        df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
+
+    cmd = "scoary -t " + tmp_dir + "/" + str(session) + ".traits.csv -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
+    returned_value = os.system(cmd)
+    cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/Trait1* " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+    returned_value = os.system(cmd)
+
+    df_scoary_results = pd.read_csv(tmp_dir + "/" + str(session) + ".scoary_results.txt")
+    scoary_table = df_scoary_results.to_dict('records')
+
+
+
+    merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+    merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Bonferroni_p"])
+
+    #print(merged_with_positions)
+    print(merged_with_positions_scoary)
+
+    graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Bonferroni_p"], title="Pan-GWAS results")
+    
+
+
+    #######################
+    # ANI
+    #######################
+
     
     fig_ANI = None
     if os.path.exists(directory + "/fastani.out.matrix.complete.xls"):
@@ -1614,7 +1676,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     # accessory-based tree
     ############################################################
 
-    session = random.randint(1, 9000000)
+    
     newick = ""
     
     # get tree in newick format as a variable
@@ -2224,9 +2286,10 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, '' #,fig_upset
 
 def get_directory(pathname):
+
     directory = "data/african_Xo"
     with open("panexplorer_config.yaml", "r") as yaml_file:
         conf = yaml.safe_load(yaml_file)
