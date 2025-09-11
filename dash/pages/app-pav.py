@@ -58,7 +58,7 @@ for subdir in subdirectories:
     if subdir.startswith(('1','2','3','4','5','6','7','8','9','0')):
         subdirectories.remove(subdir)
 
-
+print(subdirectories)
 df_metadata = pd.read_csv(data_dir+"/"+subdirectories[0]+'/metadata.xls',sep='\t')
 
 #dftest = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/solar.csv')
@@ -328,6 +328,10 @@ layout = html.Div([
                 dcc.Loading(dcc.Graph(id='rarefaction',style={'width': '50vh', 'height': '50vh','margin-left': '15px'})),
             ]),
         ]),
+        dcc.Tab(label='GFA viewer', style=tab_style, selected_style=tab_selected_style, children=[
+            html.Br(),
+            dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
+        ]),
         dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
             
@@ -381,7 +385,7 @@ layout = html.Div([
                             dag.AgGrid(
                                 id="scoary_table",
                                 style={'width': '100%','height': '50vh','margin-left': '15px'},
-                                columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Naive_p","Bonferroni_p","Benjamini_H_p"]],
+                                columnDefs=[{"field": i} for i in ["Gene","g+t+","g+t-","g-t+","g-t-","sensitivity","specificity","odds_ratio","fisher_p"]],
                                 rowData=[],
                                 columnSize="sizeToFit",
                                 defaultColDef={"filter": True},
@@ -1020,6 +1024,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table):
     Output('geo_map', 'figure'),
     Output('scoary_table', 'rowData'),
     Output('graph_pangwas', 'figure'),
+    Output('graph_gfa', 'figure'),
     Output('mainloading','children'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
@@ -1144,7 +1149,8 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     df2['ClutserID'] = df2['ClutserID'].str.replace('CLUSTER','')
     cluster_names = df2["ClutserID"]
     
-    
+    print("df2")
+    print(df2)
     df2.loc[df2['sum'] == 1, 'type'] = 'Strain-specific'
     df2.loc[df2['sum'] == len(list_sp2), 'type'] = 'Core-gene'
     df2.loc[(df2['sum'] < len(list_sp2)) & (df2['sum'] > 1), 'type'] = 'Dispensable-gene'
@@ -1292,7 +1298,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif specific_to is not None and len(specific_to) > 0:
+    elif specific_to is not None and len(specific_to) > 0 and 4<3:
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -1495,10 +1501,10 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     #fig_gene = px.bar(df, x='year', y='Nb_genes')
     
     colorscale = [[0, 'whitesmoke'], [1, 'teal']]
-    if highlight != "None" or cluster_search != "" or bedfile is not None or specific_to is not None:
-        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
-    elif colorizing == "Continent":
-        colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
+    #if highlight != "None" or cluster_search != "" or bedfile is not None or specific_to is not None:
+    #    colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
+    #elif colorizing == "Continent":
+    #    colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
     fig = go.FigureWidget(data=go.Heatmap(
                    #z=[[1, 0, 0, 0, 1], [0, 1, 0, 0, 0], [0, 0, 1, 1, 0]],
                    #z=list_of_lists,
@@ -1553,23 +1559,24 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
         df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
-    cmd = "scoary -t " + tmp_dir + "/" + str(session) + ".traits.csv -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
-    returned_value = os.system(cmd)
-    cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/Trait1* " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+    cmd = "scoary2 " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
     returned_value = os.system(cmd)
 
-    df_scoary_results = pd.read_csv(tmp_dir + "/" + str(session) + ".scoary_results.txt")
-    scoary_table = df_scoary_results.to_dict('records')
+    scoary_output_file = tmp_dir + "/" + str(session) + "_scoary_output/traits/Trait1/result.tsv"
+    if os.path.exists(scoary_output_file):
+
+        cmd = "mv " + scoary_output_file + " " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+        returned_value = os.system(cmd)
+        df_scoary_results = pd.read_csv(tmp_dir + "/" + str(session) + ".scoary_results.txt",sep='\t')
+        scoary_table = df_scoary_results.to_dict('records')
+
+        print(df_scoary_results)
+
+        merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+        merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
 
 
-
-    merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
-    merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Bonferroni_p"])
-
-    #print(merged_with_positions)
-    print(merged_with_positions_scoary)
-
-    graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Bonferroni_p"], title="Pan-GWAS results")
+        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
     
 
 
@@ -2222,38 +2229,87 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
 
     fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy", title='Values of the cross-entropy criterion for 4 sNMF runs (K=2 to K=5)')
 
-    #tree = Phylo.read(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick", "newick")
-    #Phylo.draw(tree)
 
-    # from itolapi import Itol
-    # from pathlib import Path
-    # itol_uploader = Itol()
-    # itol_uploader.add_file(Path(directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"))
-    # itol_uploader.params['treeName'] = 'apple'
-    # status = itol_uploader.upload()
-    # print("Status itol: " + str(status))
-    
+    #############################################################################################
+    # GFA viewer
+    #############################################################################################
+    gfa_file = directory+"/pangenome.gfa"
 
-    # from phytreeviz import TreeViz, load_example_tree_file
-    # tree_file = directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"
-    # tv = TreeViz(tree_file)
-    # group1 = ["Genus_species_CIX4232gb"]
-    # group2 = ["Genus_species_CIX4476gb"]
-    # tv.highlight(group1, "orange")
-    # tv.highlight(group2, "lime")
-    # tv.annotate(group1, "group1")
-    # tv.annotate(group2, "group2")
-    # tv.marker(group1, marker="s", color="blue")
-    # tv.marker(group2, marker="D", color="purple", descendent=True)
-    # #tv.marker(["Genus_species_CIX4232gb"], marker="D", color="purple", descendent=True)
-    # tv.set_node_label_props("Genus_species_CIX4232gb", color="green", style="italic")
-    # tv.set_node_label_props("Genus_species_CIX4476gb", color="green")
-    # tv.show_scale_bar()
-    # buf = io.BytesIO() # in-memory files
-    # tv.savefig(buf)
-    # data = base64.b64encode(buf.getbuffer()).decode("utf8") # encode to html elements
-    # buf.close()
-    # dynamic_tree="data:image/png;base64,{}".format(data)
+    graph_gfa = go.Figure()
+    if os.path.exists(gfa_file):
+
+        #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
+        cmd = "perl generateNodePAVfromGFA.pl /mnt/c/Users/dereeper/Documents/formation_python_scientifique_2022/dash/data_public/phages_Xoo/pangenome.gfa Genus_species_CIP37gb_gb#1#CIP37gb_gb " + tmp_dir +"/"+str(session)+".segments"
+        returned_value = os.system(cmd)
+
+        x_segments = []
+        y_segments = []
+        dict_segments_x = {}
+        dict_segments_y = {}
+        with open(tmp_dir +"/"+str(session)+".segments.segments_x.txt",'r') as file:
+            for line in file:
+                text = line.strip()
+                text2 = text.rstrip(text[-1])
+                infos = text2.split("###")
+                dict_segments_x[infos[0]] = infos[1]
+
+
+        with open(tmp_dir +"/"+str(session)+".segments.segments_y.txt",'r') as file:
+            for line in file:
+                text = line.strip()
+                text2 = text.rstrip(text[-1])
+                infos = text2.split("###")
+                dict_segments_y[infos[0]] = infos[1]
+
+
+        #x_segments = [0,10,None,20,30,None,40,50,None]
+        #y_segments = [2,2,None,6,6,None,80,80,None]
+
+        
+
+        for key in dict_segments_x.keys():
+            if key in dict_segments_y:
+                sample = key
+                print("key: " + key)
+                x_segments = dict_segments_x[key].split(",")
+                print(x_segments)
+                for i in range(0, len(x_segments)):
+                    if x_segments[i] != 'None':
+                        x_segments[i] = int(x_segments[i])
+                    else:
+                        x_segments[i] = None
+
+                y_segments = dict_segments_y[key].split(",")
+                for i in range(0, len(y_segments)):
+                    if y_segments[i] != 'None':
+                        y_segments[i] = int(y_segments[i])
+                    else:
+                        y_segments[i] = None
+
+                x_segments3 = np.array(x_segments)
+                x_segments = x_segments3 
+                y_segments3 = np.array(y_segments)
+                y_segments = y_segments3 
+
+
+                graph_gfa.add_trace(go.Scatter(
+                    x=x_segments,
+                    y=y_segments,
+                    mode='lines',
+                    name=key,
+                    line=dict(width=25),
+                    #hoverinfo='skip'
+                ))
+
+        # Configuration des axes
+        graph_gfa.update_layout(
+            title='1-Dimensional visualization of segments of the pangenome graph',
+            xaxis=dict(title='Position in reference'),
+            yaxis=dict(title='Samples', autorange='reversed'),
+            #height=300,
+            #showlegend=False
+        )
+
 
     
     ##############################################################################################
@@ -2286,7 +2342,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, '' #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa, '' #,fig_upset
 
 def get_directory(pathname):
 
@@ -2324,6 +2380,10 @@ def get_directory(pathname):
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
             returned_value = os.system(cmd)
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".pangenome.gfa -O "+directory+"/pangenome.gfa"
+            returned_value = os.system(cmd)
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".all_genomes.vcf -O "+directory+"/aal_genomes.vcf"
+            returned_value = os.system(cmd)
 
             df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
             df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
@@ -2332,9 +2392,12 @@ def get_directory(pathname):
             list_species = []
             for col in df.columns:
                 if col != "ClutserID":
-                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+col+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
+                    colbis = col
+                    #colbis = col.replace("_gb", "")
+
+                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
                     returned_value = os.system(cmd)
-                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+col+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
+                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
                     returned_value = os.system(cmd)
 
     return directory
@@ -2398,6 +2461,8 @@ def init_dataframes(pathname):
         df_gene_positons.insert(0, 'block_id', 'chr1')
         
     merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
+
+    print(merged_with_positions)
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
