@@ -1563,20 +1563,23 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     returned_value = os.system(cmd)
 
     scoary_output_file = tmp_dir + "/" + str(session) + "_scoary_output/traits/Trait1/result.tsv"
+    merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
+    df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
+
     if os.path.exists(scoary_output_file):
 
         cmd = "mv " + scoary_output_file + " " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
         returned_value = os.system(cmd)
         df_scoary_results = pd.read_csv(tmp_dir + "/" + str(session) + ".scoary_results.txt",sep='\t')
-        scoary_table = df_scoary_results.to_dict('records')
+        
 
         print(df_scoary_results)
 
         merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
         merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
 
-
-        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
+    scoary_table = df_scoary_results.to_dict('records')
+    graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
     
 
 
