@@ -8,7 +8,7 @@ import dash_auth
 
 
 VALID_USERNAME_PASSWORD_PAIRS = {
-    'XPLAIN': 'Xpl@in2025'
+    'hello': 'world'
 }
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
