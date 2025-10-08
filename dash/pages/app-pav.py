@@ -330,6 +330,8 @@ layout = html.Div([
         ]),
         dcc.Tab(label='GFA viewer', style=tab_style, selected_style=tab_selected_style, children=[
             html.Br(),
+            dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
+            html.Br(),
             dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
         ]),
         dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
@@ -1025,6 +1027,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table):
     Output('scoary_table', 'rowData'),
     Output('graph_pangwas', 'figure'),
     Output('graph_gfa', 'figure'),
+    Output('graph_gfa2', 'figure'),
     Output('mainloading','children'),
     #Output('graph_upset', 'figure'),
     #Input('sp', 'value'),
@@ -1298,7 +1301,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif specific_to is not None and len(specific_to) > 0 and 4<3:
+    elif specific_to is not None and len(specific_to) > 0:
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -1501,10 +1504,10 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     #fig_gene = px.bar(df, x='year', y='Nb_genes')
     
     colorscale = [[0, 'whitesmoke'], [1, 'teal']]
-    #if highlight != "None" or cluster_search != "" or bedfile is not None or specific_to is not None:
-    #    colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
-    #elif colorizing == "Continent":
-    #    colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
+    if highlight != "None" or cluster_search != "" or bedfile is not None or specific_to is not None:
+       colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
+    elif colorizing == "Continent":
+       colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
     fig = go.FigureWidget(data=go.Heatmap(
                    #z=[[1, 0, 0, 0, 1], [0, 1, 0, 0, 0], [0, 0, 1, 1, 0]],
                    #z=list_of_lists,
@@ -1582,6 +1585,8 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
     
 
+    cmd = "scoary2 " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
+    returned_value = os.system(cmd)
 
     #######################
     # ANI
@@ -2239,10 +2244,11 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
     gfa_file = directory+"/pangenome.gfa"
 
     graph_gfa = go.Figure()
+    graph_gfa2 = go.FigureWidget()
     if os.path.exists(gfa_file):
 
         #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
-        cmd = "perl generateNodePAVfromGFA.pl /mnt/c/Users/dereeper/Documents/formation_python_scientifique_2022/dash/data_public/phages_Xoo/pangenome.gfa Genus_species_CIP37gb_gb#1#CIP37gb_gb " + tmp_dir +"/"+str(session)+".segments"
+        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
         returned_value = os.system(cmd)
 
         x_segments = []
@@ -2313,7 +2319,33 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
             #showlegend=False
         )
 
+        df_pav_node = pd.read_csv(tmp_dir + "/" + str(session) + ".segments.node_pav.tsv", sep="\t")
+        
+        list_strains = df_pav_node.columns.tolist()
+        list_strains.remove("Node")
+        node_names = df_pav_node["Node"].astype(str).tolist()
+        df_pav_node = df_pav_node[list_strains]
+        transposed_df_pav_node = df_pav_node.transpose()
+        df_ordered = transposed_df_pav_node.loc[list_sp2]
+        z_original = df_ordered.values
 
+        # Transformation symlog
+        z_symlog = np.sign(z_original) * np.log10(np.abs(z_original) + 1) 
+
+        print(list_sp2)
+        print(list_strains)
+        graph_gfa2 = go.FigureWidget(data=go.Heatmap(
+                   z=z_symlog,
+                   y=list_sp2,
+                   x=node_names,
+                   colorscale='RdBu',
+                   zmid=0,
+                   customdata=z_original,
+                   hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
+                   hoverongaps = False))
+        graph_gfa2.update_layout(
+            title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
+        )
     
     ##############################################################################################
     # geographical map of strains
@@ -2345,7 +2377,7 @@ def update_graph(reference,ordering,colorizing,highlight,projets,url,submit_butt
         search_res2 = df_search.to_dict('records')
 
 
-    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa, '' #,fig_upset
+    return nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa, graph_gfa2, '' #,fig_upset
 
 def get_directory(pathname):
 
