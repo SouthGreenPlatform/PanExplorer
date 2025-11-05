@@ -1,7 +1,7 @@
 
 # PanExplorer
 
-Web application to explore bacterial pangenomes
+Web application to explore microbial pangenomes (bacteria, fungi, virus)
 
 **Homepage:**: [https://panexplorer.southgreen.fr](https://panexplorer.southgreen.fr)
 
