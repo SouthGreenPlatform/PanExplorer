@@ -143,7 +143,17 @@ tmp_dir = "tmp"
 # ---------- Config ----------
 DB_PATH = "example_auth.db"
 CONFIG_YAML = "panexplorer_config.yaml"
-SECRET_KEY = "change_this_in_prod"
+
+
+
+with open(CONFIG_YAML, "r") as f:
+    conf = yaml.safe_load(f)
+
+plink_exe = conf.get("plink_exe") or "plink"
+plink2_exe = conf.get("plink2_exe") or "plink2"
+snmf_exe = conf.get("snmf_exe") or "sNMF"
+vcf2geno_exe = conf.get("vcf2geno_exe") or "vcf2geno"
+SECRET_KEY = conf.get("secret_key")
 
 # ---------- DB helpers ----------
 def init_db():
@@ -170,9 +180,7 @@ def init_db():
                 FOREIGN KEY(owner_id) REFERENCES users(id)
             )
         """)
-        # example users
-        c.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("alice", generate_password_hash("alicepass")))
-        c.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("bob", generate_password_hash("bobpass")))
+
         conn.commit()
     conn.close()
 
@@ -195,13 +203,13 @@ def execute_db(query, args=()):
 # ---------- Sync projects (from YAML folder list) ----------
 def sync_projects_from_yaml():
     if not os.path.exists(CONFIG_YAML):
-        print("panexplorer_config.yaml introuvable. Crée-le ou adapte CONFIG_YAML.")
+        print("panexplorer_config.yaml not found.")
         return
     with open(CONFIG_YAML, "r") as f:
         conf = yaml.safe_load(f)
     data_dir = conf.get("data_dir") or conf.get("directory") or "data"
     if not os.path.isdir(data_dir):
-        print(f"data_dir {data_dir} introuvable. Vérifie panexplorer_config.yaml")
+        print(f"data_dir {data_dir} not found. Check panexplorer_config.yaml")
         return
     subdirs = [f.name for f in os.scandir(data_dir) if f.is_dir()]
     # optionally filter numeric folders (like in original)
@@ -212,7 +220,7 @@ def sync_projects_from_yaml():
         exists = query_db("SELECT id FROM projects WHERE path = ?", (path,), one=True)
         if not exists:
             execute_db("INSERT INTO projects (title, path, is_public) VALUES (?, ?, ?)", (sub, path, 1))
-            print("Ajout projet:", sub, path)
+            print("Add project:", sub, path)
 
 # ---------- Flask + Login ----------
 server = Flask(__name__)
@@ -236,8 +244,8 @@ def load_user(user_id):
 
 LOGIN_PAGE = """
 <!doctype html>
-<title>Connexion</title>
-<h2>Connexion</h2>
+<title>Login</title>
+<h2>Login</h2>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul>
@@ -248,9 +256,9 @@ LOGIN_PAGE = """
   {% endif %}
 {% endwith %}
 <form method="post">
-  <label>Nom d'utilisateur: <input name="username"></label><br>
-  <label>Mot de passe: <input type="password" name="password"></label><br>
-  <input type="submit" value="Se connecter">
+  <label>Username: <input name="username"></label><br>
+  <label>Password: <input type="password" name="password"></label><br>
+  <input type="submit" value="Login">
 </form>
 <p><a href="/">Retour</a></p>
 """
@@ -265,7 +273,7 @@ def login():
             user_obj = User(r[0], r[1])
             login_user(user_obj)
             return redirect("/")
-        flash("Nom d'utilisateur ou mot de passe invalide.")
+        flash("Invalid username or password.")
     return render_template_string(LOGIN_PAGE)
 
 @server.route("/logout")
@@ -358,7 +366,7 @@ def render_page(search):
         user_obj = None
 
     visible = list_visible_projects(user_obj)
-    options = [{"label": p["title"] + ("" if p["is_public"] else " (privé)"), "value": p["title"]} for p in visible]
+    options = [{"label": p["title"] + ("" if p["is_public"] else " (private)"), "value": p["title"]} for p in visible]
 
     for d in options:
         if d['value'].startswith('3'):
@@ -387,6 +395,7 @@ def render_page(search):
     ], style={"padding":"10px"})
 
     return ui
+
 
 # Load project metadata and present a table (simplified replacement for big app-pav callbacks)
 @app.callback(
@@ -1868,10 +1877,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         # Phylogenetic tree from SNPs
         #################################################################
 
-        cmd = "plink2 --vcf " + vcf_file +" --max-alleles 2 --min-alleles 2 --make-bed --out "+ tmp_dir + "/" + str(session) + ".dataset"
+        cmd = plink2_exe + " --vcf " + vcf_file +" --max-alleles 2 --min-alleles 2 --make-bed --out "+ tmp_dir + "/" + str(session) + ".dataset"
         returned_value = os.system(cmd)
 
-        cmd = "plink --bfile " + tmp_dir + "/" + str(session) + ".dataset --distance square --allow-extra-chr --out "+ tmp_dir + "/" + str(session) + ".dataset"
+        cmd = plink_exe + " --bfile " + tmp_dir + "/" + str(session) + ".dataset --distance square --allow-extra-chr --out "+ tmp_dir + "/" + str(session) + ".dataset"
         returned_value = os.system(cmd)
 
         cmd = "grep -v '#FID' " + tmp_dir + "/" + str(session) + ".dataset.dist.id >"+ tmp_dir + "/" + str(session) + ".dataset.dist.id.2"
@@ -1905,7 +1914,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #################################################################
         # Population structure with sNMF
         #################################################################
-        cmd = "vcf2geno " + vcf_file +" " + tmp_dir + "/" + str(session) + ".variants.geno"
+        cmd = vcf2geno_exe + " " + vcf_file +" " + tmp_dir + "/" + str(session) + ".variants.geno"
         returned_value = os.system(cmd)
 
         cmd = "grep '#CHROM' " + vcf_file
@@ -1923,7 +1932,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         
         # Launch sNMF for K from 2 to 5
         for K in range(2, 6):
-            cmd = "sNMF -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
+            cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
             returned_value = os.popen(cmd).read()
             match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
             if match:
