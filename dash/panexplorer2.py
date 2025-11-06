@@ -678,7 +678,7 @@ def load_project_preview(proj_title):
                                         dag.AgGrid(
                                             id="scoary_table",
                                             style={'width': '100%','height': '50vh','margin-left': '15px'},
-                                            columnDefs=[{"field": i} for i in ["Gene","g+t+","g+t-","g-t+","g-t-","sensitivity","specificity","odds_ratio","fisher_p"]],
+                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Bonferroni_p"]],
                                             rowData=[],
                                             columnSize="sizeToFit",
                                             defaultColDef={"filter": True},
@@ -1591,27 +1591,34 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
             df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
-        cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
+        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
+        cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
         returned_value = os.system(cmd)
 
-        scoary_output_file = tmp_dir + "/" + str(session) + "_scoary_output/traits/Trait1/result.tsv"
-        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
-        df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
+        cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+        returned_value = os.system(cmd)
+
+        scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
+
+        #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
+        #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
+
+        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Bonferroni_p","Odds_ratio","log_pval","start"])
+        df_scoary_results = pd.DataFrame(columns=["Gene","Bonferroni_p","Odds_ratio"])
 
         if os.path.exists(scoary_output_file):
 
-            cmd = "mv " + scoary_output_file + " " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
-            returned_value = os.system(cmd)
-            df_scoary_results = pd.read_csv(tmp_dir + "/" + str(session) + ".scoary_results.txt",sep='\t')
+            df_scoary_results = pd.read_csv(scoary_output_file)
             
 
             print(df_scoary_results)
 
             merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
-            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+            #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Bonferroni_p"])
 
         scoary_table = df_scoary_results.to_dict('records')
-        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
+        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Bonferroni_p"], title="Pan-GWAS results")
         
 
         cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
