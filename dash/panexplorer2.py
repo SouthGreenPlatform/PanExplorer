@@ -153,6 +153,7 @@ plink_exe = conf.get("plink_exe") or "plink"
 plink2_exe = conf.get("plink2_exe") or "plink2"
 snmf_exe = conf.get("snmf_exe") or "sNMF"
 vcf2geno_exe = conf.get("vcf2geno_exe") or "vcf2geno"
+scoary_exe = conf.get("scoary_exe") or "scoary2"
 SECRET_KEY = conf.get("secret_key")
 
 # ---------- DB helpers ----------
@@ -325,19 +326,23 @@ def render_page(search):
     if session_code:
         proj = get_project_by_session(session_code)
         if not proj:
-            return html.Div("Session inconnue ou expirée.", style={"color": "red", "padding": "2rem"})
-        # check expiration
-        exp = proj.get("session_expiration")
-        if exp:
-            try:
-                exp_str = exp.replace(" ", "T")
-                if datetime.fromisoformat(exp_str) < datetime.now():
-                    return html.Div("Lien de session expiré.", style={"color": "red", "padding": "2rem"})
-            except Exception:
-                return html.Div("Erreur lecture date d'expiration.", style={"color": "red", "padding": "2rem"})
+            dir = conf["data_dir"] + "/" + session_code
+            if os.path.isdir(dir):
+                print("exists")
+            else:
+                os.mkdir(dir)
+                os.mkdir(dir+"/genomes")
+                os.mkdir(dir+"/genomes/genomes")
+                download_data(dir,session_code)
+
+            title = session_code
+            path = dir
+            
+            #return html.Div("Session inconnue ou expirée." + str(dir), style={"color": "red", "padding": "2rem"})
+
         # Session valid: minimal page showing project contents (metadata preview)
-        title = proj["title"]
-        path = proj["path"]
+        #title = proj["title"]
+        #path = proj["path"]
         content = [html.H1(f"Projet partagé : {title}"), html.P(f"Chemin : {path}")]
         meta_file = os.path.join(path, "metadata.xls")
         if os.path.exists(meta_file):
@@ -1586,7 +1591,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
             df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
-        cmd = "scoary2 " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
+        cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
         returned_value = os.system(cmd)
 
         scoary_output_file = tmp_dir + "/" + str(session) + "_scoary_output/traits/Trait1/result.tsv"
@@ -1609,7 +1614,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="odds_ratio", hover_data=["Gene","fisher_p"], title="Pan-GWAS results")
         
 
-        cmd = "scoary2 " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
+        cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
         returned_value = os.system(cmd)
 
     #######################
@@ -2684,6 +2689,42 @@ def admin_generate_session(project_id):
     # only owner or superuser allowed in prod — here any logged user can create for demo
     code, exp = generate_session_code_for_project(project_id, hours_valid=24)
     return f"Code: {code} (exp: {exp}) — URL: /?session={code}"
+
+
+def download_data(directory,session_code):
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pav.xls -O "+directory+"/1.Orthologs_Cluster.txt"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".metadata.xls -O "+directory+"/metadata.xls"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".ani.xls -O "+directory+"/fastani.out.matrix.complete.xls"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_category_counts.txt -O "+directory+"/cog_category_counts.txt"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".accessory_based_tree.nwk -O "+directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_category_2_counts.txt -O "+directory+"/cog_category_2_counts.txt"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pangenome.gfa -O "+directory+"/pangenome.gfa"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".all_genomes.vcf -O "+directory+"/aal_genomes.vcf"
+    returned_value = os.system(cmd)
+
+    df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
+    df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
+    df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
+    df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
+    list_species = []
+    for col in df.columns:
+        if col != "ClutserID":
+            colbis = col
+                    #colbis = col.replace("_gb", "")
+
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
+            returned_value = os.system(cmd)
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
+            returned_value = os.system(cmd)
 
 # ---------- Main ----------
 if __name__ == "__main__":
