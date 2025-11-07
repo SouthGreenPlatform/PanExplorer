@@ -326,7 +326,9 @@ def render_page(search):
     if session_code:
         proj = get_project_by_session(session_code)
         if not proj:
-            dir = conf["data_dir"] + "/" + session_code
+            dir = conf["session_dir"] + "/" + session_code
+
+
             if os.path.isdir(dir):
                 print("exists")
             else:
@@ -335,27 +337,15 @@ def render_page(search):
                 os.mkdir(dir+"/genomes/genomes")
                 download_data(dir,session_code)
 
-            title = session_code
-            path = dir
+            
             
             #return html.Div("Session inconnue ou expirée." + str(dir), style={"color": "red", "padding": "2rem"})
 
         # Session valid: minimal page showing project contents (metadata preview)
         #title = proj["title"]
         #path = proj["path"]
-        content = [html.H1(f"Projet partagé : {title}"), html.P(f"Chemin : {path}")]
-        meta_file = os.path.join(path, "metadata.xls")
-        if os.path.exists(meta_file):
-            try:
-                df = pd.read_csv(meta_file, sep="\t", nrows=50)
-                md = df.head(10).to_markdown()
-                content.append(dcc.Markdown("**Aperçu metadata (10 premières lignes)**"))
-                content.append(dcc.Markdown("```" + md + "```"))
-            except Exception as e:
-                content.append(html.P(f"Impossible de lire metadata.xls: {e}"))
-        else:
-            content.append(html.P("Aucun metadata.xls trouvé."))
-        return html.Div(content, style={"padding": "2rem"})
+
+
 
     # Normal mode: header + dropdown + area for the simplified PAV UI
     if current_user.is_authenticated:
@@ -371,12 +361,11 @@ def render_page(search):
         user_obj = None
 
     visible = list_visible_projects(user_obj)
-    options = [{"label": p["title"] + ("" if p["is_public"] else " (private)"), "value": p["title"]} for p in visible]
-
-    for d in options:
-        if d['value'].startswith('3'):
-            options.remove(d)
-
+    options = []
+    if session_code:
+        options = [{"label": session_code, "value": session_code} ]
+    else:
+        options = [{"label": p["title"] + ("" if p["is_public"] else " (private)"), "value": p["title"]} for p in visible]
 
 
     # default selection
@@ -391,7 +380,7 @@ def render_page(search):
     ui = html.Div([
         header,
         html.Div([
-            html.Label("Choose a projet: "),
+            html.Label("Choose a project: "),
             dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
         ], style={"marginBottom":"1rem"}),
         html.Div(id="project-preview"),
@@ -411,9 +400,13 @@ def load_project_preview(proj_title):
     if not proj_title:
         return html.Div("Aucun projet sélectionné.")
     row = query_db("SELECT id, title, path, is_public FROM projects WHERE title = ?", (proj_title,), one=True)
+
+    proj = None
     if not row:
-        return html.Div("Projet introuvable en base.")
-    proj = {"id": row[0], "title": row[1], "path": row[2], "is_public": bool(row[3])}
+        #return html.Div(f"Project not found in database. {proj_title}")
+        proj = {"title": proj_title, "path": conf["session_dir"] + "/" + proj_title, "is_public": 0}
+    else:
+        proj = {"id": row[0], "title": row[1], "path": row[2], "is_public": bool(row[3])}
     path = proj["path"]
     meta_path = os.path.join(path, "metadata.xls")
     if not os.path.exists(meta_path):
@@ -422,7 +415,7 @@ def load_project_preview(proj_title):
     try:
         df = pd.read_csv(meta_path, sep="\t", nrows=500)
     except Exception as e:
-        return html.Div([html.H4(proj["title"]), html.P(f"Erreur lecture metadata: {e}")])
+        return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
     children = [ html.H4(f" {len(df)} genomes")]
     if AGGRID_AVAILABLE:
@@ -829,7 +822,7 @@ def load_project_preview(proj_title):
 def display_click_data(clickData,metadata_table,projets,url):
          
     cluster = 1
-    pathname = "#"+projets
+    pathname = projets
     if url:
         pathname=url
     list_of_strains = []
@@ -870,7 +863,7 @@ def display_click_data(clickData,metadata_table,projets,url):
 )
 def display_click_data(cell,metadata_table,projets,url):
          
-    pathname = "#"+projets
+    pathname = projets
     if url:
         pathname=url
     cluster = 1
@@ -920,7 +913,7 @@ def set_current_cluster(available_options):
 
 def display_click_data(cell,metadata_table,projets,url):
          
-    pathname = "#"+projets
+    pathname = projets
     if url:
         pathname=url
     cluster = 1
@@ -947,14 +940,18 @@ def get_cluster_details(cluster,pathname,list_of_strains):
     
     global directory
 
-    row = query_db("SELECT id, path FROM projects WHERE title = ?", (pathname,), one=True)
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
     if not row:
-        return "Projet introuvable."
-    proj_id, path = row[0], row[1]
-
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
     directory = path
 
-
+    print("dss")
+    print(pathname)
     
     df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
     mini_df = df_matrix[df_matrix["ClutserID"] == int(cluster)]
@@ -1011,7 +1008,7 @@ def get_cluster_details(cluster,pathname,list_of_strains):
     Input('url','hash')
      )
 def update_pivot(metadata_table,projets,url):
-    pathname = "#"+projets
+    pathname = projets
     if url:
         pathname=url
         
@@ -1023,7 +1020,7 @@ def update_pivot(metadata_table,projets,url):
             strain_name = strain['Strain name']
             reference_list.append(strain_name)
 
-    return [{'label': i, 'value': i} for i in reference_list], [{'label': i, 'value': i} for i in reference_list]
+    return [{'label': i, 'value': i} for i in reference_list] , [{'label': i, 'value': i} for i in reference_list]
 
 
 @app.callback(
@@ -1097,12 +1094,13 @@ def set_reference_value(available_options):
 )
 def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
     if not proj_title:
-        return "Aucun projet."
-    row = query_db("SELECT id, path FROM projects WHERE title = ?", (proj_title,), one=True)
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    path = ""
     if not row:
-        return "Projet introuvable."
-    proj_id, path = row[0], row[1]
-
+        path = conf["session_dir"] + "/" + proj_title
+    else:
+        path = row[0]
     directory = path
 
     session = random.randint(1, 9000000)
@@ -1621,8 +1619,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Bonferroni_p"], title="Pan-GWAS results")
         
 
-        cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
-        returned_value = os.system(cmd)
+        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
+        #returned_value = os.system(cmd)
 
     #######################
     # ANI
@@ -2167,7 +2165,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     gfa_file = directory+"/pangenome.gfa"
     graph_gfa = go.Figure()
     graph_gfa2 = go.FigureWidget()
-    if os.path.exists(gfa_file):
+    if os.path.exists(gfa_file) and os.path.getsize(gfa_file) > 0:
 
         tab_style_segments = tab_style  
         #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
@@ -2197,7 +2195,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #x_segments = [0,10,None,20,30,None,40,50,None]
         #y_segments = [2,2,None,6,6,None,80,80,None]
 
-        
 
         for key in dict_segments_x.keys():
             if key in dict_segments_y:
@@ -2321,12 +2318,13 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     # MLVA
     ###########################################################
     if not proj_title:
-        return "Aucun projet."
-    row = query_db("SELECT id, path FROM projects WHERE title = ?", (proj_title,), one=True)
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    path = ""
     if not row:
-        return "Projet introuvable."
-    proj_id, path = row[0], row[1]
-
+        path = conf["session_dir"] + "/" + proj_title
+    else:
+        path = row[0]
     directory = path
 
     list_selected = ['ID','Repeat','Flanking']
@@ -2492,63 +2490,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     return dynamic_network, graph_mlva
 
 
-def get_directory(pathname):
 
-    directory = "data/african_Xo"
-    with open("panexplorer_config.yaml", "r") as yaml_file:
-        conf = yaml.safe_load(yaml_file)
-        directory = conf["directory"]
-    
-    if len(pathname) > 1:
-        directory = conf["data_dir"] + "/" + pathname.replace("#", "")
-        
-        
-        if os.path.isdir(directory):
-            print("exists")
-        else:
-            ###########################
-            # Import remote data files
-            ###########################
-            os.mkdir(directory)
-            os.mkdir(directory+"/genomes")
-            os.mkdir(directory+"/genomes/genomes")
-
-
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".pav.xls -O "+directory+"/1.Orthologs_Cluster.txt"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".metadata.xls -O "+directory+"/metadata.xls"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".ani.xls -O "+directory+"/fastani.out.matrix.complete.xls"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".cog_category_counts.txt -O "+directory+"/cog_category_counts.txt"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".accessory_based_tree.nwk -O "+directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".cog_category_2_counts.txt -O "+directory+"/cog_category_2_counts.txt"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".pangenome.gfa -O "+directory+"/pangenome.gfa"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+pathname.replace("#", "")+".all_genomes.vcf -O "+directory+"/aal_genomes.vcf"
-            returned_value = os.system(cmd)
-
-            df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
-            df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
-            df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
-            df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
-            list_species = []
-            for col in df.columns:
-                if col != "ClutserID":
-                    colbis = col
-                    #colbis = col.replace("_gb", "")
-
-                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
-                    returned_value = os.system(cmd)
-                    cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
-                    returned_value = os.system(cmd)
-
-    return directory
 
 def init_dataframes(pathname):
     
@@ -2649,7 +2591,17 @@ def init_dataframes(pathname):
 ###############################################
 def get_combination(cluster,pathname,list_of_strains):
     
-    directory = get_directory(pathname)
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+
 
     df = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
 
@@ -2696,6 +2648,7 @@ def admin_generate_session(project_id):
     # only owner or superuser allowed in prod — here any logged user can create for demo
     code, exp = generate_session_code_for_project(project_id, hours_valid=24)
     return f"Code: {code} (exp: {exp}) — URL: /?session={code}"
+
 
 
 def download_data(directory,session_code):
