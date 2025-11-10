@@ -879,8 +879,8 @@ def display_click_data(clickData,metadata_table,projets,url):
     nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
     rowData = dictionary
 
-    cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
-    infos_cluster = os.popen(cmd).read().split(",")
+    cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
+    infos_cluster = os.popen(cmd).read().split("\t")
     selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
 
     list_strains = get_combination(cluster,pathname,list_of_strains)
@@ -922,10 +922,10 @@ def display_click_data(cell,metadata_table,projets,url):
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
 
-        cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
-        infos_cluster = os.popen(cmd).read().split(",")
+        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
+        infos_cluster = os.popen(cmd).read().split("\t")
         selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-
+        
         #return selected_cluster,dictionary, data, [{'label': str(cluster), 'value': str(cluster)}]
         return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}]
     else:
@@ -975,8 +975,8 @@ def display_click_data(cell,metadata_table,projets,url):
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
 
-        cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
-        infos_cluster = os.popen(cmd).read().split(",")
+        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
+        infos_cluster = os.popen(cmd).read().split("\t")
         selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
 
         return selected_cluster,dictionary#,data
@@ -1297,7 +1297,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     merged_with_cog_term = pd.merge(df_cog_terms, merged_with_cog, how="right", left_on='COG', right_on='COG')
 
     merged_with_cog = merged_with_cog_term
-    merged_with_cog.to_csv(directory+"/merged_with_cog.txt")
+    merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
     #merged_with_cog_term.to_csv(directory+"/merged_with_cog_term.txt")
 
 
