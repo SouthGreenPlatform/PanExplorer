@@ -68,7 +68,7 @@ layout_config = {
     "labels": {
         "size": 22,
         "color": "#4d4d4d",
-        "innerRadius": 500
+        "outerRadius": 100
     },
     "ticks": {
         "color": "#4d4d4d",
@@ -132,9 +132,15 @@ columnDefs2 = [
 ]
 
 columnDefs3 = [
-    {"field": "ClutserID","width": 10},
-    {"field": "COG term","width": 70},
+    {"field": "ClutserID","width": 3},
+    #{"field": "COG","width": 20},
+    {"field": "COG term","width": 90},
     {"field": "type","width": 50},
+]
+
+columnDefs4 = [
+    {"field": "Species","width": 50},
+    {"field": "Genes","width": 50},
 ]
 
 data = ""
@@ -607,12 +613,12 @@ def load_project_preview(proj_title):
                                 dbc.Col(
                                     dcc.Loading(
                                         html.Div(children=[
-                                            html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
+                                            html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
                                             dag.AgGrid(
                                                         id="genes_cluster",
-                                                        style={'width': '80vh', 'height': '50vh','margin-left': '10px'},
+                                                        style={'width': '60vh', 'height': '30vh','margin-left': '10px'},
                                                         rowData=[],
-                                                        columnDefs=[{"field": i} for i in ["Species","Genes"] ],
+                                                        columnDefs=columnDefs4,
                                                         defaultColDef={"filter": True},
                                                         columnSize="sizeToFit",
                                                         #getRowId="params.data.State",
@@ -637,6 +643,7 @@ def load_project_preview(proj_title):
                     ]),
                     dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
+                            dcc.Loading(dcc.Graph(id='circos_graph')),
                             dcc.Loading(dash_bio.Circos(
                                 id="my-dashbio-default-circos",
                                 layout=[],
@@ -728,7 +735,14 @@ def load_project_preview(proj_title):
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
                     html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
+                    dcc.Loading(
+                                        html.Div(children=[
+                                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
+                                            
+                                        ]),
+                                    ),
+
+                    #dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
                 ]),
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
@@ -781,7 +795,7 @@ def load_project_preview(proj_title):
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_ANI')),
                     ]),
-                dcc.Tab(label='Geographical map', style=tab_style, selected_style=tab_selected_style, children=[
+                dcc.Tab(label='Geographical map', id='tab_geo', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
                         dcc.Loading(dcc.Graph(id='geo_map',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
                     ]),
@@ -801,6 +815,31 @@ def load_project_preview(proj_title):
 
 
     return html.Div(children)
+
+
+#############################################################
+# Callback for node selection from heatmap
+#############################################################
+@app.callback(
+    #Output('cluster_info', 'children'),
+    Output('selected_node', 'children'),
+    #Output('my-default-alignment-viewer', 'data'),
+
+    Input('graph_gfa2', 'clickData'),
+    State('metadata_table','selectedRows'),
+    State('projets', 'value'),
+    State('url','hash')
+)
+
+def display_click_data_GFA(clickData,metadata_table,projets,url):
+    node = 1
+    if clickData:
+        wjdata = json.loads(json.dumps(clickData, indent=2))
+        node = wjdata['points'][0]['x']
+
+    selected_node = "Selected node: " + str(node)
+    infos = get_node_details(node,projets)
+    return infos
 
 
 #############################################################
@@ -839,7 +878,10 @@ def display_click_data(clickData,metadata_table,projets,url):
 
     nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
     rowData = dictionary
-    selected_cluster = "Selected cluster id: " + str(cluster)
+
+    cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
+    infos_cluster = os.popen(cmd).read().split(",")
+    selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
 
     list_strains = get_combination(cluster,pathname,list_of_strains)
         
@@ -879,7 +921,11 @@ def display_click_data(cell,metadata_table,projets,url):
         wjdata = json.loads(json.dumps(cell, indent=2))
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-        selected_cluster = "Selected cluster id:" + str(cluster)
+
+        cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
+        infos_cluster = os.popen(cmd).read().split(",")
+        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
+
         #return selected_cluster,dictionary, data, [{'label': str(cluster), 'value': str(cluster)}]
         return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}]
     else:
@@ -928,12 +974,39 @@ def display_click_data(cell,metadata_table,projets,url):
         wjdata = json.loads(json.dumps(cell, indent=2))
         cluster = wjdata['value']
         nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-        selected_cluster = "Selected cluster id:" + str(cluster) 
+
+        cmd = "grep '"+str(cluster)+"' "+directory+"/merged_with_cog.txt"
+        infos_cluster = os.popen(cmd).read().split(",")
+        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
+
         return selected_cluster,dictionary#,data
     else:
         return "",[]#,""
         
 
+def get_node_details(node,pathname):
+    global directory
+
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+
+    list_of_infos = node.split("_")
+    num_node = list_of_infos[1]
+
+    cmd = "grep -P '^S\s"+num_node+"\s' "+directory+"/pangenome.gfa"
+    result = os.popen(cmd).read()
+    list_of_infos = result.split("\t")
+    node_sequence = list_of_infos[2]
+    node_sequence2 = re.sub("(.{80})", "\\1\n", node_sequence, 0, re.DOTALL)
+
+    return "Node: " + str(num_node) + "\n\n" + str(node_sequence2)
 
         
 def get_cluster_details(cluster,pathname,list_of_strains):
@@ -950,8 +1023,6 @@ def get_cluster_details(cluster,pathname,list_of_strains):
         path = row[0]
     directory = path
 
-    print("dss")
-    print(pathname)
     
     df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
     mini_df = df_matrix[df_matrix["ClutserID"] == int(cluster)]
@@ -971,11 +1042,19 @@ def get_cluster_details(cluster,pathname,list_of_strains):
                     keep = False
             if keep:
                 list_genes = ','.join(map(str,genes)) 
+
+                # for gene in genes:
+                #     print(gene)
+                #     cmd = "grep '"+gene+"' "+directory+"/genomes/genomes/"+item+".gff | tail -1"
+                #     result = os.popen(cmd).read()
+                #     print(result)
+
                 list = [int(cluster),item,list_genes]
                 list_of_list.append(list)
                 nb_presence+=1
                 combination = combination+str(item)
     print(str(combination))
+    print(list_of_list)
     mydf = pd.DataFrame(list_of_list, columns = ['Cluster','Species','Genes']) 
     
     concat = ""
@@ -1053,6 +1132,7 @@ def set_reference_value(available_options):
     Output('graph_COG1', 'figure'),
     Output('graph_COG2', 'figure'),
     Output('rarefaction2', 'figure'),
+    Output('circos_graph', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
     Output("table_of_search",'rowData'),
@@ -1069,13 +1149,14 @@ def set_reference_value(available_options):
     Output('geo_map', 'figure'),
     Output('scoary_table', 'rowData'),
     Output('graph_pangwas', 'figure'),
-    Output('graph_gfa', 'figure'),
+    #Output('graph_gfa', 'figure'),
     Output('graph_gfa2', 'figure'),
     Output('mainloading','children'),
     Output('tab_segments','style'),
     Output('tab_repeats','style'),
     Output('tab_snps','style'),
     Output('tab_ani','style'),
+    Output('tab_geo','style'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('colorizing', 'value'),
@@ -1550,6 +1631,62 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     text="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
+
+    fig_circos = dash_bio.Circos(
+                                id="my-dashbio-default-circos",
+                                layout=[],
+                                config=layout_config,
+                        tracks=[
+                                {
+                                    "type": "HIGHLIGHT",
+                                    "data": [],
+                                    "config": highlight_config1
+                                },
+                                {
+                                    "type": "HIGHLIGHT",
+                                    "data": [],
+                                    "config": highlight_config2
+                                },
+                                {
+                                    "type": "HIGHLIGHT",
+                                    "data": [],
+                                    "config": highlight_config3
+                                },
+                            {
+                                    "type": "HIGHLIGHT",
+                                    "data": [],
+                                    "config": highlight_config4
+                                }
+                            ],
+                    )
+
+###################
+# TODO: pour ajouter legende sur le circos
+###################
+    # colors = ['red', 'green', 'blue', 'orange']
+    # labels = ['Catégorie A', 'Catégorie B', 'Catégorie C', 'Catégorie D']
+    # for color, label in zip(colors, labels):
+    #     fig.add_trace(go.Scatter(
+    #         x=[None],  # Pas de données
+    #         y=[None],
+    #         mode='markers',
+    #         marker=dict(size=10, color=color),
+    #         legendgroup=label,
+    #         showlegend=True,
+    #         name=label
+    #     ))
+
+    # fig.update_layout(
+    #     showlegend=True,
+    #     legend=dict(
+    #         title="Légende personnalisée",
+    #         x=1,
+    #         y=1,
+    #         bgcolor="rgba(255,255,255,0.7)"
+    #     )
+    # )
+
+
 
     #################################################
     # pan-GWAS
@@ -2270,20 +2407,24 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     ##############################################################################################
     # geographical map of strains
     ##############################################################################################
-    print(df_metadata3)
-
     counts = df_metadata3.groupby(["Country", "Continent"]).size().reset_index(name="number_strains")
-    
-    
-    # Créer la carte choroplèthe
-    fig_geomap = px.choropleth(
-        counts,
-        locations="Country",            # Colonne avec les noms des pays
-        locationmode="country names", # On utilise les noms de pays
-        color="number_strains",      # Couleur selon le nombre de souches
-        color_continuous_scale="Viridis",
-        title="Number of strains by country"
-    )
+
+    tab_style_geo = {'display': 'none'}
+    fig_geomap = go.Figure()
+
+    if not counts.empty:
+
+        tab_style_geo = tab_style
+
+        # Create the map
+        fig_geomap = px.choropleth(
+                counts,
+                locations="Country",            # Colonne avec les noms des pays
+                locationmode="country names", # On utilise les noms de pays
+                color="number_strains",      # Couleur selon le nombre de souches
+                color_continuous_scale="Viridis",
+                title="Number of strains by country"
+        )
 
 
 
@@ -2298,7 +2439,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani
+    return "",nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,fig_circos,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
 
 
 @app.callback(
