@@ -19,11 +19,14 @@ while(<GFA>) {
         my $length = length($segment_seq);
         $node_lengths{$segment_id} = $length;
     }
-    if (/^P\t([^\s]+)\t(.*)$/){
+    if (/^P\t([^\s]+)\t([^\s]+)\t/){
         my $path_name = $1;
         my ($genome, $rest) = split(/#/, $path_name);
         my $path_nodes = $2;
-        $paths{$genome} = $path_nodes;
+        if (!$paths{$genome}){
+            $paths{$genome} = $path_nodes;
+        }
+        
     }
 }   
 close(GFA);
@@ -35,6 +38,7 @@ my $position = 0;
 my @valid_nodes;
 my %node_series;
 my %strand_of_node;
+my %strand_of_node_for_reference;
 my %pav;
 foreach my $node(@nodes_in_path) {
     my $strand = "+";
@@ -44,7 +48,8 @@ foreach my $node(@nodes_in_path) {
         $strand = "-";
     }
     $node =~ s/[+-]//;  # Remove orientation if present
-    $strand_of_node{$node} = $strand;
+    $strand_of_node{$node} = "+";
+    $strand_of_node_for_reference{$node} = $strand;
     if (exists $node_lengths{$node}) {
         my $length=$node_lengths{$node};
         
@@ -69,30 +74,44 @@ my @list_colors= ("#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb
 
 foreach my $path_name (sort keys %paths) {
     
-    if ($path_name eq $reference) {
-        next; # Skip the reference path
-    }
+
     my $path_nodes = $paths{$path_name};
     my @nodes_in_path = split(/,/, $path_nodes);
     my $current_position = 0;
     my @positions;
     my %has_this_node;
     foreach my $node(@nodes_in_path) {
+        my $node_simple = $node;
+        $node_simple =~ s/[+-]//;
         
-        my $strand = "+";
-        if ($node =~ /\+$/) {
-            $strand = "+";
-        } elsif ($node =~ /-$/) {
-            $strand = "-";
-        }  # Remove orientation if present
-        $node =~ s/[+-]//;
-        $strand_of_node{$node} = $strand;
-        if (exists $node_lengths{$node}) {
-            $has_this_node{$node} = 1;   
-        } 
+        if (exists $strand_of_node{$node_simple}) {
+            my $strand = "";
+            if ($node =~ /\+$/) {
+                $strand = "+";
+            } elsif ($node =~ /-$/) {
+                $strand = "-";
+            }
+
+            my $strand_ref = $strand_of_node_for_reference{$node_simple};
+            my $newstrand;
+            if ($strand_ref eq $strand) {
+                $newstrand = "+";
+            } else {
+                $newstrand = "-";
+            }
+            # Remove orientation if present
+            $node =~ s/[+-]//;
+            $strand_of_node{$node} = $newstrand;
+            if (exists $node_lengths{$node}) {
+                $has_this_node{$node} = 1;   
+            } 
+        }
+        
+          
     }
     foreach my $node(@valid_nodes) {
         if (exists $has_this_node{$node}) {
+        #if (2>1){ 
             my $length = $node_lengths{$node};
             my $strand = $strand_of_node{$node};
             $pav{$node}{$path_name} = $strand.$length;
