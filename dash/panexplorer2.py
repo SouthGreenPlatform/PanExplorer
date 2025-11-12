@@ -18,6 +18,8 @@ import json
 
 import random
 import re
+import base64
+import io
 
 import numpy as np
 
@@ -115,32 +117,35 @@ columnDefs = [
         "field": "Strain name",
         "checkboxSelection": True,
         "headerCheckboxSelection": True,
+        "width": 500
     },
-    {"field": "Country"},
-    {"field": "Continent"},
-    {"field": "Organism"}
+    {"field": "Country","width": 300},
+    {"field": "Continent","width": 300},
+    {"field": "Organism","width": 800}
 ]
 
 columnDefs2 = [
     {
         "field": "ID",
-        "width": 40,
+        "width": 120,
         "checkboxSelection": True,
         "headerCheckboxSelection": True,
     },
-    {"field": "Repeat","width": 100,},
+    {"field": "Repeat","width": 200,},
+    {"field": "Flanking","width": 1000,},
 ]
 
 columnDefs3 = [
-    {"field": "ClutserID","width": 3},
-    #{"field": "COG","width": 20},
-    {"field": "COG term","width": 90},
-    {"field": "type","width": 50},
+    {"field": "ClutserID", "width": 120},
+    {"field": "COG term", "width": 500},
+    {"field": "type", "width": 150}
+
+
 ]
 
 columnDefs4 = [
-    {"field": "Species","width": 50},
-    {"field": "Genes","width": 50},
+    {"field": "Species","width": 400},
+    {"field": "Genes","width": 400},
 ]
 
 data = ""
@@ -427,11 +432,11 @@ def load_project_preview(proj_title):
     if AGGRID_AVAILABLE:
         grid = dag.AgGrid(id="metadata_table",
                           #columnDefs=[{"field": c} for c in df.columns],
-                          style={'width': '100vh','margin-left': '15px'},
+                          #style={'width': '100vh','margin-left': '15px'},
                           columnDefs=columnDefs,
                           selectedRows=df.to_dict("records"),
                           selectAll=True,
-                          defaultColDef={"filter": True},
+                          #defaultColDef={"filter": True},
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
@@ -520,24 +525,7 @@ def load_project_preview(proj_title):
                 
                 dcc.Tab(label='Genes (Pangene Atlas)', style=tab_style, selected_style=tab_selected_style, children=[
                     dcc.Tabs(id='tab2', style=tabs_styles, children=[
-                        dcc.Tab(label='Stats and Overview', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            html.Div(className="row", id='stats2', children=[
-                            dcc.Loading(
-                                dbc.Row([
-                                    dbc.Col(
-                                        dcc.Graph(id='graph_gene2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
-                                    ),
-                                    dbc.Col(
-                                        dcc.Graph(id='graph_pie2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
-                                    ),
-                                    dbc.Col(
-                                        dcc.Graph(id='rarefaction2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
-                                    )
-                                ]),
-                            ),
-                        ]),
-                    ]),
+                        
                     dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
                         html.Div(id='PAV_config',children=[
@@ -598,11 +586,11 @@ def load_project_preview(proj_title):
                                             html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
                                             dag.AgGrid(
                                                     id="table_pangenes",
-                                                    style={'width': '80vh', 'height': '50vh','margin-left': '1px'},
+                                                    #style={'width': '80vh', 'height': '50vh','margin-left': '1px'},
                                                     rowData=[],
                                                     columnDefs=columnDefs3,
                                                     #defaultColDef={"filter": True},
-                                                    columnSize="sizeToFit",
+                                                    #columnSize="sizeToFit",
                                                     defaultColDef={"filter": "agTextColumnFilter"},
                                                     #getRowId="params.data.State",
                                                     dashGridOptions={"pagination": True, "animateRows": False}
@@ -616,11 +604,11 @@ def load_project_preview(proj_title):
                                             html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
                                             dag.AgGrid(
                                                         id="genes_cluster",
-                                                        style={'width': '60vh', 'height': '30vh','margin-left': '10px'},
+                                                        #style={'width': '60vh', 'height': '30vh','margin-left': '10px'},
                                                         rowData=[],
                                                         columnDefs=columnDefs4,
                                                         defaultColDef={"filter": True},
-                                                        columnSize="sizeToFit",
+                                                        #columnSize="sizeToFit",
                                                         #getRowId="params.data.State",
                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                 )
@@ -641,9 +629,27 @@ def load_project_preview(proj_title):
                             #),
                         #]),
                     ]),
+                    dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            html.Div(className="row", id='stats2', children=[
+                            dcc.Loading(
+                                dbc.Row([
+                                    dbc.Col(
+                                        dcc.Graph(id='graph_gene2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                    ),
+                                    dbc.Col(
+                                        dcc.Graph(id='graph_pie2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                    ),
+                                    dbc.Col(
+                                        dcc.Graph(id='rarefaction2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                    )
+                                ]),
+                            ),
+                        ]),
+                    ]),
                     dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
-                            dcc.Loading(dcc.Graph(id='circos_graph')),
+                            #dcc.Loading(dcc.Graph(id='circos_graph')),
                             dcc.Loading(dash_bio.Circos(
                                 id="my-dashbio-default-circos",
                                 layout=[],
@@ -744,14 +750,50 @@ def load_project_preview(proj_title):
 
                     #dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
                 ]),
+                dcc.Tab(label='SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
+                    dcc.Tabs(id='tab3', style=tabs_styles, children=[
+                        
+                        dcc.Tab(label='Genotyping matrix', style=tab_style, selected_style=tab_selected_style, children=[
+
+                            html.Br(),
+                            html.H3(id='nb_of_snps', style={'width': '60vh','margin-left': '1px'}),
+                            html.Br(),
+                            dcc.Loading(dcc.Graph(id='VCF_graph')),
+                            
+                        ]),
+                        dcc.Tab(label='Population structure', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','margin-left': '15px'})),
+                            dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                        ]),
+                        dcc.Tab(label='PCA', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                        ]),
+                        dcc.Tab(label='SNP-based distance tree', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            dbc.Row(
+                                [
+                                    dcc.Loading(html.Iframe(id='iframe-snptree',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
+                                ],
+                                align="center",
+                            ),
+                            html.Br(),
+                        ]),
+                    ]),
+                    
+                ]),
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
+                    dcc.Loading(dcc.Graph(id='graph_mlva')),
+                    html.Br(),
+                    html.H3(id='nb_of_repeats', style={'width': '60vh','margin-left': '1px'}),
                     dbc.Row([
                         dbc.Col(
                             dcc.Loading(
                                     dag.AgGrid(
                                         id="mlva_table",
-                                        style={'width': '40vh','height': '50vh','margin-left': '15px'},
+                                        #style={'width': '180vh','height': '50vh','margin-left': '15px'},
                                         columnDefs=columnDefs2,
                                         rowData=[],
                                         columnSize="sizeToFit",
@@ -761,36 +803,18 @@ def load_project_preview(proj_title):
                                     ), 
                                 ),
                         ),
-                        dbc.Col(
-                            dcc.Textarea(
-                                id='flanking',
-                                value='scc',
-                                style={'width': '60vh', 'height': '50vh'},
-                            ),
-                        ),
+
+                    
                     ]),
                     
 
-                    html.Div(className="row", children=[
-                        
-                        #html.Pre(id='flanking', style={'width': '60vh', "fontFamily": "Courier", "whiteSpace": "pre-wrap", "border": "1px solid #ccc", "padding": "10px"}),
-                        
-                        
-                        html.Button('Show haplotypes', id='submit-vntr', n_clicks=0),
-
-                        dcc.Loading(dcc.Graph(id='graph_mlva',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
-                        #html.Iframe(id='dynamic_network',style={"height": "900px", "width": "100%"}),
-                    ]),
+                    
+                    html.Br(),
+                    html.Button('Update heatmap and generate haplotype network', id='submit-vntr', n_clicks=0),
                     html.Br(),
                     dcc.Loading(html.Div(id='dynamic_network')),
                 ]),
-                dcc.Tab(label='SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
-                    html.Br(),
-                    
-                    dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','margin-left': '15px'})),
-                    dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
-                    dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
-                    ]),
+                
                 dcc.Tab(label='ANI', id='tab_ani', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_ANI')),
@@ -1132,7 +1156,6 @@ def set_reference_value(available_options):
     Output('graph_COG1', 'figure'),
     Output('graph_COG2', 'figure'),
     Output('rarefaction2', 'figure'),
-    Output('circos_graph', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
     Output("table_of_search",'rowData'),
@@ -1140,10 +1163,14 @@ def set_reference_value(available_options):
     Output("graph_macrosynteny", 'figure'),
     Output('clinker','children'),
     Output('mlva_table', 'rowData'),
-    Output('flanking','value'),
+    Output('nb_of_repeats', 'children'),
+    Output('graph_mlva', 'figure', allow_duplicate=True),
     Output('PCA','figure'),
     Output('iframe-content', 'src'),
+    Output('iframe-snptree', 'src'),
     Output('results', 'style'),
+    Output("nb_of_snps",'children'),
+    Output('VCF_graph', 'figure'),
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
     Output('geo_map', 'figure'),
@@ -1632,33 +1659,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
 
-    fig_circos = dash_bio.Circos(
-                                id="my-dashbio-default-circos",
-                                layout=[],
-                                config=layout_config,
-                        tracks=[
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config1
-                                },
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config2
-                                },
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config3
-                                },
-                            {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config4
-                                }
-                            ],
-                    )
 
 ###################
 # TODO: pour ajouter legende sur le circos
@@ -1852,48 +1852,9 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     with open(directory+'/metadata.csv') as fp:
         metadata_csv = fp.read()
 
-    concat_for_hash = ""
-    list_metadata_color = df_metadata['Country'].unique().tolist()
-    dict_colors = {}
-    i = 0
+    generate_tree_html(newick, df_metadata, "assets/tree."+str(session)+".html")
 
-
-
-    legend = ""
-    legend += "<style>"
-    legend += ".legend div{display:flex;align-items:center;margin:4px 0}"
-    legend += ".legend span{width:16px;height:16px;margin-right:6px}"
-    legend += "</style>"
-    legend += "<div class=\"legend\">"
-    for country in list_metadata_color:
-        if country != "none" and country != "None" and str(country) != "nan" and country != "":
-            dict_colors[country] =  colors[i]
-            legend = legend + "<div><span style=\"background:" + str(colors[i]) + "\"></span>" + str(country) + "</div>"
-            i += 1
-    legend += "</div>"
-
-    for index, row in df_metadata.iterrows():
-        color = "black"
-        if str(row['Country']) in dict_colors:
-            color = dict_colors[str(row['Country'])]
-        concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
-
-    # remove last caracter
-    newick = newick.rstrip(newick[-1])
-    f = open("assets/tree."+str(session)+".html", "w")
-    template = open('assets/tree.html', 'r')
-    for line in template:
-        if re.search(r"NEWICK_TREE", line):
-            f.write("var test_string = \""+newick+";\"\n")
-        elif re.search(r"HASH_COLORS", line):
-            f.write(concat_for_hash+"\n")
-        elif re.search(r"LEGEND", line):
-            f.write(legend+"\n")
-        else:
-            f.write(line)
-    template.close()
-    f.close()
-
+    
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
@@ -1954,20 +1915,33 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
 
     df_macrosynteny = pd.read_csv(tmp_dir + "/" + str(session) + ".syntenic_blocks.txt",sep=',')
-    graph_macrosynteny = px.parallel_coordinates(df_macrosynteny,color="num_block",
-                              dimensions=list_of_species_macrosyneny,
-                              #dimensions = ["Genus_species_CIX5672gb","Genus_species_CIX696gb","Genus_species_CIX767gb","Genus_species_CIX691gb"],
-                              #color_continuous_scale=px.colors.diverging.Tealrose,
-                              #color_continuous_midpoint=2
-                              )
+    print("macrosynteny dataframe:")
+    print(df_macrosynteny)
+    print(list_of_species_macrosyneny)
+    graph_macrosynteny = go.Figure()
+    if not df_macrosynteny.empty:
+        graph_macrosynteny = px.parallel_coordinates(df_macrosynteny,color="num_block",
+                                dimensions=list_of_species_macrosyneny,
+                                #color_continuous_scale=px.colors.diverging.Tealrose,
+                                #color_continuous_midpoint=2
+                                )
 
     ##############################################################################################
     # VNTR table / MLVA
     ##############################################################################################
     vntr_file = directory+'/vntr_matrix.tsv'
 
+    list_selected = ['ID','Repeat','Flanking']
+    #if submit_samples:
+    if metadata_table:
+        wjdata = json.loads(json.dumps(metadata_table, indent=2))
+        val = wjdata
+        for strain in wjdata:
+            strain_name = strain['Strain name']
+            list_selected.append(strain_name)
 
-    df_vntr = pd.DataFrame(columns=['ID','Repeat'])
+
+    df_vntr = pd.DataFrame(columns=['ID','Repeat','Flanking'])
     flanking_sequences = ""
     tab_style_repeats = {'display': 'none'}
     if os.path.exists(vntr_file):
@@ -1980,27 +1954,31 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         returned_value = os.system(cmd)
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
-
-        df_vntr_filtered = df_vntr.drop(list_selected, axis=1)
+        df_vntr_filtered = df_vntr[list_selected]
         df_vntr = df_vntr_filtered
 
-        for row in df_vntr.itertuples():
-            id = row[1]
-            flanking = row[3]
-            flanking_sequences = flanking_sequences + ">" + str(id) + "\n" + str(flanking) + "\n"
+        # df_vntr_filtered = df_vntr.drop(list_selected, axis=1)
+        # df_vntr = df_vntr_filtered
+
+        # for row in df_vntr.itertuples():
+        #     id = row[1]
+        #     flanking = row[3]
+        #     flanking_sequences = flanking_sequences + ">" + str(id) + "\n" + str(flanking) + "\n"
             
 
     
     repeat_names = df_vntr["ID"].astype(str).tolist()
 
-    
+    df_vntr.to_csv(tmp_dir + "/" + str(session) + ".vntr_matrix.tsv",sep='\t',index=False)
+    nb_of_repeats = "VNTR loci (" + str(len(repeat_names)) + ")"
 
-    newdf = df_vntr.drop("ID", axis='columns')
-    graph_mlva = px.imshow(newdf, 
+
+    newdf = df_vntr.drop(["ID","Repeat","Flanking"], axis='columns')
+    graph_mlva = px.imshow(newdf.T, 
                            aspect="auto",
-                           labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
-                           #x=list_sp2,
-                           y=repeat_names,
+                           labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
+                           x=repeat_names,
+                           #y=list_sp2,
                            text_auto=True
                            )
     mlva_table = df_vntr.to_dict('records')
@@ -2009,14 +1987,16 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     # SNP
     ##############################################################################################
     vcf_file = directory+"/variants.vcf"
+    df_vcf_transposed = pd.DataFrame()
     df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2','PC3'])
     df_crossentropy = pd.DataFrame(columns=['K', 'Cross-entropy'])
     dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
     individual_order = []
     individual_order_by_Pop1 = []
     col_names = []
+    nb_of_snps = 0
     tab_style_snps = {'display': 'none'}
-    if os.path.exists(vcf_file):
+    if os.path.exists(vcf_file) and os.path.getsize(vcf_file) > 0:
 
         tab_style_snps = tab_style
 
@@ -2033,8 +2013,37 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         cmd = "grep -v '#FID' " + tmp_dir + "/" + str(session) + ".dataset.dist.id >"+ tmp_dir + "/" + str(session) + ".dataset.dist.id.2"
         returned_value = os.system(cmd)
 
+
+
+        #################################################################
+        # --- Heatmap of genotypes from VCF ---
+        #################################################################
+        
+        try:
+            df_vcf = parse_vcf(directory + "/variants.vcf", int(1000), None)
+            df_vcf_transposed = df_vcf.T
+        except Exception as e:
+            fig = px.imshow(np.zeros((2,2)))
+            fig.update_layout(title=f"Error during parsing: {str(e)}")
+            return fig, [], []
+
+        if df.shape[0] == 0 or df.shape[1] == 0:
+            fig = px.imshow(np.zeros((2,2)))
+            fig.update_layout(title="No variant or sample found(check VCF file)")
+            return fig, [], []
+
+
+
+        
+
+        #################################################################
+        # Phylogenetic tree from SNPs
+        #################################################################
+
         from skbio import DistanceMatrix
         from skbio.tree import nj
+
+        nb_of_snps = "SNPs (" + str(sum(1 for line in open(directory + "/variants.vcf")) - 1) + ")"
 
         # Charger les identifiants
         ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
@@ -2057,6 +2066,12 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         # Extraire l'ordre des taxons dans l'arbre
         individual_order_by_Pop1 = [tip.name for tip in rooted_tree.tips()]
+
+        snp_based_newick = ""
+        # get tree in newick format as a variable
+        with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
+            snp_based_newick = fp.read()
+            generate_tree_html(snp_based_newick, df_metadata, "assets/snp_based_tree."+str(session)+".html")
 
         #################################################################
         # Population structure with sNMF
@@ -2273,7 +2288,23 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
 
         
-        
+    fig_VCF = px.imshow(
+            df_vcf_transposed.values,
+            labels={'x': 'Variants', 'y': 'Samples', 'color': 'Alt allele count'},
+            x=df_vcf_transposed.columns,
+            y=df_vcf_transposed.index,
+            aspect='auto',
+            origin='upper',
+            zmin=0,
+            zmax=2,
+            color_continuous_scale='Viridis'
+    )
+
+    fig_VCF.update_layout(
+            margin=dict(l=200, r=20, t=50, b=150),
+            #height=800,
+            title="SNP Genotyping matrix (only the first 1000 variants are displayed)"
+    )  
 
     df_pca_metadata=pd.merge(df_pca,df_metadata, left_on='#IID', right_on='Strain name' )
     fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country')
@@ -2439,7 +2470,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,fig_circos,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, flanking_sequences, fig_scatter, "assets/tree."+str(session)+".html", {'display': 'block'}, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+    return "",nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
 
 
 @app.callback(
@@ -2468,6 +2499,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         path = row[0]
     directory = path
 
+
     list_selected = ['ID','Repeat','Flanking']
     #if submit_samples:
     if metadata_table:
@@ -2477,15 +2509,15 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             strain_name = strain['Strain name']
             list_selected.append(strain_name)
                 
-    else:
-        for value in df_metadata2['Strain name']:
-            list_selected.append(value)
+    #else:
+    #    for value in df_metadata2['Strain name']:
+    #        list_selected.append(value)
 
 
     session = random.randint(1, 9000000)
     vntr_file = directory+'/vntr_matrix.tsv'
 
-    print("submit vntr button" + str(submit_vntr) + " "+str(session))
+    #print("submit vntr button" + str(submit_vntr) + " "+str(session))
 
     df_vntr = pd.DataFrame(columns=['ID'])
     if os.path.exists(vntr_file):
@@ -2519,12 +2551,11 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     mask = df_vntr['ID'].isin(repeats)
     testdf = df_vntr[mask]
     newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
-    #print(df_vntr)
-    graph_mlva = px.imshow(newdf, 
+    graph_mlva = px.imshow(newdf.T, 
                            aspect="auto",
-                           labels=dict(x="Samples", y="VNTR loci", color="Number of repeats"),
-                           #x=list_sp2,
-                           y=repeats,
+                           labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
+                           x=repeats,
+                           #y=list_sp2,
                            text_auto=True
                            )
     mlva_table = df_vntr.to_dict('records')
@@ -2809,7 +2840,7 @@ def download_data(directory,session_code):
     returned_value = os.system(cmd)
     cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pangenome.gfa -O "+directory+"/pangenome.gfa"
     returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".all_genomes.vcf -O "+directory+"/aal_genomes.vcf"
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".all_genomes.vcf -O "+directory+"/variants.vcf"
     returned_value = os.system(cmd)
 
     df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
@@ -2826,6 +2857,192 @@ def download_data(directory,session_code):
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
             returned_value = os.system(cmd)
+
+
+
+
+def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
+    """
+    Parse minimal VCF to extract GT matrix.
+    - VCF file path
+    - max_variants: stop after this many variants (to keep la mémoire raisonnable)
+    - samples_subset: optional list of sample names to keep (None => all)
+    Returns: DataFrame (variants rows, samples columns), index=CHROM:POS:ID or CHROM:POS
+    """
+    samples = []
+    header_re = re.compile(r'^#CHROM')
+    gt_index = None
+    rows = []
+    variant_ids = []
+
+    with open(vcf_file, 'r') as file:
+        lines = file.readlines()
+
+        for line in lines:
+            if line.startswith('##'):
+                continue
+            if line.startswith('#CHROM'):
+                cols = line.strip().split('\t')
+                samples = cols[9:]
+                if samples_subset is not None:
+                    # keep only those present in samples
+                    samples = [s for s in samples if s in samples_subset]
+                continue
+            if line.startswith('#') or line.strip() == '':
+                continue
+
+            parts = line.strip().split('\t')
+            chrom, pos, vid, ref, alt, qual, filt, info, fmt = parts[:9]
+            sample_fields = parts[9:]
+
+            # find GT index in FORMAT
+            fmt_keys = fmt.split(':')
+            if gt_index is None:
+                try:
+                    gt_index = fmt_keys.index('GT')
+                except ValueError:
+                    gt_index = None
+
+            # convert each sample's GT to numeric
+            gts = []
+            sample_names = parts[9:]  # values
+            # iterate original sample names to maintain order and drop if not in subset
+            original_sample_names = samples if samples else None
+
+            for i, s_val in enumerate(parts[9:]):
+                if samples_subset is not None:
+                    # Need original sample name for position i
+                    orig_name = None
+                    # hack: when header parsed we saved 'samples' as subsetted; to map indices we need full header
+                    # To avoid complexity, we assume we only subset by names existing earlier: use placeholder mapping:
+                    # Simpler design: we will re-parse header to keep full_sample_names for correct mapping.
+                    pass
+
+            # Simpler approach: we will rework to store full sample names when parsing header.
+            break
+
+        # -- REWRITE using a single-pass with stored full sample list --
+        
+        full_samples = []
+        gt_index = None
+        rows = []
+        variant_ids = []
+        for line in lines:
+            if line.startswith('##'):
+                continue
+            if line.startswith('#CHROM'):
+                cols = line.strip().split('\t')
+                full_samples = cols[9:]
+                # build index map from full samples to kept samples
+                if samples_subset is not None:
+                    keep_mask = [s in samples_subset for s in full_samples]
+                    kept_sample_names = [s for s, keep in zip(full_samples, keep_mask) if keep]
+                else:
+                    keep_mask = [True] * len(full_samples)
+                    kept_sample_names = full_samples[:]
+                try:
+                    # find GT index in format
+                    # we'll set per-line (safe) but usually same
+                    pass
+                except Exception:
+                    pass
+                continue
+            if line.startswith('#') or line.strip() == '':
+                continue
+
+            parts = line.strip().split('\t')
+            chrom, pos, vid, ref, alt, qual, filt, info, fmt = parts[:9]
+            sample_values = parts[9:]
+
+            fmt_keys = fmt.split(':')
+            if 'GT' in fmt_keys:
+                gt_index = fmt_keys.index('GT')
+            else:
+                gt_index = None
+
+            # gather GTs for selected samples
+            row = []
+            for keep, sval in zip(keep_mask, sample_values):
+                if not keep:
+                    continue
+                if gt_index is None:
+                    row.append(np.nan)
+                    continue
+                fields = sval.split(':')
+                if gt_index >= len(fields):
+                    row.append(np.nan)
+                    continue
+                gt = fields[gt_index]
+                # normalized representation: handle phased/unphased, multiple alleles
+                if gt in ('.', './.', '.|.'):
+                    row.append(np.nan)
+                    continue
+                # split on / or |
+                alleles = re.split(r'[\/\|]', gt)
+                # if any allele is '.' -> missing
+                if any(a == '.' or a == '' for a in alleles):
+                    row.append(np.nan)
+                    continue
+                try:
+                    al_nums = [int(a) for a in alleles]
+                except ValueError:
+                    row.append(np.nan)
+                    continue
+                # simple coding: count of alt alleles (works for biallelic)
+                alt_count = sum(1 for a in al_nums if a != 0)
+                row.append(alt_count)
+            # index label
+            label = vid if vid != '.' and vid != '' else f"{chrom}:{pos}"
+            variant_ids.append(f"{chrom}:{pos}")
+            rows.append(row)
+            if len(rows) >= max_variants:
+                break
+
+    df = pd.DataFrame(rows, index=variant_ids, columns=kept_sample_names)
+    return df
+
+def generate_tree_html(newick, df_metadata, html_file):
+
+    concat_for_hash = ""
+    list_metadata_color = df_metadata['Country'].unique().tolist()
+    dict_colors = {}
+    i = 0
+
+    legend = ""
+    legend += "<style>"
+    legend += ".legend div{display:flex;align-items:center;margin:4px 0}"
+    legend += ".legend span{width:16px;height:16px;margin-right:6px}"
+    legend += "</style>"
+    legend += "<div class=\"legend\">"
+    for country in list_metadata_color:
+        if country != "none" and country != "None" and str(country) != "nan" and country != "":
+            dict_colors[country] =  colors[i]
+            legend = legend + "<div><span style=\"background:" + str(colors[i]) + "\"></span>" + str(country) + "</div>"
+            i += 1
+    legend += "</div>"
+
+    for index, row in df_metadata.iterrows():
+        color = "black"
+        if str(row['Country']) in dict_colors:
+            color = dict_colors[str(row['Country'])]
+        concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
+
+    # remove last caracter
+    newick = newick.rstrip(newick[-1])
+    f = open(html_file, "w")
+    template = open('assets/tree.html', 'r')
+    for line in template:
+        if re.search(r"NEWICK_TREE", line):
+            f.write("var test_string = \""+newick+";\"\n")
+        elif re.search(r"HASH_COLORS", line):
+            f.write(concat_for_hash+"\n")
+        elif re.search(r"LEGEND", line):
+            f.write(legend+"\n")
+        else:
+            f.write(line)
+    template.close()
+    f.close()
+
 
 # ---------- Main ----------
 if __name__ == "__main__":
