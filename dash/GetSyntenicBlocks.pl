@@ -6,6 +6,7 @@ my $gff_dir = $ARGV[0];
 my $coregene_file = $ARGV[1];
 my $output = $ARGV[2];
 my $minimal_size_blocks_to_be_displayed = $ARGV[3];
+my $chromosome_to_focus = $ARGV[4];
 
 my %order_by_strain;
 my %info_cluster;
@@ -33,7 +34,7 @@ while(<CG>){
                 #        next;
                 #}
                 my ($gene) = split(/,/,$infos[$i]);
-
+                #print "$gene $sample $cluster\n";
                 $cluster_of_genes{$gene}{$sample} = $cluster;
         }
         
@@ -41,7 +42,12 @@ while(<CG>){
 }
 close(CG);
 
+
+
 my %cluster_is_found;
+my $max_position = 0;
+my %max_positions;
+my %chromosome_sizes;
 open(LS,"ls $gff_dir/*ptt |");
 while(<LS>){
     my $file = $_;
@@ -53,35 +59,57 @@ while(<LS>){
             my $gene = $infos[3];
             my $chrom = $infos[4];
             my $chrom_num = 1;
-            if ($chrom =~/(\d+)/){
+            if ($chrom =~/[^\d]*(\d+)$/){
                 $chrom_num = $1;
             }
             my $positions = $infos[0];
             my ($position,$position2) = split(/\.\./,$positions);
+
+            $chromosome_sizes{$sample}{$chrom_num} = 1;
             
-            if ($chrom_num != 1){
+            if ($chrom_num != $chromosome_to_focus){
                 next;
             }
-            if ($position > 2000000){
-                #next;
-            }
 
+            if ($max_positions{$sample} < $position){
+                $max_positions{$sample} = $position;
+            }
+            if ($max_position < $position){
+                $max_position = $position;
+            }
             
             if (!$gene or $_=~/Location/){next;}
             my $cluster = $cluster_of_genes{$gene}{$sample};
+
             $cluster_is_found{$cluster}++;
             # not a core-gene
             if (!$cluster){
                 next;
             }
             $order_by_strain{$sample}{$position} = $cluster;
-            $info_cluster{$cluster}{$sample}{"start"} = $position;
-            $info_cluster{$cluster}{$sample}{"end"} = $position2;
+            $info_cluster{$cluster}{$sample}{"start"} = "$position";
+            $info_cluster{$cluster}{$sample}{"end"} = "$position2";
+            
+            
         }
         close(F);
     }
 }
 close(LS);
+
+
+################# Remove strains with too many chromosomes #######################
+foreach my $strain(keys(%max_positions)){
+
+        my $ref_hash= $chromosome_sizes{$strain};
+        my %subhash = %$ref_hash;
+        my $nb_chromosomes = scalar keys(%subhash);
+        print "$strain has $nb_chromosomes chromosomes\n";
+        if ($nb_chromosomes > 100){
+                print("Removing $strain with $nb_chromosomes chromosomes\n");
+                delete($order_by_strain{$strain})
+        }
+}
 
 
 my %suite_of_clusters;
@@ -91,11 +119,15 @@ foreach my $strain(keys(%order_by_strain)){
                         my $ref_hash1 = $order_by_strain{$strain};
                         my %subhash1 = %$ref_hash1;
                         foreach my $position(sort {$a<=>$b} keys(%subhash1)){
+                                
                                 my $cluster = $order_by_strain{$strain}{$position};
-                                if ($cluster_is_found{$cluster} == scalar keys(%order_by_strain)){
+                                #print "$position $cluster $cluster_is_found{$cluster}\n";
+                                #print scalar keys(%order_by_strain)."\n";
+                                #if ($cluster_is_found{$cluster} == scalar keys(%order_by_strain)){
+
                                         $suite_of_clusters{$strain}.= "$cluster-";
                                         print ORDER_CLUSTERS "$cluster-";
-                                }
+                                #}
                         }
                         print ORDER_CLUSTERS "\n";
 
@@ -215,9 +247,16 @@ my $max_num_block = $num_block;
 # construct JSON file for visualization with Clinker
 ########################################################
 my %colinear_block_infos;
+
+my $scale = 100000;
+my $diviseur = $max_position / $scale;
+
 my $json = "{\n";
 $json .= "\"clusters\":[\n";
+print keys(%order_by_strain)."\n";
 foreach my $strain(keys(%order_by_strain)){
+
+        my $chrom_size = $max_positions{$strain} / $diviseur;
         $json .= "\t{\n";
         $json .= "\t\"uid\":\"$strain\",\n";
         $json .= "\t\"name\":\"$strain\",\n";
@@ -227,7 +266,7 @@ foreach my $strain(keys(%order_by_strain)){
         $json .= "\t\t\"uid\":\"$strain\",\n";
         $json .= "\t\t\"name\":\"$strain\",\n";
         $json .= "\t\t\"start\":0,\n";
-        $json .= "\t\t\"end\":100000,\n";
+        $json .= "\t\t\"end\":$chrom_size,\n";
         $json .= "\t\t\"genes\":[\n";
         for (my $num_block = 1; $num_block <= $max_num_block; $num_block++){
                 my $positions = $limits_of_blocks{$strain}{$num_block};
@@ -252,8 +291,8 @@ foreach my $strain(keys(%order_by_strain)){
 
                 if ($number_of_genes_in_block > $minimal_size_blocks_to_be_displayed){
                         my $bloc_name = $strain."_block".$num_block;
-                        $start = $start / 50;
-                        $end = $end / 50;
+                        $start = $start / $diviseur;
+                        $end = $end / $diviseur;
 
                         $json .= "\t\t{\n";
                         $json .= "\t\t\t\"uid\":\"$bloc_name\",\n";
