@@ -466,31 +466,8 @@ def load_project_preview(proj_title):
         children.append(tbl)
     # small action buttons placeholders (update graphs)
     
-    children.append(html.H5("Search for clusters"))
-    children.append(
-        dbc.Row([
-            dbc.Col(
-                html.Label('Search for clusters by keyword or COG (comma separated): ', style={'margin-right': '15px'},),
-            ),
-            dbc.Col(
-                dcc.Input(
-                    id='cluster_search',
-                    value = '',
-                )
-            )
-        ]))
-    children.append(
-        html.Div([
-            "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
-            dcc.Textarea(
-                id='bedfile',
-                style={'width': '100%', 'height': 100},
-            ),
-
-
-        ], style={'width': '600px', 'display': 'inline-block'})
-    )
-    children.append(html.H5("Pan-GWAS"))
+    
+    children.append(html.H5("Search for group-specific genes / pan-GWAS using Scoary"))
 
     children.append(
         html.Div([
@@ -499,9 +476,15 @@ def load_project_preview(proj_title):
                 multi=True
             )
         ], style={'width': '100%', 'display': 'inline-block'}),
+
     )
     children.append(
-
+        dcc.Checklist(
+                id='heatmap_selection',
+                options=[{'label': ' By checking this box, the selection can be done by clicking in the Heatmap: only genomes harboring the clicked gene will be included.', 'value':'heatmap_selection'}],
+            )
+    )
+    children.append(
         dcc.Dropdown(
                     [],
                     id='current_cluster',
@@ -529,48 +512,62 @@ def load_project_preview(proj_title):
                     dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
                         html.Div(id='PAV_config',children=[
-        
-                            dbc.Row([
-                                dbc.Col(
-                                    html.Label('Colors: ', style={'margin-right': '15px'},),
-                                ),
-                                dbc.Col(
-                                    dcc.Dropdown(
+                            html.Div([
+                                html.Label("Colors:"),
+                                dcc.Dropdown(
                                         ['Presence/absence','Level of presence','Organism','Continent'],
                                         id='colorizing',
                                         value = 'Presence/absence',
-                                        style={'width': '300px'},
+                                        style={'width': '200px'},
                                         multi=False
                                     ),
-                                ),
-                                dbc.Col(
-                                    html.Label('Highlight: ', style={'margin-right': '15px', 'margin-left': '50px'},),
-                                ),
-                                dbc.Col(
-                                    dcc.Dropdown(
+                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
+
+                            html.Div([
+                                html.Label("Highlight:"),
+                                dcc.Dropdown(
                                         ['None','Reference genome','Core-genes','Strain-specific genes'],
                                         id='highlight',
                                         value = 'None',
-                                        style={'width': '300px'},
+                                        style={'width': '200px'},
                                         multi=False
                                     )
-                                ),
-                                dbc.Col(
-                                    html.Label('Cluster ordering: ', style={'margin-right': '15px', 'margin-left': '50px'},),
-                                ),
-                                dbc.Col(
-                                    dcc.Dropdown(
+                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
+
+                            html.Div([
+                                html.Label("Cluster ordering:"),
+                                dcc.Dropdown(
                                         ['Hierarchical clustering','Position in genome used for projection'],
                                         value = 'Hierarchical clustering',
                                         id='ordering',
                                         style={'width': '300px'},
                                         multi=False
                                     )
-                                )
-                            ]),
+                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
 
+                    
                         ]),
+                        html.Div([
+                                html.Label("Search for clusters by keyword or COG:"),
+                                dcc.Input(
+                                        id='cluster_search',
+                                        style={'width': '300px'},
+                                        value = '',
+                                    )
+                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
+                        html.Br(),
+                        html.Div([
+                            "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
+                            dcc.Textarea(
+                                id='bedfile',
+                                style={'width': '100%', 'height': 100},
+                            ),
+                        ], style={'width': '600px', 'display': 'inline-block'}),
+                        
+                        
+
                         html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
+                        html.Br(),
                         dcc.Loading(dcc.Graph(id='PAV_graph')),
                         html.Br(),
                         #html.Div(className="row", id='titles', children=[
@@ -729,6 +726,29 @@ def load_project_preview(proj_title):
                         ]),
                     dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
+                        html.Div([
+                            html.Label('Chromosome: '),
+                            dcc.Dropdown(
+                                        ['1','2','3','4','5','6','7','8','9','10','11','12'],
+                                        id='chromosome',
+                                        value = '1',
+                                        style={'width': '200px'},
+                                        multi=False
+                                    ),
+                        ], style={'display': 'inline-block', 'margin-right': '20px'}),
+
+                        
+                        html.Div([
+                            html.Label("Minimum number of genes in a colinear block to be displayed:"),
+                            dcc.Dropdown(
+                                        ['5','10','15','20'],
+                                        id='minimal_size_block',
+                                        value = '10',
+                                        style={'width': '300px'},
+                                        multi=False
+                                    ),
+                        ], style={'display': 'inline-block', 'margin-right': '20px'}),
+
                         dcc.Loading(html.Div(id='clinker'),style={'width': '150vh', 'height': '200vh','margin-left': '15px'}),
                         html.Br(),
                         html.Br(),
@@ -879,10 +899,12 @@ def display_click_data_GFA(clickData,metadata_table,projets,url):
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
-    State('url','hash')
+    State('url','hash'),
+    State('heatmap_selection','value'),
+    #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url):
+def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
          
     cluster = 1
     pathname = projets
@@ -907,7 +929,12 @@ def display_click_data(clickData,metadata_table,projets,url):
     infos_cluster = os.popen(cmd).read().split("\t")
     selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
 
-    list_strains = get_combination(cluster,pathname,list_of_strains)
+    list_strains = []
+    if (heatmap_selection and 'heatmap_selection' in heatmap_selection):
+        list_strains = get_combination(cluster,pathname,list_of_strains)
+
+
+    
         
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
     return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains
@@ -1197,10 +1224,12 @@ def set_reference_value(available_options):
     State('metadata_table','selectedRows'),
     State("my-dashbio-default-circos", "layout"),
     State("my-dashbio-default-circos", "tracks"),
+    State("chromosome",'value'),
+    State("minimal_size_block",'value'),
 
     prevent_initial_call=True
 )
-def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks):
+def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -1638,10 +1667,12 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #fig_gene = px.bar(df, x='year', y='Nb_genes')
     
     colorscale = [[0, 'whitesmoke'], [1, 'teal']]
-    if highlight != "None" or cluster_search != "" or bedfile is not None or specific_to is not None:
+    if highlight != "None" or cluster_search != "" or bedfile is not None or (specific_to is not None and len(specific_to) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     elif colorizing == "Continent":
        colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
+
+
     fig = go.FigureWidget(data=go.Heatmap(
                    #z=[[1, 0, 0, 0, 1], [0, 1, 0, 0, 0], [0, 0, 1, 1, 0]],
                    #z=list_of_lists,
@@ -1693,7 +1724,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #################################################
     scoary_table = []
     graph_pangwas = go.Figure()
-    if specific_to is not None:
+    if specific_to is not None and len(specific_to) > 0:
         # write traits file for Scoary
         with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
             f.write(",Trait1\n")
@@ -1903,21 +1934,23 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             returned_value = os.system(cmd)
             list_of_species_macrosyneny.append(sp)
 
-    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt 10"
+    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt "+ str(minimal_size_block) + " " + str(chromosome)
+    #cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt " + str(minimal_size_block) + " 1"
     returned_value = os.system(cmd)
 
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
+    cmd = "cat html_templates/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json html_templates/clinker_template.part2.html >assets/clinker."+str(session)+".html"
     returned_value = os.system(cmd)
 
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
 
     df_macrosynteny = pd.read_csv(tmp_dir + "/" + str(session) + ".syntenic_blocks.txt",sep=',')
-    print("macrosynteny dataframe:")
-    print(df_macrosynteny)
+    list_of_species_macrosyneny = df_macrosynteny.columns.tolist()
     print(list_of_species_macrosyneny)
+    list_of_species_macrosyneny.remove("num_block")
+    list_of_species_macrosyneny.remove("Unnamed: 0")
     graph_macrosynteny = go.Figure()
     if not df_macrosynteny.empty:
         graph_macrosynteny = px.parallel_coordinates(df_macrosynteny,color="num_block",
@@ -2654,7 +2687,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
+    cmd = "sed \"s/SESSION/" + str(session) + "/g\" html_templates/network_template.html >assets/network."+str(session)+".html"
     returned_value = os.system(cmd)
 
     dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
@@ -3030,7 +3063,7 @@ def generate_tree_html(newick, df_metadata, html_file):
     # remove last caracter
     newick = newick.rstrip(newick[-1])
     f = open(html_file, "w")
-    template = open('assets/tree.html', 'r')
+    template = open('html_templates/tree.html', 'r')
     for line in template:
         if re.search(r"NEWICK_TREE", line):
             f.write("var test_string = \""+newick+";\"\n")
