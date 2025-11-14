@@ -40,6 +40,8 @@ my %node_series;
 my %strand_of_node;
 my %strand_of_node_for_reference;
 my %pav;
+open(NODE_POS, ">$output_basename.node_positions.tsv");
+print NODE_POS "Node\tStart\tEnd\n";
 foreach my $node(@nodes_in_path) {
     my $strand = "+";
     if ($node =~ /\+$/) {
@@ -52,12 +54,13 @@ foreach my $node(@nodes_in_path) {
     $strand_of_node_for_reference{$node} = $strand;
     if (exists $node_lengths{$node}) {
         my $length=$node_lengths{$node};
-        
+
         if ($length > 100) {
         #if ($length > 1) {
             push(@valid_nodes, $node);
             my $start = $position + 1;  
             my $end = $position + $length;
+            print NODE_POS "$node\t$start\t$end\n";
             $node_positions{$node} = "$start,$end";
             $node_series{$reference} .= "$start,$end|";
             $pav{$node}{$reference} = $strand.$length;
@@ -66,7 +69,7 @@ foreach my $node(@nodes_in_path) {
         # Node exists in the GFA, length already recorded
     } 
 }
-
+close(NODE_POS);
 my @list_colors= ("#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080", "#ffffff", "#000000");
 
 #print scalar @valid_nodes;
