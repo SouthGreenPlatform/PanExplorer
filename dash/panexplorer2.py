@@ -80,6 +80,9 @@ layout_config = {
         "labelDenominator": 1000000,
         "labelSize": 12,
     },
+    "legend": {
+        "title": "Legend",
+    }
 }
 
 stack_config = {
@@ -647,49 +650,90 @@ def load_project_preview(proj_title):
                     dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
                             #dcc.Loading(dcc.Graph(id='circos_graph')),
-                            dcc.Loading(dash_bio.Circos(
-                                id="my-dashbio-default-circos",
-                                layout=[],
-                                config=layout_config,
-                        tracks=[
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config1
-                                },
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config2
-                                },
-                                {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config3
-                                },
-                            {
-                                    "type": "HIGHLIGHT",
-                                    "data": [],
-                                    "config": highlight_config4
-                                }
-                            ],
-                    )),
+                            dcc.Loading(
+                                html.Div([
+                                    html.Div([
+                                            html.Span(style={'display': 'inline-block',
+                                                'width': '10px',
+                                                'height': '10px',
+                                                'backgroundColor': "#e74205",
+                                                'borderRadius': '3px',
+                                                'marginRight': '6px'}),
+                                            html.Span("Forward genes", style={'marginRight': '20px'}),
+                                            html.Span(style={'display': 'inline-block',
+                                                'width': '10px',
+                                                'height': '10px',
+                                                'backgroundColor': "#1609fd",
+                                                'borderRadius': '3px',
+                                                'marginRight': '6px'}),
+                                            html.Span("Reverse genes", style={'marginRight': '20px'}),
+                                            html.Span(style={'display': 'inline-block',
+                                                'width': '10px',
+                                                'height': '10px',
+                                                'backgroundColor': "#7e099b",
+                                                'borderRadius': '3px',
+                                                'marginRight': '6px'}),
+                                            html.Span("Core-genes", style={'marginRight': '20px'}),
+                                            html.Span(style={'display': 'inline-block',
+                                                'width': '10px',
+                                                'height': '10px',
+                                                'backgroundColor': '#2ca02c',
+                                                'borderRadius': '3px',
+                                                'marginRight': '6px'}),
+                                            html.Span("Strain-specific genes", style={'marginRight': '20px'}),
+                                    ]),
+                                    dash_bio.Circos(
+                                        id="my-dashbio-default-circos",
+                                        layout=[],
+                                        config=layout_config,
+                                        tracks=[
+                                                {
+                                                    "type": "HIGHLIGHT",
+                                                    "data": [],
+                                                    "config": highlight_config1
+                                                },
+                                                {
+                                                    "type": "HIGHLIGHT",
+                                                    "data": [],
+                                                    "config": highlight_config2
+                                                },
+                                                {
+                                                    "type": "HIGHLIGHT",
+                                                    "data": [],
+                                                    "config": highlight_config3
+                                                },
+                                            {
+                                                    "type": "HIGHLIGHT",
+                                                    "data": [],
+                                                    "config": highlight_config4
+                                                }
+                                            ],
+                                    ), 
+                                ]),
+                        ),
                     ]),
                     dcc.Tab(label='Pan-GWAS', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
-                        dcc.Loading(
+                        dbc.Row([
+                            dbc.Col(
+                                dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                            ),
+                            dbc.Col(
+                                dcc.Loading(
                                         dag.AgGrid(
                                             id="scoary_table",
                                             style={'width': '100%','height': '50vh','margin-left': '15px'},
-                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Bonferroni_p"]],
+                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Naive_p","Bonferroni_p"]],
                                             rowData=[],
                                             columnSize="sizeToFit",
                                             defaultColDef={"filter": True},
                                             dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
                                         ), 
                                     ),
+                            ),
+                        ]),
                         html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                        
                         dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
                                 dcc.Loading(
                                     dag.AgGrid(
@@ -872,17 +916,18 @@ def load_project_preview(proj_title):
     Input('graph_gfa2', 'clickData'),
     State('metadata_table','selectedRows'),
     State('projets', 'value'),
-    State('url','hash')
+    State('url','hash'),
+    State('reference', 'value')
 )
 
-def display_click_data_GFA(clickData,metadata_table,projets,url):
+def display_click_data_GFA(clickData,metadata_table,projets,url,reference):
     node = 1
     if clickData:
         wjdata = json.loads(json.dumps(clickData, indent=2))
         node = wjdata['points'][0]['x']
 
     selected_node = "Selected node: " + str(node)
-    infos = get_node_details(node,projets)
+    infos = get_node_details(node,projets,reference)
     return infos
 
 
@@ -1035,7 +1080,7 @@ def display_click_data(cell,metadata_table,projets,url):
         return "",[]#,""
         
 
-def get_node_details(node,pathname):
+def get_node_details(node,pathname,reference):
     global directory
 
     if not pathname:
@@ -1051,13 +1096,43 @@ def get_node_details(node,pathname):
     list_of_infos = node.split("_")
     num_node = list_of_infos[1]
 
+    df_node_details = pd.read_csv(directory + "/" + reference+".segments.node_positions.tsv" ,sep='\t')
+    
+    mini_df = df_node_details[df_node_details["Node"] == int(num_node)]
+    start_node = mini_df['Start'].tolist()[0]
+    end_node = mini_df['End'].tolist()[0]
+
     cmd = "grep -P '^S\s"+num_node+"\s' "+directory+"/pangenome.gfa"
     result = os.popen(cmd).read()
     list_of_infos = result.split("\t")
     node_sequence = list_of_infos[2]
     node_sequence2 = re.sub("(.{80})", "\\1\n", node_sequence, 0, re.DOTALL)
 
-    return "Node: " + str(num_node) + "\n\n" + str(node_sequence2)
+    # Remove lines from ptt
+    #cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+reference+".ptt >"+directory+"/genomes/genomes/"+reference+".2.ptt"
+    #returned_value = os.system(cmd)
+
+    df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+reference+'.2.ptt',sep='\t')
+    df_gene_positons[['start', 'end']] = df_gene_positons['Location'].str.split('\.\.', expand=True)
+    df_gene_positons['start'] = pd.to_numeric(df_gene_positons['start'], downcast='integer', errors='coerce')
+    df_gene_positons['end'] = pd.to_numeric(df_gene_positons['end'], downcast='integer', errors='coerce')
+
+    query = 'start < ' + str(start_node) + ' and end > ' + str(start_node) + ' or start < ' + str(end_node) + ' and end > ' + str(end_node) + ' or start >= ' + str(start_node) + ' and end <= ' + str(end_node)
+    filtered_df_gene_positions = df_gene_positons.query(query)
+    genes = filtered_df_gene_positions['PID'].tolist()
+    product = filtered_df_gene_positions['Product'].tolist()
+
+    return html.Div([
+        html.Div("Node: " + str(num_node)),
+        html.Div("Positions in reference genome: " + str(start_node) + "-" + str(end_node)),
+        html.Div("Genes in this node: "),
+        html.Ul([html.Li(genes[i] + ": " + product[i]) for i in range(len(genes))]),
+
+        html.Div("Sequence:"),
+        html.Pre(node_sequence2)
+    ])
+        
+#"Node: " + str(num_node) + "</div>Positions in reference genome: " + str(start_node) + "-" + str(end_node)+ "\n\n" + str(node_sequence2) 
 
         
 def get_cluster_details(cluster,pathname,list_of_strains):
@@ -1535,6 +1610,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             list_of_clusters1 = returned_value.split("\n")
             list_of_clusters.extend(list_of_clusters1)
 
+            cmd = "grep '"+cog+"' "+directory+"/genomes/genomes/*ptt >" +tmp_dir + "/" +"genes_with_cog_"+str(session)+".txt"
+            returned_value = os.popen(cmd).read()
+            print(returned_value)
+
         
         # remove empty values
         list_of_clusters = list(filter(None, list_of_clusters))
@@ -1686,9 +1765,11 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                    hoverinfo='text+x+y+z',
                    hoverongaps = False))
 
-    text="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
+    text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
+
+
 
 
 ###################
@@ -1769,8 +1850,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
         #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
 
-        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Bonferroni_p","Odds_ratio","log_pval","start"])
-        df_scoary_results = pd.DataFrame(columns=["Gene","Bonferroni_p","Odds_ratio"])
+        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
+        df_scoary_results = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
 
         if os.path.exists(scoary_output_file):
 
@@ -1781,10 +1862,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
             merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
             #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
-            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Bonferroni_p"])
+            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
 
         scoary_table = df_scoary_results.to_dict('records')
-        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Bonferroni_p"], title="Pan-GWAS results")
+        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Naive_p"], title="Pan-GWAS results")
         
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
@@ -2370,14 +2451,14 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         tab_style_segments = tab_style  
         #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
-        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
+        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + directory +"/"+str(reference)+".segments"
         returned_value = os.system(cmd)
 
         x_segments = []
         y_segments = []
         dict_segments_x = {}
         dict_segments_y = {}
-        with open(tmp_dir +"/"+str(session)+".segments.segments_x.txt",'r') as file:
+        with open(directory +"/"+str(reference)+".segments.segments_x.txt",'r') as file:
             for line in file:
                 text = line.strip()
                 text2 = text.rstrip(text[-1])
@@ -2385,7 +2466,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                 dict_segments_x[infos[0]] = infos[1]
 
 
-        with open(tmp_dir +"/"+str(session)+".segments.segments_y.txt",'r') as file:
+        with open(directory +"/"+str(reference)+".segments.segments_y.txt",'r') as file:
             for line in file:
                 text = line.strip()
                 text2 = text.rstrip(text[-1])
@@ -2440,7 +2521,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             #showlegend=False
         )
 
-        df_pav_node = pd.read_csv(tmp_dir + "/" + str(session) + ".segments.node_pav.tsv", sep="\t")
+        df_pav_node = pd.read_csv(directory + "/" + str(reference) + ".segments.node_pav.tsv", sep="\t")
         
         list_strains = df_pav_node.columns.tolist()
         list_strains.remove("Node")
@@ -2503,7 +2584,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
 
 
 @app.callback(
