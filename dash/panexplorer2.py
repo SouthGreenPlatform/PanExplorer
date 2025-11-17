@@ -501,7 +501,13 @@ def load_project_preview(proj_title):
     #children.append(html.Div(id="update-status"))
 
     children+= [
-        html.Button("Update graphes", id="btn-update", n_clicks=0),
+        html.Button("Update graphes", 
+                    id="btn-update", 
+                    style={
+                        "backgroundColor": "#1E90FF",   # bleu
+                        "color": "white",
+                    },
+                    n_clicks=0),
 
         dcc.Loading(html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
         
@@ -716,14 +722,14 @@ def load_project_preview(proj_title):
                         html.Br(),
                         dbc.Row([
                             dbc.Col(
-                                dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                                dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '70vh', 'height': '50vh','margin-left': '15px'})),
                             ),
                             dbc.Col(
                                 dcc.Loading(
                                         dag.AgGrid(
                                             id="scoary_table",
-                                            style={'width': '100%','height': '50vh','margin-left': '15px'},
-                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Sensitivity","Specificity","Odds_ratio","Naive_p","Bonferroni_p"]],
+                                            style={'width': '100vh','height': '50vh','margin-left': '15px'},
+                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Odds_ratio","Naive_p","Bonferroni_p"]],
                                             rowData=[],
                                             columnSize="sizeToFit",
                                             defaultColDef={"filter": True},
@@ -750,13 +756,34 @@ def load_project_preview(proj_title):
                                 ),
 
                     ]),
-                    dcc.Tab(label='COG', style=tab_style, selected_style=tab_selected_style, children=[
+                    dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_COG_all')),
-                        html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_COG1')),
-                        html.Br(),
+                        # dcc.Loading(dcc.Graph(id='graph_COG_all')),
+                        # html.Br(),
+                        # dcc.Loading(dcc.Graph(id='graph_COG1')),
+                        # html.Br(),
                         dcc.Loading(dcc.Graph(id='graph_COG2')),
+                        html.Br(),
+                        html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
+                                    id='submit-enrichment', 
+                                    style={
+                                        "backgroundColor": "#1E90FF",   # bleu
+                                        "color": "white",
+                                    },
+                                    n_clicks=0),
+                        html.Br(),
+                        html.Br(),
+                        dcc.Loading(
+                            #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
+                            dag.AgGrid(
+                                            id="enrichment_table",
+                                            style={'display': 'none'},
+                                            columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
+                                            rowData=[],
+                                        ),
+                            
+                            
+                            ),
                         ]),
                     dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
@@ -874,7 +901,13 @@ def load_project_preview(proj_title):
 
                     
                     html.Br(),
-                    html.Button('Update heatmap and generate haplotype network', id='submit-vntr', n_clicks=0),
+                    html.Button('Update heatmap and generate haplotype network', 
+                                style={
+                                    "backgroundColor": "#1E90FF",   # bleu
+                                    "color": "white",
+                                },
+                                id='submit-vntr', 
+                                n_clicks=0),
                     html.Br(),
                     dcc.Loading(html.Div(id='dynamic_network')),
                 ]),
@@ -1254,8 +1287,8 @@ def set_reference_value(available_options):
     Output('graph_ANI', 'figure'),
     Output('graph_gene2', 'figure'),
     Output('graph_pie2', 'figure'),
-    Output('graph_COG_all', 'figure'),
-    Output('graph_COG1', 'figure'),
+    #Output('graph_COG_all', 'figure'),
+    #Output('graph_COG1', 'figure'),
     Output('graph_COG2', 'figure'),
     Output('rarefaction2', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
@@ -1878,7 +1911,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
     fig_ANI = None
     tab_style_ani = {'display': 'none'}
-    if os.path.exists(directory + "/fastani.out.matrix.complete.xls"):
+    if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
         tab_style_ani = tab_style 
         print(list_sp2)
         df_ANI_selected = df_ANI[df_ANI["Genomes"].isin(list_sp2)]
@@ -1931,10 +1964,18 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
     df_count.to_csv("COG.count.txt")
 
+    occur = df_cog_of_clusters.groupby(['COG']).size()
+    top30 = df_cog_of_clusters['COG'].value_counts().head(30).reset_index()
+    top30.columns = ['COG', 'counts']
+    top30_with_cog_term = pd.merge(df_cog_terms, top30, how="right", left_on='COG', right_on='COG')
+
+    top30_with_cog_term.to_csv("cog_occurrences.csv")
+
     #dftet = px.data.tips()
     #dftet.to_csv("COG.count.txt")
 
-    fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
+    #fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
+    fig_COG_all = px.bar(df_count, x='COGcat', y='counts', title='Distribution of COG categories among all clusters')
     
     #data_COG2_selected.to_csv("export_COG.tsv")
     
@@ -1946,6 +1987,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     fig_COG2.update_layout(
         yaxis_title="Number of genes with COG category"
     )
+
+    fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
 
 
     ############################################################
@@ -1970,7 +2013,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
-    clustersearch = "Cluster Search: " + str(len(search_res2)) + " clusters"
+    clustersearch = str(len(search_res2)) + " clusters (strictly present in selected strains)"
 
     ############################################################
     # Calculate coordinates of core-genes for macrosynteny
@@ -2584,7 +2627,64 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG_all,fig_COG1,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+
+@app.callback(
+        #Output('graph_enrichment', 'figure'),
+        Output('enrichment_table', 'rowData'),
+        Output('enrichment_table', 'style'),
+        Input('submit-enrichment', 'n_clicks'),
+        State('metadata_table','selectedRows'),
+        State('projets', 'value'),
+        prevent_initial_call=True    
+)
+
+def enrichment(submit_enrichment,metadata_table,proj_title):
+
+    if not proj_title:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + proj_title
+    else:
+        path = row[0]
+    directory = path
+
+    session = random.randint(1, 9000000)
+
+    # get core genes 
+    df_core = pd.read_csv(directory + "/core.txt",sep="\t")
+    df_core_clusters = df_core["name"]
+    core_clusters_file = tmp_dir + "/" + str(session) + ".core_clusters.txt"
+    df_core_clusters.to_csv(core_clusters_file,sep='\t',index=False)
+
+    # get COG of clusters
+    annotation_file = tmp_dir + "/" + str(session) + ".annotations.txt"
+    cmd = "cut -d '\t' -f 1,2 " + directory + "/cog_of_clusters.txt >" + annotation_file
+    returned_value = os.system(cmd)
+    df_cog_of_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".annotations.txt", sep="\t")
+    df_cog_of_clusters.columns = ['orthogroup', 'terms']
+    df_cog_of_clusters.to_csv(annotation_file,sep='\t',index=False)
+
+    # calculate enrichment (odds ratios and pvalues)
+    cmd = "python enrichment.py --subsetA " + core_clusters_file + " --annotations " + annotation_file + " --out " + tmp_dir + "/" + str(session) + ".enrichment.txt"
+    returned_value = os.system(cmd)
+    df_enrichment = pd.read_csv(tmp_dir + "/" + str(session) + ".enrichment.txt", sep="\t")
+    df_enrichment["-log10_pvalue"] = -np.log10(df_enrichment["p_value"])
+    df_enrichment_bis = df_enrichment[df_enrichment['-log10_pvalue'] > 2]
+    df_cog_terms = pd.read_csv('COG_terms.txt',sep='\t')
+    df_enrichment_with_cog_term = pd.merge(df_enrichment_bis, df_cog_terms, how="right", left_on='term', right_on='COG')
+
+    #df_enrichment["log2_odds_ratios"] = np.log2(df_enrichment["odds_ratio"])
+
+    dictionary = df_enrichment_with_cog_term.to_dict('records')
+
+
+    #graph_enrichment = px.scatter(df_enrichment_bis, x="odds_ratio", y="-log10_pvalue", text="term", title="Enrichment of COG terms in core genes compared to the pangenome")
+    #graph_enrichment = px.bar(df_enrichment, x="term", y="-log10_pvalue", color="odds_ratio", title="Enrichment of COG terms in core genes compared to the pangenome")
+
+    return dictionary, {'display': 'block'}
 
 
 @app.callback(
@@ -2812,7 +2912,7 @@ def init_dataframes(pathname):
     #df = df.dropna()
 
     df_ANI = pd.DataFrame()  
-    if os.path.exists(directory + "/fastani.out.matrix.complete.xls"):
+    if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
         df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
 
     list_species = []
@@ -2969,9 +3069,16 @@ def download_data(directory,session_code):
 
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
             returned_value = os.system(cmd)
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gff -O "+directory+"/genomes/genomes/"+col+".gff"
+            returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
             returned_value = os.system(cmd)
 
+    df_samples = pd.read_csv(directory+'/metadata.xls',sep='\t')
+    list_sp2 = df_samples['Strain name'].tolist()
+    if len(list_sp2) < 1:
+        cmd = "perl generatePtt.pl " + directory
+        returned_value = os.system(cmd)
 
 
 
