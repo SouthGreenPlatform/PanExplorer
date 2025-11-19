@@ -386,6 +386,8 @@ def render_page(search):
     default_value = options[0]["value"] if options else None
 
     header = html.Div([
+        #html.Img(src="assets/panexplorer_logo.png", style={"height":"120px","marginRight":"15px","verticalAlign":"middle"}),
+
         html.H2("PanExplorer"),
         user_summary,
     ], style={"padding":"6px"})
@@ -501,6 +503,8 @@ def load_project_preview(proj_title):
     #children.append(html.Div(id="update-status"))
 
     children+= [
+        
+            
         html.Button("Update graphes", 
                     id="btn-update", 
                     style={
@@ -508,6 +512,7 @@ def load_project_preview(proj_title):
                         "color": "white",
                     },
                     n_clicks=0),
+        
 
         dcc.Loading(html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
         
@@ -877,7 +882,9 @@ def load_project_preview(proj_title):
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_mlva')),
-                    html.Br(),
+                    html.Button("Download matrix", id="btn-download", n_clicks=0),
+                    dcc.Download(id="download-dataframe"),
+
                     html.H3(id='nb_of_repeats', style={'width': '60vh','margin-left': '1px'}),
                     dbc.Row([
                         dbc.Col(
@@ -999,6 +1006,8 @@ def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
         wjdata = json.loads(json.dumps(clickData, indent=2))
         cluster = wjdata['points'][0]['x']
     
+    inf = cluster.split(":")
+    cluster = inf[-1]
 
     nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
     rowData = dictionary
@@ -1721,6 +1730,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     specific_df_merged_with_positions.to_csv(directory+"/specific.txt",index=False,sep='\t')
     specific_list_dict = specific_df_merged_with_positions.to_dict('records')
 
+    
+
     #specific_df_merged_with_positions.to_csv(directory+"/specific.txt",index=False,sep='\t')
     
     fig_gene = px.histogram(df2, x="sum")
@@ -1751,7 +1762,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
-
+    list_chromosomes = []
     if ordering == "Hierarchical clustering":
         
         # remove sum and clutserID from the col
@@ -1760,17 +1771,17 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         
     else:
         # to be modified for ordering clusters along pivot genome
-        merged_with_positions2 = merged_with_positions2[['start','name']]
+        merged_with_positions2 = merged_with_positions2[['start','name','block_id']]
         merged_with_positions2['start'] = merged_with_positions2['start'].astype(int)
         df2['ClutserID'] = df2['ClutserID'].astype(int)
         merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
-        merged_with_positions3 = merged_with_positions3.sort_values(by=['start'],ascending=True)
+        merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
         merged_with_positions3.to_csv("export.tsv")
-        cluster_names = merged_with_positions3["ClutserID"].astype(str).tolist()
+        merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
+        cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
+        list_chromosomes = merged_with_positions3["block_id"].tolist()
         merged_with_positions3 = merged_with_positions3[list_sp2]
 
-        
-    
         transposed_df = merged_with_positions3.transpose() 
     
     
@@ -1786,17 +1797,15 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
 
     fig = go.FigureWidget(data=go.Heatmap(
-                   #z=[[1, 0, 0, 0, 1], [0, 1, 0, 0, 0], [0, 0, 1, 1, 0]],
-                   #z=list_of_lists,
                    z=transposed_df,
                    y=list_sp2,
                    x=cluster_names,
-                   #colorscale= [[0, 'whitesmoke'], [0.5, 'limegreen'], [0.67, 'tomato'], [1, 'teal']],
-                   #colorscale= [[0, 'whitesmoke'], [0.33, 'limegreen'], [0.67, 'tomato'], [1, 'red']],
-                   #colorscale= [[0, 'whitesmoke'], [1, 'teal']],
                    colorscale = colorscale,
-                   hoverinfo='text+x+y+z',
+                   hoverinfo='text+x+y+z+name',
+                   #hover_data=["block_id"],
                    hoverongaps = False))
+    fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
+
 
     text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
@@ -2058,6 +2067,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             returned_value = os.system(cmd)
             list_of_species_macrosyneny.append(sp)
 
+    
     cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt "+ str(minimal_size_block) + " " + str(chromosome)
     #cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt " + str(minimal_size_block) + " 1"
     returned_value = os.system(cmd)
@@ -2139,6 +2149,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                            text_auto=True
                            )
     mlva_table = df_vntr.to_dict('records')
+    newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
     ##############################################################################################
     # SNP
@@ -2773,7 +2784,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
                            text_auto=True
                            )
     mlva_table = df_vntr.to_dict('records')
-
+    newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
     
     transposed_newdf = newdf.transpose()
@@ -3065,7 +3076,7 @@ def download_data(directory,session_code):
     for col in df.columns:
         if col != "ClutserID":
             colbis = col
-                    #colbis = col.replace("_gb", "")
+            colbis = col.replace("_gb", "")
 
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
             returned_value = os.system(cmd)
@@ -3264,6 +3275,25 @@ def generate_tree_html(newick, df_metadata, html_file):
     template.close()
     f.close()
 
+@app.callback(
+    Output("download-dataframe", "data"),
+    Input("btn-download", "n_clicks"),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,pathname):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+    df = pd.read_csv(directory+'/export_mlva.tsv',sep='\t')
+    return dcc.send_data_frame(df.to_csv, "matrix.csv")
 
 # ---------- Main ----------
 if __name__ == "__main__":
