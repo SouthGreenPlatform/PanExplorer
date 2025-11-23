@@ -759,7 +759,9 @@ def load_project_preview(proj_title):
                                             dashGridOptions={"pagination": True, "animateRows": False}
                                     ),
                                 ),
-
+                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                dcc.Download(id="download-dataframe2"),
+                                
                     ]),
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
@@ -1444,6 +1446,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df2.loc[(df2['sum'] < len(list_sp2)) & (df2['sum'] > 1), 'type'] = 'Dispensable-gene'
     
     df2.to_csv("export_df2.csv")
+    df.to_csv("export_df.csv")
 
     ##############################################
     # Generate Core-gene and accessory files
@@ -2017,8 +2020,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         metadata_csv = fp.read()
 
     generate_tree_html(newick, df_metadata, "assets/tree."+str(session)+".html")
-
-    
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
@@ -2635,6 +2636,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         df_search = pd.DataFrame.from_dict(search_res2)
         df_search = pd.merge(df_search,merged_with_cog, left_on='ClutserID', right_on='ClutserID')
         search_res2 = df_search.to_dict('records')
+        df_search = pd.merge(df_search,df_matrix, left_on='ClutserID', right_on='ClutserID')
+        df_search.to_csv(directory+ "/search_results.txt",sep="\t",index=False)
     
 
     #return nb_of_pangenes
@@ -3294,6 +3297,26 @@ def download_matrix(n,pathname):
     directory = path
     df = pd.read_csv(directory+'/export_mlva.tsv',sep='\t')
     return dcc.send_data_frame(df.to_csv, "matrix.csv")
+
+@app.callback(
+    Output("download-dataframe2", "data"),
+    Input("download_table", "n_clicks"),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,pathname):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+    df = pd.read_csv(directory+'/search_results.txt',sep='\t')
+    return dcc.send_data_frame(df.to_csv, "search_results.txt")
 
 # ---------- Main ----------
 if __name__ == "__main__":
