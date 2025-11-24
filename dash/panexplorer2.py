@@ -3316,7 +3316,7 @@ def download_matrix(n,pathname):
         path = row[0]
     directory = path
     df = pd.read_csv(directory+'/search_results.txt',sep='\t')
-    return dcc.send_data_frame(df.to_csv, "search_results.txt")
+    return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
 
 # ---------- Main ----------
 if __name__ == "__main__":
