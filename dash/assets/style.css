@@ -1,0 +1,14 @@
+.thin-button {
+    padding: 2px 8px;          /* marges internes minuscules */
+    border: 1px solid #444;    /* bord très fin */
+    border-radius: 3px;        /* arrondis très légers */
+    background-color: white;
+    font-size: 12px;           /* texte compact */
+    height: 22px;              /* rend le bouton fin */
+    line-height: 12px;
+    cursor: pointer;
+}
+
+.thin-button:hover {
+    background-color: #f0f0f0;
+}
