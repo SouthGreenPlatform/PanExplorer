@@ -25,6 +25,7 @@ import numpy as np
 
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 
 from dash.dependencies import Output, Input
 from dash.exceptions import PreventUpdate
@@ -627,6 +628,35 @@ def load_project_preview(proj_title):
                                     ),
                                 ),
                         ]),
+                        dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
+                        dcc.Loading(
+                                    dag.AgGrid(
+                                            id="table_of_search",
+                                            style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
+                                            #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
+                                            rowData=[],
+                                            columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
+                                            defaultColDef={"filter": True},
+                                            columnSize="sizeToFit",
+                                            #getRowId="params.data.State",
+                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                    ),
+                                ),
+                        html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                        dcc.Download(id="download-dataframe2"),
+                        html.Br(),
+                        html.Br(),
+                        dcc.Loading(
+                                        dag.AgGrid(
+                                            id="scoary_table",
+                                            style={'width': '100vh','height': '50vh','margin-left': '15px'},
+                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Odds_ratio","Naive_p","Bonferroni_p"]],
+                                            rowData=[],
+                                            columnSize="sizeToFit",
+                                            defaultColDef={"filter": True},
+                                            dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                                        ), 
+                                    ),
                         #html.Div(className="row", id='manytables', children=[
                             
                             
@@ -723,46 +753,7 @@ def load_project_preview(proj_title):
                                 ]),
                         ),
                     ]),
-                    dcc.Tab(label='Pan-GWAS', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Br(),
-                        dbc.Row([
-                            dbc.Col(
-                                dcc.Loading(dcc.Graph(id='graph_pangwas',style={'width': '70vh', 'height': '50vh','margin-left': '15px'})),
-                            ),
-                            dbc.Col(
-                                dcc.Loading(
-                                        dag.AgGrid(
-                                            id="scoary_table",
-                                            style={'width': '100vh','height': '50vh','margin-left': '15px'},
-                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Odds_ratio","Naive_p","Bonferroni_p"]],
-                                            rowData=[],
-                                            columnSize="sizeToFit",
-                                            defaultColDef={"filter": True},
-                                            dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                        ), 
-                                    ),
-                            ),
-                        ]),
-                        html.Br(),
-                        
-                        dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
-                                dcc.Loading(
-                                    dag.AgGrid(
-                                            id="table_of_search",
-                                            style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
-                                            #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
-                                            rowData=[],
-                                            columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
-                                            defaultColDef={"filter": True},
-                                            columnSize="sizeToFit",
-                                            #getRowId="params.data.State",
-                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                    ),
-                                ),
-                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                                dcc.Download(id="download-dataframe2"),
-                                
-                    ]),
+                    
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
                         # dcc.Loading(dcc.Graph(id='graph_COG_all')),
@@ -1321,7 +1312,6 @@ def set_reference_value(available_options):
     Output('sNMF_cross_entropy', 'figure'),
     Output('geo_map', 'figure'),
     Output('scoary_table', 'rowData'),
-    Output('graph_pangwas', 'figure'),
     #Output('graph_gfa', 'figure'),
     Output('graph_gfa2', 'figure'),
     Output('mainloading','children'),
@@ -1766,6 +1756,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
 
     list_chromosomes = []
+    merged_with_positions3 = []
     if ordering == "Hierarchical clustering":
         
         # remove sum and clutserID from the col
@@ -1783,9 +1774,9 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
         cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
         list_chromosomes = merged_with_positions3["block_id"].tolist()
-        merged_with_positions3 = merged_with_positions3[list_sp2]
+        merged_with_positions4 = merged_with_positions3[list_sp2]
 
-        transposed_df = merged_with_positions3.transpose() 
+        transposed_df = merged_with_positions4.transpose() 
     
     
     
@@ -1799,57 +1790,11 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
        colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
 
 
-    fig = go.FigureWidget(data=go.Heatmap(
-                   z=transposed_df,
-                   y=list_sp2,
-                   x=cluster_names,
-                   colorscale = colorscale,
-                   hoverinfo='text+x+y+z+name',
-                   #hover_data=["block_id"],
-                   hoverongaps = False))
-    fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
-
-
-    text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
-    #fig.update_traces(showscale=False)
-    fig.update_layout(clickmode='event+select')
-
-
-
-
-###################
-# TODO: pour ajouter legende sur le circos
-###################
-    # colors = ['red', 'green', 'blue', 'orange']
-    # labels = ['Catégorie A', 'Catégorie B', 'Catégorie C', 'Catégorie D']
-    # for color, label in zip(colors, labels):
-    #     fig.add_trace(go.Scatter(
-    #         x=[None],  # Pas de données
-    #         y=[None],
-    #         mode='markers',
-    #         marker=dict(size=10, color=color),
-    #         legendgroup=label,
-    #         showlegend=True,
-    #         name=label
-    #     ))
-
-    # fig.update_layout(
-    #     showlegend=True,
-    #     legend=dict(
-    #         title="Légende personnalisée",
-    #         x=1,
-    #         y=1,
-    #         bgcolor="rgba(255,255,255,0.7)"
-    #     )
-    # )
-
-
-
     #################################################
     # pan-GWAS
     #################################################
     scoary_table = []
-    graph_pangwas = go.Figure()
+    scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     if specific_to is not None and len(specific_to) > 0:
         # write traits file for Scoary
         with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
@@ -1887,10 +1832,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
         returned_value = os.system(cmd)
 
-        cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+        cmd = "cp -rf " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
         returned_value = os.system(cmd)
-
-        scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
 
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
         #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
@@ -1901,16 +1844,114 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         if os.path.exists(scoary_output_file):
 
             df_scoary_results = pd.read_csv(scoary_output_file)
-            
-
-            print(df_scoary_results)
 
             merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+
             #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
             merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
 
         scoary_table = df_scoary_results.to_dict('records')
-        graph_pangwas = px.scatter(merged_with_positions_scoary, x="start", y="log_pval",color="Odds_ratio", hover_data=["Gene","Naive_p"], title="Pan-GWAS results")
+        
+
+
+
+    if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
+
+        df_scoary_results = pd.read_csv(scoary_output_file)
+        df_scoary_results["log_pval"] = -np.log10(df_scoary_results["Naive_p"])
+        merged_with_positions_scoary = pd.merge(df_scoary_results, df_matrix, left_on='Gene', right_on='ClutserID', how='right')
+        if ordering != "Hierarchical clustering":
+            merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions3, left_on='Gene', right_on='ClutserID', how='right')
+        
+
+        pvalues_list = merged_with_positions_scoary['log_pval'].tolist()
+        
+
+
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            row_heights=[0.5, 0.5], 
+            vertical_spacing=0.05
+        )
+        # Heatmap
+        fig.add_trace(
+            go.Heatmap(
+                    z=transposed_df,
+                    y=list_sp2,
+                    x=cluster_names,
+                    colorscale = colorscale,
+                    hoverinfo='text+x+y+z+name',
+                    #hover_data=["block_id"],
+                    hoverongaps = False),
+            row=1,
+            col=1
+        )
+        # Scatter
+        fig.add_trace(
+            go.Scatter(
+                
+                x=cluster_names,
+                y=pvalues_list,
+                mode="markers",
+                #hover_data=["Gene","log_pval"],
+                marker=dict(size=5, color='MediumPurple')
+            ),
+            row=2,
+            col=1
+        )
+        fig.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
+        fig.update_layout(height=900)
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
+    else:
+        fig = go.FigureWidget(data=go.Heatmap(
+                    z=transposed_df,
+                    y=list_sp2,
+                    x=cluster_names,
+                    colorscale = colorscale,
+                    hoverinfo='text+x+y+z+name',
+                    #hover_data=["block_id"],
+                    hoverongaps = False))
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
+
+
+    text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
+    #fig.update_traces(showscale=False)
+    fig.update_layout(clickmode='event+select')
+
+
+
+
+###################
+# TODO: pour ajouter legende sur le circos
+###################
+    # colors = ['red', 'green', 'blue', 'orange']
+    # labels = ['Catégorie A', 'Catégorie B', 'Catégorie C', 'Catégorie D']
+    # for color, label in zip(colors, labels):
+    #     fig.add_trace(go.Scatter(
+    #         x=[None],  # Pas de données
+    #         y=[None],
+    #         mode='markers',
+    #         marker=dict(size=10, color=color),
+    #         legendgroup=label,
+    #         showlegend=True,
+    #         name=label
+    #     ))
+
+    # fig.update_layout(
+    #     showlegend=True,
+    #     legend=dict(
+    #         title="Légende personnalisée",
+    #         x=1,
+    #         y=1,
+    #         bgcolor="rgba(255,255,255,0.7)"
+    #     )
+    # )
+
+
+
+
         
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
@@ -2023,7 +2064,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
-    clustersearch = str(len(search_res2)) + " clusters (strictly present in selected strains)"
+    clustersearch = str(len(search_res2)) + " clusters (specifically present in selected strains)"
 
     ############################################################
     # Calculate coordinates of core-genes for macrosynteny
@@ -2641,7 +2682,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_pangwas, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
 
 @app.callback(
         #Output('graph_enrichment', 'figure'),
