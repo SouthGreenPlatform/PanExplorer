@@ -159,7 +159,7 @@ tmp_dir = "tmp"
 DB_PATH = "example_auth.db"
 CONFIG_YAML = "panexplorer_config.yaml"
 
-
+#session = random.randint(1, 9000000)
 
 with open(CONFIG_YAML, "r") as f:
     conf = yaml.safe_load(f)
@@ -494,6 +494,14 @@ def load_project_preview(proj_title):
         dcc.Dropdown(
                     [],
                     id='current_cluster',
+                    value = '',
+                    style ={'visibility': 'hidden'}
+                )
+    )
+    children.append(
+        dcc.Dropdown(
+                    [],
+                    id='current_session',
                     value = '',
                     style ={'visibility': 'hidden'}
                 )
@@ -950,17 +958,18 @@ def load_project_preview(proj_title):
     State('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
-    State('reference', 'value')
+    State('reference', 'value'),
+    State('current_session', 'value')
 )
 
-def display_click_data_GFA(clickData,metadata_table,projets,url,reference):
+def display_click_data_GFA(clickData,metadata_table,projets,url,reference,session):
     node = 1
     if clickData:
         wjdata = json.loads(json.dumps(clickData, indent=2))
         node = wjdata['points'][0]['x']
 
     selected_node = "Selected node: " + str(node)
-    infos = get_node_details(node,projets,reference)
+    infos = get_node_details(node,projets,reference,session)
     return infos
 
 
@@ -1115,7 +1124,7 @@ def display_click_data(cell,metadata_table,projets,url):
         return "",[]#,""
         
 
-def get_node_details(node,pathname,reference):
+def get_node_details(node,pathname,reference,session):
     global directory
 
     if not pathname:
@@ -1131,7 +1140,7 @@ def get_node_details(node,pathname,reference):
     list_of_infos = node.split("_")
     num_node = list_of_infos[1]
 
-    df_node_details = pd.read_csv(directory + "/" + reference+".segments.node_positions.tsv" ,sep='\t')
+    df_node_details = pd.read_csv(tmp_dir +"/"+str(session) + "." + reference+".segments.node_positions.tsv" ,sep='\t')
     
     mini_df = df_node_details[df_node_details["Node"] == int(num_node)]
     start_node = mini_df['Start'].tolist()[0]
@@ -1320,6 +1329,7 @@ def set_reference_value(available_options):
     Output('tab_snps','style'),
     Output('tab_ani','style'),
     Output('tab_geo','style'),
+    Output('current_session','value'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('colorizing', 'value'),
@@ -1335,6 +1345,7 @@ def set_reference_value(available_options):
     State("my-dashbio-default-circos", "tracks"),
     State("chromosome",'value'),
     State("minimal_size_block",'value'),
+
 
     prevent_initial_call=True
 )
@@ -1689,25 +1700,33 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         merged_with_positions = pd.merge(simplified_df_matrix, df_gene_positons, left_on=reference, right_on='PID')
         #merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=reference, right_on='PID')
 
+        print("merged_with_positions")
+        df_gene_positons.to_csv("export_gene_positions.csv")
+        print(df_gene_positons)
 
-        # rename and reorganize columns
-        merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
-        merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
-        merged_with_positions2 = merged_with_positions
-        #merged_with_positions.insert(0, 'block_id', 'chr1')
-        merged_with_positions.insert(0, 'color', 'black')
-        merged_with_positions = merged_with_positions[['name','block_id','start', 'end','color','Strand']]
-        merged_with_positions['start'] = merged_with_positions['start'].astype(int)
-        gene_plus_df = merged_with_positions[merged_with_positions["Strand"] == "+"]
-        gene_minus_df = merged_with_positions[merged_with_positions["Strand"] == "-"]
-        dict_list_gene_plus = gene_plus_df.to_dict('records')
-        dict_list_gene_minus = gene_minus_df.to_dict('records')
-        karyotype_df = merged_with_positions.groupby('block_id').max().reset_index()
-        karyotype_df = karyotype_df.rename(columns={'block_id': 'id'})
-        karyotype_df['label'] = karyotype_df.loc[:, 'id']
-        karyotype_df = karyotype_df.rename(columns={'start': 'len'})
-        karyotype_df = karyotype_df[['id','label','len','color']]
-        karyotype_dict_list = karyotype_df.to_dict('records')
+        if len(merged_with_positions) != 0:
+
+            # rename and reorganize columns
+            merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
+            merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
+            merged_with_positions2 = merged_with_positions
+            #merged_with_positions.insert(0, 'block_id', 'chr1')
+            merged_with_positions.insert(0, 'color', 'black')
+            merged_with_positions = merged_with_positions[['name','block_id','start', 'end','color','Strand']]
+            merged_with_positions['start'] = merged_with_positions['start'].astype(int)
+            gene_plus_df = merged_with_positions[merged_with_positions["Strand"] == "+"]
+            gene_minus_df = merged_with_positions[merged_with_positions["Strand"] == "-"]
+            dict_list_gene_plus = gene_plus_df.to_dict('records')
+            dict_list_gene_minus = gene_minus_df.to_dict('records')
+            karyotype_df = merged_with_positions.groupby('block_id').max().reset_index()
+            karyotype_df = karyotype_df.rename(columns={'block_id': 'id'})
+            karyotype_df['label'] = karyotype_df.loc[:, 'id']
+            karyotype_df = karyotype_df.rename(columns={'start': 'len'})
+            karyotype_df = karyotype_df[['id','label','len','color']]
+            karyotype_dict_list = karyotype_df.to_dict('records')
+        else:
+            merged_with_positions = simplified_df_matrix
+            merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
     
     core_df['ClutserID'] = core_df['ClutserID'].astype(int)
@@ -1832,7 +1851,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
         returned_value = os.system(cmd)
 
-        cmd = "cp -rf " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+        cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
         returned_value = os.system(cmd)
 
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
@@ -2213,10 +2232,23 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #################################################################
         # Phylogenetic tree from SNPs
         #################################################################
+        # filter samples
+        selected_file = open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w")
+        list_selected.remove("ID")
+        list_selected.remove("Repeat")
+        list_selected.remove("Flanking")
+        with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
+            f.write("\n".join(list_selected) + "\n")
 
+        cmd = plink2_exe + " --vcf " + vcf_file +" --keep " + tmp_dir + "/" + str(session) + ".selected_genomes.txt --maf 0.0001 --export vcf --max-alleles 2 --min-alleles 2 --out "+ tmp_dir + "/" + str(session) + ".selected_genomes"
+        returned_value = os.system(cmd)
+        vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
+
+        # make bed
         cmd = plink2_exe + " --vcf " + vcf_file +" --max-alleles 2 --min-alleles 2 --make-bed --out "+ tmp_dir + "/" + str(session) + ".dataset"
         returned_value = os.system(cmd)
 
+        # distance calculation
         cmd = plink_exe + " --bfile " + tmp_dir + "/" + str(session) + ".dataset --distance square --allow-extra-chr --out "+ tmp_dir + "/" + str(session) + ".dataset"
         returned_value = os.system(cmd)
 
@@ -2230,7 +2262,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #################################################################
         
         try:
-            df_vcf = parse_vcf(directory + "/variants.vcf", int(1000), None)
+            df_vcf = parse_vcf(vcf_file, int(1000), None)
             df_vcf_transposed = df_vcf.T
         except Exception as e:
             fig = px.imshow(np.zeros((2,2)))
@@ -2253,7 +2285,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         from skbio import DistanceMatrix
         from skbio.tree import nj
 
-        nb_of_snps = "SNPs (" + str(sum(1 for line in open(directory + "/variants.vcf")) - 1) + ")"
+        nb_of_snps = "SNPs (" + str(sum(1 for line in open(vcf_file)) - 1) + ")"
 
         # Charger les identifiants
         ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
@@ -2281,11 +2313,17 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         # get tree in newick format as a variable
         with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
             snp_based_newick = fp.read()
-            generate_tree_html(snp_based_newick, df_metadata, "assets/snp_based_tree."+str(session)+".html")
+            df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+            df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+            generate_tree_html(snp_based_newick, df_metadata_selected, "assets/snp_based_tree."+str(session)+".html")
 
         #################################################################
         # Population structure with sNMF
         #################################################################
+        max_K = 5
+        if len(list_selected) < max_K:
+            max_K = len(list_selected)
+
         cmd = vcf2geno_exe + " " + vcf_file +" " + tmp_dir + "/" + str(session) + ".variants.geno"
         returned_value = os.system(cmd)
 
@@ -2302,8 +2340,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         results = []
         list_entropy = []
         
-        # Launch sNMF for K from 2 to 5
-        for K in range(2, 6):
+        # Launch sNMF for K from 2 to max_K
+        for K in range(2, max_K+1):
             cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
             returned_value = os.popen(cmd).read()
             match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
@@ -2314,7 +2352,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         # get the assignation of individuals to populations
         previous_dict_groups = {}
         previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
-        for K in range(2, 6):
+        for K in range(2, max_K+1):
             ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
             qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
             qmat['Individual'] = list_sp2
@@ -2465,21 +2503,13 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                           value_vars=ancestry_cols,
                           var_name='Cluster', value_name='Ancestry')
 
-
             qmat_long['K'] = K
-
-            #print(qmat_long)
-
             results.append(qmat_long)
 
-        
         dfsnmf = pd.concat(results)
-        print(dfsnmf)
 
-        dict_cross_entropy = {'K': range(2, 6),'Cross-entropy': list_entropy}
+        dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
         df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
-
-
 
         #################################################################
         # PCA with plink
@@ -2487,15 +2517,16 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         output_basename = tmp_dir+"/"+str(session)+".plink"
         pca_output = output_basename + ".eigenvec"
 
-        cmd = "plink2 --vcf " + vcf_file +" --pca --out " + output_basename
+        cmd = plink_exe + " --vcf " + vcf_file +" --pca --double-id --allow-extra-chr --out " + output_basename
+        #cmd = plink2_exe + " --vcf " + vcf_file +" --pca --out " + output_basename
         returned_value = os.system(cmd)
 
         if os.path.exists(pca_output):
-            cmd = "awk {'print $1\"\t\"$2\"\t\"$3\"\t\"$4'} " + pca_output + ">" + pca_output + ".tsv"
+            cmd = "awk {'print $1\"\t\"$3\"\t\"$4\"\t\"$5'} " + pca_output + ">" + pca_output + ".tsv"
             returned_value = os.system(cmd)
 
         if os.path.exists(pca_output + ".tsv"):
-            df_pca = pd.read_csv(pca_output + ".tsv",sep='\t')
+            df_pca = pd.read_csv(pca_output + ".tsv",sep='\t',header=None, names=['#IID', 'PC1', 'PC2','PC3'])
 
         
     fig_VCF = px.imshow(
@@ -2547,14 +2578,14 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         tab_style_segments = tab_style  
         #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
-        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + directory +"/"+str(reference)+".segments"
+        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session) + "." + str(reference)+".segments"
         returned_value = os.system(cmd)
 
         x_segments = []
         y_segments = []
         dict_segments_x = {}
         dict_segments_y = {}
-        with open(directory +"/"+str(reference)+".segments.segments_x.txt",'r') as file:
+        with open(tmp_dir +"/"+str(session) + "." + str(reference)+".segments.segments_x.txt",'r') as file:
             for line in file:
                 text = line.strip()
                 text2 = text.rstrip(text[-1])
@@ -2562,7 +2593,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                 dict_segments_x[infos[0]] = infos[1]
 
 
-        with open(directory +"/"+str(reference)+".segments.segments_y.txt",'r') as file:
+        with open(tmp_dir +"/"+str(session) + "." +str(reference)+".segments.segments_y.txt",'r') as file:
             for line in file:
                 text = line.strip()
                 text2 = text.rstrip(text[-1])
@@ -2608,42 +2639,121 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                     #hoverinfo='skip'
                 ))
 
-        # Configuration des axes
-        graph_gfa.update_layout(
-            title='1-Dimensional visualization of segments of the pangenome graph',
-            xaxis=dict(title='Position in reference'),
-            yaxis=dict(title='Samples', autorange='reversed'),
-            #height=300,
-            #showlegend=False
-        )
+        scoary_table2 = []
+        scoary_output_file2 = tmp_dir + "/" + str(session) + ".scoary_results2.txt"
+        if specific_to is not None and len(specific_to) > 0:
+            with open(tmp_dir + "/" + str(session) + ".scoary_input2.csv", "a") as i:
+                df_for_scoary = pd.read_csv(tmp_dir + "/" + str(session) + "." + str(reference) + ".segments.node_pav.tsv",sep='\t')
+                col_position = df_for_scoary.columns.get_loc("Node") + 1
+                df_for_scoary.insert(col_position, "Non-unique Gene name", None)
+                df_for_scoary.insert(col_position + 1, "Annotation", None)
+                df_for_scoary.insert(col_position + 2, "No. isolates", None)
+                df_for_scoary.insert(col_position + 3, "No. sequences", None)
+                df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
+                df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
+                df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
+                df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
+                df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
+                df_for_scoary.insert(col_position + 9, "QC", None)
+                df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
+                df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
+                df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
+                df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
+                df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input2.csv",index=False)
+            
+            cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input2.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output2"
+            returned_value = os.system(cmd)
 
-        df_pav_node = pd.read_csv(directory + "/" + str(reference) + ".segments.node_pav.tsv", sep="\t")
-        
+            cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output2/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results2.txt"
+            returned_value = os.system(cmd)
+
+            #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
+            df_scoary_results2 = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
+
+            if os.path.exists(scoary_output_file2):
+
+                df_scoary_results2 = pd.read_csv(scoary_output_file2)
+
+                #merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+
+                #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+                df_scoary_results2["log_pval"] = -np.log10(df_scoary_results2["Naive_p"])
+
+            scoary_table2 = df_scoary_results2.to_dict('records')
+
+        df_pav_node = pd.read_csv(tmp_dir +"/"+str(session) + "." + str(reference) + ".segments.node_pav.tsv", sep="\t")
         list_strains = df_pav_node.columns.tolist()
         list_strains.remove("Node")
         node_names = df_pav_node["Node"].astype(str).tolist()
-        df_pav_node = df_pav_node[list_strains]
-        transposed_df_pav_node = df_pav_node.transpose()
+        #df_pav_node = df_pav_node[list_strains]
+        transposed_df_pav_node = df_pav_node[list_strains].transpose()
         df_ordered = transposed_df_pav_node.loc[list_sp2]
         z_original = df_ordered.values
 
         # Transformation symlog
         z_symlog = np.sign(z_original) * np.log10(np.abs(z_original) + 1) 
 
-        print(list_sp2)
-        print(list_strains)
-        graph_gfa2 = go.FigureWidget(data=go.Heatmap(
-                   z=z_symlog,
-                   y=list_sp2,
-                   x=node_names,
-                   colorscale='RdBu',
-                   zmid=0,
-                   customdata=z_original,
-                   hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
-                   hoverongaps = False))
-        graph_gfa2.update_layout(
-            title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
-        )
+        if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
+
+            df_scoary_results2 = pd.read_csv(scoary_output_file2)
+            df_scoary_results2["log_pval"] = -np.log10(df_scoary_results2["Naive_p"])
+            #df_pav_node = pd.read_csv(tmp_dir +"/"+str(session) + "." + str(reference) + ".segments.node_pav.tsv", sep="\t")
+            merged_with_positions_scoary2 = pd.merge(df_scoary_results2, df_pav_node, left_on='Node', right_on='Node', how='right')
+            pvalues_list2 = merged_with_positions_scoary2['log_pval'].tolist()
+            graph_gfa2 = make_subplots(
+                rows=2,
+                cols=1,
+                shared_xaxes=True,
+                row_heights=[0.5, 0.5], 
+                vertical_spacing=0.05
+            )
+            # Heatmap
+            graph_gfa2.add_trace(
+                go.Heatmap(
+                        z=z_symlog,
+                        y=list_sp2,
+                        x=node_names,
+                        colorscale='RdBu',
+                        zmid=0,
+                        customdata=z_original,
+                        hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
+                        hoverongaps = False),
+                row=1,
+                col=1
+            )
+            # Scatter
+            graph_gfa2.add_trace(
+                go.Scatter(
+                    
+                    x=node_names,
+                    y=pvalues_list2,
+                    mode="markers",
+                    #hover_data=["Gene","log_pval"],
+                    marker=dict(size=5, color='MediumPurple')
+                ),
+                row=2,
+                col=1
+            )
+            graph_gfa2.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
+            graph_gfa2.update_layout(height=900)
+            graph_gfa2.update_layout(title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size. <br>Pan-GWAS results are shown below the PAV matrix.')
+
+        else:
+
+            graph_gfa2 = go.FigureWidget(data=go.Heatmap(
+                    z=z_symlog,
+                    y=list_sp2,
+                    x=node_names,
+                    colorscale='RdBu',
+                    zmid=0,
+                    customdata=z_original,
+                    hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
+                    hoverongaps = False))
+            graph_gfa2.update_layout(
+                title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
+            )
+
+        
     
     ##############################################################################################
     # geographical map of strains
@@ -2682,7 +2792,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
 
 @app.callback(
         #Output('graph_enrichment', 'figure'),
@@ -3128,6 +3238,8 @@ def download_data(directory,session_code):
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
             returned_value = os.system(cmd)
+            #cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gb -O "+directory+"/genomes/genomes/"+col+".gb"
+            #returned_value = os.system(cmd)
 
     df_samples = pd.read_csv(directory+'/metadata.xls',sep='\t')
     list_sp2 = df_samples['Strain name'].tolist()
