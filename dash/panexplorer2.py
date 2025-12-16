@@ -865,9 +865,54 @@ def load_project_preview(proj_title):
                         ]),
                         dcc.Tab(label='PCA', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
+                            dbc.Row([
+                                    dbc.Col(
+                                        html.Label("Colored by: "),style={'width': '150px'},
+                                    ),
+                                    dbc.Col(
+                                        dcc.Dropdown(
+                                                ['Country','Population as defined by sNMF'],
+                                                value='Country',
+                                                id='colorizing_pca',
+                                                style={'width': '300px'},
+                                                multi=False
+                                            )
+                                    ),
+                                    dbc.Col(
+                                        html.Label("Number of axes: "),style={'width': '150px'},
+                                    ),
+                                    dbc.Col(
+                                        dcc.Dropdown(
+                                                ['2D','3D'],
+                                                value='3D',
+                                                id='dimension_pca',
+                                                style={'width': '100px'},
+                                                multi=False
+                                            )
+                                        
+                                    ),
+                                    
+                                ],style={'width': '700px'}),
+                            html.Br(),html.Br(),
                             dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
                         ]),
                         dcc.Tab(label='SNP-based distance tree', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            dbc.Row([
+                                    dbc.Col(
+                                        html.Label("Colored by: "),style={'width': '150px'},
+                                    ),
+                                    dbc.Col(
+                                        dcc.Dropdown(
+                                                ['Country','Population as defined by sNMF'],
+                                                value='Country',
+                                                id='colorizing_tree',
+                                                style={'width': '300px'},
+                                                multi=False
+                                            )
+                                    ),
+                                    
+                                ],style={'width': '450px'}),
                             html.Br(),
                             dbc.Row(
                                 [
@@ -1423,8 +1468,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df2 = df[list_sp]
 
     
-
-    
     # add sum column indicating the number of strains holding the gene
     df2['sum'] = df2.drop('ClutserID', axis=1).sum(axis=1)
     
@@ -1733,7 +1776,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
-    core_df_merged_with_positions.to_csv(directory+"/core.txt",index=False,sep='\t')
+    core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
     core_list_dict = core_df_merged_with_positions.to_dict('records')
 
     specific_df['ClutserID'] = specific_df['ClutserID'].astype(int)
@@ -2012,7 +2055,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     table_core = core_df.to_dict('records')
     
     table_pangenes = merged_with_cog.to_dict('records')
-    merged_with_cog.to_csv("export_merged_with_cog.csv")
+    merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".export_merged_with_cog.csv")
     
     current_layout = karyotype_dict_list
     
@@ -2528,6 +2571,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         if os.path.exists(pca_output + ".tsv"):
             df_pca = pd.read_csv(pca_output + ".tsv",sep='\t',header=None, names=['#IID', 'PC1', 'PC2','PC3'])
 
+
+        df_pca_metadata=pd.merge(df_pca,df_metadata, left_on='#IID', right_on='Strain name' )
+        df_pca_pop_metadata=pd.merge(df_pca_metadata,previous_qmat, left_on='Strain name', right_on='Individual' )
+        df_pca_pop_metadata.to_csv(tmp_dir+"/"+str(session) + "." +"metadata.txt")
         
     fig_VCF = px.imshow(
             df_vcf_transposed.values,
@@ -2547,8 +2594,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             title="SNP Genotyping matrix (only the first 1000 variants are displayed)"
     )  
 
-    df_pca_metadata=pd.merge(df_pca,df_metadata, left_on='#IID', right_on='Strain name' )
-    fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country')
+    
+    
+    
+    fig_scatter = pca("3D","Country",session)
 
     # Création des barcharts avec facettes
     fig_snmf = px.bar(
@@ -2794,6 +2843,48 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #return nb_of_pangenes
     return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
 
+
+
+@app.callback(
+    Output('PCA', 'figure', allow_duplicate=True),
+    Input('dimension_pca', 'value'),
+    Input('colorizing_pca', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True    
+)
+
+def pca(dimension_pca,colorizing_pca,session):
+
+    if os.path.exists(f"{tmp_dir}/{session}.metadata.txt"):
+        df_pca_metadata = pd.read_csv(f"{tmp_dir}/{session}.metadata.txt")
+        if dimension_pca=="3D":
+            if colorizing_pca=="Country":
+                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country')
+            else:
+                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Assigned_to_pop')
+        else:
+            if colorizing_pca=="Country":
+                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Country')
+            else:
+                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Assigned_to_pop')
+    else:
+        fig_scatter = px.scatter(pd.DataFrame({'PC1':[], 'PC2':[], 'PC3':[]}), x='PC1', y='PC2')
+        fig_scatter.update_layout(title="No PCA data found.")
+    return fig_scatter
+
+
+@app.callback(
+    Output('iframe-snptree', 'figure', allow_duplicate=True),
+    Input('colorizing_tree', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True    
+)
+
+def tree(colorizing_tree,session):
+    return ""
+
+
+
 @app.callback(
         #Output('graph_enrichment', 'figure'),
         Output('enrichment_table', 'rowData'),
@@ -2801,10 +2892,11 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         Input('submit-enrichment', 'n_clicks'),
         State('metadata_table','selectedRows'),
         State('projets', 'value'),
+        State('current_session', 'value'),
         prevent_initial_call=True    
 )
 
-def enrichment(submit_enrichment,metadata_table,proj_title):
+def enrichment(submit_enrichment,metadata_table,proj_title,session):
 
     if not proj_title:
         return "No project."
@@ -2816,19 +2908,21 @@ def enrichment(submit_enrichment,metadata_table,proj_title):
         path = row[0]
     directory = path
 
-    session = random.randint(1, 9000000)
-
     # get core genes 
-    df_core = pd.read_csv(directory + "/core.txt",sep="\t")
+    df_core = pd.read_csv(tmp_dir + "/" + str(session) + ".core.txt",sep="\t")
     df_core_clusters = df_core["name"]
     core_clusters_file = tmp_dir + "/" + str(session) + ".core_clusters.txt"
     df_core_clusters.to_csv(core_clusters_file,sep='\t',index=False)
 
     # get COG of clusters
     annotation_file = tmp_dir + "/" + str(session) + ".annotations.txt"
+
     cmd = "cut -d '\t' -f 1,2 " + directory + "/cog_of_clusters.txt >" + annotation_file
+
+    df_merged_with_cog = pd.read_csv(tmp_dir + "/" + str(session) + ".export_merged_with_cog.csv")
     returned_value = os.system(cmd)
     df_cog_of_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".annotations.txt", sep="\t")
+    # TODO: filter les annotations que celles qui sont dans notre selection
     df_cog_of_clusters.columns = ['orthogroup', 'terms']
     df_cog_of_clusters.to_csv(annotation_file,sep='\t',index=False)
 
@@ -2849,6 +2943,7 @@ def enrichment(submit_enrichment,metadata_table,proj_title):
     #graph_enrichment = px.scatter(df_enrichment_bis, x="odds_ratio", y="-log10_pvalue", text="term", title="Enrichment of COG terms in core genes compared to the pangenome")
     #graph_enrichment = px.bar(df_enrichment, x="term", y="-log10_pvalue", color="odds_ratio", title="Enrichment of COG terms in core genes compared to the pangenome")
 
+    
     return dictionary, {'display': 'block'}
 
 
@@ -3240,6 +3335,9 @@ def download_data(directory,session_code):
             returned_value = os.system(cmd)
             #cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gb -O "+directory+"/genomes/genomes/"+col+".gb"
             #returned_value = os.system(cmd)
+
+    cmd = 'sed -i "s/gb/gb_gb/g" ' + directory+'/metadata.xls'
+    returned_value = os.system(cmd)
 
     df_samples = pd.read_csv(directory+'/metadata.xls',sep='\t')
     list_sp2 = df_samples['Strain name'].tolist()
