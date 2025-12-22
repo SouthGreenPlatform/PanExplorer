@@ -37,6 +37,8 @@ import folium.plugins
 
 import dash_bio as dash_bio
 
+from plotly_upset.plotting import plot_upset
+
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
     import dash_ag_grid as dag
@@ -387,9 +389,9 @@ def render_page(search):
     default_value = options[0]["value"] if options else None
 
     header = html.Div([
-        #html.Img(src="assets/panexplorer_logo.png", style={"height":"120px","marginRight":"15px","verticalAlign":"middle"}),
+        html.Img(src="assets/panexplorer_logo6.png", style={"height":"150px","marginRight":"15px","verticalAlign":"middle"}),
 
-        html.H2("PanExplorer"),
+        #html.H2("PanExplorer"),
         user_summary,
     ], style={"padding":"6px"})
 
@@ -631,11 +633,14 @@ def load_project_preview(proj_title):
                                                         #columnSize="sizeToFit",
                                                         #getRowId="params.data.State",
                                                         dashGridOptions={"pagination": True, "animateRows": False}
-                                                )
+                                                ),
+                                            html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
                                         ]),
                                     ),
+                                    
                                 ),
                         ]),
+                        
                         dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
                         dcc.Loading(
                                     dag.AgGrid(
@@ -678,6 +683,15 @@ def load_project_preview(proj_title):
                             #),
                         #]),
                     ]),
+                    dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            html.Div(className="row", id='upset', children=[
+                            dcc.Loading(
+                                    dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','margin-left': '15px'}),
+                            ),
+                        ]),
+                    ]),
+
                     dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
                             html.Div(className="row", id='stats2', children=[
@@ -1337,8 +1351,8 @@ def set_reference_value(available_options):
     Output("nb_of_pangenes",'children'),
     Output('textarea-example-output', 'children'),
     Output('PAV_graph', 'figure'),
+    Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
-        
         #Output('datatable-paging','srcDoc'),
     Output('graph_ANI', 'figure'),
     Output('graph_gene2', 'figure'),
@@ -1700,56 +1714,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
     fig_gene = px.histogram(df2, x="sum")
 
-    # if bedfile is not None:
-
-    #     print("analysis of bedfile")
-    #     lines_of_bedfile = bedfile.split("\n")
-
-    #     df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
-    #     df_search['start'] = df_search['start'].astype(int)
-    #     df_search['end'] = df_search['end'].astype(int)
-
-    #     list_of_clusters = []
-    #     for line in lines_of_bedfile:
-    #         elements_of_line = line.split("\t")
-    #         start = int(elements_of_line[1])
-    #         end = int(elements_of_line[2])
-    #         df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
-    #         df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
-    #         list_of_clusters1 = df_subset['ClutserID'].tolist()
-    #         list_of_clusters.extend(list_of_clusters1)
-
-    #     df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-    #     search_res2 = df_search.to_dict('records')
-
-    #     for sample in list_sp2:
-    #         df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
-
-
-    # list_chromosomes = []
-    # merged_with_positions3 = []
-    # if ordering == "Hierarchical clustering":
-        
-    #     # remove sum and clutserID from the col
-    #     df2 = df2[list_sp2]
-    #     transposed_df = df2.transpose() 
-        
-    # else:
-    #     # to be modified for ordering clusters along pivot genome
-    #     merged_with_positions2 = merged_with_positions2[['start','name','block_id']]
-    #     merged_with_positions2['start'] = merged_with_positions2['start'].astype(int)
-    #     df2['ClutserID'] = df2['ClutserID'].astype(int)
-    #     merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
-    #     merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
-    #     merged_with_positions3.to_csv("export.tsv")
-    #     merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
-    #     cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
-    #     list_chromosomes = merged_with_positions3["block_id"].tolist()
-    #     merged_with_positions4 = merged_with_positions3[list_sp2]
-
-    #     transposed_df = merged_with_positions4.transpose() 
-    
-    
 
     #################################################
     # pan-GWAS
@@ -1861,6 +1825,29 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
         #returned_value = os.system(cmd)
+
+    
+    ################
+    # Upset plot
+    ################
+    df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
+    df_upset = df_upset[list_sp2[:6]]
+
+    upset_plot = plot_upset(
+        dataframes=[df_upset],
+        exclude_zeros=True,
+        sorted_x="d",
+        sorted_y="a",
+        legendgroups=["Strains"],
+        marker_size=11,
+    )
+    upset_plot.update_layout(
+        title_text='Upset plot for accessory genes (for the first 6 samples).',
+        width=1800,
+        height=800
+    )
+
+
 
     #######################
     # ANI
@@ -2690,7 +2677,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     #return nb_of_pangenes
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
+    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
 
 
 
@@ -3706,6 +3693,9 @@ def download_matrix(n,pathname):
     directory = path
     df = pd.read_csv(directory+'/search_results.txt',sep='\t')
     return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
+
+
+
 
 # ---------- Main ----------
 if __name__ == "__main__":
