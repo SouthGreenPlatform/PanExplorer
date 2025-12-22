@@ -8,12 +8,24 @@ my %node_lengths;
 my $gfa_file = $ARGV[0];
 my $reference = $ARGV[1];
 my $output_basename = $ARGV[2];
+my $list_individuals = $ARGV[3]; # comma-separated list of individuals to include, if empty include all
+
+my @individuals_to_include;
+my %inds_to_include;
+if (defined $list_individuals && $list_individuals ne "") {
+    @individuals_to_include = split(/,/, $list_individuals);
+    foreach my $ind (@individuals_to_include) {
+        $ind =~ s/^\s+|\s+$//g; # Trim whitespace
+        $inds_to_include{$ind} = 1;
+    }
+}
 
 my %paths;
 open(GFA, $gfa_file) or die "Cannot open pangenome.gfa: $!";
 while(<GFA>) {
     chomp;
     if (/^S\t(\d+)\t(\w+)/) {
+        
         my $segment_id = $1;
         my $segment_seq = $2;
         my $length = length($segment_seq);
@@ -21,15 +33,31 @@ while(<GFA>) {
     }
     if (/^P\t([^\s]+)\t([^\s]+)\t/){
         my $path_name = $1;
-        my ($genome, $rest) = split(/#/, $path_name);
+        my ($genome, $rest,$chrom) = split(/#/, $path_name);
         my $path_nodes = $2;
-        if (!$paths{$genome}){
+        my $nb_nodes = scalar split(/,/, $path_nodes);
+
+        if (! $inds_to_include{$genome}) {
+            # Only consider paths for individuals in the include list (if provided
+            next;
+        }
+        if ($chrom =~/^\d+$/ && $chrom != 2){
+            next;
+        }
+        if ($paths{$genome}){
+            my $nb_nodes2 = scalar split(/,/, $paths{$genome});
+            if ($nb_nodes2 < $nb_nodes){
+                $paths{$genome} = $path_nodes;
+            }
+        }
+        else{
             $paths{$genome} = $path_nodes;
         }
-        
     }
 }   
 close(GFA);
+
+
 
 my %node_positions;
 my $path_of_reference = $paths{$reference};
@@ -159,12 +187,15 @@ close(VALID2);
 open(SEGX, ">$output_basename.segments_x.txt");
 open(SEGY, ">$output_basename.segments_y.txt");
 my $num_ind = 0;
-foreach my $path_name (sort keys %node_series) {
+#foreach my $path_name (sort keys %node_series) {
+foreach my $path_name(@individuals_to_include){
     $num_ind++;
     #print "$path_name\n";
-    print SEGX $path_name."###";
-    print SEGY $path_name."###";
+    
     if (exists $node_series{$path_name}) {
+
+        print SEGX $path_name."###";
+        print SEGY $path_name."###";
 
         my $previous_position = 0;
         my $concat = "";
@@ -198,9 +229,11 @@ foreach my $path_name (sort keys %node_series) {
         my $first = $pos[0];
         print SEGX "$first,$previous_position,None,";
         print SEGY "$num_ind,$num_ind,None,";
+
+        print SEGX "\n";
+        print SEGY "\n";
     }
-    print SEGX "\n";
-    print SEGY "\n";
+    
 }
 close(SEGX);
 close(SEGY);
