@@ -847,7 +847,7 @@ def load_project_preview(proj_title):
 
                     #dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
                 ]),
-                dcc.Tab(label='SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
+                dcc.Tab(label='Core-SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
                     dcc.Tabs(id='tab3', style=tabs_styles, children=[
                         
                         dcc.Tab(label='Genotyping matrix', style=tab_style, selected_style=tab_selected_style, children=[
@@ -1582,53 +1582,15 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df_rarefaction2 = pd.read_csv(tmp_dir + "/" +'rarefactiontest2.txt',sep=',')
     fig_rarefaction = px.box(df_rarefaction2, title="Rarefaction curve",x="Number strains", y="Number genes",color="Type")
 
-    ##########################################################
-    # test for changing color for specific genes or strains
-    ##########################################################
+    # ##########################################################
+    # # test for changing color for specific genes or strains
+    # ##########################################################
     search_res2 = []
-    if colorizing == "Level of presence":
-        for sample in list_sp2:
-            proportion = df2["sum"] / len(list_sp2)
-            df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
-    elif colorizing == "Continent":
-        list_organisms = df_metadata3["Continent"].unique().tolist()
-        count = 0
-        association = {}
-        for organism in list_organisms:
-            count+=0.1
-            association[organism] = count
-            
-        ordered_list_organisms = df_metadata3["Continent"]
-        ordered_list_strains = df_metadata3["Strain name"]
-        count = 0
-        for sample in ordered_list_strains:
-            organism = ordered_list_organisms[count]
-            count+=1
-            val = association[organism]
-            df2[sample] = np.where( (df2[sample] == 1),val,df2[sample])
-            
-            
-            
-    elif highlight == "Reference genome":
-        for sample in list_sp2:
-            proportion = df2["sum"] / len(list_sp2)
-            if sample == reference:
-                df2[sample] = np.where( (df2[sample] == 1),1,df2[sample])
-            else:
-                df2[sample] = np.where( (df2[sample] == 1),0.67,df2[sample])
-    elif highlight == "Core-genes":
-        for sample in list_sp2:
-            proportion = df2["sum"] / len(list_sp2)
-            df2[sample] = np.where( (df2[sample] == 1) & (proportion != 1),0.67,df2[sample])
-    elif highlight == "Strain-specific genes":
-        for sample in list_sp2:
-            proportion = df2["sum"] / len(list_sp2)
-            df2[sample] = np.where( (df2[sample] == 1) & (df2["sum"] > 1),0.67,df2[sample])
-            
-    ##############################################
-    # get clusters specific to a subset of samples
-    ##############################################
-    elif specific_to is not None and len(specific_to) > 0:
+ 
+    # ##############################################
+    # # get clusters specific to a subset of samples
+    # ##############################################
+    if specific_to is not None and len(specific_to) > 0:
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -1639,10 +1601,6 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
         # remove CLUSTER tag (TODO: to be removed)
 
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
         df_specific_to.to_csv("df_specific_to.csv")
         list1 = df_specific_to['ClutserID'].tolist()
         #list1bis = [eval(i) for i in list1]
@@ -1655,13 +1613,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         
         # 3) get overlapping clusters between the two dataframes
         intersected_list = [value for value in list1 if value in list2]
-        print(intersected_list)
-        print("Nb specific genes:")
-        print(specific_to)
-        print(len(intersected_list))
 
-        
-        
         df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
         search_res2 = df_search.to_dict('records')
         #df_specific_final2.to_csv("df_specific_to.csv")
@@ -1669,50 +1621,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         list_of_clusters = intersected_list
 
         df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-
-        
-
-
         search_res2 = df_search.to_dict('records')
-        
-        for sample in list_sp2:
-            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
-            
-        print(len(search_res2))
-        print("specific to: "+str(specific_to))
-    elif cluster_search != "":
-        
-        #cmd = "grep -P '"+cluster_search+"' "+directory+"/1.Orthologs_Cluster.txt | awk {'print $1'}"
-        #returned_value = os.popen(cmd).read()
-        #cluster_search = returned_value
-        #df_search = pd.DataFrame([int(returned_value)], columns=['ClutserID'])
-        #search_res2 = df_search.to_dict('records')
-        
-        
-        #COG1192
-        
-        list_of_clusters = []
-        list_of_COGs = cluster_search.split(",")
-        for cog in list_of_COGs:
-            cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
-            returned_value = os.popen(cmd).read()
-            list_of_clusters1 = returned_value.split("\n")
-            list_of_clusters.extend(list_of_clusters1)
-
-            cmd = "grep '"+cog+"' "+directory+"/genomes/genomes/*ptt >" +tmp_dir + "/" +"genes_with_cog_"+str(session)+".txt"
-            returned_value = os.popen(cmd).read()
-            print(returned_value)
-
-        
-        # remove empty values
-        list_of_clusters = list(filter(None, list_of_clusters))
-        list_of_clusters = list(map(int, list_of_clusters))
-        
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
-
-        
-
         
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
@@ -1791,66 +1700,56 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
     fig_gene = px.histogram(df2, x="sum")
 
-    if bedfile is not None:
+    # if bedfile is not None:
 
-        print("analysis of bedfile")
-        lines_of_bedfile = bedfile.split("\n")
+    #     print("analysis of bedfile")
+    #     lines_of_bedfile = bedfile.split("\n")
 
-        df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
-        df_search['start'] = df_search['start'].astype(int)
-        df_search['end'] = df_search['end'].astype(int)
+    #     df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
+    #     df_search['start'] = df_search['start'].astype(int)
+    #     df_search['end'] = df_search['end'].astype(int)
 
-        list_of_clusters = []
-        for line in lines_of_bedfile:
-            elements_of_line = line.split("\t")
-            start = int(elements_of_line[1])
-            end = int(elements_of_line[2])
-            df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
-            df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
-            list_of_clusters1 = df_subset['ClutserID'].tolist()
-            list_of_clusters.extend(list_of_clusters1)
+    #     list_of_clusters = []
+    #     for line in lines_of_bedfile:
+    #         elements_of_line = line.split("\t")
+    #         start = int(elements_of_line[1])
+    #         end = int(elements_of_line[2])
+    #         df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
+    #         df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
+    #         list_of_clusters1 = df_subset['ClutserID'].tolist()
+    #         list_of_clusters.extend(list_of_clusters1)
 
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
+    #     df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+    #     search_res2 = df_search.to_dict('records')
 
-        for sample in list_sp2:
-            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+    #     for sample in list_sp2:
+    #         df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
-    list_chromosomes = []
-    merged_with_positions3 = []
-    if ordering == "Hierarchical clustering":
+    # list_chromosomes = []
+    # merged_with_positions3 = []
+    # if ordering == "Hierarchical clustering":
         
-        # remove sum and clutserID from the col
-        df2 = df2[list_sp2]
-        transposed_df = df2.transpose() 
+    #     # remove sum and clutserID from the col
+    #     df2 = df2[list_sp2]
+    #     transposed_df = df2.transpose() 
         
-    else:
-        # to be modified for ordering clusters along pivot genome
-        merged_with_positions2 = merged_with_positions2[['start','name','block_id']]
-        merged_with_positions2['start'] = merged_with_positions2['start'].astype(int)
-        df2['ClutserID'] = df2['ClutserID'].astype(int)
-        merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
-        merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
-        merged_with_positions3.to_csv("export.tsv")
-        merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
-        cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
-        list_chromosomes = merged_with_positions3["block_id"].tolist()
-        merged_with_positions4 = merged_with_positions3[list_sp2]
+    # else:
+    #     # to be modified for ordering clusters along pivot genome
+    #     merged_with_positions2 = merged_with_positions2[['start','name','block_id']]
+    #     merged_with_positions2['start'] = merged_with_positions2['start'].astype(int)
+    #     df2['ClutserID'] = df2['ClutserID'].astype(int)
+    #     merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
+    #     merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
+    #     merged_with_positions3.to_csv("export.tsv")
+    #     merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
+    #     cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
+    #     list_chromosomes = merged_with_positions3["block_id"].tolist()
+    #     merged_with_positions4 = merged_with_positions3[list_sp2]
 
-        transposed_df = merged_with_positions4.transpose() 
+    #     transposed_df = merged_with_positions4.transpose() 
     
     
-    
-    # Nb genes for each strain
-    #fig_gene = px.bar(df, x='year', y='Nb_genes')
-    
-    colorscale = [[0, 'whitesmoke'], [1, 'teal']]
-    if highlight != "None" or cluster_search != "" or bedfile is not None or (specific_to is not None and len(specific_to) > 0):
-       colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
-    elif colorizing == "Continent":
-       colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
-
 
     #################################################
     # pan-GWAS
@@ -1914,69 +1813,13 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         scoary_table = df_scoary_results.to_dict('records')
         
-
-
-
-    if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
-
-        df_scoary_results = pd.read_csv(scoary_output_file)
-        df_scoary_results["log_pval"] = -np.log10(df_scoary_results["Naive_p"])
-        merged_with_positions_scoary = pd.merge(df_scoary_results, df_matrix, left_on='Gene', right_on='ClutserID', how='right')
-        if ordering != "Hierarchical clustering":
-            merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions3, left_on='Gene', right_on='ClutserID', how='right')
-        
-
-        pvalues_list = merged_with_positions_scoary['log_pval'].tolist()
-        
-
-
-        fig = make_subplots(
-            rows=2,
-            cols=1,
-            shared_xaxes=True,
-            row_heights=[0.5, 0.5], 
-            vertical_spacing=0.05
-        )
-        # Heatmap
-        fig.add_trace(
-            go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False),
-            row=1,
-            col=1
-        )
-        # Scatter
-        fig.add_trace(
-            go.Scatter(
-                
-                x=cluster_names,
-                y=pvalues_list,
-                mode="markers",
-                #hover_data=["Gene","log_pval"],
-                marker=dict(size=5, color='MediumPurple')
-            ),
-            row=2,
-            col=1
-        )
-        fig.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
-        fig.update_layout(height=900)
-        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
-    else:
-        fig = go.FigureWidget(data=go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False))
-        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
-
+    df_matrix.to_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
+    df2.to_csv(tmp_dir + "/" + str(session) + ".df2.csv")
+    merged_with_positions2.to_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
+    df_metadata3.to_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+    merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
+    df.to_csv(tmp_dir + "/" + str(session) + ".df.csv")
+    fig = heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing)
 
     text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
@@ -2215,7 +2058,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df_vntr = pd.DataFrame(columns=['ID','Repeat','Flanking'])
     flanking_sequences = ""
     tab_style_repeats = {'display': 'none'}
-    if os.path.exists(vntr_file):
+    if os.path.exists(vntr_file) and os.path.getsize(vntr_file) > 0:
 
         tab_style_repeats = tab_style
 
@@ -2303,9 +2146,9 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #################################################################
         # --- Heatmap of genotypes from VCF ---
         #################################################################
-        
+ 
         try:
-            df_vcf = parse_vcf(vcf_file, int(1000), None)
+            df_vcf = parse_vcf(vcf_file, int(1000), list_sp2)
             df_vcf_transposed = df_vcf.T
         except Exception as e:
             fig = px.imshow(np.zeros((2,2)))
@@ -2372,7 +2215,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         cmd = "grep '#CHROM' " + vcf_file
         result = os.popen(cmd).read()
-        list_sp2 = result.strip().split("\t")[9:]
+        list_sp3 = result.strip().split("\t")[9:]
 
         with open(directory + "/1.Orthologs_Cluster.txt") as f:
             ordered_ids = f.readline().strip().split("\t")
@@ -2385,12 +2228,16 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         
         # Launch sNMF for K from 2 to max_K
         for K in range(2, max_K+1):
+            
             cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
             returned_value = os.popen(cmd).read()
             match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
             if match:
                 valeur = float(match.group(1))
                 list_entropy.append(valeur)
+            else:
+                list_entropy.append(None)
+        
 
         # get the assignation of individuals to populations
         previous_dict_groups = {}
@@ -2398,7 +2245,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         for K in range(2, max_K+1):
             ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
             qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
-            qmat['Individual'] = list_sp2
+            qmat['Individual'] = list_sp3
             qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
             qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
 
@@ -2552,6 +2399,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         dfsnmf = pd.concat(results)
 
         dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
+        print(dict_cross_entropy)
         df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
 
         #################################################################
@@ -2627,7 +2475,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
         tab_style_segments = tab_style  
         #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
-        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session) + "." + str(reference)+".segments"
+        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session) + "." + str(reference)+".segments " +  ",".join(list_sp2)
+        print(cmd)
         returned_value = os.system(cmd)
 
         x_segments = []
@@ -2871,6 +2720,293 @@ def pca(dimension_pca,colorizing_pca,session):
         fig_scatter = px.scatter(pd.DataFrame({'PC1':[], 'PC2':[], 'PC3':[]}), x='PC1', y='PC2')
         fig_scatter.update_layout(title="No PCA data found.")
     return fig_scatter
+
+
+@app.callback(
+    Output('PAV_graph', 'figure', allow_duplicate=True),
+    State('current_session', 'value'),
+    State('specific_to', 'value'),
+    Input('ordering', 'value'),
+    State('metadata_table','selectedRows'),
+    State('reference','value'),
+    Input('highlight', 'value'),
+    Input('cluster_search', 'value'),
+    Input('bedfile', 'value'),
+    Input('colorizing', 'value'),
+    prevent_initial_call=True    
+)
+
+def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing):
+    
+    list_sp2 = []
+    if metadata_table:
+        wjdata = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata:
+            strain_name = strain['Strain name']
+            list_sp2.append(strain_name)
+
+    cluster_names=[]
+    scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
+    df_matrix = pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
+    df_metadata3 = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+    merged_with_cog = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
+    df = pd.read_csv(tmp_dir + "/" + str(session) + ".df.csv")
+    merged_with_positions2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
+    transposed_df = pd.DataFrame()
+    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
+    cluster_names = df2["ClutserID"].astype(str).tolist()
+
+    colorscale = [[0, 'whitesmoke'], [1, 'teal']]
+    if highlight != "None" or cluster_search != "" or bedfile is not None or (specific_to is not None and len(specific_to) > 0):
+       colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
+    elif colorizing == "Continent":
+       colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
+
+    search_res2 = []
+    if colorizing == "Level of presence":
+        for sample in list_sp2:
+            proportion = df2["sum"] / len(list_sp2)
+            df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
+    elif colorizing == "Continent":
+        list_organisms = df_metadata3["Continent"].unique().tolist()
+        count = 0
+        association = {}
+        for organism in list_organisms:
+            count+=0.1
+            association[organism] = count
+            
+        ordered_list_organisms = df_metadata3["Continent"]
+        ordered_list_strains = df_metadata3["Strain name"]
+        count = 0
+        for sample in ordered_list_strains:
+            organism = ordered_list_organisms[count]
+            count+=1
+            val = association[organism]
+            df2[sample] = np.where( (df2[sample] == 1),val,df2[sample])
+            
+            
+            
+    elif highlight == "Reference genome":
+        for sample in list_sp2:
+            proportion = df2["sum"] / len(list_sp2)
+            if sample == reference:
+                df2[sample] = np.where( (df2[sample] == 1),1,df2[sample])
+            else:
+                df2[sample] = np.where( (df2[sample] == 1),0.67,df2[sample])
+    elif highlight == "Core-genes":
+        for sample in list_sp2:
+            proportion = df2["sum"] / len(list_sp2)
+            df2[sample] = np.where( (df2[sample] == 1) & (proportion != 1),0.67,df2[sample])
+    elif highlight == "Strain-specific genes":
+        for sample in list_sp2:
+            proportion = df2["sum"] / len(list_sp2)
+            df2[sample] = np.where( (df2[sample] == 1) & (df2["sum"] > 1),0.67,df2[sample])
+            
+    ##############################################
+    # get clusters specific to a subset of samples
+    ##############################################
+    elif specific_to is not None and len(specific_to) > 0:
+        list_of_clusters = [1000]
+        
+        # 1) get clusters for which gene is present for these samples
+        if "ClutserID" not in specific_to:
+            specific_to.append("ClutserID")
+        df_specific_to = df[specific_to]
+        df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
+        # get only if at least one gene is present
+        df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
+        # remove CLUSTER tag (TODO: to be removed)
+
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
+        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
+        df_specific_to.to_csv("df_specific_to.csv")
+        list1 = df_specific_to['ClutserID'].tolist()
+        #list1bis = [eval(i) for i in list1]
+        
+        
+        # 2) get clusters for which the number of presence correspond to the number of selected samples
+        same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
+        same_number_df.to_csv("df_specific_to2.csv")
+        list2 = same_number_df['ClutserID'].tolist()
+        
+        # 3) get overlapping clusters between the two dataframes
+        intersected_list = [value for value in list1 if value in list2]
+        print(intersected_list)
+        print("Nb specific genes:")
+        print(specific_to)
+        print(len(intersected_list))
+
+        
+        
+        df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
+        search_res2 = df_search.to_dict('records')
+        #df_specific_final2.to_csv("df_specific_to.csv")
+        
+        list_of_clusters = intersected_list
+
+        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+
+        
+
+
+        search_res2 = df_search.to_dict('records')
+        
+        for sample in list_sp2:
+            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+            
+        print(len(search_res2))
+        print("specific to: "+str(specific_to))
+    elif cluster_search != "":
+        
+        #cmd = "grep -P '"+cluster_search+"' "+directory+"/1.Orthologs_Cluster.txt | awk {'print $1'}"
+        #returned_value = os.popen(cmd).read()
+        #cluster_search = returned_value
+        #df_search = pd.DataFrame([int(returned_value)], columns=['ClutserID'])
+        #search_res2 = df_search.to_dict('records')
+        
+        
+        #COG1192
+        
+        list_of_clusters = []
+        list_of_COGs = cluster_search.split(",")
+        for cog in list_of_COGs:
+            cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
+            returned_value = os.popen(cmd).read()
+            list_of_clusters1 = returned_value.split("\n")
+            list_of_clusters.extend(list_of_clusters1)
+
+            cmd = "grep '"+cog+"' "+directory+"/genomes/genomes/*ptt >" +tmp_dir + "/" +"genes_with_cog_"+str(session)+".txt"
+            returned_value = os.popen(cmd).read()
+            print(returned_value)
+
+        
+        # remove empty values
+        list_of_clusters = list(filter(None, list_of_clusters))
+        list_of_clusters = list(map(int, list_of_clusters))
+        
+        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+        search_res2 = df_search.to_dict('records')
+
+        
+
+        
+        for sample in list_sp2:
+            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+
+    
+
+    if bedfile is not None:
+
+        print("analysis of bedfile")
+        lines_of_bedfile = bedfile.split("\n")
+
+        df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
+        df_search['start'] = df_search['start'].astype(int)
+        df_search['end'] = df_search['end'].astype(int)
+
+        list_of_clusters = []
+        for line in lines_of_bedfile:
+            elements_of_line = line.split("\t")
+            start = int(elements_of_line[1])
+            end = int(elements_of_line[2])
+            df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
+            df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
+            list_of_clusters1 = df_subset['ClutserID'].tolist()
+            list_of_clusters.extend(list_of_clusters1)
+
+        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+        search_res2 = df_search.to_dict('records')
+
+        for sample in list_sp2:
+            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+
+    list_chromosomes = []
+    merged_with_positions3 = []
+    if ordering == "Hierarchical clustering":
+        
+        # remove sum and clutserID from the col
+        df2 = df2[list_sp2]
+        transposed_df = df2.transpose() 
+        
+        
+    else:
+        # to be modified for ordering clusters along pivot genome
+        merged_with_positions2 = merged_with_positions2[['start','name','block_id']]
+        merged_with_positions2['start'] = merged_with_positions2['start'].astype(int)
+        df2['ClutserID'] = df2['ClutserID'].astype(int)
+        merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
+        merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
+        merged_with_positions3.to_csv("export.tsv")
+        merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
+        cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
+        list_chromosomes = merged_with_positions3["block_id"].tolist()
+        merged_with_positions4 = merged_with_positions3[list_sp2]
+
+        transposed_df = merged_with_positions4.transpose()
+    
+    
+    if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
+
+        df_scoary_results = pd.read_csv(scoary_output_file)
+        df_scoary_results["log_pval"] = -np.log10(df_scoary_results["Naive_p"])
+        merged_with_positions_scoary = pd.merge(df_scoary_results, df_matrix, left_on='Gene', right_on='ClutserID', how='right')
+        if ordering != "Hierarchical clustering":
+            merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions3, left_on='Gene', right_on='ClutserID', how='right')
+        
+
+        pvalues_list = merged_with_positions_scoary['log_pval'].tolist()
+        
+
+
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            row_heights=[0.5, 0.5], 
+            vertical_spacing=0.05
+        )
+        # Heatmap
+        fig.add_trace(
+            go.Heatmap(
+                    z=transposed_df,
+                    y=list_sp2,
+                    x=cluster_names,
+                    colorscale = colorscale,
+                    hoverinfo='text+x+y+z+name',
+                    #hover_data=["block_id"],
+                    hoverongaps = False),
+            row=1,
+            col=1
+        )
+        # Scatter
+        fig.add_trace(
+            go.Scatter(
+                
+                x=cluster_names,
+                y=pvalues_list,
+                mode="markers",
+                #hover_data=["Gene","log_pval"],
+                marker=dict(size=5, color='MediumPurple')
+            ),
+            row=2,
+            col=1
+        )
+        fig.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
+        fig.update_layout(height=900)
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
+    else:
+        fig = go.FigureWidget(data=go.Heatmap(
+                    z=transposed_df,
+                    y=list_sp2,
+                    x=cluster_names,
+                    colorscale = colorscale,
+                    hoverinfo='text+x+y+z+name',
+                    #hover_data=["block_id"],
+                    hoverongaps = False))
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
+    return fig
 
 
 @app.callback(
@@ -3153,7 +3289,7 @@ def init_dataframes(pathname):
     
     print("yeahhhh: "+str(df_matrix.size))
 
-    
+    df_matrix = df_matrix.replace(to_replace=':', value='_', regex=True)
     df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
     df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
 
@@ -3198,7 +3334,7 @@ def init_dataframes(pathname):
         df_gene_positons.insert(0, 'block_id', 'chr1')
         
     merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
-
+    print(df_gene_positons)
     print(merged_with_positions)
 
     # rename and reorganize columns
@@ -3313,6 +3449,8 @@ def download_data(directory,session_code):
     cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
     returned_value = os.system(cmd)
     cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pangenome.gfa -O "+directory+"/pangenome.gfa"
+    returned_value = os.system(cmd)
+    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".vntr_matrix.txt -O "+directory+"/vntr_matrix.tsv"
     returned_value = os.system(cmd)
     cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".all_genomes.vcf -O "+directory+"/variants.vcf"
     returned_value = os.system(cmd)
