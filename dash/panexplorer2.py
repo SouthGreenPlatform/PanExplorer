@@ -492,21 +492,14 @@ def load_project_preview(proj_title):
                 options=[{'label': ' By checking this box, the selection can be done by clicking in the Heatmap: only genomes harboring the clicked gene will be included.', 'value':'heatmap_selection'}],
             )
     )
+    children.append(html.Br())
     children.append(
-        dcc.Dropdown(
-                    [],
-                    id='current_cluster',
-                    value = '',
-                    style ={'visibility': 'hidden'}
-                )
+        dcc.Input(id='current_cluster', type='hidden'),
+        
     )
     children.append(
-        dcc.Dropdown(
-                    [],
-                    id='current_session',
-                    value = '',
-                    style ={'visibility': 'hidden'}
-                )
+        dcc.Input(id='current_session', type='hidden'),
+        
     )
     
     
@@ -1049,10 +1042,12 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
     # write data to a temporary fasta file
     with open(f"{tmp_dir}/{session}.temp.fasta", "w") as text_file:
         text_file.write(data)
+
+    if os.path.exists(f"{tmp_dir}/{session}.muscle.log"):
+        os.remove(tmp_dir+"/"+str(session)+".muscle.log")
     
     # run muscle to generate alignment
     if os.path.exists(f"{tmp_dir}/{session}.temp.fasta"):
-        os.remove(tmp_dir+"/"+str(session)+".muscle.log")
         cmd = "muscle -in "+tmp_dir+"/"+str(session)+".temp.fasta -out "+tmp_dir+"/"+str(session)+".temp.aln.fasta -quiet >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
         os.system(cmd)
         print(cmd)
