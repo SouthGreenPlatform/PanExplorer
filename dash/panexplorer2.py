@@ -389,7 +389,7 @@ def render_page(search):
     default_value = options[0]["value"] if options else None
 
     header = html.Div([
-        html.Img(src="assets/panexplorer_logo6.png", style={"height":"150px","marginRight":"15px","verticalAlign":"middle"}),
+        html.Img(src="assets/panexplorer_logo6.png", style={"height":"100px","marginRight":"15px","verticalAlign":"middle"}),
 
         #html.H2("PanExplorer"),
         user_summary,
@@ -594,7 +594,7 @@ def load_project_preview(proj_title):
                         html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
                         html.Br(),
                         dcc.Loading(dcc.Graph(id='PAV_graph')),
-                        html.Br(),
+                        #html.Br(),
                         #html.Div(className="row", id='titles', children=[
                         #     html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
                         #     dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
@@ -605,7 +605,7 @@ def load_project_preview(proj_title):
                                 dbc.Col(
                                     dcc.Loading(
                                         html.Div(children=[
-                                            html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
+                                            html.H5(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
                                             dag.AgGrid(
                                                     id="table_pangenes",
                                                     #style={'width': '80vh', 'height': '50vh','margin-left': '1px'},
@@ -640,23 +640,33 @@ def load_project_preview(proj_title):
                                     
                                 ),
                         ]),
-                        
-                        dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
-                        dcc.Loading(
-                                    dag.AgGrid(
-                                            id="table_of_search",
-                                            style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
-                                            #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
-                                            rowData=[],
-                                            columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
-                                            defaultColDef={"filter": True},
-                                            columnSize="sizeToFit",
-                                            #getRowId="params.data.State",
-                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                    ),
+                        dbc.Row([
+                                dbc.Col(
+                                    html.Div([
+                                        dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
+                                        dcc.Loading(
+                                                    dag.AgGrid(
+                                                            id="table_of_search",
+                                                            style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
+                                                            #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
+                                                            rowData=[],
+                                                            columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
+                                                            defaultColDef={"filter": True},
+                                                            columnSize="sizeToFit",
+                                                            #getRowId="params.data.State",
+                                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                                    ),
+                                                ),
+                                        html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                        dcc.Download(id="download-dataframe2"),
+                                    ]),
                                 ),
-                        html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                        dcc.Download(id="download-dataframe2"),
+                                dbc.Col(
+                                    dcc.Loading(
+                                        html.Div(id='default-alignment-viewer-output')
+                                    )
+                                )
+                        ]),
                         html.Br(),
                         html.Br(),
                         dcc.Loading(
@@ -668,20 +678,16 @@ def load_project_preview(proj_title):
                                             columnSize="sizeToFit",
                                             defaultColDef={"filter": True},
                                             dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                        ), 
+                                        ),  
                                     ),
-                        #html.Div(className="row", id='manytables', children=[
-                            
-                            
-                            
-                            #dcc.Loading(
-                                        # dash_bio.AlignmentChart(
-                                        #     id='my-default-alignment-viewer2',
-                                        #     width=1000,
-                                        #     height=600,
-                                        # ),
-                            #),
-                        #]),
+                        dcc.Loading(
+
+                            html.Div([
+                                
+                            ])
+
+                        ),
+                           
                     ]),
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
@@ -689,6 +695,8 @@ def load_project_preview(proj_title):
                             dcc.Loading(
                                     dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','margin-left': '15px'}),
                             ),
+
+                            
                         ]),
                     ]),
 
@@ -1004,6 +1012,64 @@ def load_project_preview(proj_title):
 
     return html.Div(children)
 
+#############################################################
+# Callback for alignment viewer
+#############################################################
+@app.callback(
+    Output('default-alignment-viewer-output', 'children'),
+    Input('display_alignment', 'n_clicks'),
+    Input('current_cluster', 'value'),
+    State('metadata_table','selectedRows'),
+    State('projets', 'value'),
+    State('current_session', 'value')
+)
+
+def display_alignment(display_alignment,current_cluster,metadata_table,projets,session):
+    import urllib.request as urlreq
+    data = urlreq.urlopen('https://git.io/alignment_viewer_p53.fasta').read().decode('utf-8')
+
+    list_of_strains = []
+    if metadata_table:
+        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata1:
+            strain_name = strain['Strain name']
+            list_of_strains.append(strain_name)
+
+    nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
+
+    # create fasta file from selected genes
+    data = ""
+    for dict in dictionaries:
+        species = dict['Species']
+        gene = dict['Genes']
+        cmd = f"grep -A 1 '{gene}' {directory}/genomes/genomes/{species}.faa | tail -1"
+        protein_fasta = os.popen(cmd).read()
+        data = data + ">"+gene+"\n"+protein_fasta
+
+    # write data to a temporary fasta file
+    with open(f"{tmp_dir}/{session}.temp.fasta", "w") as text_file:
+        text_file.write(data)
+    
+    # run muscle to generate alignment
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta"):
+        os.remove(tmp_dir+"/"+str(session)+".muscle.log")
+        cmd = "muscle -in "+tmp_dir+"/"+str(session)+".temp.fasta -out "+tmp_dir+"/"+str(session)+".temp.aln.fasta -quiet >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
+        os.system(cmd)
+        print(cmd)
+
+    # read alignment file
+    with open(f"{tmp_dir}/{session}.temp.aln.fasta", "r") as file:
+        data = file.read()
+    
+    # create alignment viewer 
+    fig = dash_bio.AlignmentChart(
+        id='alignment',
+        data=data,
+        height=600,
+        tilewidth=30,
+        width=900
+    ),
+    return fig
 
 #############################################################
 # Callback for node selection from heatmap
@@ -1036,10 +1102,8 @@ def display_click_data_GFA(clickData,metadata_table,projets,url,reference,sessio
 # Callback for cluster selection from heatmap or from table
 #############################################################
 @app.callback(
-    #Output('cluster_info', 'children'),
     Output('selected_cluster', 'children'),
     Output('genes_cluster', 'rowData'),
-    #Output('my-default-alignment-viewer', 'data'),
     Output("current_cluster",'options'),
     Output("specific_to",'value'),
     Input('PAV_graph', 'clickData'),
@@ -1094,7 +1158,6 @@ def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
 @app.callback(
     Output('selected_cluster', 'children', allow_duplicate=True),
     Output('genes_cluster', 'rowData', allow_duplicate=True),
-    #Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Output("current_cluster",'options', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
     Input('metadata_table','selectedRows'),
@@ -1148,7 +1211,6 @@ def set_current_cluster(available_options):
 @app.callback(
     Output('selected_cluster', 'children', allow_duplicate=True),
     Output('genes_cluster', 'rowData', allow_duplicate=True),
-    #Output('my-default-alignment-viewer', 'data', allow_duplicate=True),
     Input('table_of_search', 'cellClicked'),
     Input('metadata_table','selectedRows'),
     Input('projets', 'value'),
@@ -1260,7 +1322,6 @@ def get_cluster_details(cluster,pathname,list_of_strains):
     list_of_list = []
     nb_presence = 0
     combination = ""
-    print("Combination")
     for item in mini_df.columns:
         if item != 'ClutserID' and item in list_of_strains:
             genes = mini_df[item]
@@ -1282,8 +1343,7 @@ def get_cluster_details(cluster,pathname,list_of_strains):
                 list_of_list.append(list)
                 nb_presence+=1
                 combination = combination+str(item)
-    print(str(combination))
-    print(list_of_list)
+
     mydf = pd.DataFrame(list_of_list, columns = ['Cluster','Species','Genes']) 
     
     concat = ""
