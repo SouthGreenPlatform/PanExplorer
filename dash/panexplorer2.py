@@ -141,13 +141,6 @@ columnDefs2 = [
     {"field": "Flanking","width": 1000,},
 ]
 
-columnDefs3 = [
-    {"field": "ClutserID", "width": 120},
-    {"field": "COG term", "width": 500},
-    {"field": "type", "width": 150}
-
-
-]
 
 columnDefs4 = [
     {"field": "Species","width": 400},
@@ -599,19 +592,18 @@ def load_project_preview(proj_title):
                                     dcc.Loading(
                                         html.Div(children=[
                                             html.H5(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
+                                            html.H5(id="clustersearch", style={'color': 'red'}),
                                             dag.AgGrid(
                                                     id="table_pangenes",
-                                                    #style={'width': '80vh', 'height': '50vh','margin-left': '1px'},
                                                     rowData=[],
-                                                    columnDefs=columnDefs3,
-                                                    #defaultColDef={"filter": True},
-                                                    #columnSize="sizeToFit",
                                                     defaultColDef={"filter": "agTextColumnFilter"},
                                                     #getRowId="params.data.State",
                                                     dashGridOptions={"pagination": True, "animateRows": False}
                                             ),
+                                            html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                            dcc.Download(id="download-dataframe2"),
                                         ]),
-                                    ),
+                                    ),width=8
                                 ),
                                 dbc.Col(
                                     dcc.Loading(
@@ -619,7 +611,6 @@ def load_project_preview(proj_title):
                                             html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
                                             dag.AgGrid(
                                                         id="genes_cluster",
-                                                        #style={'width': '60vh', 'height': '30vh','margin-left': '10px'},
                                                         rowData=[],
                                                         columnDefs=columnDefs4,
                                                         defaultColDef={"filter": True},
@@ -628,58 +619,21 @@ def load_project_preview(proj_title):
                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                 ),
                                             html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
+                                            html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
                                         ]),
-                                    ),
+                                    ),width=4
                                     
                                 ),
                         ]),
-                        dbc.Row([
-                                dbc.Col(
-                                    html.Div([
-                                        dcc.Loading(html.H3(id="clustersearch", style={'color': 'red'})),
-                                        dcc.Loading(
-                                                    dag.AgGrid(
-                                                            id="table_of_search",
-                                                            style={'width': '80vh', 'height': '50vh','margin-left': '15px'},
-                                                            #style={'width': '20vh', 'border-style': '1px solid red','height': '50vh','margin-left': '15px'},
-                                                            rowData=[],
-                                                            columnDefs=[{"field": i} for i in ["ClutserID","COG","COG term","COGcat","type"]],
-                                                            defaultColDef={"filter": True},
-                                                            columnSize="sizeToFit",
-                                                            #getRowId="params.data.State",
-                                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                                    ),
-                                                ),
-                                        html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                                        dcc.Download(id="download-dataframe2"),
-                                    ]),
-                                ),
-                                dbc.Col(
-                                    dcc.Loading(
+                        html.Br(),
+                        html.Br(),
+                        dcc.Loading(
                                         html.Div(id='default-alignment-viewer-output')
-                                    )
-                                )
-                        ]),
-                        html.Br(),
-                        html.Br(),
-                        dcc.Loading(
-                                        dag.AgGrid(
-                                            id="scoary_table",
-                                            style={'width': '100vh','height': '50vh','margin-left': '15px'},
-                                            columnDefs=[{"field": i} for i in ["Gene","Number_pos_present_in","Number_neg_present_in","Number_pos_not_present_in","Number_neg_not_present_in","Odds_ratio","Naive_p","Bonferroni_p"]],
-                                            rowData=[],
-                                            columnSize="sizeToFit",
-                                            defaultColDef={"filter": True},
-                                            dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                        ),  
                                     ),
-                        dcc.Loading(
-
-                            html.Div([
-                                
-                            ])
-
-                        ),
+                        
+                        
+                        
+                        
                            
                     ]),
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
@@ -1011,16 +965,14 @@ def load_project_preview(proj_title):
 @app.callback(
     Output('default-alignment-viewer-output', 'children'),
     Input('display_alignment', 'n_clicks'),
-    Input('current_cluster', 'value'),
+    State('current_cluster', 'value'),
     State('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('current_session', 'value')
 )
 
 def display_alignment(display_alignment,current_cluster,metadata_table,projets,session):
-    import urllib.request as urlreq
-    data = urlreq.urlopen('https://git.io/alignment_viewer_p53.fasta').read().decode('utf-8')
-
+    
     list_of_strains = []
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
@@ -1048,7 +1000,7 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
     
     # run muscle to generate alignment
     if os.path.exists(f"{tmp_dir}/{session}.temp.fasta"):
-        cmd = "muscle -in "+tmp_dir+"/"+str(session)+".temp.fasta -out "+tmp_dir+"/"+str(session)+".temp.aln.fasta -quiet >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
+        cmd = "muscle -align "+tmp_dir+"/"+str(session)+".temp.fasta -output "+tmp_dir+"/"+str(session)+".temp.aln.fasta >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
         os.system(cmd)
         print(cmd)
 
@@ -1062,8 +1014,41 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
         data=data,
         height=600,
         tilewidth=30,
-        width=900
+        width=1800
     ),
+    return fig
+
+############################################################
+# Callback for clinker viewer
+############################################################
+@app.callback(
+    Output('default-alignment-viewer-output', 'children', allow_duplicate=True),
+    Input('display_local_synteny', 'n_clicks'),
+    State('current_cluster', 'value'),
+    State('metadata_table','selectedRows'),
+    State('projets', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def display_local_synteny(display_local_synteny,current_cluster,metadata_table,projets,session):
+
+    
+    list_of_strains = []
+    if metadata_table:
+        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata1:
+            strain_name = strain['Strain name']
+            list_of_strains.append(strain_name)
+
+    nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
+
+    list_strains = ",".join(list_of_strains)
+    cmd= f"perl ClinkerPlotFromMatrix.pl {directory}/1.Orthologs_Cluster.txt {current_cluster} {directory}/genomes/genomes/ {list_strains} {tmp_dir}/{session}_clinker.html"
+
+    print(cmd)
+    os.system(cmd)
+
+    fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
     return fig
 
 #############################################################
@@ -1201,44 +1186,6 @@ def set_current_cluster(available_options):
         return ''
     
 
-
-    
-@app.callback(
-    Output('selected_cluster', 'children', allow_duplicate=True),
-    Output('genes_cluster', 'rowData', allow_duplicate=True),
-    Input('table_of_search', 'cellClicked'),
-    Input('metadata_table','selectedRows'),
-    Input('projets', 'value'),
-    Input('url','hash'),
-    prevent_initial_call=True
-)
-
-def display_click_data(cell,metadata_table,projets,url):
-         
-    pathname = projets
-    if url:
-        pathname=url
-    cluster = 1
-    list_of_strains = []
-    if metadata_table:
-        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
-        for strain in wjdata1:
-            strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)
-    print(list_of_strains)    
-    if cell:
-        wjdata = json.loads(json.dumps(cell, indent=2))
-        cluster = wjdata['value']
-        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-
-        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
-        infos_cluster = os.popen(cmd).read().split("\t")
-        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-
-        return selected_cluster,dictionary#,data
-    else:
-        return "",[]#,""
-        
 
 def get_node_details(node,pathname,reference,session):
     global directory
@@ -1408,6 +1355,7 @@ def set_reference_value(available_options):
     Output('PAV_graph', 'figure'),
     Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
+    Output('table_pangenes','columnDefs'),
         #Output('datatable-paging','srcDoc'),
     Output('graph_ANI', 'figure'),
     Output('graph_gene2', 'figure'),
@@ -1418,7 +1366,7 @@ def set_reference_value(available_options):
     Output('rarefaction2', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
-    Output("table_of_search",'rowData'),
+    #Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
     Output('clinker','children'),
@@ -1434,7 +1382,6 @@ def set_reference_value(available_options):
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
     Output('geo_map', 'figure'),
-    Output('scoary_table', 'rowData'),
     #Output('graph_gfa', 'figure'),
     Output('graph_gfa2', 'figure'),
     Output('mainloading','children'),
@@ -2011,7 +1958,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
-    clustersearch = str(len(search_res2)) + " clusters (specifically present in selected strains)"
+
+    clustersearch = ""
+    if len(search_res2) > 1:
+        clustersearch = str(len(search_res2)) + " clusters (specifically present in selected strains)"
 
     ############################################################
     # Calculate coordinates of core-genes for macrosynteny
@@ -2729,10 +2679,30 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         search_res2 = df_search.to_dict('records')
         df_search = pd.merge(df_search,df_matrix, left_on='ClutserID', right_on='ClutserID')
         df_search.to_csv(directory+ "/search_results.txt",sep="\t",index=False)
-    
 
-    #return nb_of_pangenes
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,search_res2,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, scoary_table, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
+
+    columnDefs3 = [
+        {"field": "ClutserID", "width": 120},
+        {"field": "COG term", "width": 500},
+        {"field": "type", "width": 150}
+    ]
+    if (len(scoary_table) > 1):
+        df_scoary = pd.DataFrame.from_dict(scoary_table)
+        merged_with_cog = pd.merge(df_scoary,merged_with_cog, left_on='Gene', right_on='ClutserID',how = 'outer')
+        table_pangenes = merged_with_cog.to_dict('records')
+        columnDefs3 = [
+            {"field": "ClutserID", "width": 120},
+            {"field": "COG term", "width": 500},
+            {"field": "type", "width": 150},
+            {"field": "Odds_ratio", "width": 150},
+            {"field": "Naive_p", "width": 150},
+            {"field": "Bonferroni_p", "width": 150}
+        ]
+        
+    # export final merged table
+    merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
+    
+    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
 
 
 
@@ -3513,8 +3483,8 @@ def download_data(directory,session_code):
             returned_value = os.system(cmd)
             cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
             returned_value = os.system(cmd)
-            #cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gb -O "+directory+"/genomes/genomes/"+col+".gb"
-            #returned_value = os.system(cmd)
+            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gb -O "+directory+"/genomes/genomes/"+col+".gb"
+            returned_value = os.system(cmd)
 
     cmd = 'sed -i "s/gb/gb_gb/g" ' + directory+'/metadata.xls'
     returned_value = os.system(cmd)
@@ -3732,10 +3702,11 @@ def download_matrix(n,pathname):
 @app.callback(
     Output("download-dataframe2", "data"),
     Input("download_table", "n_clicks"),
+    State("current_session", 'value'),
     State('projets', 'value'),
     prevent_initial_call=True
 )
-def download_matrix(n,pathname):
+def download_matrix(n,session,pathname):
     directory = ""
     if not pathname:
         return "No project."
@@ -3746,7 +3717,7 @@ def download_matrix(n,pathname):
     else:
         path = row[0]
     directory = path
-    df = pd.read_csv(directory+'/search_results.txt',sep='\t')
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep='\t')
     return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
 
 
