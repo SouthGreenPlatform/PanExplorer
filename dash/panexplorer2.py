@@ -1,7 +1,7 @@
 # app.py — Application Dash unique + authentification SQLite + mode "session-only"
 import os
 import sqlite3
-from datetime import datetime
+from datetime import datetime, time
 import uuid
 
 from flask import Flask, render_template_string, request, redirect, flash
@@ -511,7 +511,9 @@ def load_project_preview(proj_title):
                     n_clicks=0),
         
 
-        dcc.Loading(html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
+        
+
+        dcc.Loading(id="mainload", children=html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
         
 
         html.Div(id='results', style={'display': 'none'}, children=[
@@ -3721,7 +3723,19 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
 
 
+##########################################
+# make results page invisible during loading
+##########################################
+@app.callback(
+    Output("zone", "style"),
+    Input("mainload", "loading_stat")
+)
+def cacher_pendant_chargement(loading_state):
+    open("log.txt", "a").write("loading state: "+str(loading_state)+"\n")
 
+    if loading_state and loading_state["is_loading"]:
+        return {"display": "none"}
+    return {"display": "none"}
 
 # ---------- Main ----------
 if __name__ == "__main__":
