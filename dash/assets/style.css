@@ -12,3 +12,12 @@
 .thin-button:hover {
     background-color: #f0f0f0;
 }
+
+*[data-dash-is-loading="true"]{
+    visibility: hidden;
+}
+*[data-dash-is-loading="true"]::before{
+    content: "Loading...";
+    display: inline-block;
+    visibility: hidden;
+}
