@@ -39,6 +39,8 @@ import dash_bio as dash_bio
 
 from plotly_upset.plotting import plot_upset
 
+import app_upload_genbank2
+
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
     import dash_ag_grid as dag
@@ -300,12 +302,35 @@ app.title = "PanExplorer v2"
 
 # IDs used: 'url', 'projets', 'metadata_table', 'project_detail' (keeps similarity with original)
 def main_layout():
+    
+
     return html.Div([
         dcc.Location(id="url", refresh=False),
+        #build_navbar(),
+
+        dbc.Navbar(
+            
+            dbc.Nav([
+                html.Img(
+                                src="/assets/panexplorer_logo6.png",
+                                height="65px",
+                                className="me-2"
+                            ),
+                html.A("Browse projects", href="/", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                dbc.NavLink("Import genomes", href="/app_upload_genbank2", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+            ],
+
+            )
+        ),
+        
         html.Div(id="page-content")
     ])
 
 app.layout = main_layout()
+
+
+
+
 
 # Helper: project by session code
 def get_project_by_session(code):
@@ -323,9 +348,41 @@ def list_visible_projects(user):
                            WHERE is_public = 1 OR owner_id = ? ORDER BY title""", (user['id'],))
     return [{"id": r[0], "title": r[1], "path": r[2], "is_public": bool(r[3]), "owner_id": r[4]} for r in rows]
 
+
+@app.callback(
+    Output("page-content", "children", allow_duplicate=True),
+    Input("url", "pathname"),
+    prevent_initial_call=True
+)
+def display_page(pathname):
+
+    if pathname == "/app_upload_genbank2":
+        return app_upload_genbank2.layout
+    else:
+        print("Normal page")
+        # simplified UI inspired from app-pav.py
+        ui = html.Div([
+            header,
+            
+            html.Div([
+                html.Label("Choose a project: "),
+                dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
+            ], style={"marginBottom":"1rem"}),
+            html.Div(id="project-preview"),
+            html.Hr(),
+            html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
+        ], style={"padding":"10px"})
+
+        return ui
+    
+
 # Render page: session-only OR normal app
-@app.callback(Output("page-content", "children"), Input("url", "search"))
+@app.callback(
+    Output("page-content", "children"),
+    Input("url", "search")
+)
 def render_page(search):
+
     # parse session param
     session_code = None
     if search:
@@ -333,6 +390,8 @@ def render_page(search):
         params = urllib.parse.parse_qs(search.lstrip("?"))
         session_code = params.get("session", [None])[0]
 
+    
+    
     if session_code:
         proj = get_project_by_session(session_code)
         if not proj:
@@ -360,14 +419,24 @@ def render_page(search):
     # Normal mode: header + dropdown + area for the simplified PAV UI
     if current_user.is_authenticated:
         user_row = query_db("SELECT id, username FROM users WHERE id = ?", (int(current_user.get_id()),), one=True)
-        user_summary = html.Div([html.A(f"Logout (Connected as {user_row[1]} )", href="/logout")], style={"marginBottom":"1rem"})
-
-        #user_summary = html.Div([html.A("Logout", href="/logout")], style={"marginBottom":"1rem"}),
+        
+        right_menu = dbc.Button(
+                f"Logout ({user_row[1]})",
+                href="/logout",
+                external_link=True,
+                color="secondary",
+            )
+        
         user_obj = {"id": user_row[0], "username": user_row[1]}
     else:
-        #user_summary = html.Div([html.A("Login", href="/login")], style={"marginBottom":"1rem"}),
         
-        user_summary = html.Div([html.A("Login", href="/login")], style={"marginBottom":"1rem"})
+        right_menu = dbc.Button(
+                f"Login",
+                href="/login",
+                external_link=True,
+                color="primary"
+                
+            )
         user_obj = None
 
     visible = list_visible_projects(user_obj)
@@ -380,17 +449,11 @@ def render_page(search):
 
     # default selection
     default_value = options[0]["value"] if options else None
-
-    header = html.Div([
-        html.Img(src="assets/panexplorer_logo6.png", style={"height":"100px","marginRight":"15px","verticalAlign":"middle"}),
-
-        #html.H2("PanExplorer"),
-        user_summary,
-    ], style={"padding":"6px"})
-
+    
     # simplified UI inspired from app-pav.py
     ui = html.Div([
-        header,
+        
+        html.Div(right_menu,style={"textAlign":"right","marginTop":"0px","marginRight":"2px"}),
         html.Div([
             html.Label("Choose a project: "),
             dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
@@ -3723,19 +3786,11 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
 
 
-##########################################
-# make results page invisible during loading
-##########################################
-@app.callback(
-    Output("zone", "style"),
-    Input("mainload", "loading_stat")
-)
-def cacher_pendant_chargement(loading_state):
-    open("log.txt", "a").write("loading state: "+str(loading_state)+"\n")
 
-    if loading_state and loading_state["is_loading"]:
-        return {"display": "none"}
-    return {"display": "none"}
+
+# Register dashboard callbacks
+
+app_upload_genbank2.register_callbacks(app)
 
 # ---------- Main ----------
 if __name__ == "__main__":
