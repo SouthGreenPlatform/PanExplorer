@@ -32,12 +32,15 @@ UPLOAD_DIR = "uploads"
 MAX_GENOMES = 80
 MIN_VALID_GENOMES = 3
 
+
+
 CONFIG_YAML = "panexplorer_config.yaml"
 tmp_dir = "tmp"
 with open(CONFIG_YAML, "r") as f:
     conf = yaml.safe_load(f)
 session_dir = conf.get("session_dir")
 web_url = conf.get("web_url")
+ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -216,7 +219,7 @@ def register_callbacks(app):
             if not x:
                 return html.Div("Does not respect GCA accession format")
             else:
-                cmd = "datasets download genome accession " + accession + " --filename " + tmp_dir + "/" +accession + ".zip --include genome,gbff,protein"
+                cmd = ncbi_datasets_exe + " download genome accession " + accession + " --filename " + tmp_dir + "/" +accession + ".zip --include genome,gbff,protein"
                 returned_value = os.system(cmd)
 
                 if returned_value == 0:
