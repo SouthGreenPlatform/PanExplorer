@@ -21,3 +21,45 @@
     display: inline-block;
     visibility: hidden;
 }
+
+/* === NAV LINKS BOX STYLE === */
+.nav-item-box {
+    padding: 8px 14px !important;
+    border-radius: 8px;
+    margin-right: 6px;
+    color: #374151 !important;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-item-box:hover {
+    background-color: #e0ecff;
+    color: #1d4ed8 !important;
+    text-decoration: none;
+}
+
+/* Active link */
+.nav-pills .nav-link.active {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+/* === AVATAR === */
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #2563eb;
+}
+
+/* Remove arrow background */
+.avatar-toggle::after {
+    display: none;
+}
+
+/* Dropdown spacing */
+.dropdown-menu {
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
