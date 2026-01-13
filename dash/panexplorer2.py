@@ -39,7 +39,7 @@ import dash_bio as dash_bio
 
 from plotly_upset.plotting import plot_upset
 
-import app_upload_genbank2
+import submit_genomes
 
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
@@ -317,7 +317,7 @@ def main_layout():
                                 className="me-2"
                             ),
                 html.A("Browse projects", href="/", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
-                dbc.NavLink("Import genomes", href="/app_upload_genbank2", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
             ],
 
             )
@@ -356,8 +356,8 @@ def list_visible_projects(user):
 )
 def display_page(pathname):
 
-    if pathname == "/app_upload_genbank2":
-        return app_upload_genbank2.layout
+    if pathname == "/submit_genomes":
+        return submit_genomes.layout
     else:
         print("Normal page")
         # simplified UI inspired from app-pav.py
@@ -3790,7 +3790,7 @@ def download_matrix(n,session,pathname):
 
 # Register dashboard callbacks
 
-app_upload_genbank2.register_callbacks(app)
+submit_genomes.register_callbacks(app)
 
 # ---------- Main ----------
 if __name__ == "__main__":
