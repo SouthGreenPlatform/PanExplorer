@@ -50,36 +50,42 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # --------------------------------------------------
 
 layout = html.Div(
-    style={"width": "85%", "margin": "auto"},
     children=[
-        html.Br(),
-        html.H5("Project name:"),
-        dcc.Input(id="project-name", type="text", placeholder="Enter project name",style={"width":"550px"}),
-        html.Label("Alphanumeric, no spaces, underscores (_) or hyphens (-) only."),
+        
 
-        html.H5("Email address:"),
-        dcc.Input(id="email-address", type="email", placeholder="Enter email address", style={"width": "50%"}),
-        html.Label("Must be a valid email address."),
+        html.Div(id="page-submission-content",style={"display": "block"}, children=[
+            html.Br(),
+            html.H5("Project name:"),
+            dcc.Input(id="project-name", type="text", placeholder="Enter project name",style={"width":"550px"}),
+            html.Label("Alphanumeric, no spaces, underscores (_) or hyphens (-) only."),
 
-        html.H5("Minimum percentage identity:"),
-        dcc.Input(id="min-percentage-identity", type="number", placeholder="Enter minimum percentage identity", value=80,style={"width": "50%"}),
-        html.Label("Percentage identity for protein Blast. Must be between 1 and 100."),
+            html.H5("Email address:"),
+            dcc.Input(id="email-address", type="email", placeholder="Enter email address", style={"width": "50%"}),
+            html.Label("Must be a valid email address."),
 
-        html.H5("What is your inputs:"),
-        dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, {"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}], style={"width":"750px"}),
+            html.H5("Minimum percentage identity:"),
+            dcc.Input(id="min-percentage-identity", type="number", placeholder="Enter minimum percentage identity", value=80,style={"width": "50%"}),
+            html.Label("Percentage identity for protein Blast. Must be between 1 and 100."),
 
-        html.Br(),
-        html.Div(id="input-options"),
+            html.H5("What is your inputs:"),
+            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, {"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}], style={"width":"750px"}),
+
+            html.Br(),
+            html.Div(id="input-options"),
+            html.Br(),
+            dcc.Loading(
+                type="circle",
+                children=html.Div(id="output-area")
+            ),
+            
+            
+        ]),
         html.Br(),
         dcc.Loading(
-            type="circle",
-            children=html.Div(id="output-area")
-        ),
-        html.Br(),
-        dcc.Loading(
-            type="circle",
-            children=html.Div(id="output-area2")
-        ),
+                type="circle",
+                children=html.Div(id="output-area2")
+            ),
+        
     ]
 )
 
@@ -148,14 +154,14 @@ def summarize_records(records, original_name, stored_filename):
         "Stored file": stored_filename,
     }
 
-def run_external_command(project_name, email_address, valid_list, min_percentage_identity,session):
+def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
     try:
         if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip"):
-            cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s panacota --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, session)
+            cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
         elif valid_list.count(",") + 1 > 1:
-            cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s panacota --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, session)
+            cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
 
     except subprocess.CalledProcessError as e:
@@ -362,7 +368,7 @@ def register_callbacks(app):
                 html.Button(
                     f"  (Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
-                    style={"visibility": "visible"},
+                    style={"display": "block"},
                     n_clicks=0
                 ),
                 
@@ -380,31 +386,32 @@ def register_callbacks(app):
 
 
     @app.callback(
-        Output("output-area2", "children", allow_duplicate=True),
-        Output("go-button", "style", allow_duplicate=True),
+        Output("output-area2", "children",allow_duplicate=True),
+        Output("page-submission-content", "style", allow_duplicate=True),
         Input("go-button", "n_clicks"),
         State("project-name", "value"),
         State("email-address", "value"),
         State("valid_list", "value"),
+        State("software", "value"),
         State("session_id", "value"),
         State("min-percentage-identity", "value"),
         prevent_initial_call=True,
     )
-    def go_to_pipeline_public(n_clicks, project_name, email_address, valid_list, session_id, min_percentage_identity):
+    def go_to_pipeline_public(n_clicks, project_name, email_address, valid_list, software, session_id, min_percentage_identity):
         if n_clicks == 0:
             return html.Div()
 
         if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
-            return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger"), {"visibility": "visible"}
+            return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
         if (not email_address or not re.match(r"[^@]+@[^@]+\.[^@]+", email_address)):
-            return dbc.Alert("Error: Invalid email address.", color="danger"), {"visibility": "visible"}
+            return dbc.Alert("Error: Invalid email address.", color="danger") , {"display": "block"}
         if (not min_percentage_identity or not (1 <= min_percentage_identity <= 100)):
-            return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger"), {"visibility": "visible"}
+            return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger") , {"display": "block"}
         
         
         thread = threading.Thread(
             target=run_external_command,
-            args=(project_name, email_address, valid_list, min_percentage_identity, session_id),
+            args=(project_name, email_address, valid_list, min_percentage_identity, session_id, software),
             daemon=True
         )
         
@@ -418,7 +425,7 @@ def register_callbacks(app):
                 html.A(f"{web_url}/?session={session_id}", href=f"{web_url}/?session={session_id}", target="_blank", className="alert-link"),
             ],
             color="success",
-        ), {"visibility": "hidden"}
+        ) , {"display": "none"}
         
     @app.callback(
         Output("input-options", "children"),
@@ -427,6 +434,9 @@ def register_callbacks(app):
     def apply_import(input_type):
         if input_type == "public":
             return html.Div([
+                html.H5("Choose the pan-genome software"),
+                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
+
                 html.H5("Public genomes. Enter a list of Genbank assembly accessions (GCA). Must be annotated (up to 200 genomes)"),
                 dcc.Input(id="public-genomes", type="text", placeholder="GCA_000001234.1,GCA_000005678.1", style={"width": "75%"}),
                 html.Label("Coma separated list (Genbank assembly GCA,GCF)"),
@@ -435,6 +445,10 @@ def register_callbacks(app):
         elif input_type == "upload":
             MAX_GENOMES = 200
             return html.Div([
+
+                html.H5("Choose the pan-genome software"),
+                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
+
                 html.H5("Upload your own genomes. Must be annotated (up to 200 genomes)"),
                 html.Label("Upload genbank files (accepted extension: .gb, .gbk, .gbff). Selection of multiple files is possible. Must be annotated genomes. "),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
@@ -460,6 +474,9 @@ def register_callbacks(app):
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
             return html.Div([
+                html.H5("Choose the pan-genome software"),
+                dcc.Dropdown(id="software", options=[{"label": "Orthofinder", "value": "orthofinder"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="orthofinder", style={"width":"300px"}),
+
                 html.H5("Eukaryotic genomes. Upload your own annotated genomes (FASTA + GFF files) (up to 20 genomes)"),
                 html.Label("For each genome, upload a gzipped FASTA file of the genome sequence + a GFF annotation file."),
                 html.Label("In order to make the association between sequence and annotation, they must be named with the same basename as follows: genome1.fasta.gz, genome1.gff, myspeciesXXX.fasta.gz, myspeciesXXX.gff... "),
@@ -622,7 +639,7 @@ def register_callbacks(app):
                 html.Button(
                     f"  Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
-                    style={"visibility": "visible"},
+                    style={"display": "block"},
                     n_clicks=0
                 ),
                 
