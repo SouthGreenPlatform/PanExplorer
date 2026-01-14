@@ -320,7 +320,8 @@ def main_layout():
                 dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
             ],
 
-            )
+            ),
+            color="light",
         ),
         
         html.Div(id="page-content")
