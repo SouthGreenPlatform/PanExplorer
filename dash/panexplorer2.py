@@ -588,7 +588,7 @@ def load_project_preview(proj_title):
                         
                     dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
-                        html.Div(id='PAV_config',children=[
+                        html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
                             html.Div([
                                 html.Label("Colors:"),
                                 dcc.Dropdown(
@@ -598,8 +598,7 @@ def load_project_preview(proj_title):
                                         style={'width': '200px'},
                                         multi=False
                                     ),
-                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
-
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
                             html.Div([
                                 html.Label("Highlight:"),
                                 dcc.Dropdown(
@@ -608,8 +607,18 @@ def load_project_preview(proj_title):
                                         value = 'None',
                                         style={'width': '200px'},
                                         multi=False
-                                    )
-                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
+                                    ),
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                            html.Div([
+                                html.Label("Sample ordering:"),
+                                dcc.Dropdown(
+                                        ['Hierarchical clustering'],
+                                        id='sample_ordering',
+                                        value = 'Hierarchical clustering',
+                                        style={'width': '200px'},
+                                        multi=False
+                                    ),
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
 
                             html.Div([
                                 html.Label("Cluster ordering:"),
@@ -619,31 +628,43 @@ def load_project_preview(proj_title):
                                         id='ordering',
                                         style={'width': '300px'},
                                         multi=False
-                                    )
-                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
-
-                    
-                        ]),
-                        html.Div([
-                                html.Label("Search for clusters by keyword or COG:"),
+                                    ),  
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                            html.Div([
+                                html.Label("Highlight clusters by keyword or COG:"),
                                 dcc.Input(
                                         id='cluster_search',
                                         style={'width': '300px'},
                                         value = '',
-                                    )
-                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
-                        html.Br(),
-                        html.Div([
-                            "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
-                            dcc.Textarea(
-                                id='bedfile',
-                                style={'width': '100%', 'height': 100},
-                            ),
-                        ], style={'width': '600px', 'display': 'inline-block'}),
-                        
-                        
+                                    ),
+                                
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                            html.Div([
+                                html.Label("Highlight genomic intervals (bedfile):"),
+                                dcc.Textarea(
+                                        id='bedfile',
+                                        style={'width': '300px', 'height': 30},
+                                        value = '',
+                                    ),
+                                
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
 
+                            html.Div([
+                                
+                                html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
+                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                        ]),
+                        
+                        html.Br(),
+                        # html.Div([
+                        #     "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
+                        #     dcc.Textarea(
+                        #         id='bedfile',
+                        #         style={'width': '100%', 'height': 50},
+                        #     ),
+                        # ], style={'width': '600px', 'display': 'inline-block'}),
                         html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
+
                         html.Br(),
                         dcc.Loading(dcc.Graph(id='PAV_graph')),
                         #html.Br(),
@@ -1459,6 +1480,7 @@ def set_reference_value(available_options):
     Output('current_session','value'),
     State('reference', 'value'),
     State('ordering', 'value'),
+    State('sample_ordering', 'value'),
     State('colorizing', 'value'),
     State('highlight', 'value'),
     State('projets', 'value'),
@@ -1476,7 +1498,7 @@ def set_reference_value(available_options):
 
     prevent_initial_call=True
 )
-def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
+def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -1851,7 +1873,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     df_metadata3.to_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
     merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
     df.to_csv(tmp_dir + "/" + str(session) + ".df.csv")
-    fig = heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing)
+    fig = heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
     text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
     #fig.update_traces(showscale=False)
@@ -2802,20 +2824,32 @@ def pca(dimension_pca,colorizing_pca,session):
 
 @app.callback(
     Output('PAV_graph', 'figure', allow_duplicate=True),
+    State('projets', 'value'),
     State('current_session', 'value'),
     State('specific_to', 'value'),
     Input('ordering', 'value'),
+    Input('sample_ordering', 'value'),
     State('metadata_table','selectedRows'),
     State('reference','value'),
     Input('highlight', 'value'),
-    Input('cluster_search', 'value'),
-    Input('bedfile', 'value'),
+    State('cluster_search', 'value'),
+    State('bedfile', 'value'),
     Input('colorizing', 'value'),
+    Input('highlight_button', 'n_clicks'),
     prevent_initial_call=True    
 )
+def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
+    if not proj_title:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + proj_title
+    else:
+        path = row[0]
+    directory = path
 
-def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing):
-    
+
     list_sp2 = []
     if metadata_table:
         wjdata = json.loads(json.dumps(metadata_table, indent=2))
@@ -2835,7 +2869,7 @@ def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
     colorscale = [[0, 'whitesmoke'], [1, 'teal']]
-    if highlight != "None" or cluster_search != "" or bedfile is not None or (specific_to is not None and len(specific_to) > 0):
+    if highlight != "None" or cluster_search != "" or bedfile != "" or (specific_to is not None and len(specific_to) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     elif colorizing == "Continent":
        colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
@@ -2946,18 +2980,18 @@ def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,
         
         
         #COG1192
-        
+        print(str(session))
         list_of_clusters = []
         list_of_COGs = cluster_search.split(",")
         for cog in list_of_COGs:
             cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
+            cmd = "grep -i -P '"+ cog + "' "+tmp_dir+"/"+str(session)+".merged_with_cog_final.csv | awk -F '\t' {'print $3'}"
+            print(cmd)
             returned_value = os.popen(cmd).read()
+            print("returned_value: " + returned_value)
             list_of_clusters1 = returned_value.split("\n")
             list_of_clusters.extend(list_of_clusters1)
 
-            cmd = "grep '"+cog+"' "+directory+"/genomes/genomes/*ptt >" +tmp_dir + "/" +"genes_with_cog_"+str(session)+".txt"
-            returned_value = os.popen(cmd).read()
-            print(returned_value)
 
         
         # remove empty values
@@ -2975,7 +3009,7 @@ def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,
 
     
 
-    if bedfile is not None:
+    if bedfile is not None and bedfile != "":
 
         print("analysis of bedfile")
         lines_of_bedfile = bedfile.split("\n")
@@ -2999,6 +3033,13 @@ def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,
 
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+
+
+    order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
+    order_samples.remove("ClutserID")
+    if sample_ordering == "Hierarchical clustering":
+        list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
+        list_sp2 = list_sp2_sorted
 
     list_chromosomes = []
     merged_with_positions3 = []
@@ -3061,7 +3102,6 @@ def heatmap_PAV(session,specific_to,ordering,metadata_table,reference,highlight,
         # Scatter
         fig.add_trace(
             go.Scatter(
-                
                 x=cluster_names,
                 y=pvalues_list,
                 mode="markers",
