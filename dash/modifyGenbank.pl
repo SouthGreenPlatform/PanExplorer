@@ -115,10 +115,9 @@ while(<LS>){
 			#if ($evidences_gene > 300 && $evidences_LOCUS == 1 && $evidences_seq == 1){
 			if ($evidences_gene > 45 && $evidences_seq > 0 && ($nb_locus_tag > 0 or $nb_protein_id > 0) && $evidences_ACCESSION > 0){
 				#system("cp $file $Configuration::DATA_DIR/$pangenome_data/$session.$projectnew/genomes/genomes/$filename.gbff");
-				open(F,">$outdir/$filename.gbff");
+				open(F,">$outdir/forzip/$filename.gb");
 				print F $concat;
 				close(F);
-				system("cp -rf $outdir/$filename.gbff $outdir/forzip/$filename.gb");
 				#system("gzip $Configuration::DATA_DIR/$pangenome_data/$session.$projectnew/genomes/genomes/$filename.gbff");
 				$nb_files_ok++;
 			}
@@ -148,6 +147,7 @@ close(LS);
 if (-d "$outdir"){
     chdir("$outdir/forzip");
     system("zip genomes.zip  ./*.gb >>zip.log 2>&1");
+	
 }
 
 
