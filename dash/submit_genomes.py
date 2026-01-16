@@ -5,11 +5,14 @@ import base64
 import io
 import pathlib
 import random
+import shutil
 import smtplib
+from sys import meta_path
 import uuid
 import re
 
 import pandas as pd
+import json
 import yaml
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -23,12 +26,14 @@ import threading
 import subprocess
 import time
 
+import dash_uploader as du
+
+
 
 # --------------------------------------------------
 # Configuration
 # --------------------------------------------------
 
-UPLOAD_DIR = "uploads"
 MAX_GENOMES = 80
 MIN_VALID_GENOMES = 3
 
@@ -40,9 +45,13 @@ with open(CONFIG_YAML, "r") as f:
     conf = yaml.safe_load(f)
 session_dir = conf.get("session_dir")
 web_url = conf.get("web_url")
+UPLOAD_DIR = conf.get("upload_dir")
+
 ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+session = random.randint(1, 9000000)
 
 
 # --------------------------------------------------
@@ -50,9 +59,9 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # --------------------------------------------------
 
 layout = html.Div(
+    
     children=[
         
-
         html.Div(id="page-submission-content",style={"display": "block"}, children=[
             html.Br(),
             html.H5("Project name:"),
@@ -72,12 +81,17 @@ layout = html.Div(
 
             html.Br(),
             html.Div(id="input-options"),
+            dcc.Input(id="session", type="hidden", value=str(session)),
             html.Br(),
             dcc.Loading(
                 type="circle",
                 children=html.Div(id="output-area")
             ),
-            
+            html.Br(),
+            dcc.Loading(
+                type="circle",
+                children=html.Div(id="output-area3")
+            ),
             
         ]),
         html.Br(),
@@ -154,6 +168,7 @@ def summarize_records(records, original_name, stored_filename):
         "Stored file": stored_filename,
     }
 
+
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
     try:
@@ -191,6 +206,8 @@ def send_email(to):
 # --------------------------------------------------
 
 def register_callbacks(app):
+    du.configure_upload(app, folder=UPLOAD_DIR)
+
     @app.callback(
         Output("output-area", "children", allow_duplicate=True),
         Input("check-gca-button", "n_clicks"),
@@ -430,8 +447,9 @@ def register_callbacks(app):
     @app.callback(
         Output("input-options", "children"),
         Input("input-type", "value"),
+        State("session", "value"),
     )
-    def apply_import(input_type):
+    def apply_import(input_type, session):
         if input_type == "public":
             return html.Div([
                 html.H5("Choose the pan-genome software"),
@@ -453,23 +471,33 @@ def register_callbacks(app):
                 html.Label("Upload genbank files (accepted extension: .gb, .gbk, .gbff). Selection of multiple files is possible. Must be annotated genomes. "),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
                 
-                dcc.Upload(
+                du.Upload(
                     id="upload-genbank",
-                    children=html.Div([
-                        "Drag and drop GenBank files here or ",
-                        html.A("select files")
-                    ]),
-                    style={
-                        "width": "100%",
-                        "height": "80px",
-                        "lineHeight": "80px",
-                        "borderWidth": "2px",
-                        "borderStyle": "dashed",
-                        "borderRadius": "10px",
-                        "textAlign": "center",
-                    },
-                    multiple=True,
+                    text="Upload GenBank files",
+                    upload_id=session,
+                    max_files=80,
+                    filetypes=["gb", "gbk"],
                 ),
+                dcc.Store(id="upload-dir-state", data=None),
+                dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
+
+                # dcc.Upload(
+                #     id="upload-genbank",
+                #     children=html.Div([
+                #         "Drag and drop GenBank files here or ",
+                #         html.A("select files")
+                #     ]),
+                #     style={
+                #         "width": "100%",
+                #         "height": "80px",
+                #         "lineHeight": "80px",
+                #         "borderWidth": "2px",
+                #         "borderStyle": "dashed",
+                #         "borderRadius": "10px",
+                #         "textAlign": "center",
+                #     },
+                #     multiple=True,
+                # ),
             ])
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
@@ -483,8 +511,8 @@ def register_callbacks(app):
                 html.Label("Selection of multiple files is possible."),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
                 
-                dcc.Upload(
-                    id="upload-genbank",
+                du.Upload(
+                    id="upload-gff-fasta",
                     children=html.Div([
                         "Drag and drop GenBank files here or ",
                         html.A("select files")
@@ -504,64 +532,143 @@ def register_callbacks(app):
         else:
             return html.Div()
 
+    
 
-    @app.callback(
-        Output("output-area", "children"),
-        Input("upload-genbank", "contents"),
-        State("upload-genbank", "filename"),
+    # @du.callback(
+    #     Output("output-area", "children"),
+    #     Input("upload-genbank", "contents"),
+    #     State("upload-genbank", "filename"),
+    # )
+    @du.callback(
+        output=Output("output-area", "children"),
+        id="upload-genbank",
     )
-    def handle_upload(list_of_contents, list_of_names):
+    def handle_uploaded_files(uploaded_files):
 
-        if list_of_contents is None:
+        if not uploaded_files:
             return html.Div("No files uploaded yet.")
+        
+        return html.Div(html.Button(
+                    "Check status of uploaded files",
+                    id="check-status-button",
+                    style={"display": "block"},
+                    n_clicks=0
+                ),
+        )
+    
+    @app.callback(
+        Output("output-area3", "children", allow_duplicate=True),
+        Input("check-status-button", "n_clicks"),
+        State("session", "value"),
+        prevent_initial_call=True,
+    )
+    def refresh_table(n_clicks, session):
 
-        if len(list_of_contents) > MAX_GENOMES:
-            return html.Div(
-                f"Error: maximum number of genomes exceeded "
-                f"({MAX_GENOMES} allowed)."
-            )
+        filepaths = []
+        for file in os.listdir(UPLOAD_DIR+"/"+str(session)):
+            original_name = os.path.basename(file)
+            if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff"):
+                filepaths.append(UPLOAD_DIR+"/"+str(session)+"/"+file)
+        
 
         rows = []
         valid_genome_count = 0
-        session = random.randint(1, 9000000)
-        os.mkdir(f"{UPLOAD_DIR}/{session}")
+        
         dict_strains = {}
 
-        mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
-        os.system(mkdir_cmd)
-        for contents, name in zip(list_of_contents, list_of_names):
+        if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
+            mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
+            os.system(mkdir_cmd)
+        else:
+            shutil.rmtree(session_dir+"/"+str(session)+"/genomes/genomes")
 
-            content_type, content_string = contents.split(",")
-            decoded_bytes = base64.b64decode(content_string)
-            decoded_text = decoded_bytes.decode("utf-8", errors="replace")
 
-            is_valid, result = is_valid_genbank(decoded_text)
+        
 
-            if not is_valid:
+        for filepath in filepaths:
+            original_name = os.path.basename(filepath)
+            print(original_name)
+
+            # skip if file already in table
+            if any(r["Stored file"] == original_name for r in rows):
+                continue
+
+            try:
+
+                records = list(SeqIO.parse(filepath, "genbank"))
+                if not records:
+                    raise ValueError("No GenBank records found")
+
+                contigs = len(records)
+                genome_size = sum(len(r.seq) for r in records)
+                genes = sum(1 for r in records for f in r.features if f.type == "gene")
+                cds = sum(1 for r in records for f in r.features if f.type == "CDS")
+
                 rows.append({
-                    "File name": name,
+                    "File name": original_name,
+                    "Valid": "✅",
+                    "Error": "",
+                    "Number of contigs": contigs,
+                    "Genome size (bp)": genome_size,
+                    "Genes": genes,
+                    "CDS": cds,
+                    "Stored file": original_name,
+                })
+
+                valid_genome_count += 1
+
+            except Exception as e:
+                rows.append({
+                    "File name": original_name,
                     "Valid": "❌",
-                    "Error": result,
+                    "Error": str(e),
                     "Number of contigs": None,
                     "Genome size (bp)": None,
                     "Genes": None,
                     "CDS": None,
                     "Stored file": None,
                 })
-                continue
 
-            # Valid GenBank → save and summarize
-            filepath = save_genbank_file(decoded_bytes, name,session)
-            stored_filename = os.path.basename(filepath)
 
-            summary = summarize_records(result, name, stored_filename)
-            rows.append(summary)
-            valid_genome_count += 1
+
+        # for contents, name in zip(list_of_contents, list_of_names):
+
+        #     content_type, content_string = contents.split(",")
+        #     decoded_bytes = base64.b64decode(content_string)
+        #     decoded_text = decoded_bytes.decode("utf-8", errors="replace")
+
+        #     is_valid, result = is_valid_genbank(decoded_text)
+
+        #     if not is_valid:
+        #         rows.append({
+        #             "File name": name,
+        #             "Valid": "❌",
+        #             "Error": result,
+        #             "Number of contigs": None,
+        #             "Genome size (bp)": None,
+        #             "Genes": None,
+        #             "CDS": None,
+        #             "Stored file": None,
+        #         })
+        #         continue
+
+        #     # Valid GenBank → save and summarize
+        #     filepath = save_genbank_file(decoded_bytes, name,session)
+        #     stored_filename = os.path.basename(filepath)
+
+        #     summary = summarize_records(result, name, stored_filename)
+        #     rows.append(summary)
+        #     valid_genome_count += 1
 
         cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
         os.system(cmd)
 
-        filepaths = [f for f in pathlib.Path().glob(f"{UPLOAD_DIR}/{session}/forzip/*.gb")]
+        filepaths = []
+        for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
+            if file.endswith(".gb"):
+                filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
+                
+
         for filepath in filepaths:
             name = os.path.basename(filepath)
             print(name)

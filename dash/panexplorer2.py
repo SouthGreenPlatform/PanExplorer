@@ -612,7 +612,7 @@ def load_project_preview(proj_title):
                             html.Div([
                                 html.Label("Sample ordering:"),
                                 dcc.Dropdown(
-                                        ['Hierarchical clustering'],
+                                        ['Hierarchical clustering','Population as defined by sNMF'],
                                         id='sample_ordering',
                                         value = 'Hierarchical clustering',
                                         style={'width': '200px'},
@@ -2226,7 +2226,11 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         #################################################################
         # --- Heatmap of genotypes from VCF ---
         #################################################################
- 
+        order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
+        order_samples.remove("ClutserID")
+        list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
+        list_sp2 = list_sp2_sorted
+
         try:
             df_vcf = parse_vcf(vcf_file, int(1000), list_sp2)
             df_vcf_transposed = df_vcf.T
@@ -2984,6 +2988,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         list_of_clusters = []
         list_of_COGs = cluster_search.split(",")
         for cog in list_of_COGs:
+            cog = re.sub(r'[^a-zA-Z0-9]', '', cog)
             cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
             cmd = "grep -i -P '"+ cog + "' "+tmp_dir+"/"+str(session)+".merged_with_cog_final.csv | awk -F '\t' {'print $3'}"
             print(cmd)
@@ -3035,11 +3040,17 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
-    order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
-    order_samples.remove("ClutserID")
     if sample_ordering == "Hierarchical clustering":
+        order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
+        order_samples.remove("ClutserID")
         list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
         list_sp2 = list_sp2_sorted
+    elif sample_ordering == "Population as defined by sNMF":
+        order_samples = pd.read_csv(tmp_dir+"/" + str(session) + ".metadata.txt", sep=",")
+        individual_order_by_Pop1 = order_samples.sort_values(by=['Assigned_to_pop'])['Strain name'].tolist()
+        list_sp2_sorted = [sample for sample in individual_order_by_Pop1 if sample in list_sp2]
+        list_sp2 = list_sp2_sorted
+
 
     list_chromosomes = []
     merged_with_positions3 = []
