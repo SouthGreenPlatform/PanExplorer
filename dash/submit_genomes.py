@@ -51,7 +51,7 @@ ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-session = random.randint(1, 9000000)
+#session = random.randint(1, 9000000)
 
 
 # --------------------------------------------------
@@ -61,7 +61,7 @@ session = random.randint(1, 9000000)
 layout = html.Div(
     
     children=[
-        
+        dcc.Store(id="session", storage_type="session"),
         html.Div(id="page-submission-content",style={"display": "block"}, children=[
             html.Br(),
             html.H5("Project name:"),
@@ -81,7 +81,7 @@ layout = html.Div(
 
             html.Br(),
             html.Div(id="input-options"),
-            dcc.Input(id="session", type="hidden", value=str(session)),
+            #dcc.Input(id="session", type="hidden", value=str(session)),
             html.Br(),
             dcc.Loading(
                 type="circle",
@@ -182,7 +182,6 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
     except subprocess.CalledProcessError as e:
         stderr = e.stderr
         stdout = e.stdout
-
 
 
     # Une fois terminé → email
@@ -410,7 +409,7 @@ def register_callbacks(app):
         State("email-address", "value"),
         State("valid_list", "value"),
         State("software", "value"),
-        State("session_id", "value"),
+        State("session", "value"),
         State("min-percentage-identity", "value"),
         prevent_initial_call=True,
     )
@@ -447,12 +446,13 @@ def register_callbacks(app):
     @app.callback(
         Output("input-options", "children"),
         Input("input-type", "value"),
-        State("session", "value"),
     )
-    def apply_import(input_type, session):
+    def apply_import(input_type):
+        session = random.randint(1, 9000000)
         if input_type == "public":
             return html.Div([
-                html.H5("Choose the pan-genome software"),
+                dcc.Input(id="session", type="hidden", value=str(session)),
+                html.H5("Choose the pan-genome software"+str(session)),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
                 html.H5("Public genomes. Enter a list of Genbank assembly accessions (GCA). Must be annotated (up to 200 genomes)"),
@@ -463,7 +463,7 @@ def register_callbacks(app):
         elif input_type == "upload":
             MAX_GENOMES = 200
             return html.Div([
-
+                dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
@@ -502,6 +502,7 @@ def register_callbacks(app):
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
             return html.Div([
+                dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "Orthofinder", "value": "orthofinder"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="orthofinder", style={"width":"300px"}),
 
@@ -569,7 +570,7 @@ def register_callbacks(app):
             original_name = os.path.basename(file)
             if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff"):
                 filepaths.append(UPLOAD_DIR+"/"+str(session)+"/"+file)
-        
+        print(filepaths)
 
         rows = []
         valid_genome_count = 0
