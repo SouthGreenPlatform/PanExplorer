@@ -580,8 +580,8 @@ def register_callbacks(app):
         if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
             mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
             os.system(mkdir_cmd)
-        else:
-            shutil.rmtree(session_dir+"/"+str(session)+"/genomes/genomes")
+        #else:
+            #shutil.rmtree(session_dir+"/"+str(session)+"/genomes/genomes")
 
 
         
