@@ -495,17 +495,23 @@ def load_project_preview(proj_title):
     # Show some info and table (ag-grid if available)
     children = [ html.H4(f" {len(df)} genomes")]
     if AGGRID_AVAILABLE:
+        
+        
         grid = dag.AgGrid(id="metadata_table",
                           #columnDefs=[{"field": c} for c in df.columns],
                           #style={'width': '100vh','margin-left': '15px'},
                           columnDefs=columnDefs,
                           selectedRows=df.to_dict("records"),
+                          
                           selectAll=True,
                           #defaultColDef={"filter": True},
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
-                          dashGridOptions={"rowSelection":"multiple"})
+                          dashGridOptions = {'rowSelection': {'mode': 'multiRow'}},
+                          #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
+                          
+                          )
         
                           
 
