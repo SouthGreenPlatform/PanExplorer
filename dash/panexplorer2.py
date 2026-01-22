@@ -508,7 +508,8 @@ def load_project_preview(proj_title):
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
-                          dashGridOptions = {'rowSelection': {'mode': 'multiRow'}},
+                          dashGridOptions={"rowSelection": "multiple"},
+                          #dashGridOptions={"rowSelection": {'mode': 'multiRow'}, "suppressRowClickSelection": True, "animateRows": False},
                           #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
                           
                           )
@@ -598,7 +599,7 @@ def load_project_preview(proj_title):
                             html.Div([
                                 html.Label("Colors:"),
                                 dcc.Dropdown(
-                                        ['Presence/absence','Level of presence','Organism','Continent'],
+                                        ['Presence/absence','Level of presence','Organism','Continent','Country'],
                                         id='colorizing',
                                         value = 'Presence/absence',
                                         style={'width': '200px'},
@@ -1009,11 +1010,8 @@ def load_project_preview(proj_title):
                                     ), 
                                 ),
                         ),
-
-                    
                     ]),
                     
-
                     
                     html.Br(),
                     html.Button('Update heatmap and generate haplotype network', 
@@ -2878,26 +2876,48 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
-    colorscale = [[0, 'whitesmoke'], [1, 'teal']]
+    search_res2 = []
+    ticktext = ['Absence']
+    tickval = ['0']
+    colorscale = []
+    zmax = 1
     if highlight != "None" or cluster_search != "" or bedfile != "" or (specific_to is not None and len(specific_to) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
-    elif colorizing == "Continent":
-       colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
-
-    search_res2 = []
+    else:
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
+        ticktext.append("Presence")
+        tickval.append(1)
+    
     if colorizing == "Level of presence":
+        colorscale = [[0, 'whitesmoke'], [1, 'teal']]
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
-    elif colorizing == "Continent":
-        list_organisms = df_metadata3["Continent"].unique().tolist()
+
+    elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country":
+        colorscale = []
+        list_organisms = df_metadata3[colorizing].unique().tolist()
+        nb_organisms = len(list_organisms)
+        step = 1 / (nb_organisms+1)
+        colorscale.append([0.0, "whitesmoke"])
+        colorscale.append([step, "whitesmoke"])
         count = 0
+        color_level = 0
         association = {}
+        s = 0
         for organism in list_organisms:
             count+=0.1
+            ticktext.append(organism)
+            tickval.append(count)
+            s+=step
+            color = colors[color_level]
+            colorscale.append([s, color])
+            colorscale.append([s+step, color])
+            color_level += 1
             association[organism] = count
-            
-        ordered_list_organisms = df_metadata3["Continent"]
+        zmax = count
+
+        ordered_list_organisms = df_metadata3[colorizing]
         ordered_list_strains = df_metadata3["Strain name"]
         count = 0
         for sample in ordered_list_strains:
@@ -2909,6 +2929,11 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             
             
     elif highlight == "Reference genome":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
+        #ticktext.append("Highlight")
+        #tickval.append(0.75)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             if sample == reference:
@@ -2916,10 +2941,16 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             else:
                 df2[sample] = np.where( (df2[sample] == 1),0.67,df2[sample])
     elif highlight == "Core-genes":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1) & (proportion != 1),0.67,df2[sample])
     elif highlight == "Strain-specific genes":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1) & (df2["sum"] > 1),0.67,df2[sample])
@@ -2928,6 +2959,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     # get clusters specific to a subset of samples
     ##############################################
     elif specific_to is not None and len(specific_to) > 0:
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -2988,7 +3022,10 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         #df_search = pd.DataFrame([int(returned_value)], columns=['ClutserID'])
         #search_res2 = df_search.to_dict('records')
         
-        
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
+
         #COG1192
         print(str(session))
         list_of_clusters = []
@@ -3082,7 +3119,22 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
 
         transposed_df = merged_with_positions4.transpose()
     
-    
+    y_labels = []
+    x_labels = []
+    z = []
+    for row in transposed_df.itertuples():
+        y_labels.append(row[0])
+        z.append(list(row[1:]))
+
+    # colorscale = [
+    #     [0.00, "whitesmoke"], [0.25, "whitesmoke"],
+    #     [0.25, "yellow"], [0.50, "yellow"],
+    #     [0.50, "green"], [0.75, "green"],
+    #     [0.75, "red"], [1.00, "red"],
+    # ]
+    print("color scale:")
+    print(colorscale)
+
     if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
 
         df_scoary_results = pd.read_csv(scoary_output_file)
@@ -3106,13 +3158,18 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         # Heatmap
         fig.add_trace(
             go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False),
+                z=z,
+                x=cluster_names,
+                y=list_sp2,
+                zmin=0,
+                zmax=zmax,
+                colorscale=colorscale,  # ou autre
+                colorbar=dict(
+                        tickvals=tickval,
+                        ticktext= ticktext
+                    ),
+                showscale=True
+            ),
             row=1,
             col=1
         )
@@ -3132,15 +3189,55 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         fig.update_layout(height=900)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
-        fig = go.FigureWidget(data=go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False))
-        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
+        print(colorscale)
+        fig = go.FigureWidget(data=
+                              go.Heatmap(
+                                    z=z,
+                                    x=cluster_names,
+                                    y=list_sp2,
+                                    zmin=0,
+                                    zmax=zmax,
+                                    colorscale=colorscale,  # ou autre
+                                    colorbar=dict(
+                                            tickvals=tickval,
+                                            ticktext= ticktext
+                                        ),
+                                    showscale=True
+                                )
+        )
+                            
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes',xaxis_title="Gene clusters",yaxis_title="Samples")
+
+    
+
+    
+
+
+    # fig = go.Figure(
+    #     go.Heatmap(
+    #         z=z,
+    #         x=cluster_names,
+    #         y=list_sp2,
+    #         zmin=0,
+    #         zmax=0.3,
+    #         colorscale=colorscale,  # ou autre
+    #         colorbar=dict(
+    #                 tickvals=tickval,
+    #                 ticktext= ticktext
+    #             ),
+    #         showscale=True
+    #     )
+    # )
+
+    fig.update_layout(
+        xaxis_title="Gene clusters",
+        yaxis_title="Samples",
+        height=400
+    )
+
+    # Important pour l'ordre naturel des lignes
+    fig.update_yaxes(autorange="reversed")
+
     return fig
 
 
