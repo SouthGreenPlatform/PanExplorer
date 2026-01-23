@@ -2876,6 +2876,8 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
+    print(df2)
+
     search_res2 = []
     ticktext = ['Absence']
     tickval = ['0']
@@ -2896,7 +2898,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
 
     elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country":
         colorscale = []
-        list_organisms = df_metadata3[colorizing].unique().tolist()
+        df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
+        list_organisms = df_metadata4[colorizing].unique().tolist()
+        print(df_metadata4)
         nb_organisms = len(list_organisms)
         step = 1 / (nb_organisms+1)
         colorscale.append([0.0, "whitesmoke"])
@@ -2917,8 +2921,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             association[organism] = count
         zmax = count
 
-        ordered_list_organisms = df_metadata3[colorizing]
-        ordered_list_strains = df_metadata3["Strain name"]
+        ordered_list_organisms = df_metadata4[colorizing].tolist()
+        ordered_list_strains = df_metadata4["Strain name"].tolist()
+        
         count = 0
         for sample in ordered_list_strains:
             organism = ordered_list_organisms[count]
