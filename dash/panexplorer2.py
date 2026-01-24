@@ -2314,9 +2314,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         results = []
         list_entropy = []
         
+        snmf_failure = 0
         # Launch sNMF for K from 2 to max_K
         for K in range(2, max_K+1):
-            
             cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
             returned_value = os.popen(cmd).read()
             match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
@@ -2325,166 +2325,174 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 list_entropy.append(valeur)
             else:
                 list_entropy.append(None)
-        
+                snmf_failure = 1
 
-        # get the assignation of individuals to populations
-        previous_dict_groups = {}
         previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
-        for K in range(2, max_K+1):
-            ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
-            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
-            qmat['Individual'] = list_sp3
-            qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-            qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
-
-            #print("\n\n")
-
-            groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
-            #print(groups)
-            #print(str(K))
-            dict_groups = {}
-            dict_renaming = {}
-            dict_renaming2 = {}
-            dict_done = {}
-            dict_splitted = {}
-
+        if snmf_failure == 0:
+            # get the assignation of individuals to populations
+            previous_dict_groups = {}
             
-            # first assignment for population with exact same individuals
-            for row in groups.itertuples():
-                pop_name = row[1]
-                individuals = row[2]
-                dict_groups[individuals] = pop_name
-                #print(pop_name + " : " + individuals)
-                # keep the same name of population if it exists in previous dict
-                if individuals in previous_dict_groups:
-                    previous_pop_name = previous_dict_groups[individuals]
-                    dict_renaming[pop_name] = previous_pop_name
-                    dict_done[previous_pop_name] = 1
-                    #print("same as previous" + previous_pop_name)
+            for K in range(2, max_K+1):
+                ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
+                qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
+                qmat['Individual'] = list_sp3
+                qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+                qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
 
-            for row in groups.itertuples():
-                pop_name = row[1]
-                individuals = row[2]
-                dict_groups[individuals] = pop_name
-                #print(pop_name + " : " + individuals)
-                # keep the same name of population if it exists in previous dict
-                if individuals in previous_dict_groups:
-                    print("do nothing here")
-                # else it means that the pop has been splitted into two populations
-                else:
-                    if len(previous_dict_groups) > 0:
-                        individuals_list = individuals.split(", ")
-                        dict_of_pop_in_previous = {}
-                        for ind in individuals_list:
-                            # get the pop in previous qmat
-                            pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
-                            
-                            if pop not in dict_of_pop_in_previous:
-                                dict_of_pop_in_previous[pop] = 1
-                            else:
-                                dict_of_pop_in_previous[pop] += 1
-                            if pop not in dict_splitted:
-                                dict_splitted[pop] = pop_name
-                            else:
-                                dict_splitted[pop] += ","+pop_name
+                #print("\n\n")
 
-                                
+                groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
+                #print(groups)
+                #print(str(K))
+                dict_groups = {}
+                dict_renaming = {}
+                dict_renaming2 = {}
+                dict_done = {}
+                dict_splitted = {}
 
-                        print("splitted")
-                        
-                        
-
-                        # renaming for all except the last one
-                        if len(dict_of_pop_in_previous) > 1:
-                            #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
-                            if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                            elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
-                                dict_done[list(dict_of_pop_in_previous)[1]] = 1
-                            
-                        else:
-                            if list(dict_of_pop_in_previous)[0] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                            else:
-                                new_pop_name = "Pop_" + str(K)
-                                if len(dict_of_pop_in_previous) > 1:
-                                    dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
-                                else:
-                                    dict_renaming[pop_name] = new_pop_name
-                                    dict_done[new_pop_name] = 1
-
-                        #print(dict_of_pop_in_previous.keys())
-                        #print(list(dict_of_pop_in_previous)[0])
-                    else:
-                        print("do nothing")
-
-            #print("Dict renaming before adjustment")
-            #print(dict_renaming)
-            #print("Dict renaming after adjustment")
-            #print(dict_renaming2)
-            #print("Dict splitted")
-            for key, value in dict_splitted.items():
-                listvalue = value.split(",")
-                dict_splitted[key] = list(dict.fromkeys(listvalue))
-            
-            #print(dict_splitted)
-            list_keys_to_removed = []
-            for key in dict_renaming.keys():
-                value = dict_renaming[key]
-                print("key: " + key + " => " + value)
-                list_values = value.split(",")
                 
-                if len(list_values) > 1:
-                    has_been_adjusted = 0
-                    for val in list_values:
-                        print("val: " + val)
-                        if val not in dict_done:
-                            print("to be adjusted :" + val + "=>" + key)
-                            has_been_adjusted = 1
-                            dict_renaming[key] = val
-                    if has_been_adjusted == 0:
-                        new_pop_name = "Pop_" + str(K)
-                        dict_renaming[key] = new_pop_name
+                # first assignment for population with exact same individuals
+                for row in groups.itertuples():
+                    pop_name = row[1]
+                    individuals = row[2]
+                    dict_groups[individuals] = pop_name
+                    #print(pop_name + " : " + individuals)
+                    # keep the same name of population if it exists in previous dict
+                    if individuals in previous_dict_groups:
+                        previous_pop_name = previous_dict_groups[individuals]
+                        dict_renaming[pop_name] = previous_pop_name
+                        dict_done[previous_pop_name] = 1
+                        #print("same as previous" + previous_pop_name)
+
+                for row in groups.itertuples():
+                    pop_name = row[1]
+                    individuals = row[2]
+                    dict_groups[individuals] = pop_name
+                    #print(pop_name + " : " + individuals)
+                    # keep the same name of population if it exists in previous dict
+                    if individuals in previous_dict_groups:
+                        print("do nothing here")
+                    # else it means that the pop has been splitted into two populations
+                    else:
+                        if len(previous_dict_groups) > 0:
+                            individuals_list = individuals.split(", ")
+                            dict_of_pop_in_previous = {}
+                            for ind in individuals_list:
+                                # get the pop in previous qmat
+                                pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
+                                
+                                if pop not in dict_of_pop_in_previous:
+                                    dict_of_pop_in_previous[pop] = 1
+                                else:
+                                    dict_of_pop_in_previous[pop] += 1
+                                if pop not in dict_splitted:
+                                    dict_splitted[pop] = pop_name
+                                else:
+                                    dict_splitted[pop] += ","+pop_name
+
+                                    
+
+                            print("splitted")
+                            
+                            
+
+                            # renaming for all except the last one
+                            if len(dict_of_pop_in_previous) > 1:
+                                #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
+                                if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                                elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
+                                    dict_done[list(dict_of_pop_in_previous)[1]] = 1
+                                
+                            else:
+                                if list(dict_of_pop_in_previous)[0] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                                else:
+                                    new_pop_name = "Pop_" + str(K)
+                                    if len(dict_of_pop_in_previous) > 1:
+                                        dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
+                                    else:
+                                        dict_renaming[pop_name] = new_pop_name
+                                        dict_done[new_pop_name] = 1
+
+                            #print(dict_of_pop_in_previous.keys())
+                            #print(list(dict_of_pop_in_previous)[0])
+                        else:
+                            print("do nothing")
+
+                #print("Dict renaming before adjustment")
+                #print(dict_renaming)
+                #print("Dict renaming after adjustment")
+                #print(dict_renaming2)
+                #print("Dict splitted")
+                for key, value in dict_splitted.items():
+                    listvalue = value.split(",")
+                    dict_splitted[key] = list(dict.fromkeys(listvalue))
+                
+                #print(dict_splitted)
+                list_keys_to_removed = []
+                for key in dict_renaming.keys():
+                    value = dict_renaming[key]
+                    print("key: " + key + " => " + value)
+                    list_values = value.split(",")
+                    
+                    if len(list_values) > 1:
+                        has_been_adjusted = 0
+                        for val in list_values:
+                            print("val: " + val)
+                            if val not in dict_done:
+                                print("to be adjusted :" + val + "=>" + key)
+                                has_been_adjusted = 1
+                                dict_renaming[key] = val
+                        if has_been_adjusted == 0:
+                            new_pop_name = "Pop_" + str(K)
+                            dict_renaming[key] = new_pop_name
+                
+
+                #print(dict_renaming)
+                # rename pop for keeping the same as previously
+                #qmat = qmat.rename(columns=dict_renaming)
+                #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
+                #qmat = qmat
+                #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
+                #print(qmat)
+                #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+
+                previous_dict_groups = dict_groups
+                previous_qmat = qmat
+                #print(dict_groups)
+                #print(previous_dict_groups)
+
+                qmat_sorted = qmat.sort_values(
+                    by=['Assigned_to_pop', 'max_prop'],
+                    ascending=[True, False]
+                )
+
+                individual_order = qmat_sorted['Individual'].tolist()
+
+                qmat['Individual'] = pd.Categorical(
+                    qmat['Individual'],
+                    categories=individual_order,
+                    ordered=True
+                )
+
+                qmat_long = qmat.melt(id_vars=['Individual'],
+                            value_vars=ancestry_cols,
+                            var_name='Cluster', value_name='Ancestry')
+
+                qmat_long['K'] = K
+                results.append(qmat_long)
+        else:
+            results = []
             
 
-            #print(dict_renaming)
-            # rename pop for keeping the same as previously
-            #qmat = qmat.rename(columns=dict_renaming)
-            #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
-            #qmat = qmat
-            #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
-            #print(qmat)
-            #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-
-            previous_dict_groups = dict_groups
-            previous_qmat = qmat
-            #print(dict_groups)
-            #print(previous_dict_groups)
-
-            qmat_sorted = qmat.sort_values(
-                by=['Assigned_to_pop', 'max_prop'],
-                ascending=[True, False]
-            )
-
-            individual_order = qmat_sorted['Individual'].tolist()
-
-            qmat['Individual'] = pd.Categorical(
-                qmat['Individual'],
-                categories=individual_order,
-                ordered=True
-            )
-
-            qmat_long = qmat.melt(id_vars=['Individual'],
-                          value_vars=ancestry_cols,
-                          var_name='Cluster', value_name='Ancestry')
-
-            qmat_long['K'] = K
-            results.append(qmat_long)
-
-        dfsnmf = pd.concat(results)
+        if results:
+            dfsnmf = pd.concat(results)
+        else:
+            dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
 
         dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
         print(dict_cross_entropy)
