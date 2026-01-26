@@ -149,21 +149,23 @@ def summarize_records(records, original_name, stored_filename):
 
     cds_count = 0
     gene_count = 0
-
+    country = ""
     for record in records:
         for feature in record.features:
             if feature.type == "CDS":
                 cds_count += 1
             elif feature.type == "gene":
                 gene_count += 1
+            elif feature.type == "source":
+                country = feature.qualifiers.get("country", ["Non renseigné"])[0]
 
     return {
         "File name": original_name,
         "Valid": "✅",
         "Error": "",
+        "Country": country,
         "Number of contigs": contig_count,
         "Genome size (bp)": genome_size,
-        "Genes": gene_count,
         "CDS": cds_count,
         "Stored file": stored_filename,
     }
@@ -264,7 +266,6 @@ def register_callbacks(app):
                             "Error": "No GenBank files found in the dataset",
                             "Number of contigs": None,
                             "Genome size (bp)": None,
-                            "Genes": None,
                             "CDS": None,
                             "Stored file": None,
                         })
@@ -281,9 +282,9 @@ def register_callbacks(app):
                                     "File name": accession,
                                     "Valid": "❌",
                                     "Error": result,
+                                    "Country": None,
                                     "Number of contigs": None,
                                     "Genome size (bp)": None,
-                                    "Genes": None,
                                     "CDS": None,
                                     "Stored file": None,
                                 })
@@ -348,9 +349,9 @@ def register_callbacks(app):
                         "File name": accession,
                         "Valid": "❌",
                         "Error": "Failed to download dataset from NCBI Datasets",
+                        "Country": None,
                         "Number of contigs": None,
                         "Genome size (bp)": None,
-                        "Genes": None,
                         "CDS": None,
                         "Stored file": None,
                     })
@@ -435,13 +436,24 @@ def register_callbacks(app):
             return dbc.Alert("Error: Invalid email address.", color="danger") , {"display": "block"}
         if (not min_percentage_identity or not (1 <= min_percentage_identity <= 100)):
             return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger") , {"display": "block"}
-        
+
+
         path = UPLOAD_DIR+"/"+str(session)
         if os.path.exists(path):
-            print("done1")
+
+            # Remove invalid genomes before proceeding
+            df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
+            for row in df.itertuples():
+                file_name = row[1]
+                valid = row[2]
+                if valid == "✅":
+                    pass
+                else:
+                    os.remove(f"{UPLOAD_DIR}/{session}/{file_name}")
+            
+
             cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
             os.system(cmd)
-            print("done2")
 
             dict_strains = {}
             filepaths = []
@@ -496,13 +508,8 @@ def register_callbacks(app):
 
                 dict_strains[name] = strain
 
-            print("done3")
-
             cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
             os.system(cmd) 
-
-
-            print("done4")
 
             with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
                 f.write("Strain name\tCountry\tContinent\tOrganism\n")
@@ -676,14 +683,25 @@ def register_callbacks(app):
                 if any(r["Stored file"] == original_name for r in rows):
                     continue
 
+                #records = list(SeqIO.parse(filepath, "genbank"))
+                #summary = summarize_records(records, original_name, original_name)
+                #rows.append(summary)
+
                 try:
 
                     records = list(SeqIO.parse(filepath, "genbank"))
+
                     if not records:
                         raise ValueError("No GenBank records found")
 
                     contigs = len(records)
                     genome_size = sum(len(r.seq) for r in records)
+                    country = ""
+                    for r in records:
+                        for feature in r.features:
+                            if feature.type == "source":
+                                country = feature.qualifiers.get("country", ["unknown"])[0]
+                       
                     genes = sum(1 for r in records for f in r.features if f.type == "gene")
                     cds = sum(1 for r in records for f in r.features if f.type == "CDS")
 
@@ -691,9 +709,9 @@ def register_callbacks(app):
                         "File name": original_name,
                         "Valid": "✅",
                         "Error": "",
+                        "Country": country,
                         "Number of contigs": contigs,
                         "Genome size (bp)": genome_size,
-                        "Genes": genes,
                         "CDS": cds,
                         "Stored file": original_name,
                     })
@@ -701,14 +719,13 @@ def register_callbacks(app):
                     valid_genome_count += 1
 
                 except Exception as e:
-                    os.remove(filepath)
                     rows.append({
                         "File name": original_name,
                         "Valid": "❌",
                         "Error": str(e),
+                        "Country": None,
                         "Number of contigs": None,
                         "Genome size (bp)": None,
-                        "Genes": None,
                         "CDS": None,
                         "Stored file": None,
                     })
@@ -774,6 +791,10 @@ def register_callbacks(app):
         #         f.write(f"{strain}\t\t\t\n")
 
         df = pd.DataFrame(rows)
+        df.to_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t", index=False)
+
+        df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
+        
 
         grid = dag.AgGrid(
             rowData=df.to_dict("records"),
