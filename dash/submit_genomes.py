@@ -512,13 +512,13 @@ def register_callbacks(app):
 
 
 
-        # thread = threading.Thread(
-        #     target=run_external_command,
-        #     args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
-        #     daemon=True
-        # )
+        thread = threading.Thread(
+            target=run_external_command,
+            args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
+            daemon=True
+        )
         
-        # thread.start()
+        thread.start()
 
         return dbc.Alert(
             [
