@@ -157,7 +157,7 @@ def summarize_records(records, original_name, stored_filename):
             elif feature.type == "gene":
                 gene_count += 1
             elif feature.type == "source":
-                country = feature.qualifiers.get("country", ["Non renseigné"])[0]
+                country = feature.qualifiers.get("country", ["unknown"])[0]
 
     return {
         "File name": original_name,
@@ -693,8 +693,11 @@ def register_callbacks(app):
                     for r in records:
                         for feature in r.features:
                             if feature.type == "source":
-                                country = feature.qualifiers.get("country", ["unknown"])[0]
-                       
+                                if "country" in feature.qualifiers:
+                                    country = feature.qualifiers.get("country", ["unknown"])[0]
+                                elif "geo_loc_name" in feature.qualifiers:
+                                    country = feature.qualifiers.get("geo_loc_name", ["unknown"])[0]
+
                     genes = sum(1 for r in records for f in r.features if f.type == "gene")
                     cds = sum(1 for r in records for f in r.features if f.type == "CDS")
 
