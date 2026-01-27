@@ -441,11 +441,14 @@ def register_callbacks(app):
         path = UPLOAD_DIR+"/"+str(session)
         if os.path.exists(path):
 
+            countries = {}
             # Remove invalid genomes before proceeding
             df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
             for row in df.itertuples():
                 file_name = row[1]
                 valid = row[2]
+                country = row[4]
+                countries[file_name] = country
                 if valid == "✅":
                     pass
                 else:
@@ -461,7 +464,6 @@ def register_callbacks(app):
                 if file.endswith(".gb"):
                     filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
                     
-            countries = {}
             for filepath in filepaths:
                 name = os.path.basename(filepath)
                 print(name)
@@ -470,16 +472,6 @@ def register_callbacks(app):
                 os.system(cmd)
                 cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
                 os.system(cmd)
-
-                cmd = f"zgrep 'country=' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
-                get_country_line = os.popen(cmd).read()
-                lines_country = get_country_line.split("=")
-                country = ""
-                if len(lines_country) > 1:
-                    country = lines_country[1].strip()
-                    country = country.replace('"', "")
-
-                countries[name] = country
 
                 cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
                 get_organism_line = os.popen(cmd).read()
@@ -507,6 +499,9 @@ def register_callbacks(app):
                 os.system(cmd) 
 
                 dict_strains[name] = strain
+                country = countries[file_name] 
+                countries[strain] = country
+                print(strain+" "+name + " " + country+"\n")
 
             cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
             os.system(cmd) 
@@ -514,10 +509,8 @@ def register_callbacks(app):
             with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
                 f.write("Strain name\tCountry\tContinent\tOrganism\n")
                 for accession, strain in dict_strains.items():
-                    country = countries[accession]
+                    country = countries[strain]
                     f.write(f"{strain}\t{country}\t\t\n")
-
-
 
         thread = threading.Thread(
             target=run_external_command,
@@ -792,8 +785,6 @@ def register_callbacks(app):
 
         df = pd.DataFrame(rows)
         df.to_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t", index=False)
-
-        df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
         
 
         grid = dag.AgGrid(
