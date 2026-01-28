@@ -2236,16 +2236,16 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_sp2 = list_sp2_sorted
 
         try:
-            df_vcf = parse_vcf(vcf_file, int(1000), list_sp2)
+            df_vcf = parse_vcf(vcf_file, int(5000), list_sp2)
             df_vcf_transposed = df_vcf.T
         except Exception as e:
-            fig = px.imshow(np.zeros((2,2)))
-            fig.update_layout(title=f"Error during parsing: {str(e)}")
+            fig_VCF = px.imshow(np.zeros((2,2)))
+            fig_VCF.update_layout(title=f"Error during parsing: {str(e)}")
             return fig, [], []
 
         if df.shape[0] == 0 or df.shape[1] == 0:
-            fig = px.imshow(np.zeros((2,2)))
-            fig.update_layout(title="No variant or sample found(check VCF file)")
+            fig_VCF = px.imshow(np.zeros((2,2)))
+            fig_VCF.update_layout(title="No variant or sample found(check VCF file)")
             return fig, [], []
 
 
@@ -2535,7 +2535,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     fig_VCF.update_layout(
             margin=dict(l=200, r=20, t=50, b=150),
             #height=800,
-            title="SNP Genotyping matrix (only the first 1000 variants are displayed)"
+            title="SNP Genotyping matrix (only the first 5000 variants are displayed)"
     )  
 
     
@@ -3743,7 +3743,7 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     gt_index = None
     rows = []
     variant_ids = []
-
+    
     with open(vcf_file, 'r') as file:
         lines = file.readlines()
 
@@ -3866,8 +3866,10 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
             rows.append(row)
             if len(rows) >= max_variants:
                 break
-
     df = pd.DataFrame(rows, index=variant_ids, columns=kept_sample_names)
+
+    # reorder columns to match samples_subset if provided
+    df = df[samples_subset]
     return df
 
 def generate_tree_html(newick, df_metadata, html_file):
