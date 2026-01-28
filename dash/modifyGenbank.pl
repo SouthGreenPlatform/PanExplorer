@@ -71,30 +71,30 @@ while(<LS>){
 					# annotation bakta
 					if ($strain eq "chromosome"){
 						$strain = "Genus species";
-						$_ = "DEFINITION  Genus species $filename\n";
+						$_ = "DEFINITION  $filename\n";
 					}
 					# annotation bakta
 					elsif ($strain =~/contig/ or $strain =~/scaffold/ or $strain =~/NODE_\d+/){
                                                 $strain = "Genus species";
-                                                $_ = "DEFINITION  Genus species $filename\n";
+                                                $_ = "DEFINITION  $filename\n";
                                         }
 					# annotation dfast
 					elsif ($strain =~/Genus sp unspecified DNA/){
 						$strain = "Genus species";
-						$_ = "DEFINITION  Genus species $filename\n";
+						$_ = "DEFINITION  $filename\n";
 					}
 					# annotation prokka
 					elsif (/Genus species strain/){
-						$_ = "DEFINITION  Genus species $filename\n";
+						$_ = "DEFINITION  $filename\n";
 					}
 					# definition is not explicite enough
 					elsif (scalar @informations_strain < 10){
 						$duplicate_definitions{$strain}++;
-                                                $_ = "DEFINITION  $strain $filename\n";
+                                                $_ = "DEFINITION  $filename\n";
                                         }
 					elsif ($duplicate_definitions{$strain} > 1){
 						$already_observed=1;
-						$_ = "DEFINITION  Genus species $filename\n";
+						$_ = "DEFINITION  $filename\n";
 					}
 					else{
 						$duplicate_definitions{$strain}++;
@@ -118,6 +118,7 @@ while(<LS>){
 				open(F,">$outdir/forzip/$filename.gb");
 				print F $concat;
 				close(F);
+
 				#system("gzip $Configuration::DATA_DIR/$pangenome_data/$session.$projectnew/genomes/genomes/$filename.gbff");
 				$nb_files_ok++;
 			}
@@ -149,5 +150,3 @@ if (-d "$outdir"){
     system("zip genomes.zip  ./*.gb >>zip.log 2>&1");
 	
 }
-
-
