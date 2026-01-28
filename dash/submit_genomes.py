@@ -448,7 +448,11 @@ def register_callbacks(app):
                 file_name = row[1]
                 valid = row[2]
                 country = row[4]
+                file_name = file_name.replace("_", "")
+                file_name = file_name.replace("-", "")
+                file_name = file_name.replace(".", "")
                 countries[file_name] = country
+                print(file_name+" "+country+"\n")
                 if valid == "✅":
                     pass
                 else:
@@ -456,7 +460,7 @@ def register_callbacks(app):
             
 
             cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
-            os.system(cmd)
+            returned_value = os.popen(cmd).read()
 
             dict_strains = {}
             filepaths = []
@@ -466,7 +470,6 @@ def register_callbacks(app):
                     
             for filepath in filepaths:
                 name = os.path.basename(filepath)
-                print(name)
 
                 cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
                 os.system(cmd)
@@ -499,9 +502,10 @@ def register_callbacks(app):
                 os.system(cmd) 
 
                 dict_strains[name] = strain
-                country = countries[file_name] 
+                print(strain+" "+name + "\n")
+                country = countries[strain] 
                 countries[strain] = country
-                print(strain+" "+name + " " + country+"\n")
+                
 
             cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
             os.system(cmd) 
@@ -512,13 +516,12 @@ def register_callbacks(app):
                     country = countries[strain]
                     f.write(f"{strain}\t{country}\t\t\n")
 
-        thread = threading.Thread(
-            target=run_external_command,
-            args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
-            daemon=True
-        )
-        
-        thread.start()
+        # thread = threading.Thread(
+        #     target=run_external_command,
+        #     args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
+        #     daemon=True
+        # )
+        # thread.start()
 
         return dbc.Alert(
             [
