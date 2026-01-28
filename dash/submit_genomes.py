@@ -186,20 +186,25 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
         stdout = e.stdout
 
 
-    # Une fois terminé → email
-    #send_email(email_address, stdout, stderr)
+    # once finished, send an email
+    send_email(email_address)
 
 def send_email(to):
-    msg = EmailMessage()
-    msg["Subject"] = "Script terminé"
-    msg["From"] = "noreply@tonapp.com"
-    msg["To"] = to
-    msg.set_content("Votre script est terminé.")
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as s:
-        s.starttls()
-        s.login("email@gmail.com", "mot_de_passe")
-        s.send_message(msg)
+    cmd = "echo 'Done' | mail -s 'Done' alexis.dereeper@ird.fr"
+    os.system(cmd)
+
+
+    # msg = EmailMessage()
+    # msg["Subject"] = "Script terminé"
+    # msg["From"] = "noreply@tonapp.com"
+    # msg["To"] = to
+    # msg.set_content("Votre script est terminé.")
+
+    # with smtplib.SMTP("smtp.gmail.com", 587) as s:
+    #     s.starttls()
+    #     s.login("email@gmail.com", "mot_de_passe")
+    #     s.send_message(msg)
 
 
 # --------------------------------------------------
@@ -516,12 +521,12 @@ def register_callbacks(app):
                     country = countries[strain]
                     f.write(f"{strain}\t{country}\t\t\n")
 
-        # thread = threading.Thread(
-        #     target=run_external_command,
-        #     args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
-        #     daemon=True
-        # )
-        # thread.start()
+        thread = threading.Thread(
+            target=run_external_command,
+            args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
+            daemon=True
+        )
+        thread.start()
 
         return dbc.Alert(
             [
