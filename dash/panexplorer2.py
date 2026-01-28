@@ -40,6 +40,7 @@ import dash_bio as dash_bio
 from plotly_upset.plotting import plot_upset
 
 import submit_genomes
+import homepage
 
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
@@ -312,11 +313,12 @@ def main_layout():
             
             dbc.Nav([
                 html.Img(
-                                src="/assets/panexplorer_logo6.png",
+                                src="/assets/panexplorer_logo8.png",
                                 height="65px",
                                 className="me-2"
                             ),
-                html.A("Browse projects", href="/", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                dbc.NavLink("Home", href="/", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                html.A("Browse projects", href="/browse", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
                 dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
             ],
 
@@ -359,8 +361,9 @@ def display_page(pathname):
 
     if pathname == "/submit_genomes":
         return submit_genomes.layout
-    else:
-        print("Normal page")
+    elif pathname == "/":
+        return homepage.layout
+    elif pathname == "/browse":
         # simplified UI inspired from app-pav.py
         ui = html.Div([
             header,
