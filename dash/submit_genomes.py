@@ -193,10 +193,9 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
 def send_email(to,session):
 
     message = f"""
-From: PanExplorer <panexplorer@southgreen.fr>
 Hi,
 
-Your job 137471457450.20260122_1_50 is done. You can click the link below to see your results:
+Your PanExplorer job {session} is done. You can click the link below to see your results:
 https://panexplorer2.ird.fr/browse?session={session}
 
 Your data will be available on the server for 15 days from the time they are generated.
@@ -205,12 +204,11 @@ See you soon on PanExplorer,
 
 The PanExplorer team
 """
-    
+
     with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
         f.write(message)
 
-    cmd = "service postfix start && cat {tmp_dir}/{session}.message.txt | mail -s 'Analysis done' {to} && service postfix stop"
-    #cmd = "service postfix start && echo 'analysis done' | mail -s 'Analysis done' -r panexplorer@southgreen.fr alexis.dereeper@ird.fr && service postfix stop"
+    cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
     os.system(cmd)
 
 
