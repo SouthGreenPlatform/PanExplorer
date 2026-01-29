@@ -79,7 +79,10 @@ layout = html.Div(
             html.Label("Percentage identity for protein Blast. Must be between 1 and 100."),
 
             html.H5("What is your inputs:"),
-            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, {"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}], style={"width":"750px"}),
+            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, 
+                                                   {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, 
+                                                   #{"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}
+                                                   ], style={"width":"750px"}),
 
             html.Br(),
             html.Div(id="input-options"),
@@ -129,12 +132,16 @@ def is_valid_genbank(decoded_text):
     except Exception as e:
         return False, str(e)
 
+def sanitize_filename(filename: str) -> str:
+
+    return re.sub(r'[^a-zA-Z0-9.]', '', filename)
 
 def save_genbank_file(decoded_bytes, original_filename,session):
     """
     Save a validated GenBank file to disk.
     """
-    filepath = os.path.join(f"{UPLOAD_DIR}/{session}", original_filename)
+
+    filepath = os.path.join(f"{UPLOAD_DIR}/{session}", sanitize_filename(original_filename))
 
     with open(filepath, "wb") as f:
         f.write(decoded_bytes)
@@ -145,6 +152,8 @@ def save_genbank_file(decoded_bytes, original_filename,session):
 def is_string_without_special_character(valeur):
     return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_-]+", valeur) is not None
 
+def is_list_GCA(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_, .]+", valeur) is not None
 
 def summarize_records(records, original_name, stored_filename):
     """
@@ -180,10 +189,10 @@ def summarize_records(records, original_name, stored_filename):
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
     try:
-        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and min_percentage_identity.is_integer() and session.is_integer() and is_string_without_special_character(software):
+        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
-        elif valid_list.count(",") + 1 > 1 and min_percentage_identity.is_integer() and session.is_integer() and is_string_without_special_character(software):
+        elif valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
 
@@ -253,6 +262,9 @@ def register_callbacks(app):
         if not gca_list:
             return html.Div("Please enter at least 3 Genbank assembly accession (GCA).")
 
+        if is_list_GCA(gca_list) == False:
+            return html.Div("Please enter at least 3 Genbank assembly accession (GCA). The list is not recognized...")
+        
         gca_accessions = [gca.strip() for gca in gca_list.split(",") if gca.strip()]
 
         if len(gca_accessions) > 200:
@@ -483,7 +495,6 @@ def register_callbacks(app):
                 file_name = file_name.replace("-", "")
                 file_name = file_name.replace(".", "")
                 countries[file_name] = country
-                print(file_name+" "+country+"\n")
                 if valid == "✅":
                     pass
                 else:
@@ -559,7 +570,7 @@ def register_callbacks(app):
                 html.H4("Well done!", className="alert-heading"),
                 html.P("Data have been sent to the pipeline. You will receive an email once it is complete. Data are available in the URL: "),
                 #html.Hr(),
-                html.A(f"{web_url}/?session={session}", href=f"{web_url}/?session={session}", target="_blank", className="alert-link"),
+                html.A(f"{web_url}/browse?session={session}", href=f"{web_url}/?session={session}", target="_blank", className="alert-link"),
             ],
             color="success",
         ) , {"display": "none"}
@@ -700,8 +711,11 @@ def register_callbacks(app):
         for file in os.listdir(UPLOAD_DIR+"/"+str(session)):
             original_name = os.path.basename(file)
             if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff"):
-                filepath = UPLOAD_DIR+"/"+str(session)+"/"+file
+                newfile = sanitize_filename(file)
+                filepath = UPLOAD_DIR+"/"+str(session)+"/"+newfile
                 filepaths.append(filepath)
+                if file != newfile:
+                    os.rename(UPLOAD_DIR+"/"+str(session)+"/"+file, UPLOAD_DIR+"/"+str(session)+"/"+newfile)
 
                 original_name = os.path.basename(filepath)
                 print(original_name)
