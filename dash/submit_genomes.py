@@ -54,6 +54,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 #session = random.randint(1, 9000000)
 
 
+
 # --------------------------------------------------
 # Layout
 # --------------------------------------------------
@@ -187,11 +188,28 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
 
 
     # once finished, send an email
-    send_email(email_address)
+    send_email(email_address,session)
 
-def send_email(to):
+def send_email(to,session):
 
-    cmd = "echo 'Done' | mail -s 'Done' alexis.dereeper@ird.fr"
+    message = f"""
+Hi,
+
+Your job 137471457450.20260122_1_50 is done. You can click the link below to see your results:
+https://panexplorer2.ird.fr/browse?session={session}
+
+Your data will be available on the server for 15 days from the time they are generated.
+
+See you soon on PanExplorer,
+
+The PanExplorer team
+"""
+    
+    with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
+        f.write(message)
+
+    #cmd = "service postfix start && cat {tmp_dir}/{session}.message.txt | mail -s 'Analysis done' alexis.dereeper@ird.fr && service postfix stop"
+    cmd = "service postfix start && echo 'analysis done' | mail -s 'Analysis done' alexis.dereeper@ird.fr && service postfix stop"
     os.system(cmd)
 
 
