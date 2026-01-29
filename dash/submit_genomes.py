@@ -45,6 +45,7 @@ with open(CONFIG_YAML, "r") as f:
     conf = yaml.safe_load(f)
 session_dir = conf.get("session_dir")
 web_url = conf.get("web_url")
+ADMIN_MAIL = conf.get("admin_mail")
 UPLOAD_DIR = conf.get("upload_dir")
 
 ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
@@ -212,16 +213,19 @@ The PanExplorer team
     os.system(cmd)
 
 
-    # msg = EmailMessage()
-    # msg["Subject"] = "Script terminé"
-    # msg["From"] = "noreply@tonapp.com"
-    # msg["To"] = to
-    # msg.set_content("Votre script est terminé.")
+    message_for_admin = f"""
 
-    # with smtplib.SMTP("smtp.gmail.com", 587) as s:
-    #     s.starttls()
-    #     s.login("email@gmail.com", "mot_de_passe")
-    #     s.send_message(msg)
+The PanExplorer job {session} is done. It has been sent to {to}:
+https://panexplorer2.ird.fr/browse?session={session}
+
+"""
+
+    with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
+        f.write(message_for_admin)
+
+    cmd = f"cat {tmp_dir}/{session}.message_for_admin.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {ADMIN_MAIL} && service postfix start"
+    os.system(cmd)
+    
 
 
 # --------------------------------------------------
