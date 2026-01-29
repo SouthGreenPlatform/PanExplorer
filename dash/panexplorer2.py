@@ -1520,6 +1520,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     if is_stringlist_without_special_character(cluster_search) == False:
         cluster_search = ""
 
+    if is_bed(bedfile) == False:
+        bedfile = ""
+
     session = random.randint(1, 9000000)
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
@@ -1962,7 +1965,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         width=1800,
         height=800
     )
-
+    
 
 
     #######################
@@ -2252,7 +2255,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         returned_value = os.system(cmd)
 
 
-
         #################################################################
         # --- Heatmap of genotypes from VCF ---
         #################################################################
@@ -2261,21 +2263,20 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
         list_sp2 = list_sp2_sorted
 
+
+
         try:
             df_vcf = parse_vcf(vcf_file, int(5000), list_sp2)
             df_vcf_transposed = df_vcf.T
         except Exception as e:
             fig_VCF = px.imshow(np.zeros((2,2)))
             fig_VCF.update_layout(title=f"Error during parsing: {str(e)}")
-            return fig, [], []
 
         if df.shape[0] == 0 or df.shape[1] == 0:
             fig_VCF = px.imshow(np.zeros((2,2)))
             fig_VCF.update_layout(title="No variant or sample found(check VCF file)")
-            return fig, [], []
 
-
-
+        
         
 
         #################################################################
@@ -2894,6 +2895,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     if is_stringlist_without_special_character(cluster_search) == False:
         cluster_search = ""
 
+    if is_bed(bedfile) == False:
+        bedfile = ""
+
     list_sp2 = []
     if metadata_table:
         wjdata = json.loads(json.dumps(metadata_table, indent=2))
@@ -2911,8 +2915,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     transposed_df = pd.DataFrame()
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
     cluster_names = df2["ClutserID"].astype(str).tolist()
-
-    print(df2)
 
     search_res2 = []
     ticktext = ['Absence']
@@ -2936,7 +2938,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         colorscale = []
         df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
         list_organisms = df_metadata4[colorizing].unique().tolist()
-        print(df_metadata4)
         nb_organisms = len(list_organisms)
         step = 1 / (nb_organisms+1)
         colorscale.append([0.0, "whitesmoke"])
@@ -3248,9 +3249,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         )
                             
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes',xaxis_title="Gene clusters",yaxis_title="Samples")
-
-    
-
     
 
 
@@ -3763,6 +3761,38 @@ def is_string_without_special_character(valeur):
 def is_stringlist_without_special_character(valeur):
     return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9, _-]+", valeur) is not None
 
+def is_bed(valeur: str) -> bool:
+    if not isinstance(valeur, str):
+        return False
+
+    # Découpe par tab ou espaces multiples
+    champs = re.split(r"\s+", valeur.strip())
+
+    # BED = au moins 3 colonnes
+    if len(champs) < 3:
+        return False
+
+    chrom, start, end = champs[0], champs[1], champs[2]
+
+    # chromosome valide (chr1, chrX, chrM, etc.)
+    if not re.fullmatch(r"chr([1-9][0-9]?|X|Y|M)", chrom):
+        return False
+
+    # start / end entiers
+    try:
+        start = int(start)
+        end = int(end)
+    except ValueError:
+        return False
+
+    # règles BED
+    if start < 0 or end < 0:
+        return False
+    if end <= start:
+        return False
+
+    return True
+
 def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     """
     Parse minimal VCF to extract GT matrix.
@@ -3900,10 +3930,11 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
             if len(rows) >= max_variants:
                 break
     df = pd.DataFrame(rows, index=variant_ids, columns=kept_sample_names)
-
+    
     # reorder columns to match samples_subset if provided
-    df = df[samples_subset]
-    return df
+    df_ordered = df[samples_subset]
+
+    return df_ordered
 
 def generate_tree_html(newick, df_metadata, html_file):
 
