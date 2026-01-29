@@ -2274,6 +2274,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         if df.shape[0] == 0 or df.shape[1] == 0:
             fig_VCF = px.imshow(np.zeros((2,2)))
+
             fig_VCF.update_layout(title="No variant or sample found(check VCF file)")
 
         
@@ -3932,8 +3933,11 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     df = pd.DataFrame(rows, index=variant_ids, columns=kept_sample_names)
     
     # reorder columns to match samples_subset if provided
+    cols = df.columns.to_list()
+    # keep columns if present in VCF (remove reference)
+    samples_subset = [x for x in samples_subset if x in cols]
     df_ordered = df[samples_subset]
-
+    
     return df_ordered
 
 def generate_tree_html(newick, df_metadata, html_file):
