@@ -193,6 +193,7 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
 def send_email(to,session):
 
     message = f"""
+From: PanExplorer <panexplorer@southgreen.fr>
 Hi,
 
 Your job 137471457450.20260122_1_50 is done. You can click the link below to see your results:
@@ -208,8 +209,8 @@ The PanExplorer team
     with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
         f.write(message)
 
-    #cmd = "service postfix start && cat {tmp_dir}/{session}.message.txt | mail -s 'Analysis done' alexis.dereeper@ird.fr && service postfix stop"
-    cmd = "service postfix start && echo 'analysis done' | mail -s 'Analysis done' alexis.dereeper@ird.fr && service postfix stop"
+    cmd = "service postfix start && cat {tmp_dir}/{session}.message.txt | mail -s 'Analysis done' alexis.dereeper@ird.fr && service postfix stop"
+    #cmd = "service postfix start && echo 'analysis done' | mail -s 'Analysis done' -r panexplorer@southgreen.fr alexis.dereeper@ird.fr && service postfix stop"
     os.system(cmd)
 
 
