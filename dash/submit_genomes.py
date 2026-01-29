@@ -142,6 +142,10 @@ def save_genbank_file(decoded_bytes, original_filename,session):
     return filepath
 
 
+def is_string_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_-]+", valeur) is not None
+
+
 def summarize_records(records, original_name, stored_filename):
     """
     Summarize a GenBank file at the FILE level.
@@ -176,10 +180,10 @@ def summarize_records(records, original_name, stored_filename):
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
     try:
-        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip"):
+        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and min_percentage_identity.is_integer() and session.is_integer() and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
-        elif valid_list.count(",") + 1 > 1:
+        elif valid_list.count(",") + 1 > 1 and min_percentage_identity.is_integer() and session.is_integer() and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
 
@@ -209,8 +213,9 @@ The PanExplorer team
     with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
         f.write(message)
 
-    cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
-    os.system(cmd)
+    if session.is_integer():
+        cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
+        os.system(cmd)
 
 
     message_for_admin = f"""

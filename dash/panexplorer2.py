@@ -18,6 +18,7 @@ import json
 
 import random
 import re
+import shutil
 import base64
 import io
 
@@ -33,6 +34,8 @@ from dash.exceptions import PreventUpdate
 import pandas as pd
 import folium
 import folium.plugins
+
+import subprocess
 
 
 import dash_bio as dash_bio
@@ -1093,7 +1096,7 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
         os.remove(tmp_dir+"/"+str(session)+".muscle.log")
     
     # run muscle to generate alignment
-    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta"):
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and session.is_integer():
         cmd = "muscle -align "+tmp_dir+"/"+str(session)+".temp.fasta -output "+tmp_dir+"/"+str(session)+".temp.aln.fasta >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
         os.system(cmd)
         print(cmd)
@@ -1138,8 +1141,6 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
 
     list_strains = ",".join(list_of_strains)
     cmd= f"perl ClinkerPlotFromMatrix.pl {directory}/1.Orthologs_Cluster.txt {current_cluster} {directory}/genomes/genomes/ {list_strains} {tmp_dir}/{session}_clinker.html"
-
-    print(cmd)
     os.system(cmd)
 
     fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
@@ -1516,6 +1517,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         path = row[0]
     directory = path
 
+    if is_stringlist_without_special_character(cluster_search) == False:
+        cluster_search = ""
+
     session = random.randint(1, 9000000)
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
@@ -1606,8 +1610,13 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ##############################################
     # Generate Core-gene and accessory files
     ##############################################
-    cmd = "awk {'print $1\"\t\"$2\"\t\"$3'} "+directory+"/cog_of_clusters.txt >"+directory+"/cog_of_clusters.2.txt"
-    returned_value = os.system(cmd)
+    with open(directory+"/cog_of_clusters.2.txt", "w") as out:
+        subprocess.run(
+            ["awk" , "{print $1\"\t\"$2\"\t\"$3}", directory+"/cog_of_clusters.txt"],
+            stdout=out,
+            check=True
+        )
+
 
     df_cog_of_clusters = pd.read_csv(directory+'/cog_of_clusters.2.txt',sep='\t')
     
@@ -1745,9 +1754,17 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     gene_position_file = directory+'/genomes/genomes/'+str(reference)+'.ptt'
     gene_position_file2 = directory+'/genomes/genomes/'+str(reference)+'.2.ptt'
+
     # Remove lines from ptt
-    cmd = "grep -P 'Location|^\d+\.\.' "+ directory+"/genomes/genomes/"+reference+".ptt >"+directory+"/genomes/genomes/"+reference+".2.ptt"
-    returned_value = os.system(cmd)
+    if is_string_without_special_character(reference):
+        with open(directory+"/genomes/genomes/"+reference+".2.ptt", "w") as out:
+            subprocess.run(
+                ["grep" , "-P", "Location|^\d+\.\.",  directory+"/genomes/genomes/"+reference+".ptt"],
+                stdout=out,
+                check=True
+            )
+
+
     merged_with_positions2 = []
     if os.path.exists(gene_position_file) & os.path.exists(gene_position_file2):
         #df_gene_positons = pd.read_csv('data/Xo/'+reference+'.ptt',sep='\t')
@@ -1851,11 +1868,20 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
-        cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
-        returned_value = os.system(cmd)
+        if int(session):
+            subprocess.run(
+                [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
+                check=True
+            )
 
-        cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
-        returned_value = os.system(cmd)
+            cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+            returned_value = os.system(cmd)
+            # subprocess.run(
+            #     ["mv" , tmp_dir + "/" + str(session) + "_scoary_output/*results.csv", tmp_dir + "/" + str(session) + ".scoary_results.txt"],
+            #     check=True
+            # )
+
+
 
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
         #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
@@ -1915,13 +1941,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     #     )
     # )
 
-
-
-
-        
-
-        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
-        #returned_value = os.system(cmd)
 
     
     ################
@@ -2079,6 +2098,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     print("Max nb for synteny: " + str(max_nb_strains_macrosynteny))
     print(list_selected)
 
+    
     selection_dir = tmp_dir+"/selection."+str(session)
     print(selection_dir)
 
@@ -2097,14 +2117,17 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     for sp in list_selected:
         c+=1
         if (c >=1 and c <=(max_nb_strains_macrosynteny)):
-            cmd = "cp -rf "+directory+"/genomes/genomes/"+sp+".ptt "+ selection_dir
-            returned_value = os.system(cmd)
-            list_of_species_macrosyneny.append(sp)
+            if int(session):
+                shutil.copy(directory+"/genomes/genomes/"+sp+".ptt", selection_dir)
+                list_of_species_macrosyneny.append(sp)
 
     
-    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt "+ str(minimal_size_block) + " " + str(chromosome)
-    #cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt " + str(minimal_size_block) + " 1"
-    returned_value = os.system(cmd)
+
+    if int(session) and is_string_without_special_character(chromosome) and int(minimal_size_block):
+        subprocess.run(
+            ["perl" , "GetSyntenicBlocks.pl", selection_dir, tmp_dir + "/" + str(session) + ".core_genes.txt", tmp_dir + "/" + str(session) + ".syntenic_blocks.txt", str(minimal_size_block), str(chromosome)],
+            check=True
+        )
 
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
@@ -2868,6 +2891,8 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         path = row[0]
     directory = path
 
+    if is_stringlist_without_special_character(cluster_search) == False:
+        cluster_search = ""
 
     list_sp2 = []
     if metadata_table:
@@ -3732,6 +3757,11 @@ def download_data(directory,session_code):
         returned_value = os.system(cmd)
 
 
+def is_string_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_-]+", valeur) is not None
+
+def is_stringlist_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9, _-]+", valeur) is not None
 
 def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     """
