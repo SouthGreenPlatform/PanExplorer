@@ -3,7 +3,6 @@ import os
 import sqlite3
 from datetime import datetime, time
 import uuid
-import subprocess
 
 from flask import Flask, render_template_string, request, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
@@ -45,45 +44,6 @@ from plotly_upset.plotting import plot_upset
 
 import submit_genomes
 import homepage
-
-
-import xml.etree.ElementTree as ET
-import struct
-
-# Helper to get image dimensions without external heavy dependencies
-def get_image_dimensions(path):
-    width, height = 800, 600 # Default fallback
-    try:
-        if path.endswith('.png'):
-            with open(path, 'rb') as f:
-                head = f.read(24)
-                if len(head) == 24 and head.startswith(b'\211PNG\r\n\032\n'):
-                    # PNG header: 8 bytes magic + 4 bytes chunk len + 4 bytes 'IHDR' + 4 bytes width + 4 bytes height
-                    check = struct.unpack('>i', head[4:8])[0]
-                    if check != 0x0d0a1a0a: # Check for not matching IHDR (rare)
-                        width, height = struct.unpack('>ii', head[16:24])
-                    else:
-                        width, height = struct.unpack('>ii', head[16:24])
-        elif path.endswith('.svg') or path.endswith('svg'):
-            # Simple SVG parsing
-            tree = ET.parse(path)
-            root = tree.getroot()
-            # Try width/height attributes
-            w_str = root.attrib.get('width', '')
-            h_str = root.attrib.get('height', '')
-            # Try viewBox if width/height missing
-            if not w_str or not h_str:
-                viewbox = root.attrib.get('viewBox', '').split()
-                if len(viewbox) == 4:
-                    width = float(viewbox[2])
-                    height = float(viewbox[3])
-            else:
-                width = float(w_str.replace('px', '').replace('pt', ''))
-                height = float(h_str.replace('px', '').replace('pt', ''))
-    except Exception as e:
-        print(f"Could not determine image dimensions: {e}")
-    
-    return width, height
 
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
@@ -438,29 +398,20 @@ def render_page(search):
         session_code = params.get("session", [None])[0]
 
     
-    
     if session_code:
-        proj = get_project_by_session(session_code)
-        if not proj:
-            dir = conf["session_dir"] + "/" + session_code
+        if session_code.isdigit():
+            proj = get_project_by_session(session_code)
+            if not proj:
+                dir = conf["session_dir"] + "/" + session_code
 
 
-            if os.path.isdir(dir):
-                print("exists")
-            else:
-                os.mkdir(dir)
-                os.mkdir(dir+"/genomes")
-                os.mkdir(dir+"/genomes/genomes")
-                download_data(dir,session_code)
+                if os.path.isdir(dir):
+                    print("exists")
+                else:
+                    return html.Br(), dbc.Alert(html.P("Session does not exist", className="alert-heading"),color="danger")
 
-            
-            
-            #return html.Div("Session inconnue ou expirée." + str(dir), style={"color": "red", "padding": "2rem"})
-
-        # Session valid: minimal page showing project contents (metadata preview)
-        #title = proj["title"]
-        #path = proj["path"]
-
+        else:
+            return html.Br(), dbc.Alert(html.P("Session is not accepted", className="alert-heading"),color="danger")     
 
 
     # Normal mode: header + dropdown + area for the simplified PAV UI
@@ -523,6 +474,8 @@ def load_project_preview(proj_title):
         return html.Div("Aucun projet sélectionné.")
     row = query_db("SELECT id, title, path, is_public FROM projects WHERE title = ?", (proj_title,), one=True)
 
+    
+    print(proj_title)
     proj = None
     if not row:
         #return html.Div(f"Project not found in database. {proj_title}")
@@ -706,8 +659,7 @@ def load_project_preview(proj_title):
                                 
                                 html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
                                  ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
-                            ]
-                        ),
+                        ]),
                         
                         html.Br(),
                         # html.Div([
@@ -944,159 +896,19 @@ def load_project_preview(proj_title):
                         ]),
                     ]),
                 ]),
-
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
                     html.Br(),
-                    
-                    # --- EXISTING NODE INFO AREA ---
                     dcc.Loading(
-                        html.Div(children=[
-                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
-                        ]),
-                    ),
-
-                    html.Hr(),
-
-                    # subgraph extraction panel
-                    html.Div(id="subgraph-control-panel", style={'display': 'none', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                        html.H4("Subgraph Extraction"),
-                        html.Small("Define the context size using either Steps OR Base Pairs (not both)."),
-                        html.Br(), html.Br(),
-                        
-                        dbc.Row([
-                            # input 1: node steps
-                            dbc.Col([
-                                html.Label("Context (Node Steps):"),
-                                dcc.Input(id="subgraph-steps", type="number", value=2, placeholder="e.g. 3", min=0, className="form-control"),
-                                html.Small("Ex: 3 nodes away", style={"color": "grey"})
-                            ], width=3),
-                            
-                            # input 2: base pairs
-                            dbc.Col([
-                                html.Label("Context (Base Pairs):"),
-                                dcc.Input(id="subgraph-bp", type="number", value=200, placeholder="e.g. 1000", min=0, step=100, className="form-control"),
-                                html.Small("Ex: 1000 bp away", style={"color": "grey"})
-                            ], width=3),
-                            
-                            # input 3: visualizer
-                            dbc.Col([
-                                html.Label("Visualizer:"),
-                                dcc.Dropdown(
-                                    id="subgraph-viz-type",
-                                    options=[
-                                        {'label': 'ODGI (PNG Image)', 'value': '--odgi'},
-                                        {'label': 'Bandage (SVG Image)', 'value': '--bandage'},
-                                        {'label': 'VG (Dot Plot)', 'value': '--vg'}
-                                    ],
-                                    value='--odgi'
-                                )
-                            ], width=3),
-                            
-                            # button
-                            dbc.Col([
-                                html.Br(),
-                                html.Button("Extract & Visualize", id="btn-extract-subgraph", className="btn btn-primary", style={"backgroundColor": "#1E90FF", "color": "white"})
-                            ], width=3, style={'textAlign': 'center'})
-                        ]),
-                        
-                        html.Br(),
-                        dcc.Loading(html.Div(id="subgraph-result-area", children="Select parameters and click extract."))
-                    ]),
-
-                    dcc.Store(id='stored-node-id'),
-
-                    html.Hr(),
-
-                    html.Div(style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                                    html.H4("Align Sequence to Pangenome"),
-                                    html.Small("Paste a FASTA sequence to find and extract matching subgraphs."),
-                                    html.Br(), html.Br(),
-                                    
-                                    dbc.Row([
-                                        dbc.Col([
-                                            html.Label("Sequence (FASTA):"),
-                                            dcc.Textarea(
-                                                id="seq-input-fasta",
-                                                placeholder=">seq1\nATGC...",
-                                                style={'width': '100%', 'height': 150},
-                                            ),
-                                        ], width=6),
-                                        dbc.Col([
-                                            html.Label("Read Type:"),
-                                            dcc.Dropdown(
-                                                id="seq-read-type",
-                                                options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
-                                                value='long'
-                                            ),
-                                    html.Hr(),
-                        html.Label("Context Settings (Choose one):"),
-                        dbc.Row([
-                            dbc.Col([
-                                html.Small("Steps (Nodes)"),
-                                dcc.Input(id="seq-context", type="number", value=1, min=0, className="form-control"),
-                            ], width=6),
-                            dbc.Col([
-                                html.Small("Distance (bp)"),
-                                dcc.Input(id="seq-context-bp", type="number", placeholder="e.g 1000", min=0, step=100, className="form-control"),
-                            ], width=6),
-                        ]),
-                        html.Br(),
-                        html.Button("Align & Extract Hits", id="btn-align-sequence", className="btn btn-success", style={"marginTop": "10px", "width": "100%"}),
-                    ], width=5)
-                ]),
-                                    
-                                    html.Hr(),
-                                    
-                                    
-                                    html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
-                                        html.H5("Alignment Hits"),
-                                        dbc.Row([
-                                            dbc.Col([
-                                                html.Label("Select Hit to Visualize:"),
-                                                dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
-                                            ], width=6),
-                                            dbc.Col([
-                                                html.Label("Visualizer:"),
-                                                dcc.Dropdown(
-                                                    id="hit-viz-type",
-                                                    options=[
-                                                        {'label': 'ODGI (PNG)', 'value': 'odgi'},
-                                                        {'label': 'Bandage (SVG)', 'value': 'bandage'}
-                                                    ],
-                                                    value='odgi'
-                                                )
-                                            ], width=4)
+                                        html.Div(children=[
+                                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
+                                            
                                         ]),
-                                        html.Br(),
-                                        dcc.Loading(html.Div(id="hit-visualization-area"))
-                                    ]),
-                                    
-                                    
-                                    dcc.Store(id='store-alignment-hits'),
-                                    dcc.Store(id='store-alignment-path')
-                                ])
-                        ]),                    
-                    
-                    # --- NEW: MEMORY STORAGE ---
-                    
+                                    ),
 
                     #dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
-                
-                # dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
-                #     html.Br(),
-                #     dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
-                #     html.Br(),
-                #     dcc.Loading(
-                #                         html.Div(children=[
-                #                             html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
-                                            
-                #                         ]),
-                #                     ),
-
-                #     #dcc.Loading(dcc.Graph(id='graph_gfa',style={'width': '100%', 'height': '140vh','margin-left': '15px'})),
-                # ]),
+                ]),
                 dcc.Tab(label='Core-SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
                     dcc.Tabs(id='tab3', style=tabs_styles, children=[
                         
@@ -1331,17 +1143,9 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
 # Callback for node selection from heatmap
 #############################################################
 @app.callback(
-# 1. The visible text area
+    #Output('cluster_info', 'children'),
     Output('selected_node', 'children'),
-    # 2. The hidden memory store (NEW)
-    Output('stored-node-id', 'data'),
-    # 3. The visibility of the subgraph panel (NEW)
-    Output('subgraph-control-panel', 'style'),
-    # 4. Reset Inputs
-    Output('subgraph-steps', 'value'),
-    Output('subgraph-bp', 'value'),
-    # 5. Reset Visualization Area
-    Output('subgraph-result-area', 'children'),
+    #Output('my-default-alignment-viewer', 'data'),
 
     Input('graph_gfa2', 'clickData'),
     State('metadata_table','selectedRows'),
@@ -1359,16 +1163,7 @@ def display_click_data_GFA(clickData,metadata_table,projets,url,reference,sessio
 
     selected_node = "Selected node: " + str(node)
     infos = get_node_details(node,projets,reference,session)
-    node_data = get_node_genes_metadata(node, projets, reference, session)
-# 3. Define Style to Show the Panel
-    panel_style = {
-        'display': 'block', 
-        'padding': '20px', 
-        'backgroundColor': '#f9f9f9', 
-        'border': '1px solid #ddd', 
-        'marginTop': '20px'
-    }
-    return infos, node_data, panel_style, 2, 200, "Select parameters and click extract."
+    return infos
 
 
 #############################################################
@@ -1534,78 +1329,7 @@ def get_node_details(node,pathname,reference,session):
         
 #"Node: " + str(num_node) + "</div>Positions in reference genome: " + str(start_node) + "-" + str(end_node)+ "\n\n" + str(node_sequence2) 
 
-def get_node_genes_metadata(node, pathname, reference, session):
-    """
-    Extracts the node ID and a list of overlapping genes with:
-    - reference genome
-    - start
-    - end
-    - gene_name
-    """
-    if not pathname:
-        return None
-
-    # 1. Resolve Project Path
-    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
-    directory = row[0] if row else conf["session_dir"] + "/" + pathname
-
-    # 2. Parse clean Node ID
-    # Handles "Node_123" or just "123"
-    num_node = str(node).replace("Node_", "").split("_")[1] if "_" in str(node) else str(node)
-
-    # 3. Get Node Coordinates
-    # Reads the node position file generated during the heavy update
-    node_pos_file = f"{tmp_dir}/{session}.{reference}.segments.node_positions.tsv"
-    
-    if not os.path.exists(node_pos_file):
-        return {"node_id": num_node, "genes": [], "error": "Node positions file not found"}
-
-    try:
-        df_node_details = pd.read_csv(node_pos_file, sep='\t')
-        mini_df = df_node_details[df_node_details["Node"] == int(num_node)]
         
-        if mini_df.empty:
-            return {"node_id": num_node, "genes": [], "error": "Node not found in positions"}
-
-        start_node = int(mini_df['Start'].iloc[0])
-        end_node = int(mini_df['End'].iloc[0])
-
-        # 4. Find Overlapping Genes in PTT
-        ptt_file = f"{directory}/genomes/genomes/{reference}.2.ptt"
-        genes_list = []
-        
-        if os.path.exists(ptt_file):
-            df_genes = pd.read_csv(ptt_file, sep='\t')
-            
-            # Ensure start/end columns exist (parse 'Location' if needed)
-            if 'start' not in df_genes.columns:
-                df_genes[['start', 'end']] = df_genes['Location'].str.split(r'\.\.', expand=True).astype(int)
-            else:
-                df_genes['start'] = pd.to_numeric(df_genes['start'], errors='coerce')
-                df_genes['end'] = pd.to_numeric(df_genes['end'], errors='coerce')
-
-            # Filter logic: Overlap
-            # (Gene Start < Node End) AND (Gene End > Node Start)
-            query = f"(start < {end_node}) & (end > {start_node})"
-            overlapping_genes = df_genes.query(query)
-
-            for _, row in overlapping_genes.iterrows():
-                genes_list.append({
-                    "reference_genome": reference,
-                    "start": int(row['start']),
-                    "end": int(row['end']),
-                    "gene_name": row['PID']
-                })
-
-        return {
-            "node_id": num_node,
-            "genes": genes_list
-        }
-
-    except Exception as e:
-        print(f"Error in get_node_genes_metadata: {e}")
-        return {"node_id": num_node, "genes": [], "error": str(e)}
-
 def get_cluster_details(cluster,pathname,list_of_strains):
     
     global directory
@@ -2404,7 +2128,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
+    cmd = "cat html_templates/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json html_templates/clinker_template.part2.html >assets/clinker."+str(session)+".html"
     returned_value = os.system(cmd)
 
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
@@ -3044,7 +2768,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
             )
 
-
+        
     
     ##############################################################################################
     # geographical map of strains
@@ -3104,319 +2828,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
     
     return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
-
-    #############################################################################################
-    # Extraction and visualization of a subgraph
-    #############################################################################################  
-
-@app.callback(
-    Output("subgraph-result-area", "children", allow_duplicate=True),
-    Input("btn-extract-subgraph", "n_clicks"),
-    State("stored-node-id", "data"),
-    State("subgraph-steps", "value"),
-    State("subgraph-bp", "value"),
-    State("subgraph-viz-type", "value"),
-    State("current_session", "value"),
-    State('projets', 'value'),
-    State('metadata_table', 'selectedRows'),
-    prevent_initial_call=True
-)
-def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
-    if not node_data or "node_id" not in node_data:
-        return dbc.Alert("No node selected!", color="warning")
-
-    node_id = node_data['node_id']
-    
-    # --- 1. Setup Paths ---
-    row = query_db("SELECT path FROM projects WHERE title = ?", (project_name,), one=True)
-    project_path = row[0] if row else conf["session_dir"] + "/" + project_name
-    input_gfa = os.path.join(project_path, "pangenome.gfa")
-    
-    import time
-    timestamp = int(time.time())
-    output_base = os.path.join(tmp_dir, f"{session}_node{node_id}_{timestamp}")
-    output_og = output_base + ".og"
-
-    # --- 2. Generate BED File ---
-    bed_file_path = output_base + ".genes.bed"
-    has_genes = False
-    
-    if "genes" in node_data and len(node_data["genes"]) > 0:
-        try:
-            with open(bed_file_path, "w") as f:
-                for gene in node_data["genes"]:
-                    f.write(f"{gene['reference_genome']}\t{gene['start']}\t{gene['end']}\t{gene['gene_name']}\n")
-            has_genes = True
-        except Exception as e:
-            print(f"Error writing BED: {e}")
-
-    # --- 3. Build Command ---
-    cmd_parts = [
-        "bash", "extract_subgraphs.sh",
-        "-i", input_gfa,
-        "-o", output_og,
-        "-n", str(node_id)
-    ]
-
-    # Add Selected Genomes (Paths)
-    if selected_rows:
-        selected_genomes = [row["Strain name"] for row in selected_rows if "Strain name" in row]
-        if selected_genomes:
-            paths_file_path = output_base + ".paths.txt"
-            with open(paths_file_path, "w") as f:
-                for genome in selected_genomes:
-                    f.write(f"{genome}\n")
-            cmd_parts.extend(["-p", paths_file_path])
-
-    # Handle Mutually Exclusive Context Flags
-    if bp_dist is not None and bp_dist > 0:
-        cmd_parts.extend(["-L", str(bp_dist)])
-    elif steps is not None and steps > 0:
-        cmd_parts.extend(["-c", str(steps)])
-    else:
-        cmd_parts.extend(["-c", "1"])
-
-    if has_genes:
-        cmd_parts.extend(["-B", bed_file_path])
-    
-    # Add Visualization Flag
-    
-    cmd_parts.append(viz_type)
-
-    # --- 4. Run Script ---
-    full_cmd = " ".join(cmd_parts)
-    print(f"Running: {full_cmd}")
-    
-    try:
-        subprocess.run(cmd_parts, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        return html.Div([
-            dbc.Alert("Error during extraction", color="danger"),
-            html.Pre(e.stderr)
-        ])
-
-    # --- 5. Return Visualization (Now Interactive) ---
-    
-
-    # Handle Image Formats (PNG/SVG) using dcc.Graph for Zoom/Pan
-    image_path = None
-    mime_type = ""
-    
-    if viz_type == '--odgi':
-        image_path = output_base + "_odgi.png"
-        mime_type = "data:image/png;base64"
-    elif viz_type == '--bandage':
-        image_path = output_base + "_bandage.svg"
-        mime_type = "data:image/svg+xml;base64"
-    elif viz_type == '--vg':
-        image_path = output_base + "_vg.svg"
-        mime_type = "data:image/svg+xml;base64"
-        
-    if image_path and os.path.exists(image_path):
-        # 1. Read and Encode Image
-        encoded_image = base64.b64encode(open(image_path, 'rb').read()).decode('ascii')
-        source_url = f"{mime_type},{encoded_image}"
-        
-        # 2. Get Dimensions to set graph ratio
-        img_w, img_h = get_image_dimensions(image_path)
-        
-        # 3. Create Figure with Image Layout
-        fig = go.Figure()
-        
-        # Add the image
-        fig.add_layout_image(
-            dict(
-                source=source_url,
-                xref="x",
-                yref="y",
-                x=0,
-                y=0, # Plotly places image top-left at y=size_y usually, or we flip axis
-                sizex=img_w,
-                sizey=img_h,
-                sizing="contain",
-                layer="below"
-            )
-        )
-        
-        # Configure Axes
-        fig.update_xaxes(visible=False, range=[0, img_w])
-        # Invert Y axis so image coordinates match (0,0 at top-left)
-        fig.update_yaxes(visible=False, range=[img_h, 0], scaleanchor="x")
-        
-        # Configure Layout for Interaction
-        fig.update_layout(
-            width=1200, # or '100%' via style
-            height=800,
-            margin={"l": 0, "r": 0, "t": 0, "b": 0},
-            dragmode="pan", # Enable Panning by default
-            plot_bgcolor="white"
-        )
-        
-        # Return Graph with config enabling scroll zoom
-        return dcc.Graph(
-            figure=fig, 
-            config={'scrollZoom': True, 'displayModeBar': True},
-            style={"width": "100%", "height": "80vh"}
-        )
-
-    return dbc.Alert("Extraction finished, but no output file was found.", color="warning")
-
-
-
-  #############################################################################################
-    # Extraction and visualization of a subgraph based on alignments
-    #############################################################################################  
-
-# Callback: Run Sequence Alignment Script
-@app.callback(
-    Output("alignment-results-container", "style"),
-    Output("hit-selector", "options"),
-    Output("hit-selector", "value"),
-    Output("store-alignment-hits", "data"),
-    Output("store-alignment-path", "data"),
-    Input("btn-align-sequence", "n_clicks"),
-    State("seq-input-fasta", "value"),
-    State("seq-read-type", "value"),
-    State("seq-context", "value"),      # Node Steps
-    State("seq-context-bp", "value"),   # Base Pairs (NEW)
-    State("current_session", "value"),
-    State('projets', 'value'),
-    prevent_initial_call=True
-)
-def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, context_bp, session, project_name):
-    if not fasta_content:
-        return {'display': 'none'}, [], None, None, None
-    
-    # 1. Setup Paths
-    row = query_db("SELECT path FROM projects WHERE title = ?", (project_name,), one=True)
-    project_path = row[0] if row else conf["session_dir"] + "/" + project_name
-    input_gfa = os.path.join(project_path, "pangenome.gfa")
-    
-    # Unique directory
-    import time
-    timestamp = int(time.time())
-    output_dir = os.path.join(tmp_dir, f"{session}_align_{timestamp}")
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # 2. Save Fasta
-    fasta_path = os.path.join(output_dir, "input.fasta")
-    with open(fasta_path, "w") as f:
-        f.write(fasta_content)
-        
-    # 3. Build Command
-    cmd = [
-        "bash", "extract_subgraph_sequences.sh",
-        "-f", fasta_path,
-        "-g", input_gfa,
-        "-d", output_dir,
-        "-r", read_type
-    ]
-
-    # Handle mutually exclusive context logic (BP takes precedence if provided)
-    if context_bp is not None and str(context_bp).strip() != "":
-        cmd.extend(["-L", str(context_bp)])
-    elif context_steps is not None:
-        cmd.extend(["-n", str(context_steps)])
-    
-    print(f"Running Alignment: {' '.join(cmd)}")
-    
-    # 4. Run Script
-    try:
-        subprocess.run(cmd, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Alignment Error: {e.stderr}")
-        return {'display': 'none'}, [], None, None, None
-
-    # 5. Parse hits.json
-    manifest_path = os.path.join(output_dir, "hits.json")
-    if not os.path.exists(manifest_path):
-        print("No manifest found.")
-        return {'display': 'block'}, [], None, None, None
-        
-    try:
-        with open(manifest_path, 'r') as f:
-            hits_data = json.load(f)
-    except Exception as e:
-        print(f"JSON Error: {e}")
-        return {'display': 'block'}, [], None, None, None
-
-    # 6. Populate Dropdown
-    options = []
-    for hit in hits_data:
-        # Truncate long node lists for display
-        nodes_str = str(hit['nodes'])
-        nodes_display = nodes_str[:30] + "..." if len(nodes_str) > 30 else nodes_str
-        label = f"{hit['id']} (Nodes: {nodes_display})"
-        options.append({'label': label, 'value': hit['id']})
-    
-    first_val = options[0]['value'] if options else None
-    
-    return {'display': 'block'}, options, first_val, hits_data, output_dir
-
-# Callback 2: Visualize Selected Hit
-@app.callback(
-    Output("hit-visualization-area", "children"),
-    Input("hit-selector", "value"),
-    Input("hit-viz-type", "value"),
-    State("store-alignment-hits", "data"),
-    State("store-alignment-path", "data"),
-    prevent_initial_call=True
-)
-def display_selected_hit(hit_id, viz_type, hits_data, output_dir):
-    if not hit_id or not hits_data or not output_dir:
-        return html.Div("No hit selected.")
-    
-    # Find hit data
-    selected_hit = next((h for h in hits_data if h['id'] == hit_id), None)
-    if not selected_hit:
-        return html.Div("Hit not found.")
-    
-    image_filename = ""
-    mime_type = ""
-    
-    if viz_type == 'odgi':
-        image_filename = selected_hit.get('odgi_image')
-        mime_type = "data:image/png;base64"
-    elif viz_type == 'bandage':
-        image_filename = selected_hit.get('bandage_image')
-        mime_type = "data:image/svg+xml;base64"
-        
-    full_path = os.path.join(output_dir, image_filename)
-    
-    if os.path.exists(full_path):
-        encoded_image = base64.b64encode(open(full_path, 'rb').read()).decode('ascii')
-        source_url = f"{mime_type},{encoded_image}"
-        
-        # Helper to get dims (reuse the function defined in previous step)
-        img_w, img_h = get_image_dimensions(full_path)
-        
-        fig = go.Figure()
-        fig.add_layout_image(
-            dict(
-                source=source_url,
-                xref="x", yref="y",
-                x=0, y=0,
-                sizex=img_w, sizey=img_h,
-                sizing="contain",
-                layer="below"
-            )
-        )
-        fig.update_xaxes(visible=False, range=[0, img_w])
-        fig.update_yaxes(visible=False, range=[img_h, 0], scaleanchor="x")
-        fig.update_layout(
-            width=1200, height=800,
-            margin={"l": 0, "r": 0, "t": 0, "b": 0},
-            dragmode="pan",
-            plot_bgcolor="white"
-        )
-        
-        return dcc.Graph(
-            figure=fig,
-            config={'scrollZoom': True, 'displayModeBar': True},
-            style={"width": "100%", "height": "80vh"}
-        )
-    
-    return dbc.Alert(f"Image file {image_filename} not found.", color="danger")
 
 
 
@@ -4118,7 +3529,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
+    cmd = "sed \"s/SESSION/" + str(session) + "/g\" html_templates/network_template.html >assets/network."+str(session)+".html"
     returned_value = os.system(cmd)
 
     dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
@@ -4286,56 +3697,6 @@ def admin_generate_session(project_id):
     return f"Code: {code} (exp: {exp}) — URL: /?session={code}"
 
 
-
-def download_data(directory,session_code):
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pav.xls -O "+directory+"/1.Orthologs_Cluster.txt"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".metadata.xls -O "+directory+"/metadata.xls"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".ani.xls -O "+directory+"/fastani.out.matrix.complete.xls"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_category_counts.txt -O "+directory+"/cog_category_counts.txt"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".accessory_based_tree.nwk -O "+directory+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_category_2_counts.txt -O "+directory+"/cog_category_2_counts.txt"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".cog_of_clusters.xls -O "+directory+"/cog_of_clusters.txt"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".pangenome.gfa -O "+directory+"/pangenome.gfa"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".vntr_matrix.txt -O "+directory+"/vntr_matrix.tsv"
-    returned_value = os.system(cmd)
-    cmd = "wget https://panexplorer.southgreen.fr/tables/"+session_code+".all_genomes.vcf -O "+directory+"/variants.vcf"
-    returned_value = os.system(cmd)
-
-    df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
-    df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
-    df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
-    df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
-    list_species = []
-    for col in df.columns:
-        if col != "ClutserID":
-            colbis = col
-            colbis = col.replace("_gb", "")
-
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".ptt -O "+directory+"/genomes/genomes/"+col+".ptt"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gff -O "+directory+"/genomes/genomes/"+col+".gff"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".faa -O "+directory+"/genomes/genomes/"+col+".faa"
-            returned_value = os.system(cmd)
-            cmd = "wget https://panexplorer.southgreen.fr/tables/"+colbis+".gb -O "+directory+"/genomes/genomes/"+col+".gb"
-            returned_value = os.system(cmd)
-
-    cmd = 'sed -i "s/gb/gb_gb/g" ' + directory+'/metadata.xls'
-    returned_value = os.system(cmd)
-
-    df_samples = pd.read_csv(directory+'/metadata.xls',sep='\t')
-    list_sp2 = df_samples['Strain name'].tolist()
-    if len(list_sp2) < 1:
-        cmd = "perl generatePtt.pl " + directory
-        returned_value = os.system(cmd)
 
 
 def is_string_without_special_character(valeur):
@@ -4551,7 +3912,7 @@ def generate_tree_html(newick, df_metadata, html_file):
     # remove last caracter
     newick = newick.rstrip(newick[-1])
     f = open(html_file, "w")
-    template = open('assets/tree.html', 'r')
+    template = open('html_templates/tree.html', 'r')
     for line in template:
         if re.search(r"NEWICK_TREE", line):
             f.write("var test_string = \""+newick+";\"\n")
