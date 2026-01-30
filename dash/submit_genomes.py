@@ -45,13 +45,15 @@ with open(CONFIG_YAML, "r") as f:
     conf = yaml.safe_load(f)
 session_dir = conf.get("session_dir")
 web_url = conf.get("web_url")
+ADMIN_MAIL = conf.get("admin_mail")
 UPLOAD_DIR = conf.get("upload_dir")
 
 ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-session = random.randint(1, 9000000)
+#session = random.randint(1, 9000000)
+
 
 
 # --------------------------------------------------
@@ -61,7 +63,7 @@ session = random.randint(1, 9000000)
 layout = html.Div(
     
     children=[
-        
+        dcc.Store(id="session", storage_type="session"),
         html.Div(id="page-submission-content",style={"display": "block"}, children=[
             html.Br(),
             html.H5("Project name:"),
@@ -77,11 +79,14 @@ layout = html.Div(
             html.Label("Percentage identity for protein Blast. Must be between 1 and 100."),
 
             html.H5("What is your inputs:"),
-            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, {"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}], style={"width":"750px"}),
+            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, 
+                                                   {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, 
+                                                   #{"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}
+                                                   ], style={"width":"750px"}),
 
             html.Br(),
             html.Div(id="input-options"),
-            dcc.Input(id="session", type="hidden", value=str(session)),
+            #dcc.Input(id="session", type="hidden", value=str(session)),
             html.Br(),
             dcc.Loading(
                 type="circle",
@@ -127,18 +132,28 @@ def is_valid_genbank(decoded_text):
     except Exception as e:
         return False, str(e)
 
+def sanitize_filename(filename: str) -> str:
+
+    return re.sub(r'[^a-zA-Z0-9.]', '', filename)
 
 def save_genbank_file(decoded_bytes, original_filename,session):
     """
     Save a validated GenBank file to disk.
     """
-    filepath = os.path.join(f"{UPLOAD_DIR}/{session}", original_filename)
+
+    filepath = os.path.join(f"{UPLOAD_DIR}/{session}", sanitize_filename(original_filename))
 
     with open(filepath, "wb") as f:
         f.write(decoded_bytes)
 
     return filepath
 
+
+def is_string_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_-]+", valeur) is not None
+
+def is_list_GCA(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_, .]+", valeur) is not None
 
 def summarize_records(records, original_name, stored_filename):
     """
@@ -149,21 +164,23 @@ def summarize_records(records, original_name, stored_filename):
 
     cds_count = 0
     gene_count = 0
-
+    country = ""
     for record in records:
         for feature in record.features:
             if feature.type == "CDS":
                 cds_count += 1
             elif feature.type == "gene":
                 gene_count += 1
+            elif feature.type == "source":
+                country = feature.qualifiers.get("country", ["unknown"])[0]
 
     return {
         "File name": original_name,
         "Valid": "✅",
         "Error": "",
+        "Country": country,
         "Number of contigs": contig_count,
         "Genome size (bp)": genome_size,
-        "Genes": gene_count,
         "CDS": cds_count,
         "Stored file": stored_filename,
     }
@@ -172,10 +189,10 @@ def summarize_records(records, original_name, stored_filename):
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
     try:
-        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip"):
+        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
-        elif valid_list.count(",") + 1 > 1:
+        elif valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
 
@@ -184,21 +201,45 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
         stdout = e.stdout
 
 
+    # once finished, send an email
+    send_email(email_address,session)
 
-    # Une fois terminé → email
-    #send_email(email_address, stdout, stderr)
+def send_email(to,session):
 
-def send_email(to):
-    msg = EmailMessage()
-    msg["Subject"] = "Script terminé"
-    msg["From"] = "noreply@tonapp.com"
-    msg["To"] = to
-    msg.set_content("Votre script est terminé.")
+    message = f"""
+Hi,
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as s:
-        s.starttls()
-        s.login("email@gmail.com", "mot_de_passe")
-        s.send_message(msg)
+Your PanExplorer job {session} is done. You can click the link below to see your results:
+https://panexplorer2.ird.fr/browse?session={session}
+
+Your data will be available on the server for 15 days from the time they are generated.
+
+See you soon on PanExplorer,
+
+The PanExplorer team
+"""
+
+    with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
+        f.write(message)
+
+    if session.is_integer():
+        cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
+        os.system(cmd)
+
+
+    message_for_admin = f"""
+
+The PanExplorer job {session} is done. It has been sent to {to}:
+https://panexplorer2.ird.fr/browse?session={session}
+
+"""
+
+    with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
+        f.write(message_for_admin)
+
+    cmd = f"cat {tmp_dir}/{session}.message_for_admin.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {ADMIN_MAIL} && service postfix start"
+    os.system(cmd)
+    
 
 
 # --------------------------------------------------
@@ -221,6 +262,9 @@ def register_callbacks(app):
         if not gca_list:
             return html.Div("Please enter at least 3 Genbank assembly accession (GCA).")
 
+        if is_list_GCA(gca_list) == False:
+            return html.Div("Please enter at least 3 Genbank assembly accession (GCA). The list is not recognized...")
+        
         gca_accessions = [gca.strip() for gca in gca_list.split(",") if gca.strip()]
 
         if len(gca_accessions) > 200:
@@ -236,6 +280,7 @@ def register_callbacks(app):
         mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
         os.system(mkdir_cmd)
         dict_strains = {}
+        countries = {}
         for accession in gca_accessions:
 
             x = re.search("^GC[AF]_\d+(\.\d+)?$", accession)
@@ -264,7 +309,6 @@ def register_callbacks(app):
                             "Error": "No GenBank files found in the dataset",
                             "Number of contigs": None,
                             "Genome size (bp)": None,
-                            "Genes": None,
                             "CDS": None,
                             "Stored file": None,
                         })
@@ -281,9 +325,9 @@ def register_callbacks(app):
                                     "File name": accession,
                                     "Valid": "❌",
                                     "Error": result,
+                                    "Country": None,
                                     "Number of contigs": None,
                                     "Genome size (bp)": None,
-                                    "Genes": None,
                                     "CDS": None,
                                     "Stored file": None,
                                 })
@@ -305,6 +349,16 @@ def register_callbacks(app):
                             os.system(cmd)
                             cmd = f"gzip {session_dir}/{session}/genomes/genomes/{accession}.gbff"
                             os.system(cmd)
+
+                            cmd = f"zgrep 'country=' {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz"
+                            get_country_line = os.popen(cmd).read()
+                            lines_country = get_country_line.split("=")
+                            country = ""
+                            if len(lines_country) > 1:
+                                country = lines_country[1].strip()
+                                country = country.replace('"', "")
+
+                            countries[accession] = country
 
                             cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz"
                             os.system(cmd)  
@@ -330,7 +384,7 @@ def register_callbacks(app):
                                 strain = re.sub(r"[^\w\-\_]", "", strain)
                                 strain = strain.replace("-", "_")
                             cmd = f"mv {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
-                            os.system(cmd) 
+                            os.system(cmd)
 
                             dict_strains[accession] = strain
                 else:
@@ -338,9 +392,9 @@ def register_callbacks(app):
                         "File name": accession,
                         "Valid": "❌",
                         "Error": "Failed to download dataset from NCBI Datasets",
+                        "Country": None,
                         "Number of contigs": None,
                         "Genome size (bp)": None,
-                        "Genes": None,
                         "CDS": None,
                         "Stored file": None,
                     })
@@ -353,7 +407,8 @@ def register_callbacks(app):
         with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
             f.write("Strain name\tCountry\tContinent\tOrganism\n")
             for accession, strain in dict_strains.items():
-                f.write(f"{strain}\t\t\t\n")
+                country = countries[accession]
+                f.write(f"{strain}\t{country}\t\t\n")
         
         df = pd.DataFrame(rows)
 
@@ -410,11 +465,11 @@ def register_callbacks(app):
         State("email-address", "value"),
         State("valid_list", "value"),
         State("software", "value"),
-        State("session_id", "value"),
+        State("session", "value"),
         State("min-percentage-identity", "value"),
         prevent_initial_call=True,
     )
-    def go_to_pipeline_public(n_clicks, project_name, email_address, valid_list, software, session_id, min_percentage_identity):
+    def go_to_pipeline_public(n_clicks, project_name, email_address, valid_list, software, session, min_percentage_identity):
         if n_clicks == 0:
             return html.Div()
 
@@ -424,14 +479,90 @@ def register_callbacks(app):
             return dbc.Alert("Error: Invalid email address.", color="danger") , {"display": "block"}
         if (not min_percentage_identity or not (1 <= min_percentage_identity <= 100)):
             return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger") , {"display": "block"}
-        
-        
+
+
+        path = UPLOAD_DIR+"/"+str(session)
+        if os.path.exists(path):
+
+            countries = {}
+            # Remove invalid genomes before proceeding
+            df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
+            for row in df.itertuples():
+                file_name = row[1]
+                valid = row[2]
+                country = row[4]
+                file_name = file_name.replace("_", "")
+                file_name = file_name.replace("-", "")
+                file_name = file_name.replace(".", "")
+                countries[file_name] = country
+                if valid == "✅":
+                    pass
+                else:
+                    os.remove(f"{UPLOAD_DIR}/{session}/{file_name}")
+            
+
+            cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
+            returned_value = os.popen(cmd).read()
+
+            dict_strains = {}
+            filepaths = []
+            for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
+                if file.endswith(".gb"):
+                    filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
+                    
+            for filepath in filepaths:
+                name = os.path.basename(filepath)
+
+                cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
+                os.system(cmd)
+                cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
+                os.system(cmd)
+
+                cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
+                get_organism_line = os.popen(cmd).read()
+                lines_organism = get_organism_line.split("\n")
+                first_line = lines_organism[0]
+                second_line = lines_organism[1]
+                if re.match(r"^            (.*)", second_line):
+                    get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
+                else:
+                    get_organism_line = first_line
+                strain = ""
+                if re.match(r"DEFINITION  (.*)$", get_organism_line):
+                    strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
+                    strain = strain.replace(".", "")
+                    info = strain.split(",")
+                    strain = info[0]
+                    strain = strain.replace(" ", "_")
+                    strain = strain.replace("strain_", "")
+                    strain = strain.replace("_chromosome", "")
+                    strain = strain.replace("_genome", "")
+                    strain = strain.replace("_str_", "_")
+                    strain = re.sub(r"[^\w\-\_]", "", strain)
+                    strain = strain.replace("-", "_")
+                cmd = f"mv {session_dir}/{session}/genomes/genomes/{name}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
+                os.system(cmd) 
+
+                dict_strains[name] = strain
+                print(strain+" "+name + "\n")
+                country = countries[strain] 
+                countries[strain] = country
+                
+
+            cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
+            os.system(cmd) 
+
+            with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
+                f.write("Strain name\tCountry\tContinent\tOrganism\n")
+                for accession, strain in dict_strains.items():
+                    country = countries[strain]
+                    f.write(f"{strain}\t{country}\t\t\n")
+
         thread = threading.Thread(
             target=run_external_command,
-            args=(project_name, email_address, valid_list, min_percentage_identity, session_id, software),
+            args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
             daemon=True
         )
-        
         thread.start()
 
         return dbc.Alert(
@@ -439,7 +570,7 @@ def register_callbacks(app):
                 html.H4("Well done!", className="alert-heading"),
                 html.P("Data have been sent to the pipeline. You will receive an email once it is complete. Data are available in the URL: "),
                 #html.Hr(),
-                html.A(f"{web_url}/?session={session_id}", href=f"{web_url}/?session={session_id}", target="_blank", className="alert-link"),
+                html.A(f"{web_url}/browse?session={session}", href=f"{web_url}/?session={session}", target="_blank", className="alert-link"),
             ],
             color="success",
         ) , {"display": "none"}
@@ -447,12 +578,13 @@ def register_callbacks(app):
     @app.callback(
         Output("input-options", "children"),
         Input("input-type", "value"),
-        State("session", "value"),
     )
-    def apply_import(input_type, session):
+    def apply_import(input_type):
+        session = random.randint(1, 9000000)
         if input_type == "public":
             return html.Div([
-                html.H5("Choose the pan-genome software"),
+                dcc.Input(id="session", type="hidden", value=str(session)),
+                html.H5("Choose the pan-genome software"+str(session)),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
                 html.H5("Public genomes. Enter a list of Genbank assembly accessions (GCA). Must be annotated (up to 200 genomes)"),
@@ -463,7 +595,7 @@ def register_callbacks(app):
         elif input_type == "upload":
             MAX_GENOMES = 200
             return html.Div([
-
+                dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
@@ -476,7 +608,7 @@ def register_callbacks(app):
                     text="Upload GenBank files",
                     upload_id=session,
                     max_files=80,
-                    filetypes=["gb", "gbk"],
+                    filetypes=["gb", "gbk", "gbff"],
                 ),
                 dcc.Store(id="upload-dir-state", data=None),
                 dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
@@ -502,6 +634,7 @@ def register_callbacks(app):
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
             return html.Div([
+                dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "Orthofinder", "value": "orthofinder"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="orthofinder", style={"width":"300px"}),
 
@@ -565,158 +698,145 @@ def register_callbacks(app):
     def refresh_table(n_clicks, session):
 
         filepaths = []
-        for file in os.listdir(UPLOAD_DIR+"/"+str(session)):
-            original_name = os.path.basename(file)
-            if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff"):
-                filepaths.append(UPLOAD_DIR+"/"+str(session)+"/"+file)
-        
+
+        if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
+            mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
+            os.system(mkdir_cmd)
 
         rows = []
         valid_genome_count = 0
         
         dict_strains = {}
 
-        if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
-            mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
-            os.system(mkdir_cmd)
-        else:
-            shutil.rmtree(session_dir+"/"+str(session)+"/genomes/genomes")
+        for file in os.listdir(UPLOAD_DIR+"/"+str(session)):
+            original_name = os.path.basename(file)
+            if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff"):
+                newfile = sanitize_filename(file)
+                filepath = UPLOAD_DIR+"/"+str(session)+"/"+newfile
+                filepaths.append(filepath)
+                if file != newfile:
+                    os.rename(UPLOAD_DIR+"/"+str(session)+"/"+file, UPLOAD_DIR+"/"+str(session)+"/"+newfile)
 
+                original_name = os.path.basename(filepath)
+                print(original_name)
 
-        
+                # skip if file already in table
+                if any(r["Stored file"] == original_name for r in rows):
+                    continue
 
-        for filepath in filepaths:
-            original_name = os.path.basename(filepath)
-            print(original_name)
+                #records = list(SeqIO.parse(filepath, "genbank"))
+                #summary = summarize_records(records, original_name, original_name)
+                #rows.append(summary)
 
-            # skip if file already in table
-            if any(r["Stored file"] == original_name for r in rows):
-                continue
+                try:
 
-            try:
+                    records = list(SeqIO.parse(filepath, "genbank"))
 
-                records = list(SeqIO.parse(filepath, "genbank"))
-                if not records:
-                    raise ValueError("No GenBank records found")
+                    if not records:
+                        raise ValueError("No GenBank records found")
 
-                contigs = len(records)
-                genome_size = sum(len(r.seq) for r in records)
-                genes = sum(1 for r in records for f in r.features if f.type == "gene")
-                cds = sum(1 for r in records for f in r.features if f.type == "CDS")
+                    contigs = len(records)
+                    genome_size = sum(len(r.seq) for r in records)
+                    country = ""
+                    for r in records:
+                        for feature in r.features:
+                            if feature.type == "source":
+                                if "country" in feature.qualifiers:
+                                    country = feature.qualifiers.get("country", ["unknown"])[0]
+                                elif "geo_loc_name" in feature.qualifiers:
+                                    country = feature.qualifiers.get("geo_loc_name", ["unknown"])[0]
 
-                rows.append({
-                    "File name": original_name,
-                    "Valid": "✅",
-                    "Error": "",
-                    "Number of contigs": contigs,
-                    "Genome size (bp)": genome_size,
-                    "Genes": genes,
-                    "CDS": cds,
-                    "Stored file": original_name,
-                })
+                    genes = sum(1 for r in records for f in r.features if f.type == "gene")
+                    cds = sum(1 for r in records for f in r.features if f.type == "CDS")
 
-                valid_genome_count += 1
+                    rows.append({
+                        "File name": original_name,
+                        "Valid": "✅",
+                        "Error": "",
+                        "Country": country,
+                        "Number of contigs": contigs,
+                        "Genome size (bp)": genome_size,
+                        "CDS": cds,
+                        "Stored file": original_name,
+                    })
 
-            except Exception as e:
-                rows.append({
-                    "File name": original_name,
-                    "Valid": "❌",
-                    "Error": str(e),
-                    "Number of contigs": None,
-                    "Genome size (bp)": None,
-                    "Genes": None,
-                    "CDS": None,
-                    "Stored file": None,
-                })
+                    valid_genome_count += 1
 
+                except Exception as e:
+                    rows.append({
+                        "File name": original_name,
+                        "Valid": "❌",
+                        "Error": str(e),
+                        "Country": None,
+                        "Number of contigs": None,
+                        "Genome size (bp)": None,
+                        "CDS": None,
+                        "Stored file": None,
+                    })
 
+        # print("done1")
+        # cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
+        # os.system(cmd)
+        # print("done2")
 
-        # for contents, name in zip(list_of_contents, list_of_names):
-
-        #     content_type, content_string = contents.split(",")
-        #     decoded_bytes = base64.b64decode(content_string)
-        #     decoded_text = decoded_bytes.decode("utf-8", errors="replace")
-
-        #     is_valid, result = is_valid_genbank(decoded_text)
-
-        #     if not is_valid:
-        #         rows.append({
-        #             "File name": name,
-        #             "Valid": "❌",
-        #             "Error": result,
-        #             "Number of contigs": None,
-        #             "Genome size (bp)": None,
-        #             "Genes": None,
-        #             "CDS": None,
-        #             "Stored file": None,
-        #         })
-        #         continue
-
-        #     # Valid GenBank → save and summarize
-        #     filepath = save_genbank_file(decoded_bytes, name,session)
-        #     stored_filename = os.path.basename(filepath)
-
-        #     summary = summarize_records(result, name, stored_filename)
-        #     rows.append(summary)
-        #     valid_genome_count += 1
-
-        cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
-        os.system(cmd)
-
-        filepaths = []
-        for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
-            if file.endswith(".gb"):
-                filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
+        # filepaths = []
+        # for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
+        #     if file.endswith(".gb"):
+        #         filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
                 
 
-        for filepath in filepaths:
-            name = os.path.basename(filepath)
-            print(name)
+        # for filepath in filepaths:
+        #     name = os.path.basename(filepath)
+        #     print(name)
 
-            cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
-            os.system(cmd)
-            cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
-            os.system(cmd)
+        #     cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
+        #     os.system(cmd)
+        #     cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
+        #     os.system(cmd)
 
-            cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
-            os.system(cmd)  
-            get_organism_line = os.popen(cmd).read()
-            lines_organism = get_organism_line.split("\n")
-            first_line = lines_organism[0]
-            second_line = lines_organism[1]
-            if re.match(r"^            (.*)", second_line):
-                get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
-            else:
-                get_organism_line = first_line
-            strain = ""
-            if re.match(r"DEFINITION  (.*)$", get_organism_line):
-                strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
-                strain = strain.replace(".", "")
-                info = strain.split(",")
-                strain = info[0]
-                strain = strain.replace(" ", "_")
-                strain = strain.replace("strain_", "")
-                strain = strain.replace("_chromosome", "")
-                strain = strain.replace("_genome", "")
-                strain = strain.replace("_str_", "_")
-                strain = re.sub(r"[^\w\-\_]", "", strain)
-                strain = strain.replace("-", "_")
-            cmd = f"mv {session_dir}/{session}/genomes/genomes/{name}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
-            os.system(cmd) 
+        #     cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
+        #     get_organism_line = os.popen(cmd).read()
+        #     lines_organism = get_organism_line.split("\n")
+        #     first_line = lines_organism[0]
+        #     second_line = lines_organism[1]
+        #     if re.match(r"^            (.*)", second_line):
+        #         get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
+        #     else:
+        #         get_organism_line = first_line
+        #     strain = ""
+        #     if re.match(r"DEFINITION  (.*)$", get_organism_line):
+        #         strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
+        #         strain = strain.replace(".", "")
+        #         info = strain.split(",")
+        #         strain = info[0]
+        #         strain = strain.replace(" ", "_")
+        #         strain = strain.replace("strain_", "")
+        #         strain = strain.replace("_chromosome", "")
+        #         strain = strain.replace("_genome", "")
+        #         strain = strain.replace("_str_", "_")
+        #         strain = re.sub(r"[^\w\-\_]", "", strain)
+        #         strain = strain.replace("-", "_")
+        #     cmd = f"mv {session_dir}/{session}/genomes/genomes/{name}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
+        #     os.system(cmd) 
 
-            dict_strains[name] = strain
+        #     dict_strains[name] = strain
 
-        
+        # print("done3")
 
-        cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
-        os.system(cmd) 
+        # cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
+        # os.system(cmd) 
 
-        with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
-            f.write("Strain name\tCountry\tContinent\tOrganism\n")
-            for accession, strain in dict_strains.items():
-                f.write(f"{strain}\t\t\t\n")
+
+        # print("done4")
+
+        # with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
+        #     f.write("Strain name\tCountry\tContinent\tOrganism\n")
+        #     for accession, strain in dict_strains.items():
+        #         f.write(f"{strain}\t\t\t\n")
 
         df = pd.DataFrame(rows)
+        df.to_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t", index=False)
+        
 
         grid = dag.AgGrid(
             rowData=df.to_dict("records"),

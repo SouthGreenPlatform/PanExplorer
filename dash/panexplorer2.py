@@ -19,6 +19,7 @@ import json
 
 import random
 import re
+import shutil
 import base64
 import io
 
@@ -35,12 +36,15 @@ import pandas as pd
 import folium
 import folium.plugins
 
+import subprocess
+
 
 import dash_bio as dash_bio
 
 from plotly_upset.plotting import plot_upset
 
 import submit_genomes
+import homepage
 
 
 import xml.etree.ElementTree as ET
@@ -352,11 +356,12 @@ def main_layout():
             
             dbc.Nav([
                 html.Img(
-                                src="/assets/panexplorer_logo6.png",
+                                src="/assets/panexplorer_logo8.png",
                                 height="65px",
                                 className="me-2"
                             ),
-                html.A("Browse projects", href="/", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                dbc.NavLink("Home", href="/", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
+                html.A("Browse projects", href="/browse", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
                 dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
             ],
 
@@ -399,8 +404,9 @@ def display_page(pathname):
 
     if pathname == "/submit_genomes":
         return submit_genomes.layout
-    else:
-        print("Normal page")
+    elif pathname == "/":
+        return homepage.layout
+    elif pathname == "/browse":
         # simplified UI inspired from app-pav.py
         ui = html.Div([
             header,
@@ -535,17 +541,24 @@ def load_project_preview(proj_title):
     # Show some info and table (ag-grid if available)
     children = [ html.H4(f" {len(df)} genomes")]
     if AGGRID_AVAILABLE:
+        
+        
         grid = dag.AgGrid(id="metadata_table",
                           #columnDefs=[{"field": c} for c in df.columns],
                           #style={'width': '100vh','margin-left': '15px'},
                           columnDefs=columnDefs,
                           selectedRows=df.to_dict("records"),
+                          
                           selectAll=True,
                           #defaultColDef={"filter": True},
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
-                          dashGridOptions={"rowSelection":"multiple"})
+                          dashGridOptions={"rowSelection": "multiple"},
+                          #dashGridOptions={"rowSelection": {'mode': 'multiRow'}, "suppressRowClickSelection": True, "animateRows": False},
+                          #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
+                          
+                          )
         
                           
 
@@ -632,7 +645,7 @@ def load_project_preview(proj_title):
                             html.Div([
                                 html.Label("Colors:"),
                                 dcc.Dropdown(
-                                        ['Presence/absence','Level of presence','Organism','Continent'],
+                                        ['Presence/absence','Level of presence','Organism','Continent','Country'],
                                         id='colorizing',
                                         value = 'Presence/absence',
                                         style={'width': '200px'},
@@ -1184,11 +1197,8 @@ def load_project_preview(proj_title):
                                     ), 
                                 ),
                         ),
-
-                    
                     ]),
                     
-
                     
                     html.Br(),
                     html.Button('Update heatmap and generate haplotype network', 
@@ -1267,7 +1277,7 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
         os.remove(tmp_dir+"/"+str(session)+".muscle.log")
     
     # run muscle to generate alignment
-    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta"):
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and session.is_integer():
         cmd = "muscle -align "+tmp_dir+"/"+str(session)+".temp.fasta -output "+tmp_dir+"/"+str(session)+".temp.aln.fasta >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
         os.system(cmd)
         print(cmd)
@@ -1312,8 +1322,6 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
 
     list_strains = ",".join(list_of_strains)
     cmd= f"perl ClinkerPlotFromMatrix.pl {directory}/1.Orthologs_Cluster.txt {current_cluster} {directory}/genomes/genomes/ {list_strains} {tmp_dir}/{session}_clinker.html"
-
-    print(cmd)
     os.system(cmd)
 
     fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
@@ -1778,6 +1786,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         path = row[0]
     directory = path
 
+    if is_stringlist_without_special_character(cluster_search) == False:
+        cluster_search = ""
+
+    if is_bed(bedfile) == False:
+        bedfile = ""
+
     session = random.randint(1, 9000000)
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
@@ -1868,8 +1882,13 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ##############################################
     # Generate Core-gene and accessory files
     ##############################################
-    cmd = "awk {'print $1\"\t\"$2\"\t\"$3'} "+directory+"/cog_of_clusters.txt >"+directory+"/cog_of_clusters.2.txt"
-    returned_value = os.system(cmd)
+    with open(directory+"/cog_of_clusters.2.txt", "w") as out:
+        subprocess.run(
+            ["awk" , "{print $1\"\t\"$2\"\t\"$3}", directory+"/cog_of_clusters.txt"],
+            stdout=out,
+            check=True
+        )
+
 
     df_cog_of_clusters = pd.read_csv(directory+'/cog_of_clusters.2.txt',sep='\t')
     
@@ -2007,9 +2026,17 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     gene_position_file = directory+'/genomes/genomes/'+str(reference)+'.ptt'
     gene_position_file2 = directory+'/genomes/genomes/'+str(reference)+'.2.ptt'
+
     # Remove lines from ptt
-    cmd = "grep -P 'Location|^\d+\.\.' "+ directory+"/genomes/genomes/"+reference+".ptt >"+directory+"/genomes/genomes/"+reference+".2.ptt"
-    returned_value = os.system(cmd)
+    if is_string_without_special_character(reference):
+        with open(directory+"/genomes/genomes/"+reference+".2.ptt", "w") as out:
+            subprocess.run(
+                ["grep" , "-P", "Location|^\d+\.\.",  directory+"/genomes/genomes/"+reference+".ptt"],
+                stdout=out,
+                check=True
+            )
+
+
     merged_with_positions2 = []
     if os.path.exists(gene_position_file) & os.path.exists(gene_position_file2):
         #df_gene_positons = pd.read_csv('data/Xo/'+reference+'.ptt',sep='\t')
@@ -2113,11 +2140,20 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
-        cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output"
-        returned_value = os.system(cmd)
+        if int(session):
+            subprocess.run(
+                [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
+                check=True
+            )
 
-        cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
-        returned_value = os.system(cmd)
+            cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
+            returned_value = os.system(cmd)
+            # subprocess.run(
+            #     ["mv" , tmp_dir + "/" + str(session) + "_scoary_output/*results.csv", tmp_dir + "/" + str(session) + ".scoary_results.txt"],
+            #     check=True
+            # )
+
+
 
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
         #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
@@ -2178,13 +2214,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # )
 
 
-
-
-        
-
-        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".segments.node_pav.binary.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_node_output --trait-data-type binary:, --gene-data-type gene-count:,"
-        #returned_value = os.system(cmd)
-
     
     ################
     # Upset plot
@@ -2205,7 +2234,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         width=1800,
         height=800
     )
-
+    
 
 
     #######################
@@ -2341,6 +2370,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     print("Max nb for synteny: " + str(max_nb_strains_macrosynteny))
     print(list_selected)
 
+    
     selection_dir = tmp_dir+"/selection."+str(session)
     print(selection_dir)
 
@@ -2359,14 +2389,17 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     for sp in list_selected:
         c+=1
         if (c >=1 and c <=(max_nb_strains_macrosynteny)):
-            cmd = "cp -rf "+directory+"/genomes/genomes/"+sp+".ptt "+ selection_dir
-            returned_value = os.system(cmd)
-            list_of_species_macrosyneny.append(sp)
+            if int(session):
+                shutil.copy(directory+"/genomes/genomes/"+sp+".ptt", selection_dir)
+                list_of_species_macrosyneny.append(sp)
 
     
-    cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt "+ str(minimal_size_block) + " " + str(chromosome)
-    #cmd = "perl GetSyntenicBlocks.pl "+selection_dir+" " + tmp_dir + "/" + str(session) + ".core_genes.txt " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt " + str(minimal_size_block) + " 1"
-    returned_value = os.system(cmd)
+
+    if int(session) and is_string_without_special_character(chromosome) and int(minimal_size_block):
+        subprocess.run(
+            ["perl" , "GetSyntenicBlocks.pl", selection_dir, tmp_dir + "/" + str(session) + ".core_genes.txt", tmp_dir + "/" + str(session) + ".syntenic_blocks.txt", str(minimal_size_block), str(chromosome)],
+            check=True
+        )
 
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
@@ -2491,7 +2524,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         returned_value = os.system(cmd)
 
 
-
         #################################################################
         # --- Heatmap of genotypes from VCF ---
         #################################################################
@@ -2500,21 +2532,21 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
         list_sp2 = list_sp2_sorted
 
+
+
         try:
-            df_vcf = parse_vcf(vcf_file, int(1000), list_sp2)
+            df_vcf = parse_vcf(vcf_file, int(5000), list_sp2)
             df_vcf_transposed = df_vcf.T
         except Exception as e:
-            fig = px.imshow(np.zeros((2,2)))
-            fig.update_layout(title=f"Error during parsing: {str(e)}")
-            return fig, [], []
+            fig_VCF = px.imshow(np.zeros((2,2)))
+            fig_VCF.update_layout(title=f"Error during parsing: {str(e)}")
 
         if df.shape[0] == 0 or df.shape[1] == 0:
-            fig = px.imshow(np.zeros((2,2)))
-            fig.update_layout(title="No variant or sample found(check VCF file)")
-            return fig, [], []
+            fig_VCF = px.imshow(np.zeros((2,2)))
 
+            fig_VCF.update_layout(title="No variant or sample found(check VCF file)")
 
-
+        
         
 
         #################################################################
@@ -2579,9 +2611,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         results = []
         list_entropy = []
         
+        snmf_failure = 0
         # Launch sNMF for K from 2 to max_K
         for K in range(2, max_K+1):
-            
             cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
             returned_value = os.popen(cmd).read()
             match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
@@ -2590,166 +2622,174 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 list_entropy.append(valeur)
             else:
                 list_entropy.append(None)
-        
+                snmf_failure = 1
 
-        # get the assignation of individuals to populations
-        previous_dict_groups = {}
         previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
-        for K in range(2, max_K+1):
-            ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
-            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
-            qmat['Individual'] = list_sp3
-            qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-            qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
-
-            #print("\n\n")
-
-            groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
-            #print(groups)
-            #print(str(K))
-            dict_groups = {}
-            dict_renaming = {}
-            dict_renaming2 = {}
-            dict_done = {}
-            dict_splitted = {}
-
+        if snmf_failure == 0:
+            # get the assignation of individuals to populations
+            previous_dict_groups = {}
             
-            # first assignment for population with exact same individuals
-            for row in groups.itertuples():
-                pop_name = row[1]
-                individuals = row[2]
-                dict_groups[individuals] = pop_name
-                #print(pop_name + " : " + individuals)
-                # keep the same name of population if it exists in previous dict
-                if individuals in previous_dict_groups:
-                    previous_pop_name = previous_dict_groups[individuals]
-                    dict_renaming[pop_name] = previous_pop_name
-                    dict_done[previous_pop_name] = 1
-                    #print("same as previous" + previous_pop_name)
+            for K in range(2, max_K+1):
+                ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
+                qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
+                qmat['Individual'] = list_sp3
+                qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+                qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
 
-            for row in groups.itertuples():
-                pop_name = row[1]
-                individuals = row[2]
-                dict_groups[individuals] = pop_name
-                #print(pop_name + " : " + individuals)
-                # keep the same name of population if it exists in previous dict
-                if individuals in previous_dict_groups:
-                    print("do nothing here")
-                # else it means that the pop has been splitted into two populations
-                else:
-                    if len(previous_dict_groups) > 0:
-                        individuals_list = individuals.split(", ")
-                        dict_of_pop_in_previous = {}
-                        for ind in individuals_list:
-                            # get the pop in previous qmat
-                            pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
-                            
-                            if pop not in dict_of_pop_in_previous:
-                                dict_of_pop_in_previous[pop] = 1
-                            else:
-                                dict_of_pop_in_previous[pop] += 1
-                            if pop not in dict_splitted:
-                                dict_splitted[pop] = pop_name
-                            else:
-                                dict_splitted[pop] += ","+pop_name
+                #print("\n\n")
 
-                                
+                groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
+                #print(groups)
+                #print(str(K))
+                dict_groups = {}
+                dict_renaming = {}
+                dict_renaming2 = {}
+                dict_done = {}
+                dict_splitted = {}
 
-                        print("splitted")
-                        
-                        
-
-                        # renaming for all except the last one
-                        if len(dict_of_pop_in_previous) > 1:
-                            #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
-                            if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                            elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
-                                dict_done[list(dict_of_pop_in_previous)[1]] = 1
-                            
-                        else:
-                            if list(dict_of_pop_in_previous)[0] not in dict_done:
-                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                            else:
-                                new_pop_name = "Pop_" + str(K)
-                                if len(dict_of_pop_in_previous) > 1:
-                                    dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
-                                else:
-                                    dict_renaming[pop_name] = new_pop_name
-                                    dict_done[new_pop_name] = 1
-
-                        #print(dict_of_pop_in_previous.keys())
-                        #print(list(dict_of_pop_in_previous)[0])
-                    else:
-                        print("do nothing")
-
-            #print("Dict renaming before adjustment")
-            #print(dict_renaming)
-            #print("Dict renaming after adjustment")
-            #print(dict_renaming2)
-            #print("Dict splitted")
-            for key, value in dict_splitted.items():
-                listvalue = value.split(",")
-                dict_splitted[key] = list(dict.fromkeys(listvalue))
-            
-            #print(dict_splitted)
-            list_keys_to_removed = []
-            for key in dict_renaming.keys():
-                value = dict_renaming[key]
-                print("key: " + key + " => " + value)
-                list_values = value.split(",")
                 
-                if len(list_values) > 1:
-                    has_been_adjusted = 0
-                    for val in list_values:
-                        print("val: " + val)
-                        if val not in dict_done:
-                            print("to be adjusted :" + val + "=>" + key)
-                            has_been_adjusted = 1
-                            dict_renaming[key] = val
-                    if has_been_adjusted == 0:
-                        new_pop_name = "Pop_" + str(K)
-                        dict_renaming[key] = new_pop_name
+                # first assignment for population with exact same individuals
+                for row in groups.itertuples():
+                    pop_name = row[1]
+                    individuals = row[2]
+                    dict_groups[individuals] = pop_name
+                    #print(pop_name + " : " + individuals)
+                    # keep the same name of population if it exists in previous dict
+                    if individuals in previous_dict_groups:
+                        previous_pop_name = previous_dict_groups[individuals]
+                        dict_renaming[pop_name] = previous_pop_name
+                        dict_done[previous_pop_name] = 1
+                        #print("same as previous" + previous_pop_name)
+
+                for row in groups.itertuples():
+                    pop_name = row[1]
+                    individuals = row[2]
+                    dict_groups[individuals] = pop_name
+                    #print(pop_name + " : " + individuals)
+                    # keep the same name of population if it exists in previous dict
+                    if individuals in previous_dict_groups:
+                        print("do nothing here")
+                    # else it means that the pop has been splitted into two populations
+                    else:
+                        if len(previous_dict_groups) > 0:
+                            individuals_list = individuals.split(", ")
+                            dict_of_pop_in_previous = {}
+                            for ind in individuals_list:
+                                # get the pop in previous qmat
+                                pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
+                                
+                                if pop not in dict_of_pop_in_previous:
+                                    dict_of_pop_in_previous[pop] = 1
+                                else:
+                                    dict_of_pop_in_previous[pop] += 1
+                                if pop not in dict_splitted:
+                                    dict_splitted[pop] = pop_name
+                                else:
+                                    dict_splitted[pop] += ","+pop_name
+
+                                    
+
+                            print("splitted")
+                            
+                            
+
+                            # renaming for all except the last one
+                            if len(dict_of_pop_in_previous) > 1:
+                                #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
+                                if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                                elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
+                                    dict_done[list(dict_of_pop_in_previous)[1]] = 1
+                                
+                            else:
+                                if list(dict_of_pop_in_previous)[0] not in dict_done:
+                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                                else:
+                                    new_pop_name = "Pop_" + str(K)
+                                    if len(dict_of_pop_in_previous) > 1:
+                                        dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
+                                    else:
+                                        dict_renaming[pop_name] = new_pop_name
+                                        dict_done[new_pop_name] = 1
+
+                            #print(dict_of_pop_in_previous.keys())
+                            #print(list(dict_of_pop_in_previous)[0])
+                        else:
+                            print("do nothing")
+
+                #print("Dict renaming before adjustment")
+                #print(dict_renaming)
+                #print("Dict renaming after adjustment")
+                #print(dict_renaming2)
+                #print("Dict splitted")
+                for key, value in dict_splitted.items():
+                    listvalue = value.split(",")
+                    dict_splitted[key] = list(dict.fromkeys(listvalue))
+                
+                #print(dict_splitted)
+                list_keys_to_removed = []
+                for key in dict_renaming.keys():
+                    value = dict_renaming[key]
+                    print("key: " + key + " => " + value)
+                    list_values = value.split(",")
+                    
+                    if len(list_values) > 1:
+                        has_been_adjusted = 0
+                        for val in list_values:
+                            print("val: " + val)
+                            if val not in dict_done:
+                                print("to be adjusted :" + val + "=>" + key)
+                                has_been_adjusted = 1
+                                dict_renaming[key] = val
+                        if has_been_adjusted == 0:
+                            new_pop_name = "Pop_" + str(K)
+                            dict_renaming[key] = new_pop_name
+                
+
+                #print(dict_renaming)
+                # rename pop for keeping the same as previously
+                #qmat = qmat.rename(columns=dict_renaming)
+                #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
+                #qmat = qmat
+                #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
+                #print(qmat)
+                #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+
+                previous_dict_groups = dict_groups
+                previous_qmat = qmat
+                #print(dict_groups)
+                #print(previous_dict_groups)
+
+                qmat_sorted = qmat.sort_values(
+                    by=['Assigned_to_pop', 'max_prop'],
+                    ascending=[True, False]
+                )
+
+                individual_order = qmat_sorted['Individual'].tolist()
+
+                qmat['Individual'] = pd.Categorical(
+                    qmat['Individual'],
+                    categories=individual_order,
+                    ordered=True
+                )
+
+                qmat_long = qmat.melt(id_vars=['Individual'],
+                            value_vars=ancestry_cols,
+                            var_name='Cluster', value_name='Ancestry')
+
+                qmat_long['K'] = K
+                results.append(qmat_long)
+        else:
+            results = []
             
 
-            #print(dict_renaming)
-            # rename pop for keeping the same as previously
-            #qmat = qmat.rename(columns=dict_renaming)
-            #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
-            #qmat = qmat
-            #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
-            #print(qmat)
-            #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-
-            previous_dict_groups = dict_groups
-            previous_qmat = qmat
-            #print(dict_groups)
-            #print(previous_dict_groups)
-
-            qmat_sorted = qmat.sort_values(
-                by=['Assigned_to_pop', 'max_prop'],
-                ascending=[True, False]
-            )
-
-            individual_order = qmat_sorted['Individual'].tolist()
-
-            qmat['Individual'] = pd.Categorical(
-                qmat['Individual'],
-                categories=individual_order,
-                ordered=True
-            )
-
-            qmat_long = qmat.melt(id_vars=['Individual'],
-                          value_vars=ancestry_cols,
-                          var_name='Cluster', value_name='Ancestry')
-
-            qmat_long['K'] = K
-            results.append(qmat_long)
-
-        dfsnmf = pd.concat(results)
+        if results:
+            dfsnmf = pd.concat(results)
+        else:
+            dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
 
         dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
         print(dict_cross_entropy)
@@ -2792,7 +2832,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     fig_VCF.update_layout(
             margin=dict(l=200, r=20, t=50, b=150),
             #height=800,
-            title="SNP Genotyping matrix (only the first 1000 variants are displayed)"
+            title="SNP Genotyping matrix (only the first 5000 variants are displayed)"
     )  
 
     
@@ -3435,6 +3475,11 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         path = row[0]
     directory = path
 
+    if is_stringlist_without_special_character(cluster_search) == False:
+        cluster_search = ""
+
+    if is_bed(bedfile) == False:
+        bedfile = ""
 
     list_sp2 = []
     if metadata_table:
@@ -3454,27 +3499,51 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
-    colorscale = [[0, 'whitesmoke'], [1, 'teal']]
+    search_res2 = []
+    ticktext = ['Absence']
+    tickval = ['0']
+    colorscale = []
+    zmax = 1
     if highlight != "None" or cluster_search != "" or bedfile != "" or (specific_to is not None and len(specific_to) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
-    elif colorizing == "Continent":
-       colorscale = [[0, 'whitesmoke'], [0.1, 'yellow'], [0.2, 'red'], [0.3,'blue'], [0.4,'green'], [0.5,'brown'], [0.6,'pink'], [0.7,'orange']]
-
-    search_res2 = []
+    else:
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
+        ticktext.append("Presence")
+        tickval.append(1)
+    
     if colorizing == "Level of presence":
+        colorscale = [[0, 'whitesmoke'], [1, 'teal']]
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
-    elif colorizing == "Continent":
-        list_organisms = df_metadata3["Continent"].unique().tolist()
+
+    elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country":
+        colorscale = []
+        df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
+        list_organisms = df_metadata4[colorizing].unique().tolist()
+        nb_organisms = len(list_organisms)
+        step = 1 / (nb_organisms+1)
+        colorscale.append([0.0, "whitesmoke"])
+        colorscale.append([step, "whitesmoke"])
         count = 0
+        color_level = 0
         association = {}
+        s = 0
         for organism in list_organisms:
             count+=0.1
+            ticktext.append(organism)
+            tickval.append(count)
+            s+=step
+            color = colors[color_level]
+            colorscale.append([s, color])
+            colorscale.append([s+step, color])
+            color_level += 1
             association[organism] = count
-            
-        ordered_list_organisms = df_metadata3["Continent"]
-        ordered_list_strains = df_metadata3["Strain name"]
+        zmax = count
+
+        ordered_list_organisms = df_metadata4[colorizing].tolist()
+        ordered_list_strains = df_metadata4["Strain name"].tolist()
+        
         count = 0
         for sample in ordered_list_strains:
             organism = ordered_list_organisms[count]
@@ -3485,6 +3554,11 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             
             
     elif highlight == "Reference genome":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
+        #ticktext.append("Highlight")
+        #tickval.append(0.75)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             if sample == reference:
@@ -3492,10 +3566,16 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             else:
                 df2[sample] = np.where( (df2[sample] == 1),0.67,df2[sample])
     elif highlight == "Core-genes":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1) & (proportion != 1),0.67,df2[sample])
     elif highlight == "Strain-specific genes":
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1) & (df2["sum"] > 1),0.67,df2[sample])
@@ -3504,6 +3584,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     # get clusters specific to a subset of samples
     ##############################################
     elif specific_to is not None and len(specific_to) > 0:
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
         list_of_clusters = [1000]
         
         # 1) get clusters for which gene is present for these samples
@@ -3564,7 +3647,10 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         #df_search = pd.DataFrame([int(returned_value)], columns=['ClutserID'])
         #search_res2 = df_search.to_dict('records')
         
-        
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+        ticktext.append("Presence")
+        tickval.append(0.67)
+
         #COG1192
         print(str(session))
         list_of_clusters = []
@@ -3658,7 +3744,22 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
 
         transposed_df = merged_with_positions4.transpose()
     
-    
+    y_labels = []
+    x_labels = []
+    z = []
+    for row in transposed_df.itertuples():
+        y_labels.append(row[0])
+        z.append(list(row[1:]))
+
+    # colorscale = [
+    #     [0.00, "whitesmoke"], [0.25, "whitesmoke"],
+    #     [0.25, "yellow"], [0.50, "yellow"],
+    #     [0.50, "green"], [0.75, "green"],
+    #     [0.75, "red"], [1.00, "red"],
+    # ]
+    print("color scale:")
+    print(colorscale)
+
     if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
 
         df_scoary_results = pd.read_csv(scoary_output_file)
@@ -3682,13 +3783,18 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         # Heatmap
         fig.add_trace(
             go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False),
+                z=z,
+                x=cluster_names,
+                y=list_sp2,
+                zmin=0,
+                zmax=zmax,
+                colorscale=colorscale,  # ou autre
+                colorbar=dict(
+                        tickvals=tickval,
+                        ticktext= ticktext
+                    ),
+                showscale=True
+            ),
             row=1,
             col=1
         )
@@ -3708,15 +3814,52 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         fig.update_layout(height=900)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
-        fig = go.FigureWidget(data=go.Heatmap(
-                    z=transposed_df,
-                    y=list_sp2,
-                    x=cluster_names,
-                    colorscale = colorscale,
-                    hoverinfo='text+x+y+z+name',
-                    #hover_data=["block_id"],
-                    hoverongaps = False))
-        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes')
+        print(colorscale)
+        fig = go.FigureWidget(data=
+                              go.Heatmap(
+                                    z=z,
+                                    x=cluster_names,
+                                    y=list_sp2,
+                                    zmin=0,
+                                    zmax=zmax,
+                                    colorscale=colorscale,  # ou autre
+                                    colorbar=dict(
+                                            tickvals=tickval,
+                                            ticktext= ticktext
+                                        ),
+                                    showscale=True
+                                )
+        )
+                            
+        fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes',xaxis_title="Gene clusters",yaxis_title="Samples")
+    
+
+
+    # fig = go.Figure(
+    #     go.Heatmap(
+    #         z=z,
+    #         x=cluster_names,
+    #         y=list_sp2,
+    #         zmin=0,
+    #         zmax=0.3,
+    #         colorscale=colorscale,  # ou autre
+    #         colorbar=dict(
+    #                 tickvals=tickval,
+    #                 ticktext= ticktext
+    #             ),
+    #         showscale=True
+    #     )
+    # )
+
+    fig.update_layout(
+        xaxis_title="Gene clusters",
+        yaxis_title="Samples",
+        height=400
+    )
+
+    # Important pour l'ordre naturel des lignes
+    fig.update_yaxes(autorange="reversed")
+
     return fig
 
 
@@ -4195,6 +4338,43 @@ def download_data(directory,session_code):
         returned_value = os.system(cmd)
 
 
+def is_string_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_-]+", valeur) is not None
+
+def is_stringlist_without_special_character(valeur):
+    return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9, _-]+", valeur) is not None
+
+def is_bed(valeur: str) -> bool:
+    if not isinstance(valeur, str):
+        return False
+
+    # Découpe par tab ou espaces multiples
+    champs = re.split(r"\s+", valeur.strip())
+
+    # BED = au moins 3 colonnes
+    if len(champs) < 3:
+        return False
+
+    chrom, start, end = champs[0], champs[1], champs[2]
+
+    # chromosome valide (chr1, chrX, chrM, etc.)
+    if not re.fullmatch(r"chr([1-9][0-9]?|X|Y|M)", chrom):
+        return False
+
+    # start / end entiers
+    try:
+        start = int(start)
+        end = int(end)
+    except ValueError:
+        return False
+
+    # règles BED
+    if start < 0 or end < 0:
+        return False
+    if end <= start:
+        return False
+
+    return True
 
 def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     """
@@ -4209,7 +4389,7 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     gt_index = None
     rows = []
     variant_ids = []
-
+    
     with open(vcf_file, 'r') as file:
         lines = file.readlines()
 
@@ -4332,9 +4512,15 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
             rows.append(row)
             if len(rows) >= max_variants:
                 break
-
     df = pd.DataFrame(rows, index=variant_ids, columns=kept_sample_names)
-    return df
+    
+    # reorder columns to match samples_subset if provided
+    cols = df.columns.to_list()
+    # keep columns if present in VCF (remove reference)
+    samples_subset = [x for x in samples_subset if x in cols]
+    df_ordered = df[samples_subset]
+    
+    return df_ordered
 
 def generate_tree_html(newick, df_metadata, html_file):
 
