@@ -192,53 +192,54 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
         if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
+
         elif valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
             cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
             os.system(cmd)
+
 
     except subprocess.CalledProcessError as e:
         stderr = e.stderr
         stdout = e.stdout
 
-
-    # once finished, send an email
     send_email(email_address,session)
+    
 
 def send_email(to,session):
 
-    message = f"""
-Hi,
+    if int(session):
+        message = f"""
+    Hi,
 
-Your PanExplorer job {session} is done. You can click the link below to see your results:
-https://panexplorer2.ird.fr/browse?session={session}
+    Your PanExplorer job {session} is done. You can click the link below to see your results:
+    https://panexplorer2.ird.fr/browse?session={session}
 
-Your data will be available on the server for 15 days from the time they are generated.
+    Your data will be available on the server for 15 days from the time they are generated.
 
-See you soon on PanExplorer,
+    See you soon on PanExplorer,
 
-The PanExplorer team
-"""
+    The PanExplorer team
+    """
 
-    with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
-        f.write(message)
+        with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
+            f.write(message)
 
-    if session.is_integer():
-        cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
+            cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
+            os.system(cmd)
+
+
+        message_for_admin = f"""
+
+    The PanExplorer job {session} is done. It has been sent to {to}:
+    https://panexplorer2.ird.fr/browse?session={session}
+
+    """
+
+        with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
+            f.write(message_for_admin)
+
+        cmd = f"cat {tmp_dir}/{session}.message_for_admin.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {ADMIN_MAIL} && service postfix start"
         os.system(cmd)
-
-
-    message_for_admin = f"""
-
-The PanExplorer job {session} is done. It has been sent to {to}:
-https://panexplorer2.ird.fr/browse?session={session}
-
-"""
-
-    with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
-        f.write(message_for_admin)
-
-    cmd = f"cat {tmp_dir}/{session}.message_for_admin.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {ADMIN_MAIL} && service postfix start"
-    os.system(cmd)
     
 
 

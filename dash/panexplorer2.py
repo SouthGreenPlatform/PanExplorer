@@ -2374,8 +2374,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
-    returned_value = os.system(cmd)
+    with open("assets/clinker."+str(session)+".html", "w") as out:
+        subprocess.run(
+            ["cat" , "assets/clinker_template.part1.html", tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json", "assets/clinker_template.part2.html"],
+            stdout=out,
+            check=True
+        )
 
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
 
@@ -2416,8 +2420,13 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         # remove lines/markers with missing data
         vntr_file_nomissing = directory+'/vntr_matrix.nomissing.tsv'
-        cmd = "grep -v '-' "+vntr_file+ " >"+vntr_file_nomissing
-        returned_value = os.system(cmd)
+
+        with open(vntr_file_nomissing, "w") as out:
+            subprocess.run(
+                ["grep" , "-v", "-", vntr_file],
+                stdout=out,
+                check=True
+            )
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
         df_vntr_filtered = df_vntr[list_selected]
