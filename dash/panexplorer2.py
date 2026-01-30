@@ -209,6 +209,7 @@ snmf_exe = conf.get("snmf_exe") or "sNMF"
 vcf2geno_exe = conf.get("vcf2geno_exe") or "vcf2geno"
 scoary_exe = conf.get("scoary_exe") or "scoary2"
 SECRET_KEY = conf.get("secret_key")
+WEB_URL = conf.get("web_url") or "localhost:8050"
 
 # ---------- DB helpers ----------
 def init_db():
@@ -2373,7 +2374,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "cat html_templates/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json html_templates/clinker_template.part2.html >assets/clinker."+str(session)+".html"
+    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
     returned_value = os.system(cmd)
 
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
@@ -4472,6 +4473,8 @@ def generate_tree_html(newick, df_metadata, html_file):
     for line in template:
         if re.search(r"NEWICK_TREE", line):
             f.write("var test_string = \""+newick+";\"\n")
+        elif re.search(r"WEB_URL",line):
+            f.write("<script src='"+ WEB_URL +"/assets/phylotree.js'></script>")
         elif re.search(r"HASH_COLORS", line):
             f.write(concat_for_hash+"\n")
         elif re.search(r"LEGEND", line):
