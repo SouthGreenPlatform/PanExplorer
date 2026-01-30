@@ -2371,7 +2371,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "cat html_templates/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json html_templates/clinker_template.part2.html >assets/clinker."+str(session)+".html"
+    cmd = "cat assets/clinker_template.part1.html " + tmp_dir + "/" + str(session) + ".syntenic_blocks.txt.clinker.json assets/clinker_template.part2.html >assets/clinker."+str(session)+".html"
     returned_value = os.system(cmd)
 
     clinker = html.Iframe(src="assets/clinker."+str(session)+".html",style={"height": "2000px", "width": "100%"}),
@@ -3975,7 +3975,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     # add the prefix haplo to indexes
     #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
 
-    cmd = "sed \"s/SESSION/" + str(session) + "/g\" html_templates/network_template.html >assets/network."+str(session)+".html"
+    cmd = "sed \"s/SESSION/" + str(session) + "/g\" assets/network_template.html >assets/network."+str(session)+".html"
     returned_value = os.system(cmd)
 
     dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),

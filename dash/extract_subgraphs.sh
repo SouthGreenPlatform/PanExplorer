@@ -42,7 +42,7 @@ while [[ "$#" -gt 0 ]]; do
         -d) DISTANCE=$2; shift ;;
         -p) PATHS_TO_EXTRACT=$2; shift ;;
         -c) NODE_STEPS=$2; shift ;;
-        -L) BP_STEPS=$2; shift ;;;
+        -L) BP_STEPS=$2; shift ;;
         -B) BED_FILE=$2; shift ;;
         --odgi) RUN_ODGI=true ;;
         --vg) RUN_VG=true ;;
@@ -253,7 +253,7 @@ fi
 
 if $RUN_BANDAGE; then
     echo "[$(date)] Generating Bandage visualization..."
-    SUBGRAPH_GFA="${OUTPUT_FILE%.og}.gfa"s
+    SUBGRAPH_GFA="${OUTPUT_FILE%.og}.gfa"
     if [[ ! -f "$SUBGRAPH_GFA" ]]; then
         odgi view -i "$OUTPUT_FILE" -g > "$SUBGRAPH_GFA"
     fi

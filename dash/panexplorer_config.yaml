@@ -1,3 +1,13 @@
-data_dir: "PATH_TO_DATA_DIRECTORY"
-directory: "PATH_TO_DATA_DIRECTORY"
-tmp_dir: "PATH_TO_TMP_DIRECTORY"
+#data_dir: "/mnt/c/Users/bayram/panexplorer/data_public"
+directory: "/mnt/c/Users/bayram/panexplorer/data"
+tmp_dir: "/mnt/c/Users/bayram/panexplorer/tmp"
+session_dir: "/mnt/c/Users/bayram/panexplorer/sessions"
+upload_dir: "/mnt/c/Users/bayram/panexplorer/uploads"
+web_dir: "/var/www/html"
+web_url: "http://localhost"
+plink_exe: "/home/bayram/anaconda3/envs/panexplorer/bin/plink"
+plink2_exe: "/home/bayram/anaconda3/envs/panexplorer/bin/plink2"
+snmf_exe:
+vcf2geno_exe:
+scoary_exe:
+secret_key: "mysecretkey"
