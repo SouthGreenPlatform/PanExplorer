@@ -209,37 +209,39 @@ def send_email(to,session):
 
     if int(session):
         message = f"""
-    Hi,
+Hi,
 
-    Your PanExplorer job {session} is done. You can click the link below to see your results:
-    https://panexplorer2.ird.fr/browse?session={session}
+Your PanExplorer job {session} is done. You can click the link below to see your results:
+https://panexplorer2.ird.fr/browse?session={session}
 
-    Your data will be available on the server for 15 days from the time they are generated.
+Your data will be available on the server for 15 days from the time they are generated.
 
-    See you soon on PanExplorer,
+See you soon on PanExplorer,
 
-    The PanExplorer team
-    """
+The PanExplorer team
+"""
 
         with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
             f.write(message)
 
-            cmd = f"cat {tmp_dir}/{session}.message.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {to} && service postfix start"
-            os.system(cmd)
+        cat_result = subprocess.run(['cat', f'{tmp_dir}/{session}.message.txt'], capture_output=True, text=True)
+        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', '-r', 'panexplorer@southgreen.fr', to],
+                      input=cat_result.stdout, text=True, check=True)
+        subprocess.run(['service', 'postfix', 'start'], check=True)
 
 
         message_for_admin = f"""
-
-    The PanExplorer job {session} is done. It has been sent to {to}:
-    https://panexplorer2.ird.fr/browse?session={session}
-
-    """
+The PanExplorer job {session} is done. It has been sent to {to}:
+https://panexplorer2.ird.fr/browse?session={session}
+"""
 
         with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
             f.write(message_for_admin)
 
-        cmd = f"cat {tmp_dir}/{session}.message_for_admin.txt | mail -s 'Panexplorer results session {session}' -r panexplorer@southgreen.fr {ADMIN_MAIL} && service postfix start"
-        os.system(cmd)
+        cat_result = subprocess.run(['cat', f'{tmp_dir}/{session}.message_for_admin.txt'], capture_output=True, text=True)
+        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', '-r', 'panexplorer@southgreen.fr', ADMIN_MAIL],
+                      input=cat_result.stdout, text=True, check=True)
+        subprocess.run(['service', 'postfix', 'start'], check=True)
     
 
 
@@ -278,8 +280,7 @@ def register_callbacks(app):
         os.mkdir(f"{UPLOAD_DIR}/{session}")
         
 
-        mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
-        os.system(mkdir_cmd)
+        os.makedirs(f"{session_dir}/{session}/genomes/genomes")
         dict_strains = {}
         countries = {}
         for accession in gca_accessions:
@@ -288,8 +289,12 @@ def register_callbacks(app):
             if not x:
                 return html.Div("Does not respect GCA accession format")
             else:
-                cmd = ncbi_datasets_exe + " download genome accession " + accession + " --filename " + tmp_dir + "/" +accession + ".zip --include genome,gbff,protein"
-                returned_value = os.system(cmd)
+
+                cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
+                       '--filename', f'{tmp_dir}/{accession}.zip', '--include', 'genome,gbff,protein']
+                result = subprocess.run(cmd)
+                returned_value = result.returncode
+                
 
                 if returned_value == 0:
                     filepath = tmp_dir + "/" +accession + ".zip"
@@ -346,13 +351,15 @@ def register_callbacks(app):
                             valid_genome_count += 1
                             list_of_valid_accessions.append(accession)
 
-                            cmd = f"cp -rf {gbff_file} {session_dir}/{session}/genomes/genomes/{accession}.gbff "
-                            os.system(cmd)
-                            cmd = f"gzip {session_dir}/{session}/genomes/genomes/{accession}.gbff"
-                            os.system(cmd)
+                            subprocess.run(['cp', '-rf', gbff_file, f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
+                            subprocess.run(['gzip', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
+                            
+  
+                            result = subprocess.run(['zgrep', 'country=', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
+                                                   capture_output=True, text=True)
+                            get_country_line = result.stdout
 
-                            cmd = f"zgrep 'country=' {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz"
-                            get_country_line = os.popen(cmd).read()
+
                             lines_country = get_country_line.split("=")
                             country = ""
                             if len(lines_country) > 1:
@@ -361,9 +368,11 @@ def register_callbacks(app):
 
                             countries[accession] = country
 
-                            cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz"
-                            os.system(cmd)  
-                            get_organism_line = os.popen(cmd).read()
+                            result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
+                                                   capture_output=True, text=True)
+                            get_organism_line = result.stdout
+
+
                             lines_organism = get_organism_line.split("\n")
                             first_line = lines_organism[0]
                             second_line = lines_organism[1]
@@ -384,8 +393,9 @@ def register_callbacks(app):
                                 strain = strain.replace("_str_", "_")
                                 strain = re.sub(r"[^\w\-\_]", "", strain)
                                 strain = strain.replace("-", "_")
-                            cmd = f"mv {session_dir}/{session}/genomes/genomes/{accession}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
-                            os.system(cmd)
+                            
+                            subprocess.run(['mv', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz', 
+                                           f'{session_dir}/{session}/genomes/genomes/{strain}.gbff.gz'], check=True)
 
                             dict_strains[accession] = strain
                 else:
@@ -401,9 +411,7 @@ def register_callbacks(app):
                     })
                     continue
             
-                
-        cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
-        os.system(cmd) 
+        subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
         with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
             f.write("Strain name\tCountry\tContinent\tOrganism\n")
@@ -501,9 +509,8 @@ def register_callbacks(app):
                 else:
                     os.remove(f"{UPLOAD_DIR}/{session}/{file_name}")
             
-
-            cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
-            returned_value = os.popen(cmd).read()
+            result = subprocess.run(['perl', 'modifyGenbank.pl', f'{UPLOAD_DIR}/{session}', f'{UPLOAD_DIR}/{session}'],
+                                   capture_output=True, text=True)
 
             dict_strains = {}
             filepaths = []
@@ -514,13 +521,14 @@ def register_callbacks(app):
             for filepath in filepaths:
                 name = os.path.basename(filepath)
 
-                cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
-                os.system(cmd)
-                cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
-                os.system(cmd)
+                shutil.copyfile(f"{UPLOAD_DIR}/{session}/forzip/{name}", f"{session_dir}/{session}/genomes/genomes/{name}.gbff")
+                
+                subprocess.run(["gzip" , f"{session_dir}/{session}/genomes/genomes/{name}.gbff"],check=True)
 
-                cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
-                get_organism_line = os.popen(cmd).read()
+                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
+                                                   capture_output=True, text=True)
+                get_organism_line = result.stdout
+                
                 lines_organism = get_organism_line.split("\n")
                 first_line = lines_organism[0]
                 second_line = lines_organism[1]
@@ -541,17 +549,17 @@ def register_callbacks(app):
                     strain = strain.replace("_str_", "_")
                     strain = re.sub(r"[^\w\-\_]", "", strain)
                     strain = strain.replace("-", "_")
-                cmd = f"mv {session_dir}/{session}/genomes/genomes/{name}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
-                os.system(cmd) 
+                
+                subprocess.run(['mv', f'{session_dir}/{session}/genomes/genomes/{name}.gbff.gz', 
+                               f'{session_dir}/{session}/genomes/genomes/{strain}.gbff.gz'], check=True)
 
                 dict_strains[name] = strain
                 print(strain+" "+name + "\n")
                 country = countries[strain] 
                 countries[strain] = country
                 
-
-            cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
-            os.system(cmd) 
+            os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
+            #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
             with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
                 f.write("Strain name\tCountry\tContinent\tOrganism\n")
@@ -701,8 +709,7 @@ def register_callbacks(app):
         filepaths = []
 
         if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
-            mkdir_cmd = f"mkdir -p {session_dir}/{session}/genomes/genomes"
-            os.system(mkdir_cmd)
+            os.mkdir(f"{session_dir}/{session}/genomes/genomes")
 
         rows = []
         valid_genome_count = 0
@@ -775,65 +782,7 @@ def register_callbacks(app):
                         "Stored file": None,
                     })
 
-        # print("done1")
-        # cmd = f"perl modifyGenbank.pl {UPLOAD_DIR}/{session} {UPLOAD_DIR}/{session}"
-        # os.system(cmd)
-        # print("done2")
-
-        # filepaths = []
-        # for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
-        #     if file.endswith(".gb"):
-        #         filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
-                
-
-        # for filepath in filepaths:
-        #     name = os.path.basename(filepath)
-        #     print(name)
-
-        #     cmd = f"cp -rf {UPLOAD_DIR}/{session}/forzip/{name} {session_dir}/{session}/genomes/genomes/{name}.gbff "
-        #     os.system(cmd)
-        #     cmd = f"gzip {session_dir}/{session}/genomes/genomes/{name}.gbff"
-        #     os.system(cmd)
-
-        #     cmd = f"zgrep -A 2 'DEFINITION' {session_dir}/{session}/genomes/genomes/{name}.gbff.gz"
-        #     get_organism_line = os.popen(cmd).read()
-        #     lines_organism = get_organism_line.split("\n")
-        #     first_line = lines_organism[0]
-        #     second_line = lines_organism[1]
-        #     if re.match(r"^            (.*)", second_line):
-        #         get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
-        #     else:
-        #         get_organism_line = first_line
-        #     strain = ""
-        #     if re.match(r"DEFINITION  (.*)$", get_organism_line):
-        #         strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
-        #         strain = strain.replace(".", "")
-        #         info = strain.split(",")
-        #         strain = info[0]
-        #         strain = strain.replace(" ", "_")
-        #         strain = strain.replace("strain_", "")
-        #         strain = strain.replace("_chromosome", "")
-        #         strain = strain.replace("_genome", "")
-        #         strain = strain.replace("_str_", "_")
-        #         strain = re.sub(r"[^\w\-\_]", "", strain)
-        #         strain = strain.replace("-", "_")
-        #     cmd = f"mv {session_dir}/{session}/genomes/genomes/{name}.gbff.gz {session_dir}/{session}/genomes/genomes/{strain}.gbff.gz"
-        #     os.system(cmd) 
-
-        #     dict_strains[name] = strain
-
-        # print("done3")
-
-        # cmd = f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes"
-        # os.system(cmd) 
-
-
-        # print("done4")
-
-        # with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
-        #     f.write("Strain name\tCountry\tContinent\tOrganism\n")
-        #     for accession, strain in dict_strains.items():
-        #         f.write(f"{strain}\t\t\t\n")
+        
 
         df = pd.DataFrame(rows)
         df.to_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t", index=False)
