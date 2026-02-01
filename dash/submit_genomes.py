@@ -256,9 +256,10 @@ def register_callbacks(app):
         Output("output-area", "children", allow_duplicate=True),
         Input("check-gca-button", "n_clicks"),
         State("public-genomes", "value"),
+        State("session","value"),
         prevent_initial_call=True,
     )
-    def check_public_genomes(n_clicks, gca_list):
+    def check_public_genomes(n_clicks, gca_list,session):
         if n_clicks == 0:
             return html.Div("No check performed yet.")
 
@@ -276,7 +277,6 @@ def register_callbacks(app):
         rows = []
         valid_genome_count = 0
         list_of_valid_accessions = []
-        session = random.randint(1, 9000000)
         os.mkdir(f"{UPLOAD_DIR}/{session}")
         
 

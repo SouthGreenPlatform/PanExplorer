@@ -21,6 +21,7 @@ import re
 import shutil
 import base64
 import io
+import glob
 
 import numpy as np
 
@@ -2116,15 +2117,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 check=True
             )
 
-            cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results.txt"
-            returned_value = os.system(cmd)
-            # subprocess.run(
-            #     ["mv" , tmp_dir + "/" + str(session) + "_scoary_output/*results.csv", tmp_dir + "/" + str(session) + ".scoary_results.txt"],
-            #     check=True
-            # )
-
-
-
+            src_pattern = f"{tmp_dir}/{session}_scoary_output/*results.csv"
+            src_files = glob.glob(src_pattern)
+            if src_files:
+                dst = f"{tmp_dir}/{session}.scoary_results.txt"
+                shutil.copy(src_files[0], dst)
+                
         #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
         #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
 
@@ -2489,6 +2487,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         cmd = plink2_exe + " --vcf " + vcf_file +" --keep " + tmp_dir + "/" + str(session) + ".selected_genomes.txt --maf 0.0001 --export vcf --max-alleles 2 --min-alleles 2 --out "+ tmp_dir + "/" + str(session) + ".selected_genomes"
         returned_value = os.system(cmd)
+
+        
         vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
 
         # make bed
