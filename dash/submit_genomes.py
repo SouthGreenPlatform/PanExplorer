@@ -411,7 +411,8 @@ def register_callbacks(app):
                     })
                     continue
             
-        subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+        #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+        os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
 
         with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
             f.write("Strain name\tCountry\tContinent\tOrganism\n")
@@ -525,7 +526,7 @@ def register_callbacks(app):
                 
                 subprocess.run(["gzip" , f"{session_dir}/{session}/genomes/genomes/{name}.gbff"],check=True)
 
-                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
+                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{name}.gbff.gz'],
                                                    capture_output=True, text=True)
                 get_organism_line = result.stdout
                 
@@ -579,7 +580,7 @@ def register_callbacks(app):
                 html.H4("Well done!", className="alert-heading"),
                 html.P("Data have been sent to the pipeline. You will receive an email once it is complete. Data are available in the URL: "),
                 #html.Hr(),
-                html.A(f"{web_url}/browse?session={session}", href=f"{web_url}/?session={session}", target="_blank", className="alert-link"),
+                html.A(f"{web_url}/browse?session={session}", href=f"{web_url}/browse?session={session}", target="_blank", className="alert-link"),
             ],
             color="success",
         ) , {"display": "none"}
@@ -709,7 +710,7 @@ def register_callbacks(app):
         filepaths = []
 
         if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
-            os.mkdir(f"{session_dir}/{session}/genomes/genomes")
+            os.makedirs(f"{session_dir}/{session}/genomes/genomes")
 
         rows = []
         valid_genome_count = 0
