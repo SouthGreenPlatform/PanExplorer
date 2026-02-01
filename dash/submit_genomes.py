@@ -492,7 +492,7 @@ def register_callbacks(app):
 
 
         path = UPLOAD_DIR+"/"+str(session)
-        if os.path.exists(path):
+        if os.path.exists(path) and os.path.exists(f"{session_dir}/{session}/summary_upload.csv"):
 
             countries = {}
             # Remove invalid genomes before proceeding
