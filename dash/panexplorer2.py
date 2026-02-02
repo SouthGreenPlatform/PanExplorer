@@ -611,20 +611,15 @@ def load_project_preview(proj_title):
 
     children+= [
         
-            
         html.Button("Update graphes", 
                     id="btn-update", 
                     style={
                         "backgroundColor": "#1E90FF",   # bleu
-                        "color": "white",
+                        "color": "white"
                     },
                     n_clicks=0),
-        
-
-        
 
         dcc.Loading(id="mainload", children=html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
-        
 
         html.Div(id='results', style={'display': 'none'}, children=[
             dcc.Tabs(id='tab1', style=tabs_styles, children=[
@@ -3138,6 +3133,24 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
     
     return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
+
+
+@app.callback(
+    Output('btn-update', 'disabled'),
+    Input('btn-update', 'n_clicks'),
+    prevent_initial_call=True
+)
+def hide_update_button(n_clicks):
+    return True
+
+
+@app.callback(
+    Output('btn-update', 'disabled', allow_duplicate=True),
+    Input('current_session', 'value'),
+    prevent_initial_call=True
+)
+def show_update_button(session_value):
+    return False
 
     #############################################################################################
     # Extraction and visualization of a subgraph
