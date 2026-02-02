@@ -391,20 +391,8 @@ def register_callbacks(app):
 
                             subprocess.run(['cp', '-rf', gbff_file, f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
                             subprocess.run(['gzip', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
-                            
-  
-                            result = subprocess.run(['zgrep', 'country=', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
-                                                   capture_output=True, text=True)
-                            get_country_line = result.stdout
 
-
-                            lines_country = get_country_line.split("=")
-                            country = ""
-                            if len(lines_country) > 1:
-                                country = lines_country[1].strip()
-                                country = country.replace('"', "")
-
-                            countries[accession] = country
+                            countries[accession] = summary['Country']
 
                             result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
                                                    capture_output=True, text=True)
