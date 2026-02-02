@@ -384,6 +384,20 @@ def register_callbacks(app):
                             stored_filename = os.path.basename(filepath)
 
                             summary = summarize_records(result, accession, stored_filename)
+
+                            if summary['CDS'] < 10:
+                                rows.append({
+                                    "File name": accession,
+                                    "Valid": "❌",
+                                    "Error": "Genome is not annotated",
+                                    "Country": None,
+                                    "Number of contigs": None,
+                                    "Genome size (bp)": None,
+                                    "CDS": None,
+                                    "Stored file": None,
+                                })
+                                continue
+
                             rows.append(summary)
 
                             valid_genome_count += 1
