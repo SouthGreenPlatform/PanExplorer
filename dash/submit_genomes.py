@@ -10,6 +10,7 @@ import smtplib
 from sys import meta_path
 import uuid
 import re
+import sys
 
 import pandas as pd
 import json
@@ -27,8 +28,22 @@ import subprocess
 import time
 
 import dash_uploader as du
+import logging
 
+# optional libs: python-magic (python-magic-bin on Windows) and pyclamd for ClamAV
+try:
+    import magic
+    HAS_MAGIC = True
+except Exception:
+    magic = None
+    HAS_MAGIC = False
 
+try:
+    import pyclamd
+    HAS_PYCLAMD = True
+except Exception:
+    pyclamd = None
+    HAS_PYCLAMD = False
 
 # --------------------------------------------------
 # Configuration
@@ -51,6 +66,15 @@ UPLOAD_DIR = conf.get("upload_dir")
 ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Upload safety configuration
+MAX_UPLOAD_SIZE_MB = conf.get("max_upload_size_mb", 50)
+MAX_UPLOAD_SIZE_BYTES = int(MAX_UPLOAD_SIZE_MB * 1024 * 1024)
+ALLOWED_EXT = {"gb", "gbk", "gbff"}
+VALIDATION_SENTINEL = ".upload_validation_done"
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 #session = random.randint(1, 9000000)
 
@@ -187,22 +211,36 @@ def summarize_records(records, original_name, stored_filename):
 
 
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
-
     try:
+        script_path = os.path.join(os.path.dirname(__file__), "PanExplorer_galaxy_bioblend.py")
+        logpath = os.path.join(tmp_dir, f"panexplorer_{session}.log")
+
+        cmd_args = None
         if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
-            cmd= "python PanExplorer_galaxy_bioblend.py --z {} --o {} --p {} --s {} --n {}".format(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip", session_dir+"/"+str(session), min_percentage_identity, software, session)
-            os.system(cmd)
+            cmd_args = [sys.executable, script_path, "--z", f"{UPLOAD_DIR}/{session}/forzip/genomes.zip",
+                        "--o", os.path.join(session_dir, str(session)), "--p", str(min_percentage_identity),
+                        "--s", software, "--n", str(session)]
 
-        elif valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
-            cmd= "python PanExplorer_galaxy_bioblend.py --i {} --o {} --p {} --s {} --n {}".format(valid_list, session_dir+"/"+str(session), min_percentage_identity, software, session)
-            os.system(cmd)
+        elif valid_list and valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
+            cmd_args = [sys.executable, script_path, "--i", valid_list,
+                        "--o", os.path.join(session_dir, str(session)), "--p", str(min_percentage_identity),
+                        "--s", software, "--n", str(session)]
 
+        if cmd_args:
+            os.makedirs(tmp_dir, exist_ok=True)
+            with open(logpath, "ab") as logf:
+                popen_kwargs = {"stdout": logf, "stderr": subprocess.STDOUT, "stdin": subprocess.DEVNULL}
+                if os.name != "nt":
+                    popen_kwargs["start_new_session"] = True
+
+                proc = subprocess.Popen(cmd_args, **popen_kwargs)
+                proc.wait()
 
     except subprocess.CalledProcessError as e:
         stderr = e.stderr
         stdout = e.stdout
 
-    send_email(email_address,session)
+    send_email(email_address, session)
     
 
 def send_email(to,session):
@@ -688,7 +726,108 @@ def register_callbacks(app):
     )
     def handle_uploaded_files(uploaded_files):
 
-        if not uploaded_files:
+        # Process any new upload directories under UPLOAD_DIR.
+        # dash_uploader creates a subfolder per upload_id (we configured upload_id=session).
+        processed_any = False
+
+        for sub in os.listdir(UPLOAD_DIR):
+            subpath = os.path.join(UPLOAD_DIR, sub)
+            if not os.path.isdir(subpath):
+                continue
+            sentinel = os.path.join(subpath, VALIDATION_SENTINEL)
+            if os.path.exists(sentinel):
+                continue
+
+            # process files in this upload folder
+            for fname in os.listdir(subpath):
+                fpath = os.path.join(subpath, fname)
+                if os.path.isdir(fpath):
+                    continue
+
+                # sanitize name on disk
+                safe_name = sanitize_filename(fname)
+                safe_path = os.path.join(subpath, safe_name)
+                if safe_name != fname:
+                    try:
+                        os.rename(fpath, safe_path)
+                        fpath = safe_path
+                    except Exception:
+                        pass
+
+
+                # check extension
+                ext = os.path.splitext(fpath)[1].lstrip('.').lower()
+                if ext not in ALLOWED_EXT:
+                    logger.warning("Rejected upload (extension not allowed): %s", fpath)
+                    try:
+                        os.remove(fpath)
+                    except Exception:
+                        pass
+                    continue
+
+                # check size
+                try:
+                    size = os.path.getsize(fpath)
+                except Exception:
+                    size = 0
+
+
+                print(safe_name + ": size: " + str(size))
+                if size > MAX_UPLOAD_SIZE_BYTES:
+                    logger.warning("Rejected upload (too large): %s (%d bytes)", fpath, size)
+                    try:
+                        os.remove(fpath)
+                    except Exception:
+                        pass
+                    continue
+
+                # optional magic check
+                if HAS_MAGIC:
+                    try:
+                        mime = magic.from_file(fpath, mime=True)
+                        low = str(mime).lower()
+                        if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
+                            logger.warning("Rejected upload (magic mismatch): %s -> %s", fpath, mime)
+                            try:
+                                os.remove(fpath)
+                            except Exception:
+                                pass
+                            continue
+                    except Exception:
+                        # if magic fails, we continue but log
+                        logger.exception("magic check failed for %s", fpath)
+
+                # optional ClamAV scan
+                if HAS_PYCLAMD:
+                    print("okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+                    try:
+                        cd = pyclamd.ClamdNetworkSocket()
+                        scan_result = cd.scan_file(fpath)
+                        if scan_result:
+                            logger.warning("Infected file detected and removed: %s", fpath)
+                            try:
+                                os.remove(fpath)
+                            except Exception:
+                                pass
+                            continue
+                    except Exception:
+                        logger.exception("ClamAV scan failed for %s", fpath)
+
+                # set restrictive permissions
+                try:
+                    os.chmod(fpath, 0o600)
+                except Exception:
+                    pass
+
+                processed_any = True
+
+            # mark as processed to avoid re-checking
+            try:
+                open(sentinel, 'w').close()
+            except Exception:
+                pass
+
+        if not uploaded_files and not processed_any:
             return html.Div("No files uploaded yet.")
         
         return html.Div(html.Button(
