@@ -1247,10 +1247,11 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
         os.remove(tmp_dir+"/"+str(session)+".muscle.log")
     
     # run muscle to generate alignment
-    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and session.is_integer():
-        cmd = "muscle -align "+tmp_dir+"/"+str(session)+".temp.fasta -output "+tmp_dir+"/"+str(session)+".temp.aln.fasta >> "+tmp_dir+"/"+str(session)+".muscle.log 2>&1"
-        os.system(cmd)
-        print(cmd)
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and int(session):
+
+        cmd_args = ["muscle", "-align", f"{tmp_dir}/{session}.temp.fasta", "-output", f"{tmp_dir}/{session}.temp.aln.fasta"]
+        with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
+            subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
 
     # read alignment file
     with open(f"{tmp_dir}/{session}.temp.aln.fasta", "r") as file:
@@ -1291,8 +1292,16 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
     nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
 
     list_strains = ",".join(list_of_strains)
-    cmd= f"perl ClinkerPlotFromMatrix.pl {directory}/1.Orthologs_Cluster.txt {current_cluster} {directory}/genomes/genomes/ {list_strains} {tmp_dir}/{session}_clinker.html"
-    os.system(cmd)
+    
+    cmd_args = [
+        "perl", "ClinkerPlotFromMatrix.pl",
+        f"{directory}/1.Orthologs_Cluster.txt",
+        str(current_cluster),
+        f"{directory}/genomes/genomes/",
+        list_strains,
+        f"{tmp_dir}/{session}_clinker.html"
+    ]
+    subprocess.run(cmd_args, check=True)
 
     fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
     return fig
@@ -1478,10 +1487,6 @@ def get_node_details(node,pathname,reference,session):
     list_of_infos = result.split("\t")
     node_sequence = list_of_infos[2]
     node_sequence2 = re.sub("(.{80})", "\\1\n", node_sequence, 0, re.DOTALL)
-
-    # Remove lines from ptt
-    #cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+reference+".ptt >"+directory+"/genomes/genomes/"+reference+".2.ptt"
-    #returned_value = os.system(cmd)
 
     df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+reference+'.2.ptt',sep='\t')
     df_gene_positons[['start', 'end']] = df_gene_positons['Location'].str.split('\.\.', expand=True)
@@ -2485,22 +2490,45 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
             f.write("\n".join(list_selected) + "\n")
 
-        cmd = plink2_exe + " --vcf " + vcf_file +" --keep " + tmp_dir + "/" + str(session) + ".selected_genomes.txt --maf 0.0001 --export vcf --max-alleles 2 --min-alleles 2 --out "+ tmp_dir + "/" + str(session) + ".selected_genomes"
-        returned_value = os.system(cmd)
+        cmd_args = [
+            plink2_exe, "--vcf", vcf_file,
+            "--keep", f"{tmp_dir}/{session}.selected_genomes.txt",
+            "--maf", "0.0001",
+            "--export", "vcf",
+            "--max-alleles", "2",
+            "--min-alleles", "2",
+            "--out", f"{tmp_dir}/{session}.selected_genomes"
+        ]
+        subprocess.run(cmd_args, capture_output=True)
 
         
         vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
 
         # make bed
-        cmd = plink2_exe + " --vcf " + vcf_file +" --max-alleles 2 --min-alleles 2 --make-bed --out "+ tmp_dir + "/" + str(session) + ".dataset"
-        returned_value = os.system(cmd)
+        cmd_args = [
+            plink2_exe, "--vcf", vcf_file,
+            "--max-alleles", "2",
+            "--min-alleles", "2",
+            "--make-bed",
+            "--out", f"{tmp_dir}/{session}.dataset"
+        ]
+        subprocess.run(cmd_args, capture_output=True)
 
         # distance calculation
-        cmd = plink_exe + " --bfile " + tmp_dir + "/" + str(session) + ".dataset --distance square --allow-extra-chr --out "+ tmp_dir + "/" + str(session) + ".dataset"
-        returned_value = os.system(cmd)
+        cmd_args = [
+            plink_exe,
+            "--bfile", f"{tmp_dir}/{session}.dataset",
+            "--distance", "square",
+            "--allow-extra-chr",
+            "--out", f"{tmp_dir}/{session}.dataset"
+        ]
+        subprocess.run(cmd_args, capture_output=True)
 
-        cmd = "grep -v '#FID' " + tmp_dir + "/" + str(session) + ".dataset.dist.id >"+ tmp_dir + "/" + str(session) + ".dataset.dist.id.2"
-        returned_value = os.system(cmd)
+        with open(f"{tmp_dir}/{session}.dataset.dist.id", "r") as infile, \
+            open(f"{tmp_dir}/{session}.dataset.dist.id.2", "w") as outfile:
+            for line in infile:
+                if not line.startswith("#FID"):
+                    outfile.write(line)
 
 
         #################################################################
@@ -2574,12 +2602,16 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         if len(list_selected) < max_K:
             max_K = len(list_selected)
 
-        cmd = vcf2geno_exe + " " + vcf_file +" " + tmp_dir + "/" + str(session) + ".variants.geno"
-        returned_value = os.system(cmd)
+        cmd_args = [vcf2geno_exe, vcf_file, f"{tmp_dir}/{session}.variants.geno"]
+        subprocess.run(cmd_args, capture_output=True)
 
-        cmd = "grep '#CHROM' " + vcf_file
-        result = os.popen(cmd).read()
-        list_sp3 = result.strip().split("\t")[9:]
+        result = subprocess.run(
+            ["grep", "#CHROM", vcf_file],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        list_sp3 = result.stdout.strip().split("\t")[9:]
 
         with open(directory + "/1.Orthologs_Cluster.txt") as f:
             ordered_ids = f.readline().strip().split("\t")
@@ -2780,13 +2812,22 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         output_basename = tmp_dir+"/"+str(session)+".plink"
         pca_output = output_basename + ".eigenvec"
 
-        cmd = plink_exe + " --vcf " + vcf_file +" --pca --double-id --allow-extra-chr --out " + output_basename
-        #cmd = plink2_exe + " --vcf " + vcf_file +" --pca --out " + output_basename
-        returned_value = os.system(cmd)
+        cmd_args = [
+            plink_exe,
+            "--vcf", vcf_file,
+            "--pca",
+            "--double-id",
+            "--allow-extra-chr",
+            "--out", output_basename
+        ]
+        subprocess.run(cmd_args, capture_output=True)
 
         if os.path.exists(pca_output):
-            cmd = "awk {'print $1\"\t\"$3\"\t\"$4\"\t\"$5'} " + pca_output + ">" + pca_output + ".tsv"
-            returned_value = os.system(cmd)
+            
+
+            cmd_args = ["awk", "{print $1\"\\t\"$3\"\\t\"$4\"\\t\"$5}", pca_output]
+            with open(f"{pca_output}.tsv", "w") as outfile:
+                result = subprocess.run(cmd_args, stdout=outfile, capture_output=False)
 
         if os.path.exists(pca_output + ".tsv"):
             df_pca = pd.read_csv(pca_output + ".tsv",sep='\t',header=None, names=['#IID', 'PC1', 'PC2','PC3'])
@@ -2846,10 +2887,16 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     if os.path.exists(gfa_file) and os.path.getsize(gfa_file) > 0:
 
         tab_style_segments = tab_style  
-        #cmd = "perl generateNodePAVfromGFA.pl " + directory + "/all_genomes.fa.smooth.final.gfa " + reference + " " + tmp_dir +"/"+str(session)+".segments"
-        cmd = "perl generateNodePAVfromGFA.pl " + directory+"/pangenome.gfa " + reference + " " + tmp_dir +"/"+str(session) + "." + str(reference)+".segments " +  ",".join(list_sp2)
-        print(cmd)
-        returned_value = os.system(cmd)
+        
+        cmd_args = [
+            "perl", "generateNodePAVfromGFA.pl",
+            f"{directory}/pangenome.gfa",
+            str(reference),
+            f"{tmp_dir}/{session}.{reference}.segments",
+            ",".join(list_sp2)
+        ]
+        subprocess.run(cmd_args, capture_output=True)
+
 
         x_segments = []
         y_segments = []
@@ -2930,12 +2977,20 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
                 df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
                 df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input2.csv",index=False)
-            
-            cmd = scoary_exe + " -g " + tmp_dir + "/" + str(session) + ".scoary_input2.csv -t " + tmp_dir + "/" + str(session) + ".traits.csv -o " + tmp_dir + "/" + str(session) + "_scoary_output2"
-            returned_value = os.system(cmd)
 
-            cmd = "mv " + tmp_dir + "/" + str(session) + "_scoary_output2/*results.csv " + tmp_dir + "/" + str(session) + ".scoary_results2.txt"
-            returned_value = os.system(cmd)
+            cmd_args = [
+                scoary_exe,
+                "-g", f"{tmp_dir}/{session}.scoary_input2.csv",
+                "-t", f"{tmp_dir}/{session}.traits.csv",
+                "-o", f"{tmp_dir}/{session}_scoary_output2"
+            ]
+            subprocess.run(cmd_args, capture_output=True)
+
+            src_pattern = f"{tmp_dir}/{session}_scoary_output2/*results.csv"
+            src_files = glob.glob(src_pattern)
+            if src_files:
+                dst = f"{tmp_dir}/{session}.scoary_results2.txt"
+                shutil.copy(src_files[0], dst)
 
             #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
             df_scoary_results2 = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
@@ -4127,16 +4182,6 @@ def init_dataframes(pathname):
     #df['ClutserID'].replace(to_replace ='\d', value ='CLUSTER',regex = True,inplace=True)
     df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
     
-    #df.to_csv("sessions/pav_matrix."+str(session)+".txt",sep='\t',index=False)
-
-    #cmd = "sed -i 's/^/CLUSTER/g' " + directory+"/1.Orthologs_Cluster.2.txt"
-    #returned_value = os.system(cmd)
-
-    #df = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
-
-    #df = df.rename(columns={'CLUSTERClutserID': 'ClutserID'})
-    #df = df.rename(columns={'CLUSTERCLUSTERClutserID': 'ClutserID'})
-    #df = df.dropna()
 
     df_ANI = pd.DataFrame()  
     if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
