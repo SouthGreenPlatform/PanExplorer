@@ -899,6 +899,19 @@ def register_callbacks(app):
                     genes = sum(1 for r in records for f in r.features if f.type == "gene")
                     cds = sum(1 for r in records for f in r.features if f.type == "CDS")
 
+                    if cds < 10:
+                        rows.append({
+                            "File name": accession,
+                            "Valid": "❌",
+                            "Error": "Genome is not annotated",
+                            "Country": None,
+                            "Number of contigs": None,
+                            "Genome size (bp)": None,
+                            "CDS": None,
+                            "Stored file": None,
+                            })
+                        continue
+                    
                     rows.append({
                         "File name": original_name,
                         "Valid": "✅",
