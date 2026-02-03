@@ -4229,8 +4229,10 @@ def init_dataframes(pathname):
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
+    print(merged_with_positions)
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
     #merged_with_positions.insert(0, 'block_id', 'chr1')
+
     
 
     merged_with_positions.insert(0, 'color', 'black')
