@@ -3006,9 +3006,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_strains.remove("Node")
         node_names = df_pav_node["Node"].astype(str).tolist()
         #df_pav_node = df_pav_node[list_strains]
-        transposed_df_pav_node = df_pav_node[list_strains].transpose()
-        df_ordered = transposed_df_pav_node.loc[list_sp2]
-        z_original = df_ordered.values
+        print(df_pav_node)
+        z_original = pd.DataFrame(columns=[])
+        if not df_pav_node.empty:
+            transposed_df_pav_node = df_pav_node[list_strains].transpose()
+            df_ordered = transposed_df_pav_node.loc[list_sp2]
+            z_original = df_ordered.values
 
         # Transformation symlog
         z_symlog = np.sign(z_original) * np.log10(np.abs(z_original) + 1) 
