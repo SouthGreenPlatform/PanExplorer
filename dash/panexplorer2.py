@@ -3479,14 +3479,14 @@ def pca(dimension_pca,colorizing_pca,session):
         df_pca_metadata = pd.read_csv(f"{tmp_dir}/{session}.metadata.txt")
         if dimension_pca=="3D":
             if colorizing_pca=="Country":
-                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country')
+                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country', hover_name="Individual", hover_data=["Assigned_to_pop"])
             else:
-                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Assigned_to_pop')
+                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
         else:
             if colorizing_pca=="Country":
-                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Country')
+                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Country', hover_name="Individual", hover_data=["Assigned_to_pop"])
             else:
-                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Assigned_to_pop')
+                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
     else:
         fig_scatter = px.scatter(pd.DataFrame({'PC1':[], 'PC2':[], 'PC3':[]}), x='PC1', y='PC2')
         fig_scatter.update_layout(title="No PCA data found.")
@@ -3856,7 +3856,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             col=1
         )
         fig.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
-        fig.update_layout(height=900)
+        fig.update_layout(height=1100)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
         print(colorscale)
@@ -3899,7 +3899,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     fig.update_layout(
         xaxis_title="Gene clusters",
         yaxis_title="Samples",
-        height=400
+        height=1100
     )
 
     # Important pour l'ordre naturel des lignes
@@ -4229,7 +4229,6 @@ def init_dataframes(pathname):
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
-    print(merged_with_positions)
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
     #merged_with_positions.insert(0, 'block_id', 'chr1')
 
