@@ -367,7 +367,7 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
 
                             dict_strains[accession] = strain
             
-        subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+        #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
 
         os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")

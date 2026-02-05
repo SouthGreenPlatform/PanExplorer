@@ -3006,7 +3006,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_strains.remove("Node")
         node_names = df_pav_node["Node"].astype(str).tolist()
         #df_pav_node = df_pav_node[list_strains]
-        print(df_pav_node)
         z_original = pd.DataFrame(columns=[])
         if not df_pav_node.empty:
             transposed_df_pav_node = df_pav_node[list_strains].transpose()
@@ -4524,10 +4523,16 @@ def generate_tree_html(newick, df_metadata, html_file):
     legend += ".legend span{width:16px;height:16px;margin-right:6px}"
     legend += "</style>"
     legend += "<div class=\"legend\">"
+    
     for country in list_metadata_color:
         if country != "none" and country != "None" and str(country) != "nan" and country != "":
-            dict_colors[country] =  colors[i]
-            legend = legend + "<div><span style=\"background:" + str(colors[i]) + "\"></span>" + str(country) + "</div>"
+            col = ""
+            if i < len(colors):
+                col =  colors[i]
+            else:
+                col =  "black"
+            dict_colors[country] = col
+            legend = legend + "<div><span style=\"background:" + str(col) + "\"></span>" + str(country) + "</div>"
             i += 1
     legend += "</div>"
 
