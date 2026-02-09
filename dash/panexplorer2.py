@@ -84,6 +84,57 @@ def get_image_dimensions(path):
     
     return width, height
 
+def validate_fasta_input(raw_text):
+    max_len = 200000
+    if raw_text is None:
+        return False, "", "FASTA input is empty.", ""
+
+    text = raw_text.strip()
+    if not text:
+        return False, "", "FASTA input is empty.", ""
+
+    lines = [line.rstrip() for line in text.splitlines() if line.strip()]
+    if not lines or not lines[0].startswith(">"):
+        return False, "", "FASTA must start with a header line beginning with '>'", ""
+
+    valid_dna = set("ACGTUWSMKRYBDHVN-")
+    valid_protein = set("ACDEFGHIKLMNPQRSTVWYBXZJUO*-")
+    seq_chars = []
+    total_len = 0
+
+    for line in lines:
+        if line.startswith(">"):
+            continue
+
+        if line.startswith("$"):
+            return False, "", "Command-like input detected. Paste only FASTA content.", ""
+
+        cleaned = re.sub(r"\s+", "", line).upper()
+        if not cleaned:
+            continue
+
+        total_len += len(cleaned)
+        seq_chars.append(cleaned)
+
+        for ch in cleaned:
+            if ch not in valid_dna and ch not in valid_protein:
+                return False, "", f"Invalid character in FASTA: '{ch}'", ""
+
+    if total_len < 20:
+        return False, "", "FASTA sequence is too short (min 20 bp/aa).", ""
+
+    if total_len > max_len:
+        return False, "", f"FASTA sequence is too long (max {max_len} bp/aa).", ""
+
+    is_dna_only = True
+    for seq in seq_chars:
+        if any(ch not in valid_dna for ch in seq):
+            is_dna_only = False
+            break
+
+    seq_type = "dna" if is_dna_only else "protein"
+    return True, text + "\n", "", seq_type
+
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
     import dash_ag_grid as dag
@@ -1008,12 +1059,96 @@ def load_project_preview(proj_title):
                                             ),
                                         ], width=6),
                                         dbc.Col([
-                                            html.Label("Read Type:"),
-                                            dcc.Dropdown(
-                                                id="seq-read-type",
-                                                options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
-                                                value='long'
+                                            html.Label("Alignment Method:"),
+                                            dcc.RadioItems(
+                                                id="align-method",
+                                                options=[
+                                                    {'label': 'Vg Giraffe', 'value': 'giraffe'},
+                                                    {'label': 'Bandage (BLAST)', 'value': 'bandage'}
+                                                ],
+                                                value='giraffe',
+                                                inline=True,
+                                                labelStyle={'marginRight': '10px'}
                                             ),
+                                            html.Br(),
+                                            
+                                            html.Div(id="giraffe-options", children=[
+                                                html.Label("Read Type:"),
+                                                dcc.Dropdown(
+                                                    id="seq-read-type",
+                                                    options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
+                                                    value='long'
+                                                ),
+                                            ]),
+                                            
+                                            html.Div(id="bandage-options", style={'display': 'none'}, children=[
+                                                dbc.Button("Blast Settings", id="btn-collapse-blast", size="sm", color="info", className="mb-2", outline=True),
+                                                dbc.Collapse(
+                                                    dbc.Card(dbc.CardBody([
+                                                        html.Small("Blast Params (--blastp value)"),
+                                                        dcc.Input(id="bandage-blastp", type="text", placeholder='e.g. "-word_size 11"', className="form-control mb-1", style={'fontSize': '0.8em'}),
+                                                        
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Ident %"), dcc.Input(id="bandage-ifilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Cov %"), dcc.Input(id="bandage-qcfilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("E-value"), dcc.Input(id="bandage-evfilter", type="text", value="1e1", placeholder="1e1", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Min Len"), dcc.Input(id="bandage-alfilter", type="number", value=0, placeholder="bp", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+                                                        
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("BitScore"), dcc.Input(id="bandage-bsfilter", type="number", value=0, placeholder="min score", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ]),
+
+                                                    ], style={'padding': '10px'})),
+                                                    id="collapse-blast",
+                                                    is_open=False,
+                                                ),
+                                                html.Br(),
+                                                dbc.Button("Query Path Settings", id="btn-collapse-qpaths", size="sm", color="info", className="mb-2", outline=True),
+                                                dbc.Collapse(
+                                                    dbc.Card(dbc.CardBody([
+                                                        html.Small("BLAST query paths"),
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Path nodes"), dcc.Input(id="bandage-pathnodes", type="number", value=6, min=1, max=50, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Min path cov"), dcc.Input(id="bandage-minpatcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Min hit cov"), dcc.Input(id="bandage-minhitcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Min mean id"), dcc.Input(id="bandage-minmeanid", type="number", value=0.5, min=0, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Max e-value product"), dcc.Input(id="bandage-maxevprod", type="text", value="1e-10", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Min path len"), dcc.Input(id="bandage-minpatlen", type="number", value=0.95, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Max path len"), dcc.Input(id="bandage-maxpatlen", type="number", value=1.05, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                            dbc.Col([html.Small("Min len discrepancy"), dcc.Input(id="bandage-minlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ], className="mb-1"),
+
+                                                        dbc.Row([
+                                                            dbc.Col([html.Small("Max len discrepancy"), dcc.Input(id="bandage-maxlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                        ]),
+                                                    ], style={'padding': '10px'})),
+                                                    id="collapse-qpaths",
+                                                    is_open=False,
+                                                ),
+                                                html.Br(),
+                                                html.Small("Top hits to extract"),
+                                                dcc.Input(
+                                                    id="bandage-topn",
+                                                    type="number",
+                                                    min=1,
+                                                    placeholder="e.g. 5",
+                                                    className="form-control",
+                                                    style={'fontSize': '0.8em', 'width': '140px'}
+                                                )
+                                            ]),
                                     html.Hr(),
                         html.Label("Context Settings (Choose one):"),
                         dbc.Row([
@@ -1033,30 +1168,37 @@ def load_project_preview(proj_title):
                                     
                                     html.Hr(),
                                     
-                                    
-                                    html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
-                                        html.H5("Alignment Hits"),
-                                        dbc.Row([
-                                            dbc.Col([
-                                                html.Label("Select Hit to Visualize:"),
-                                                dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
-                                            ], width=6),
-                                            dbc.Col([
-                                                html.Label("Visualizer:"),
-                                                dcc.Dropdown(
-                                                    id="hit-viz-type",
-                                                    options=[
-                                                        {'label': 'ODGI (PNG)', 'value': 'odgi'},
-                                                        {'label': 'Bandage (SVG)', 'value': 'bandage'}
-                                                    ],
-                                                    value='odgi'
-                                                )
-                                            ], width=4)
-                                        ]),
-                                        html.Br(),
-                                        dcc.Loading(html.Div(id="hit-visualization-area"))
-                                    ]),
-                                    
+                                    dcc.Loading(
+                                        id="loading-alignment",
+                                        type="default",
+                                        children=[
+                                            html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
+                                                html.Div(id="alignment-error"),
+                                                html.H5("Alignment Hits"),
+                                                dbc.Row([
+                                                    dbc.Col([
+                                                        html.Label("Select Hit to Visualize:"),
+                                                        dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
+                                                    ], width=6),
+                                                    dbc.Col([
+                                                        html.Label("Visualizer:"),
+                                                        dcc.Dropdown(
+                                                            id="hit-viz-type",
+                                                            options=[
+                                                                {'label': 'ODGI (PNG)', 'value': 'odgi'},
+                                                                {'label': 'Bandage (SVG)', 'value': 'bandage'}
+                                                            ],
+                                                            value='odgi'
+                                                        )
+                                                    ], width=4)
+                                                ]),
+                                                html.Br(),
+                                                html.Div(id="hit-metrics-area"),
+                                                html.Br(),
+                                                dcc.Loading(html.Div(id="hit-visualization-area"))
+                                            ]),
+                                        ]
+                                    ),
                                     
                                     dcc.Store(id='store-alignment-hits'),
                                     dcc.Store(id='store-alignment-path')
@@ -3310,7 +3452,35 @@ def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, sessi
 
     return dbc.Alert("Extraction finished, but no output file was found.", color="warning")
 
+@app.callback(
+    Output("giraffe-options", "style"),
+    Output("bandage-options", "style"),
+    Input("align-method", "value")
+)
+def toggle_align_method(method):
+    if method == "bandage":
+        return {'display': 'none'}, {'display': 'block'}
+    return {'display': 'block'}, {'display': 'none'}
 
+@app.callback(
+    Output("collapse-blast", "is_open"),
+    Input("btn-collapse-blast", "n_clicks"),
+    State("collapse-blast", "is_open"),
+)
+def toggle_blast_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+@app.callback(
+    Output("collapse-qpaths", "is_open"),
+    Input("btn-collapse-qpaths", "n_clicks"),
+    State("collapse-qpaths", "is_open"),
+)
+def toggle_qpaths_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
 
   #############################################################################################
     # Extraction and visualization of a subgraph based on alignments
@@ -3319,6 +3489,7 @@ def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, sessi
 # Callback: Run Sequence Alignment Script
 @app.callback(
     Output("alignment-results-container", "style"),
+    Output("alignment-error", "children"),
     Output("hit-selector", "options"),
     Output("hit-selector", "value"),
     Output("store-alignment-hits", "data"),
@@ -3330,17 +3501,43 @@ def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, sessi
     State("seq-context-bp", "value"),   # Base Pairs (NEW)
     State("current_session", "value"),
     State('projets', 'value'),
+    State("align-method", "value"),
+    State("bandage-blastp", "value"),
+    State("bandage-ifilter", "value"),
+    State("bandage-qcfilter", "value"),
+    State("bandage-evfilter", "value"),
+    State("bandage-alfilter", "value"),
+    State("bandage-bsfilter", "value"),
+    State("bandage-pathnodes", "value"),
+    State("bandage-minpatcov", "value"),
+    State("bandage-minhitcov", "value"),
+    State("bandage-minmeanid", "value"),
+    State("bandage-maxevprod", "value"),
+    State("bandage-minpatlen", "value"),
+    State("bandage-maxpatlen", "value"),
+    State("bandage-minlendis", "value"),
+    State("bandage-maxlendis", "value"),
+    State("bandage-topn", "value"),
+    State("metadata_table", "selectedRows"),
     prevent_initial_call=True
 )
-def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, context_bp, session, project_name):
-    if not fasta_content:
-        return {'display': 'none'}, [], None, None, None
+def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, context_bp, session, project_name, method, blastp, ifilter, qcfilter, evfilter, alfilter, bsfilter, pathnodes, minpatcov, minhitcov, minmeanid, maxevprod, minpatlen, maxpatlen, minlendis, maxlendis, topn, selected_rows):
+    is_valid, cleaned_fasta, error_message, seq_type = validate_fasta_input(fasta_content)
+    if not is_valid:
+        return {'display': 'block'}, dbc.Alert(error_message, color="danger"), [], None, None, None
     
     # 1. Setup Paths
     row = query_db("SELECT path FROM projects WHERE title = ?", (project_name,), one=True)
     project_path = row[0] if row else conf["session_dir"] + "/" + project_name
     input_gfa = os.path.join(project_path, "pangenome.gfa")
     
+    # Process selected genomes
+    path_list_arg = ""
+    if selected_rows:
+        selected_genomes = [row["Strain name"] for row in selected_rows if "Strain name" in row]
+        if selected_genomes:
+            path_list_arg = ",".join(selected_genomes)
+
     # Unique directory
     import time
     timestamp = int(time.time())
@@ -3350,16 +3547,46 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
     # 2. Save Fasta
     fasta_path = os.path.join(output_dir, "input.fasta")
     with open(fasta_path, "w") as f:
-        f.write(fasta_content)
+        f.write(cleaned_fasta)
         
     # 3. Build Command
-    cmd = [
-        "bash", "extract_subgraph_sequences.sh",
-        "-f", fasta_path,
-        "-g", input_gfa,
-        "-d", output_dir,
-        "-r", read_type
-    ]
+    if method == "bandage":
+        cmd = [
+            "bash", "extract_subgraph_bandage.sh",
+            "-f", fasta_path,
+            "-g", input_gfa,
+            "-d", output_dir
+        ]
+        if path_list_arg:
+            cmd.extend(["-p", path_list_arg])
+        if blastp: cmd.extend(["--blastp", str(blastp)])
+        if ifilter: cmd.extend(["--ifilter", str(ifilter)])
+        if qcfilter: cmd.extend(["--qcfilter", str(qcfilter)])
+        if evfilter: cmd.extend(["--evfilter", str(evfilter)])
+        if alfilter: cmd.extend(["--alfilter", str(alfilter)])
+        if bsfilter: cmd.extend(["--bsfilter", str(bsfilter)])
+        if pathnodes: cmd.extend(["--pathnodes", str(int(pathnodes))])
+        if minpatcov is not None: cmd.extend(["--minpatcov", str(minpatcov)])
+        if minhitcov is not None: cmd.extend(["--minhitcov", str(minhitcov)])
+        if minmeanid is not None: cmd.extend(["--minmeanid", str(minmeanid)])
+        if maxevprod: cmd.extend(["--maxevprod", str(maxevprod)])
+        if minpatlen is not None: cmd.extend(["--minpatlen", str(minpatlen)])
+        if maxpatlen is not None: cmd.extend(["--maxpatlen", str(maxpatlen)])
+        if minlendis is not None and str(minlendis).strip() != "": cmd.extend(["--minlendis", str(int(minlendis))])
+        if maxlendis is not None and str(maxlendis).strip() != "": cmd.extend(["--maxlendis", str(int(maxlendis))])
+        if topn: cmd.extend(["--topn", str(int(topn))])
+        
+    else:
+        # Default Vg Giraffe
+        cmd = [
+            "bash", "extract_subgraph_sequences.sh",
+            "-f", fasta_path,
+            "-g", input_gfa,
+            "-d", output_dir,
+            "-r", read_type
+        ]
+        if path_list_arg:
+            cmd.extend(["-p", path_list_arg])
 
     # Handle mutually exclusive context logic (BP takes precedence if provided)
     if context_bp is not None and str(context_bp).strip() != "":
@@ -3374,20 +3601,20 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
         subprocess.run(cmd, check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Alignment Error: {e.stderr}")
-        return {'display': 'none'}, [], None, None, None
+        return {'display': 'block'}, dbc.Alert("Alignment failed. See server logs for details.", color="danger"), [], None, None, None
 
     # 5. Parse hits.json
     manifest_path = os.path.join(output_dir, "hits.json")
     if not os.path.exists(manifest_path):
         print("No manifest found.")
-        return {'display': 'block'}, [], None, None, None
+        return {'display': 'block'}, dbc.Alert("No hits manifest found.", color="warning"), [], None, None, None
         
     try:
         with open(manifest_path, 'r') as f:
             hits_data = json.load(f)
     except Exception as e:
         print(f"JSON Error: {e}")
-        return {'display': 'block'}, [], None, None, None
+        return {'display': 'block'}, dbc.Alert("Failed to parse hits.json.", color="danger"), [], None, None, None
 
     # 6. Populate Dropdown
     options = []
@@ -3400,11 +3627,12 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
     
     first_val = options[0]['value'] if options else None
     
-    return {'display': 'block'}, options, first_val, hits_data, output_dir
+    return {'display': 'block'}, "", options, first_val, hits_data, output_dir
 
 # Callback 2: Visualize Selected Hit
 @app.callback(
     Output("hit-visualization-area", "children"),
+    Output("hit-metrics-area", "children"),
     Input("hit-selector", "value"),
     Input("hit-viz-type", "value"),
     State("store-alignment-hits", "data"),
@@ -3413,13 +3641,31 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
 )
 def display_selected_hit(hit_id, viz_type, hits_data, output_dir):
     if not hit_id or not hits_data or not output_dir:
-        return html.Div("No hit selected.")
+        return html.Div("No hit selected."), ""
     
     # Find hit data
     selected_hit = next((h for h in hits_data if h['id'] == hit_id), None)
     if not selected_hit:
-        return html.Div("Hit not found.")
+        return html.Div("Hit not found."), ""
     
+    # Metrics Table and Sequence Text
+    metrics_div = html.Div([
+        html.H6(f"Hit Details: {selected_hit.get('query', hit_id)}"),
+        dbc.Row([
+            dbc.Col(dbc.Card([dbc.CardBody([html.H6("Identity", className="card-subtitle"), html.H4(f"{selected_hit.get('identity', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
+            dbc.Col(dbc.Card([dbc.CardBody([html.H6("Query Cov", className="card-subtitle"), html.H4(f"{selected_hit.get('coverage_query', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
+            dbc.Col(dbc.Card([dbc.CardBody([html.H6("E-value", className="card-subtitle"), html.H4(f"{selected_hit.get('e_value_product', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
+        ], className="mb-2"),
+        
+        html.Label("Hit Sequence:"),
+        dcc.Textarea(
+            value=selected_hit.get('sequence', ''),
+            style={'width': '100%', 'height': 100},
+            readOnly=True,
+            title="Copy this sequence"
+        )
+    ])
+
     image_filename = ""
     mime_type = ""
     
@@ -3463,9 +3709,9 @@ def display_selected_hit(hit_id, viz_type, hits_data, output_dir):
             figure=fig,
             config={'scrollZoom': True, 'displayModeBar': True},
             style={"width": "100%", "height": "80vh"}
-        )
+        ), metrics_div
     
-    return dbc.Alert(f"Image file {image_filename} not found.", color="danger")
+    return dbc.Alert(f"Image file {image_filename} not found.", color="danger"), metrics_div
 
 @app.callback(
     Output('PCA', 'figure', allow_duplicate=True),

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # extract_subgraph_sequences.sh
-# Usage: ./extract_subgraph_sequences.sh -f input.fasta -g graph.gfa -d output_dir -n 2 -L 1000 -r long
+# Usage: ./extract_subgraph_sequences.sh -f input.fasta -g graph.gfa -d output_dir -p "path1,path2" -n 2 -L 1000 -r long
 
 usage() {
-    echo "Usage: $0 -f <fasta_file> -g <gfa_file> -d <output_dir> [-n <node_steps>] [-L <bp_steps>] -r <read_type: short|long>"
+    echo "Usage: $0 -f <fasta_file> -g <gfa_file> -d <output_dir> [-p <paths>] [-n <node_steps>] [-L <bp_steps>] -r <read_type: short|long>"
     exit 1
 }
 
@@ -15,13 +15,15 @@ OUTPUT_DIR=""
 CONTEXT_STEPS="" # Default handled in logic
 CONTEXT_BP=""
 READ_TYPE="long"
+PATHS=""
 
 # Parse arguments
-while getopts ":f:g:d:n:L:r:h" opt; do
+while getopts ":f:g:d:p:n:L:r:h" opt; do
     case ${opt} in
         f ) FASTA_FILE=$OPTARG ;;
         g ) GFA_FILE=$OPTARG ;;
         d ) OUTPUT_DIR=$OPTARG ;;
+        p ) PATHS=$OPTARG ;;
         n ) CONTEXT_STEPS=$OPTARG ;;
         L ) CONTEXT_BP=$OPTARG ;;
         r ) READ_TYPE=$OPTARG ;;
@@ -104,6 +106,10 @@ for NODE_FILE in "$OUTPUT_DIR"/*_hit.txt; do
         "--odgi"
         "--bandage"
     )
+
+    if [[ -n "$PATHS" ]]; then
+        CMD_ARGS+=("-p" "$PATHS")
+    fi
 
     # Context logic: Priority to BP (-L) if set, otherwise Steps (-c)
     if [[ -n "$CONTEXT_BP" ]]; then
