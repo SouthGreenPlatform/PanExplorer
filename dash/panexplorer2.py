@@ -1868,6 +1868,7 @@ def set_reference_value(available_options):
     Output('tab_ani','style'),
     Output('tab_geo','style'),
     Output('current_session','value'),
+    Output('colorizing_pca','options'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3276,7 +3277,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # export final merged table
     merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
     
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session
+    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,[{'label': 'Country', 'value': 'Country'},{'label': 'Continent', 'value': 'Continent'},{'label': 'Organism', 'value': 'Organism'}]
 
 
 @app.callback(
@@ -4569,7 +4570,9 @@ def admin_generate_session(project_id):
     code, exp = generate_session_code_for_project(project_id, hours_valid=24)
     return f"Code: {code} (exp: {exp}) — URL: /?session={code}"
 
-
+@server.route("/cgi-bin/<path:anything>")
+def redirect_all_cgi(anything):
+    return redirect("/", code=301)
 
 
 def is_string_without_special_character(valeur):
