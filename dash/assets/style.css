@@ -84,3 +84,21 @@
     height: 65px;
     object-fit: contain;
 }
+
+.how-to-cite {
+    position: absolute;
+    width: 92%;
+    padding: 10px 10px 5px 10px;
+    background-color: white;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-left: 10px;
+}
+
+.how-to-cite-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 0.75em;
+}
