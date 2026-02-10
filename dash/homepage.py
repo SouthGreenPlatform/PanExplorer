@@ -40,6 +40,21 @@ layout = html.Div(
         dcc.Markdown('''
 For general questions, comments or problems about the site or the data, please contact [alexis.dereeper@ird.fr](mailto:alexis.dereeper@ird.fr)    
 '''),
+
+        html.Footer(
+                    className="footer",
+                    children=[
+                        html.Div(
+                            className="footer-logos",
+                            children=[
+                                html.Img(src="/assets/phim_logo.png", className="footer-logo"),
+                                html.Img(src="/assets/southgreen_logo.png", className="footer-logo"),
+                                html.Img(src="/assets/ird_logo.png", className="footer-logo"),
+                                html.Img(src="/assets/cirad_logo.png", className="footer-logo"),
+                            ]
+                        )
+                    ]
+                )
         
     ],
     style={"padding": "20px"}
