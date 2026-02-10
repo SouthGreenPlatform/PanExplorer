@@ -1869,6 +1869,7 @@ def set_reference_value(available_options):
     Output('tab_geo','style'),
     Output('current_session','value'),
     Output('colorizing_pca','options'),
+    Output('colorizing_tree','options'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3276,8 +3277,11 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         
     # export final merged table
     merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
+
+    list_metadata_columns = df_metadata.columns.tolist()
+    list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,[{'label': 'Country', 'value': 'Country'},{'label': 'Continent', 'value': 'Continent'},{'label': 'Organism', 'value': 'Organism'}]
+    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
 
 
 @app.callback(
@@ -3727,13 +3731,13 @@ def pca(dimension_pca,colorizing_pca,session):
     if os.path.exists(f"{tmp_dir}/{session}.metadata.txt"):
         df_pca_metadata = pd.read_csv(f"{tmp_dir}/{session}.metadata.txt")
         if dimension_pca=="3D":
-            if colorizing_pca=="Country":
-                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Country', hover_name="Individual", hover_data=["Assigned_to_pop"])
+            if colorizing_pca=="Country" or colorizing_pca=="Continent" or colorizing_pca=="Organism":
+                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color=colorizing_pca, hover_name="Individual", hover_data=["Assigned_to_pop"])
             else:
                 fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
         else:
-            if colorizing_pca=="Country":
-                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Country', hover_name="Individual", hover_data=["Assigned_to_pop"])
+            if colorizing_pca=="Country" or colorizing_pca=="Continent" or colorizing_pca=="Organism":
+                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color=colorizing_pca, hover_name="Individual", hover_data=["Assigned_to_pop"])
             else:
                 fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
     else:
@@ -4462,14 +4466,16 @@ def init_dataframes(pathname):
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
     # Remove lines from ptt
-    cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+list_species[0]+".ptt >"+directory+"/genomes/genomes/"+list_species[0]+".2.ptt"
-    returned_value = os.system(cmd)
-    
-    print("Species:"+list_species[0])
+    df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
+    if os.path.exists(directory+"/genomes/genomes/"+list_species[0]+".ptt"):
+        cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+list_species[0]+".ptt >"+directory+"/genomes/genomes/"+list_species[0]+".2.ptt"
+        returned_value = os.system(cmd)
+        
+        print("Species:"+list_species[0])
 
-    df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species[0]+'.2.ptt',sep='\t')
-    if 'block_id' not in df_gene_positons.columns:
-        df_gene_positons.insert(0, 'block_id', 'chr1')
+        df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species[0]+'.2.ptt',sep='\t')
+        if 'block_id' not in df_gene_positons.columns:
+            df_gene_positons.insert(0, 'block_id', 'chr1')
         
     merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
     print(df_gene_positons)
