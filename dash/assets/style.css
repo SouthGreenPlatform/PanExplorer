@@ -63,3 +63,24 @@
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    border-top: 2px solid #e0e0e0;
+    padding: 15px 30px;
+}
+
+/* Logos */
+.footer-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 130px;
+    flex-wrap: wrap;
+}
+
+.footer-logo {
+    height: 65px;
+    object-fit: contain;
+}
