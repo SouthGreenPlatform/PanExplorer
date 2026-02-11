@@ -4218,19 +4218,24 @@ def enrichment(submit_enrichment,metadata_table,proj_title,session):
 
     # get COG of clusters
     annotation_file = tmp_dir + "/" + str(session) + ".annotations.txt"
-
-    cmd = "cut -d '\t' -f 1,2 " + directory + "/cog_of_clusters.txt >" + annotation_file
+    cmd_args = ["cut", "-d", "\t", "-f", "1,2", directory + "/cog_of_clusters.txt"]
+    with open(annotation_file, "w") as file:
+        subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
 
     df_merged_with_cog = pd.read_csv(tmp_dir + "/" + str(session) + ".export_merged_with_cog.csv")
-    returned_value = os.system(cmd)
+
+
+
     df_cog_of_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".annotations.txt", sep="\t")
     # TODO: filter les annotations que celles qui sont dans notre selection
     df_cog_of_clusters.columns = ['orthogroup', 'terms']
     df_cog_of_clusters.to_csv(annotation_file,sep='\t',index=False)
 
     # calculate enrichment (odds ratios and pvalues)
-    cmd = "python enrichment.py --subsetA " + core_clusters_file + " --annotations " + annotation_file + " --out " + tmp_dir + "/" + str(session) + ".enrichment.txt"
-    returned_value = os.system(cmd)
+    cmd_args = ["python", "enrichment.py", "--subsetA",core_clusters_file, "--annotations", annotation_file, "--out", tmp_dir + "/" + str(session) + ".enrichment.txt"]
+    with open(f"{tmp_dir}/{session}.enrichment.log", "a") as log_file:
+        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+
     df_enrichment = pd.read_csv(tmp_dir + "/" + str(session) + ".enrichment.txt", sep="\t")
     df_enrichment["-log10_pvalue"] = -np.log10(df_enrichment["p_value"])
     df_enrichment_bis = df_enrichment[df_enrichment['-log10_pvalue'] > 2]
@@ -4300,8 +4305,9 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
 
         # remove lines/markers with missing data
         vntr_file_nomissing = directory+'/vntr_matrix.nomissing.tsv'
-        cmd = "grep -v '-' "+vntr_file+ " >"+vntr_file_nomissing
-        returned_value = os.system(cmd)
+        cmd_args = ["grep", "-v", "'-'", vntr_file]
+        with open(vntr_file_nomissing, "w") as file:
+            subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
         df_vntr_filtered = df_vntr[list_selected]
@@ -4482,18 +4488,20 @@ def init_dataframes(pathname):
     # Remove lines from ptt
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species[0]+".ptt"):
+
         cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+list_species[0]+".ptt >"+directory+"/genomes/genomes/"+list_species[0]+".2.ptt"
         returned_value = os.system(cmd)
         
         print("Species:"+list_species[0])
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species[0]+'.2.ptt',sep='\t')
+
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
         
     merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
     print(df_gene_positons)
-    print(merged_with_positions)
+
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
