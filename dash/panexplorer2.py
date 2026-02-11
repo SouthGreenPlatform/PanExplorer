@@ -2452,7 +2452,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     with open(directory+'/metadata.csv') as fp:
         metadata_csv = fp.read()
 
-    generate_tree_html(newick, df_metadata, "assets/tree."+str(session)+".html")
+    #generate_tree_html(newick, df_metadata, "Country", tmp_dir + "/" + str(session) + ".tree.html")
+    generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
@@ -2732,7 +2733,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             snp_based_newick = fp.read()
             df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
             df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
-            generate_tree_html(snp_based_newick, df_metadata_selected, "assets/snp_based_tree."+str(session)+".html")
+            generate_tree_html(snp_based_newick, df_metadata_selected, "Country", "assets/snp_based_tree."+str(session)+".html")
+
+
 
         #################################################################
         # Population structure with sNMF
@@ -4162,14 +4165,25 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
 
 
 @app.callback(
-    Output('iframe-snptree', 'figure', allow_duplicate=True),
+    Output('iframe-snptree', 'src', allow_duplicate=True),
     Input('colorizing_tree', 'value'),
     State('current_session', 'value'),
     prevent_initial_call=True    
 )
 
 def tree(colorizing_tree,session):
-    return ""
+    
+    with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
+        snp_based_newick = fp.read()
+        
+        list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
+        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".metadata.txt")
+        print(list_selected)
+        df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        generate_tree_html(snp_based_newick, df_metadata_selected, colorizing_tree, "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html")
+
+    return "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html"
 
 
 
@@ -4765,10 +4779,10 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     
     return df_ordered
 
-def generate_tree_html(newick, df_metadata, html_file):
+def generate_tree_html(newick, df_metadata, colorizing, html_file):
 
     concat_for_hash = ""
-    list_metadata_color = df_metadata['Country'].unique().tolist()
+    list_metadata_color = df_metadata[colorizing].unique().tolist()
     dict_colors = {}
     i = 0
 
@@ -4793,8 +4807,8 @@ def generate_tree_html(newick, df_metadata, html_file):
 
     for index, row in df_metadata.iterrows():
         color = "black"
-        if str(row['Country']) in dict_colors:
-            color = dict_colors[str(row['Country'])]
+        if str(row[colorizing]) in dict_colors:
+            color = dict_colors[str(row[colorizing])]
         concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
 
     # remove last caracter
