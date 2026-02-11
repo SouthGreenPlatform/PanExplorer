@@ -23,12 +23,7 @@ GetOptions(
 die $usage
   if ( !$inputdir );
 
-$|++;
-my $pid2 = fork;
-if (!defined $pid2) {
-	die "Cannot fork: $!";
-}
-elsif ($pid2 == 0 ){
+
 	my %strains;
 	open(LS,"ls $inputdir/*gbff.gz |");
         while(<LS>){
@@ -135,4 +130,3 @@ elsif ($pid2 == 0 ){
             rename("$inputdir/$strain.gb.ptt","$inputdir/$strain.ptt");
         }
 
-}

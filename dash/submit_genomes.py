@@ -281,8 +281,8 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                 country = countries[strain] 
                 countries[strain] = country
                 
-            os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
-            #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+            #os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
+            subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
             with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
                 f.write("Strain name\tCountry\tContinent\tOrganism\n")
@@ -370,7 +370,8 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
         #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
 
-        os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
+        #os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
+        subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
 
         with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
             f.write("Strain name\tCountry\tContinent\tOrganism\n")
