@@ -659,7 +659,7 @@ def register_callbacks(app):
             return html.Div([
                 dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
-                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
+                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
                 html.H5("Public genomes. Enter a list of Genbank assembly accessions (GCA). Must be annotated (up to 200 genomes)"),
                 dcc.Input(id="public-genomes", type="text", placeholder="GCA_000001234.1,GCA_000005678.1", style={"width": "75%"}),
@@ -671,7 +671,7 @@ def register_callbacks(app):
             return html.Div([
                 dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
-                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "Roary", "value": "roary"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
+                dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
                 html.H5("Upload your own genomes. Must be annotated (up to 200 genomes)"),
                 html.Label("Upload genbank files (accepted extension: .gb, .gbk, .gbff, .genbank). Selection of multiple files is possible. Must be annotated genomes. "),
