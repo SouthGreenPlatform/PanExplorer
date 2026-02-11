@@ -4413,8 +4413,9 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         j.write("],\n")
 
     # run haplotype network
-    cmd = "python haplotype_network.py -i " + tmp_dir+"/"+str(session)+".haplotypes.txt -o " + tmp_dir+"/"+str(session) + " >> " + tmp_dir+"/haplotype_network.log 2>&1"
-    returned_value = os.system(cmd)
+    cmd_args = ["python", "haplotype_network.py", "-i", tmp_dir+"/"+str(session)+".haplotypes.txt", "-o", tmp_dir+"/"+str(session)]
+    with open(tmp_dir+"/haplotype_network.log", "a") as log_file:
+        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
 
     with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
         j.write("  \"links\": [\n")
@@ -4430,14 +4431,14 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         j.write("]\n")
         j.write("}\n")
 
-    cmd = "cat assets/network."+str(session)+".1.json assets/network."+str(session)+".2.json > assets/network."+str(session)+".json"
-    returned_value = os.system(cmd)
+    cmd_args = ["cat", "assets/network."+str(session)+".1.json", "assets/network."+str(session)+".2.json"]
+    with open("assets/network."+str(session)+".json", "a") as json_file:
+        subprocess.run(cmd_args, stdout=json_file, stderr=subprocess.STDOUT, check=True)
 
     # add the prefix haplo to indexes
-    #haplotype_freq_df.index = [f"haplo{i+1}" for i in range(len(haplotype_freq_df))]
-
-    cmd = "sed \"s/SESSION/" + str(session) + "/g\" html_templates/network_template.html >assets/network."+str(session)+".html"
-    returned_value = os.system(cmd)
+    cmd_args = ["sed", "s/SESSION/" + str(session) + "/g", "html_templates/network_template.html"]
+    with open("assets/network."+str(session)+".html", "w") as html_file:
+        subprocess.run(cmd_args, stdout=html_file, stderr=subprocess.STDOUT, check=True)
 
     dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
 
@@ -4489,8 +4490,9 @@ def init_dataframes(pathname):
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species[0]+".ptt"):
 
-        cmd = "grep -P 'Location|^\d+\.\.' "+directory+"/genomes/genomes/"+list_species[0]+".ptt >"+directory+"/genomes/genomes/"+list_species[0]+".2.ptt"
-        returned_value = os.system(cmd)
+        cmd_args = ["grep", "-P", "Location|^\d+\.\.", directory+"/genomes/genomes/"+list_species[0]+".ptt"]
+        with open(directory+"/genomes/genomes/"+list_species[0]+".2.ptt", "w") as file:
+            subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
         
         print("Species:"+list_species[0])
 
