@@ -11,6 +11,8 @@ from sys import meta_path
 import uuid
 import re
 import sys
+import shlex
+import secrets
 
 import pandas as pd
 import json
@@ -156,9 +158,59 @@ def is_valid_genbank(decoded_text):
     except Exception as e:
         return False, str(e)
 
-def sanitize_filename(filename: str) -> str:
+def validate_session_id(session_id):
+    """
+    Validate that session_id is a valid UUID format.
+    """
+    try:
+        uuid.UUID(str(session_id))
+        return True
+    except (ValueError, AttributeError):
+        return False
 
-    return re.sub(r'[^a-zA-Z0-9.]', '', filename)
+def validate_gca_accession(accession: str) -> bool:
+    """
+    Validate that accession matches GCA/GCF format strictly.
+    Format: GCA_XXXXXX.X or GCF_XXXXXX.X
+    """
+    return bool(re.fullmatch(r"^GC[AF]_\d{9}(\.\d+)?$", accession.strip()))
+
+def validate_email_strict(email: str) -> bool:
+    """
+    Validate email address more strictly.
+    """
+    # Simple but effective regex for emails
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email.strip())) and len(email) < 254
+
+def is_safe_path(path: str, base_dir: str) -> bool:
+    """
+    Verify that `path` is within `base_dir` to prevent directory traversal.
+    Returns True if safe, False otherwise.
+    """
+    try:
+        real_path = os.path.realpath(path)
+        real_base = os.path.realpath(base_dir)
+        return real_path.startswith(real_base + os.sep) or real_path == real_base
+    except (OSError, ValueError):
+        return False
+
+def sanitize_filename(filename: str) -> str:
+    """
+    Sanitize filename to prevent path traversal and injection attacks.
+    Only allows alphanumeric, underscores, hyphens, and dots (for extension).
+    Removes any path separators and traversal attempts.
+    """
+    # Remove any path separators
+    filename = os.path.basename(filename)
+    # Remove null bytes
+    filename = filename.replace('\x00', '')
+    # Only allow safe characters
+    safe_name = re.sub(r'[^a-zA-Z0-9._-]', '', filename)
+    # Prevent empty filenames
+    if not safe_name:
+        safe_name = 'unnamed'
+    return safe_name
 
 def save_genbank_file(decoded_bytes, original_filename,session):
     """
@@ -212,7 +264,12 @@ def summarize_records(records, original_name, stored_filename):
 
 def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
 
-    path = UPLOAD_DIR+"/"+str(session)
+    # Validate session to prevent injection attacks
+    if not validate_session_id(session):
+        logger.error("Invalid session ID attempted: %s", session)
+        return
+
+    path = UPLOAD_DIR + "/" + str(session)
 
     if os.path.exists(path) and os.path.exists(f"{session_dir}/{session}/summary_upload.csv"):
 
@@ -230,31 +287,43 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                 if valid == "✅":
                     pass
                 else:
-                    os.remove(f"{UPLOAD_DIR}/{session}/{file_name}")
+                    file_to_remove = os.path.join(UPLOAD_DIR, session, file_name)
+                    if is_safe_path(file_to_remove, UPLOAD_DIR) and os.path.exists(file_to_remove):
+                        os.remove(file_to_remove)
             
-            result = subprocess.run(['perl', 'modifyGenbank.pl', f'{UPLOAD_DIR}/{session}', f'{UPLOAD_DIR}/{session}'],
+            upload_path = os.path.join(UPLOAD_DIR, session)
+            result = subprocess.run(['perl', 'modifyGenbank.pl', upload_path, upload_path],
                                    capture_output=True, text=True)
 
             dict_strains = {}
             filepaths = []
-            for file in os.listdir(UPLOAD_DIR+"/"+str(session)+"/forzip"):
-                if file.endswith(".gb"):
-                    filepaths.append(UPLOAD_DIR+"/"+str(session)+"/forzip/"+file)
+            forzip_dir = os.path.join(UPLOAD_DIR, session, "forzip")
+            if os.path.isdir(forzip_dir):
+                for file in os.listdir(forzip_dir):
+                    if file.endswith(".gb"):
+                        filepaths.append(os.path.join(forzip_dir, file))
                     
             for filepath in filepaths:
                 name = os.path.basename(filepath)
+                safe_name = sanitize_filename(name)
 
-                shutil.copyfile(f"{UPLOAD_DIR}/{session}/forzip/{name}", f"{session_dir}/{session}/genomes/genomes/{name}.gbff")
+                dest_gbff = os.path.join(session_dir, session, "genomes", "genomes", f"{safe_name}.gbff")
+                if not is_safe_path(dest_gbff, session_dir):
+                    logger.warning("Path traversal attempt detected: %s", dest_gbff)
+                    continue
+
+                shutil.copyfile(filepath, dest_gbff)
                 
-                subprocess.run(["gzip" , f"{session_dir}/{session}/genomes/genomes/{name}.gbff"],check=True)
+                subprocess.run(["gzip", dest_gbff], check=True)
 
-                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{name}.gbff.gz'],
+                dest_gbff_gz = f"{dest_gbff}.gz"
+                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', dest_gbff_gz],
                                                    capture_output=True, text=True)
                 get_organism_line = result.stdout
                 
                 lines_organism = get_organism_line.split("\n")
                 first_line = lines_organism[0]
-                second_line = lines_organism[1]
+                second_line = lines_organism[1] if len(lines_organism) > 1 else ""
                 if re.match(r"^            (.*)", second_line):
                     get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
                 else:
@@ -273,43 +342,58 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                     strain = re.sub(r"[^\w\-\_]", "", strain)
                     strain = strain.replace("-", "_")
                 
-                subprocess.run(['mv', f'{session_dir}/{session}/genomes/genomes/{name}.gbff.gz', 
-                               f'{session_dir}/{session}/genomes/genomes/{strain}.gbff.gz'], check=True)
+                # Sanitize strain name before using in filesystem
+                safe_strain = sanitize_filename(strain) if strain else safe_name
+                dest_strain_gz = os.path.join(session_dir, session, "genomes", "genomes", f"{safe_strain}.gbff.gz")
+                
+                if is_safe_path(dest_strain_gz, session_dir):
+                    subprocess.run(['mv', dest_gbff_gz, dest_strain_gz], check=True)
 
                 dict_strains[name] = strain
                 print(strain+" "+name + "\n")
                 country = countries[strain] 
                 countries[strain] = country
                 
-            #os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
-            subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+            subprocess.run(['perl', 'GetSequences.pl', '-i', os.path.join(session_dir, session, "genomes", "genomes")], check=True)
 
-            with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
-                f.write("Strain name\tCountry\tContinent\tOrganism\n")
-                for accession, strain in dict_strains.items():
-                    country = countries[strain]
-                    f.write(f"{strain}\t{country}\t\t\n")
+            metadata_file = os.path.join(session_dir, session, "metadata.xls")
+            if is_safe_path(metadata_file, session_dir):
+                with open(metadata_file, "w") as f:
+                    f.write("Strain name\tCountry\tContinent\tOrganism\n")
+                    for accession, strain in dict_strains.items():
+                        country = countries.get(strain, "")
+                        f.write(f"{strain}\t{country}\t\t\n")
+                os.chmod(metadata_file, 0o644)
 
     elif valid_list and valid_list.count(",") + 1 > 1:
 
-        accessions = valid_list.split(",")
+        accessions = [acc.strip() for acc in valid_list.split(",") if acc.strip()]
+        
+        # Validate all accessions before processing
+        for accession in accessions:
+            if not validate_gca_accession(accession):
+                logger.error("Invalid accession format: %s", accession)
+                continue
+        
         dict_strains = {}   
         countries = {}
         for accession in accessions:
                     
                 cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
-                       '--filename', f'{tmp_dir}/{accession}.zip', '--include', 'genome,gbff,protein']
+                       '--filename', os.path.join(tmp_dir, f"{accession}.zip"), '--include', 'genome,gbff,protein']
                 result = subprocess.run(cmd)
                 returned_value = result.returncode
 
                 if returned_value == 0:
-                    filepath = tmp_dir + "/" +accession + ".zip"
+                    filepath = os.path.join(tmp_dir, f"{accession}.zip")
                     import zipfile
+                    extract_dir = os.path.join(tmp_dir, accession)
+                    os.makedirs(extract_dir, exist_ok=True)
                     with zipfile.ZipFile(filepath, 'r') as zip_ref:
-                        zip_ref.extractall(tmp_dir + "/" +accession)
+                        zip_ref.extractall(extract_dir)
 
                     gbff_files = []
-                    for root, dirs, files in os.walk(tmp_dir + "/" +accession):
+                    for root, dirs, files in os.walk(extract_dir):
                         for file in files:
                             if file.endswith(".gbff") or file.endswith(".gbk") or file.endswith(".gb"):
                                 gbff_files.append(os.path.join(root, file))
@@ -326,35 +410,38 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                             # Valid GenBank → save and summarize
                             with open(gbff_file, "rb") as f:
                                 decoded_bytes = f.read()
-                            filepath = save_genbank_file(decoded_bytes, os.path.basename(gbff_file),session)
+                            filepath = save_genbank_file(decoded_bytes, os.path.basename(gbff_file), session)
                             stored_filename = os.path.basename(filepath)
 
                             summary = summarize_records(result, accession, stored_filename)
 
-                            subprocess.run(['cp', '-rf', gbff_file, f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
-                            subprocess.run(['gzip', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff'], check=True)
+                            dest_gbff = os.path.join(session_dir, session, "genomes", "genomes", f"{accession}.gbff")
+                            if is_safe_path(dest_gbff, session_dir):
+                                subprocess.run(['cp', '-rf', gbff_file, dest_gbff], check=True)
+                                subprocess.run(['gzip', dest_gbff], check=True)
 
-                            countries[accession] = summary['Country']
+                                countries[accession] = summary['Country']
 
-                            result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz'],
-                                                   capture_output=True, text=True)
-                            get_organism_line = result.stdout
+                                dest_gbff_gz = f"{dest_gbff}.gz"
+                                result = subprocess.run(['zgrep', '-A', '2', 'DEFINITION', dest_gbff_gz],
+                                                       capture_output=True, text=True)
+                                get_organism_line = result.stdout
 
 
-                            lines_organism = get_organism_line.split("\n")
-                            first_line = lines_organism[0]
-                            second_line = lines_organism[1]
-                            if re.match(r"^            (.*)", second_line):
-                                get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
-                            else:
-                                get_organism_line = first_line
-                            strain = ""
-                            if re.match(r"DEFINITION  (.*)$", get_organism_line):
-                                strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
-                                strain = strain.replace(".", "")
-                                info = strain.split(",")
-                                strain = info[0]
-                                strain = strain.replace(" ", "_")
+                                lines_organism = get_organism_line.split("\n")
+                                first_line = lines_organism[0]
+                                second_line = lines_organism[1] if len(lines_organism) > 1 else ""
+                                if re.match(r"^            (.*)", second_line):
+                                    get_organism_line = first_line + " " + re.match(r"^            (.*)", second_line).group(1)
+                                else:
+                                    get_organism_line = first_line
+                                strain = ""
+                                if re.match(r"DEFINITION  (.*)$", get_organism_line):
+                                    strain = re.match(r"DEFINITION  (.*)$", get_organism_line).group(1)
+                                    strain = strain.replace(".", "")
+                                    info = strain.split(",")
+                                    strain = info[0]
+                                    strain = strain.replace(" ", "_")
                                 strain = strain.replace("strain_", "")
                                 strain = strain.replace("_chromosome", "")
                                 strain = strain.replace("_genome", "")
@@ -362,37 +449,52 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                                 strain = re.sub(r"[^\w\-\_]", "", strain)
                                 strain = strain.replace("-", "_")
                             
-                            subprocess.run(['mv', f'{session_dir}/{session}/genomes/genomes/{accession}.gbff.gz', 
-                                           f'{session_dir}/{session}/genomes/genomes/{strain}.gbff.gz'], check=True)
+                            # Sanitize strain name before using in filesystem
+                            safe_strain = sanitize_filename(strain) if strain else accession
+                            dest_strain_gz = os.path.join(session_dir, session, "genomes", "genomes", f"{safe_strain}.gbff.gz")
+                            
+                            if is_safe_path(dest_strain_gz, session_dir):
+                                subprocess.run(['mv', dest_gbff_gz, dest_strain_gz], check=True)
 
-                            dict_strains[accession] = strain
-            
-        #subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
+                                dict_strains[accession] = safe_strain
+        
+        genomes_dir = os.path.join(session_dir, session, "genomes", "genomes")
+        subprocess.run(['perl', 'GetSequences.pl', '-i', genomes_dir], check=True)
 
-
-        #os.system(f"perl GetSequences.pl -i {session_dir}/{session}/genomes/genomes")
-        subprocess.run(['perl', 'GetSequences.pl', '-i', f'{session_dir}/{session}/genomes/genomes'], check=True)
-
-        with open(f"{session_dir}/{session}/metadata.xls", "w") as f:
-            f.write("Strain name\tCountry\tContinent\tOrganism\n")
-            for accession, strain in dict_strains.items():
-                country = countries[accession]
-                f.write(f"{strain}\t{country}\t\t\n")
+        metadata_file = os.path.join(session_dir, session, "metadata.xls")
+        if is_safe_path(metadata_file, session_dir):
+            with open(metadata_file, "w") as f:
+                f.write("Strain name\tCountry\tContinent\tOrganism\n")
+                for accession, strain in dict_strains.items():
+                    country = countries.get(accession, "")
+                    f.write(f"{strain}\t{country}\t\t\n")
+            os.chmod(metadata_file, 0o644)
 
     try:
         script_path = os.path.join(os.path.dirname(__file__), "PanExplorer_galaxy_bioblend.py")
         logpath = os.path.join(tmp_dir, f"panexplorer_{session}.log")
 
         cmd_args = None
-        if os.path.exists(f"{UPLOAD_DIR}/{session}/forzip/genomes.zip") and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
-            cmd_args = [sys.executable, script_path, "--z", f"{UPLOAD_DIR}/{session}/forzip/genomes.zip",
-                        "--o", os.path.join(session_dir, str(session)), "--p", str(min_percentage_identity),
-                        "--s", software, "--n", str(session)]
+        upload_genomes_zip = os.path.join(UPLOAD_DIR, session, "forzip", "genomes.zip")
+        if os.path.exists(upload_genomes_zip) and validate_session_id(session) and is_string_without_special_character(software):
+            try:
+                pct_identity = int(min_percentage_identity)
+                if 1 <= pct_identity <= 100:
+                    cmd_args = [sys.executable, script_path, "--z", upload_genomes_zip,
+                                "--o", os.path.join(session_dir, str(session)), "--p", str(pct_identity),
+                                "--s", software, "--n", str(session)]
+            except (ValueError, TypeError):
+                logger.error("Invalid min_percentage_identity: %s", min_percentage_identity)
 
-        elif valid_list and valid_list.count(",") + 1 > 1 and int(min_percentage_identity) and int(session) and is_string_without_special_character(software):
-            cmd_args = [sys.executable, script_path, "--i", valid_list,
-                        "--o", os.path.join(session_dir, str(session)), "--p", str(min_percentage_identity),
-                        "--s", software, "--n", str(session)]
+        elif valid_list and valid_list.count(",") + 1 > 1 and validate_session_id(session) and is_string_without_special_character(software):
+            try:
+                pct_identity = int(min_percentage_identity)
+                if 1 <= pct_identity <= 100:
+                    cmd_args = [sys.executable, script_path, "--i", valid_list,
+                                "--o", os.path.join(session_dir, str(session)), "--p", str(pct_identity),
+                                "--s", software, "--n", str(session)]
+            except (ValueError, TypeError):
+                logger.error("Invalid min_percentage_identity: %s", min_percentage_identity)
 
         if cmd_args:
             os.makedirs(tmp_dir, exist_ok=True)
@@ -405,15 +507,27 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
                 proc.wait()
 
     except subprocess.CalledProcessError as e:
-        stderr = e.stderr
-        stdout = e.stdout
+        logger.error("Subprocess error: %s", str(e))
+    except Exception as e:
+        logger.error("Error in run_external_command: %s", str(e))
 
     send_email(email_address, session)
     
 
-def send_email(to,session):
+def send_email(to, session):
+    """
+    Send email notification with validation.
+    """
+    # Validate session and email
+    if not validate_session_id(session):
+        logger.error("Invalid session ID: %s", session)
+        return
+    
+    if not validate_email_strict(to):
+        logger.error("Invalid recipient email: %s", to)
+        return
 
-    if int(session):
+    if validate_session_id(session):
         message = f"""
 Hi,
 
@@ -427,27 +541,41 @@ See you soon on PanExplorer,
 The PanExplorer team
 """
 
-        with open(f"{tmp_dir}/{session}.message.txt", "a") as f:
+        msg_file = os.path.join(tmp_dir, f"{session}.message.txt")
+        with open(msg_file, "w") as f:
             f.write(message)
+        
+        # Set restrictive permissions on message file
+        os.chmod(msg_file, 0o600)
 
-        cat_result = subprocess.run(['cat', f'{tmp_dir}/{session}.message.txt'], capture_output=True, text=True)
-        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', '-r', 'panexplorer@southgreen.fr', to],
+        # Use subprocess with list form (safer against injection) and pipe stdin
+        cat_result = subprocess.run(['cat', msg_file], capture_output=True, text=True)
+        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', to],
                       input=cat_result.stdout, text=True, check=True)
-        subprocess.run(['service', 'postfix', 'start'], check=True)
-
+        try:
+            subprocess.run(['service', 'postfix', 'start'], check=True)
+        except subprocess.CalledProcessError:
+            logger.warning("Could not start postfix service")
 
         message_for_admin = f"""
 The PanExplorer job {session} is done. It has been sent to {to}:
 https://panexplorer2.ird.fr/browse?session={session}
 """
 
-        with open(f"{tmp_dir}/{session}.message_for_admin.txt", "a") as f:
+        admin_msg_file = os.path.join(tmp_dir, f"{session}.message_for_admin.txt")
+        with open(admin_msg_file, "w") as f:
             f.write(message_for_admin)
+        
+        # Set restrictive permissions on message file
+        os.chmod(admin_msg_file, 0o600)
 
-        cat_result = subprocess.run(['cat', f'{tmp_dir}/{session}.message_for_admin.txt'], capture_output=True, text=True)
-        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', '-r', 'panexplorer@southgreen.fr', ADMIN_MAIL],
+        cat_result = subprocess.run(['cat', admin_msg_file], capture_output=True, text=True)
+        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', ADMIN_MAIL],
                       input=cat_result.stdout, text=True, check=True)
-        subprocess.run(['service', 'postfix', 'start'], check=True)
+        try:
+            subprocess.run(['service', 'postfix', 'start'], check=True)
+        except subprocess.CalledProcessError:
+            logger.warning("Could not start postfix service")
     
 
 
@@ -469,6 +597,9 @@ def register_callbacks(app):
         if n_clicks == 0:
             return html.Div("No check performed yet.")
 
+        if not validate_session_id(session):
+            return html.Div("Error: Invalid session.")
+
         if not gca_list:
             return html.Div("Please enter at least 3 Genbank assembly accession (GCA).")
 
@@ -477,16 +608,21 @@ def register_callbacks(app):
         
         gca_accessions = [gca.strip() for gca in gca_list.split(",") if gca.strip()]
 
+        # Validate each accession format
+        for accession in gca_accessions:
+            if not validate_gca_accession(accession):
+                return html.Div(f"Invalid accession format: {accession}. Must be GCA_XXXXXX.X or GCF_XXXXXX.X")
+
         if len(gca_accessions) > 200:
             return html.Div("Error: maximum number of genomes exceeded (200 allowed).")
         
         rows = []
         valid_genome_count = 0
         list_of_valid_accessions = []
-        os.mkdir(f"{UPLOAD_DIR}/{session}")
+        os.makedirs(f"{UPLOAD_DIR}/{session}", exist_ok=True)  # Fix race condition with exist_ok=True
         
 
-        os.makedirs(f"{session_dir}/{session}/genomes/genomes")
+        os.makedirs(f"{session_dir}/{session}/genomes/genomes", exist_ok=True)  # Fix race condition
         dict_strains = {}   
         countries = {}
         for accession in gca_accessions:
@@ -627,10 +763,12 @@ def register_callbacks(app):
 
         if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
             return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
-        if (not email_address or not re.match(r"[^@]+@[^@]+\.[^@]+", email_address)):
+        if (not email_address or not validate_email_strict(email_address)):
             return dbc.Alert("Error: Invalid email address.", color="danger") , {"display": "block"}
-        if (not min_percentage_identity or not (1 <= min_percentage_identity <= 100)):
+        if (not min_percentage_identity or not (1 <= int(min_percentage_identity) <= 100)):
             return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger") , {"display": "block"}
+        if not validate_session_id(session):
+            return dbc.Alert("Error: Invalid session.", color="danger") , {"display": "block"}
 
 
         thread = threading.Thread(
@@ -655,7 +793,7 @@ def register_callbacks(app):
         Input("input-type", "value"),
     )
     def apply_import(input_type):
-        session = random.randint(1, 9000000)
+        session = str(uuid.uuid4())  # Generate secure UUID instead of random number
         if input_type == "public":
             return html.Div([
                 dcc.Input(id="session", type="hidden", value=str(session)),
@@ -759,8 +897,20 @@ def register_callbacks(app):
 
         for sub in os.listdir(UPLOAD_DIR):
             subpath = os.path.join(UPLOAD_DIR, sub)
+            
+            # Validate session ID format before processing
+            if not validate_session_id(sub):
+                logger.warning("Skipping invalid session ID: %s", sub)
+                continue
+            
             if not os.path.isdir(subpath):
                 continue
+            
+            # Verify path safety to prevent directory traversal
+            if not is_safe_path(subpath, UPLOAD_DIR):
+                logger.warning("Path outside allowed directory: %s", subpath)
+                continue
+                
             sentinel = os.path.join(subpath, VALIDATION_SENTINEL)
             if os.path.exists(sentinel):
                 continue
@@ -811,6 +961,7 @@ def register_callbacks(app):
                 # optional magic check
                 if HAS_MAGIC:
                     try:
+                        print("testttt magic")
                         mime = magic.from_file(fpath, mime=True)
                         low = str(mime).lower()
                         if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
@@ -829,6 +980,7 @@ def register_callbacks(app):
                     try:
                         cd = pyclamd.ClamdNetworkSocket()
                         scan_result = cd.scan_file(fpath)
+                        print("testttt pyclamd")
                         if scan_result:
                             logger.warning("Infected file detected and removed: %s", fpath)
                             try:
@@ -872,24 +1024,31 @@ def register_callbacks(app):
     )
     def refresh_table(n_clicks, session):
 
+        if not validate_session_id(session):
+            return html.Div("Error: Invalid session.")
+
         filepaths = []
 
-        if not os.path.exists(session_dir+"/"+str(session)+"/genomes/genomes"):
-            os.makedirs(f"{session_dir}/{session}/genomes/genomes")
+        session_genomes_dir = f"{session_dir}/{session}/genomes/genomes"
+        os.makedirs(session_genomes_dir, exist_ok=True)
 
         rows = []
         valid_genome_count = 0
         
         dict_strains = {}
 
-        for file in os.listdir(UPLOAD_DIR+"/"+str(session)):
+        upload_session_dir = f"{UPLOAD_DIR}/{session}"
+        if not os.path.isdir(upload_session_dir):
+            return html.Div("Error: Upload directory not found.")
+
+        for file in os.listdir(upload_session_dir):
             original_name = os.path.basename(file)
             if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff") or file.endswith(".genbank"):
                 newfile = sanitize_filename(file)
-                filepath = UPLOAD_DIR+"/"+str(session)+"/"+newfile
+                filepath = os.path.join(upload_session_dir, newfile)
                 filepaths.append(filepath)
                 if file != newfile:
-                    os.rename(UPLOAD_DIR+"/"+str(session)+"/"+file, UPLOAD_DIR+"/"+str(session)+"/"+newfile)
+                    os.rename(os.path.join(upload_session_dir, file), filepath)
 
                 original_name = os.path.basename(filepath)
                 print(original_name)
@@ -925,7 +1084,7 @@ def register_callbacks(app):
 
                     if cds < 10:
                         rows.append({
-                            "File name": accession,
+                            "File name": original_name,
                             "Valid": "❌",
                             "Error": "Genome is not annotated",
                             "Country": None,

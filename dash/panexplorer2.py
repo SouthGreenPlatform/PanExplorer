@@ -1,8 +1,10 @@
 # app.py — Application Dash unique + authentification SQLite + mode "session-only"
 import os
 import sqlite3
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 import uuid
+from functools import wraps
+import time as time_module
 
 from flask import Flask, render_template_string, request, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
@@ -308,6 +310,49 @@ def execute_db(query, args=()):
     conn.commit()
     conn.close()
 
+# ---------- Login Rate Limiting ----------
+login_attempts = {}  # {username: [(timestamp, success), ...]}
+MAX_LOGIN_ATTEMPTS = 5
+LOGIN_ATTEMPT_WINDOW = 900  # 15 minutes in seconds
+LOCKOUT_DURATION = 1800  # 30 minutes in seconds
+
+def validate_username(username):
+    """Validate username format and length."""
+    if not username or not isinstance(username, str):
+        return False
+    if len(username) < 3 or len(username) > 64:
+        return False
+    # Only alphanumeric, underscore, hyphen
+    return bool(re.match(r'^[a-zA-Z0-9_-]+$', username))
+
+def check_rate_limit(username):
+    """Check if user has exceeded login attempt limit."""
+    now = time_module.time()
+    
+    if username not in login_attempts:
+        login_attempts[username] = []
+    
+    # Clean old attempts outside the window
+    login_attempts[username] = [
+        (ts, success) for ts, success in login_attempts[username]
+        if now - ts < LOGIN_ATTEMPT_WINDOW
+    ]
+    
+    # Check for lockout (multiple failed attempts)
+    recent_failures = [ts for ts, success in login_attempts[username] if not success]
+    if len(recent_failures) >= MAX_LOGIN_ATTEMPTS:
+        # Check if user is in lockout period
+        if now - recent_failures[-1] < LOCKOUT_DURATION:
+            return False, "Too many login attempts. Try again later."
+    
+    return True, ""
+
+def record_login_attempt(username, success):
+    """Record a login attempt."""
+    if username not in login_attempts:
+        login_attempts[username] = []
+    login_attempts[username].append((time_module.time(), success))
+
 # ---------- Sync projects (from YAML folder list) ----------
 def sync_projects_from_yaml():
     if not os.path.exists(CONFIG_YAML):
@@ -333,6 +378,10 @@ def sync_projects_from_yaml():
 # ---------- Flask + Login ----------
 server = Flask(__name__)
 server.secret_key = SECRET_KEY
+server.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+server.config['SESSION_COOKIE_SECURE'] = True  # Only send over HTTPS
+server.config['SESSION_COOKIE_HTTPONLY'] = True  # No JavaScript access
+server.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 
 login_manager = LoginManager()
 login_manager.init_app(server)
@@ -352,23 +401,48 @@ def load_user(user_id):
 
 LOGIN_PAGE = """
 <!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
+<style>
+body { font-family: Arial, sans-serif; }
+.container { max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+.messages { color: red; margin-bottom: 20px; }
+form { display: flex; flex-direction: column; }
+label { margin-bottom: 5px; margin-top: 10px; }
+input[type="text"], input[type="password"] { padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 3px; }
+input[type="submit"] { padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+input[type="submit"]:hover { background-color: #0056b3; }
+.help-text { font-size: 0.85em; color: #666; margin-top: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
 <h2>Login</h2>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul>
+    <div class="messages">
     {% for m in messages %}
-      <li style="color:red">{{m}}</li>
+      <p>{{ m }}</p>
     {% endfor %}
-    </ul>
+    </div>
   {% endif %}
 {% endwith %}
 <form method="post">
-  <label>Username: <input name="username"></label><br>
-  <label>Password: <input type="password" name="password"></label><br>
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required maxlength="64" autocomplete="username">
+  
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required autocomplete="current-password">
+  
   <input type="submit" value="Login">
 </form>
-<p><a href="/">Retour</a></p>
+<p><a href="/">Back to home</a></p>
+</div>
+</body>
+</html>
 """
 
 @server.route("/login", methods=["GET","POST"])
@@ -376,12 +450,36 @@ def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
+        
+        # Validate username format
+        if not validate_username(username):
+            flash("Invalid username format. Use 3-64 alphanumeric characters, underscore, or hyphen.")
+            return render_template_string(LOGIN_PAGE)
+        
+        # Check rate limiting
+        allowed, msg = check_rate_limit(username)
+        if not allowed:
+            flash(msg)
+            return render_template_string(LOGIN_PAGE)
+        
+        # Query user (constant-time comparison)
         r = query_db("SELECT id, username, password_hash FROM users WHERE username = ?", (username,), one=True)
-        if r and check_password_hash(r[2], password):
+        
+        # Always check password (even if user doesn't exist) to prevent user enumeration
+        # Use a dummy hash if user not found
+        password_hash = r[2] if r else generate_password_hash("dummy_password_that_wont_match")
+        password_match = check_password_hash(password_hash, password)
+        
+        if r and password_match:
             user_obj = User(r[0], r[1])
-            login_user(user_obj)
+            login_user(user_obj, remember=False)
+            record_login_attempt(username, True)
             return redirect("/")
-        flash("Invalid username or password.")
+        
+        # Generic error message to prevent user enumeration
+        record_login_attempt(username, False)
+        flash("Invalid username or password. Please try again.")
+    
     return render_template_string(LOGIN_PAGE)
 
 @server.route("/logout")
@@ -428,6 +526,17 @@ app.layout = main_layout()
 
 
 
+
+def validate_session_id(session_id):
+    """
+    Validate that session_id is a valid UUID format or legacy numeric format.
+    """
+    try:
+        uuid.UUID(str(session_id))
+        return True
+    except (ValueError, AttributeError):
+        # Also accept legacy numeric sessions for backward compatibility
+        return isinstance(session_id, str) and session_id.isdigit()
 
 # Helper: project by session code
 def get_project_by_session(code):
@@ -490,7 +599,7 @@ def render_page(search):
 
     
     if session_code:
-        if session_code.isdigit():
+        if validate_session_id(session_code):
             proj = get_project_by_session(session_code)
             if not proj:
                 dir = conf["session_dir"] + "/" + session_code
@@ -502,7 +611,7 @@ def render_page(search):
                     return html.Br(), dbc.Alert(html.P("Session does not exist", className="alert-heading"),color="danger")
 
         else:
-            return html.Br(), dbc.Alert(html.P("Session is not accepted", className="alert-heading"),color="danger")     
+            return html.Br(), dbc.Alert(html.P("Session is not accepted (must be UUID or legacy numeric ID)", className="alert-heading"),color="danger")     
 
 
     # Normal mode: header + dropdown + area for the simplified PAV UI
@@ -1384,7 +1493,7 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
         os.remove(tmp_dir+"/"+str(session)+".muscle.log")
     
     # run muscle to generate alignment
-    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and int(session):
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and validate_session_id(session):
 
         cmd_args = ["muscle", "-align", f"{tmp_dir}/{session}.temp.fasta", "-output", f"{tmp_dir}/{session}.temp.aln.fasta"]
         with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
@@ -1907,7 +2016,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     if is_bed(bedfile) == False:
         bedfile = ""
 
-    session = random.randint(1, 9000000)
+    session = str(uuid.uuid4())
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
     
@@ -2255,7 +2364,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
         #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
-        if int(session):
+        if validate_session_id(session):
             subprocess.run(
                 [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
                 check=True
@@ -2502,13 +2611,13 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     for sp in list_selected:
         c+=1
         if (c >=1 and c <=(max_nb_strains_macrosynteny)):
-            if int(session):
+            if validate_session_id(session):
                 shutil.copy(directory+"/genomes/genomes/"+sp+".ptt", selection_dir)
                 list_of_species_macrosyneny.append(sp)
 
     
 
-    if int(session) and is_string_without_special_character(chromosome) and int(minimal_size_block):
+    if validate_session_id(session) and is_string_without_special_character(chromosome) and int(minimal_size_block):
         subprocess.run(
             ["perl" , "GetSyntenicBlocks.pl", selection_dir, tmp_dir + "/" + str(session) + ".core_genes.txt", tmp_dir + "/" + str(session) + ".syntenic_blocks.txt", str(minimal_size_block), str(chromosome)],
             check=True
