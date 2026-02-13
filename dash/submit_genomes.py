@@ -365,7 +365,8 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
 
                 dict_strains[name] = strain
                 print(strain+" "+name + "\n")
-                country = countries[strain] 
+                name2 = pathlib.Path(name).stem
+                country = countries[name2] 
                 countries[strain] = country
                 
             subprocess.run(['perl', 'GetSequences.pl', '-i', os.path.join(session_dir, session, "genomes", "genomes")], check=True)
@@ -1057,6 +1058,8 @@ def register_callbacks(app):
             original_name = os.path.basename(file)
             if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff") or file.endswith(".genbank"):
                 newfile = sanitize_filename(file)
+
+                print(f"Processing uploaded file: {file} -> {newfile}")
                 filepath = os.path.join(upload_session_dir, newfile)
                 filepaths.append(filepath)
 
@@ -1067,6 +1070,9 @@ def register_callbacks(app):
                 
                 os.rename(os.path.join(upload_session_dir, newfile+".2"), filepath)
                 original_name = os.path.basename(filepath)
+
+                if file != newfile:
+                    os.remove(os.path.join(upload_session_dir, file))
 
                 # skip if file already in table
                 if any(r["Stored file"] == original_name for r in rows):
