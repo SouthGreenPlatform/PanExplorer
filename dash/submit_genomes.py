@@ -32,6 +32,8 @@ import time
 import dash_uploader as du
 import logging
 
+from pathlib import Path
+
 # optional libs: python-magic (python-magic-bin on Windows) and pyclamd for ClamAV
 try:
     import magic
@@ -138,6 +140,17 @@ layout = html.Div(
 # Utility functions
 # --------------------------------------------------
 
+def fix_locus_line(line):
+    if line.startswith("LOCUS"):
+        # capture LOCUS + nom + taille collée + unité
+        match = re.match(r"(LOCUS\s+)(\w+)\s+(bp|aa)", line)
+        if match:
+            return f"{match.group(1)}{match.group(2)} 100 {match.group(3)}\n"
+    return line
+
+
+
+
 def is_valid_genbank(decoded_text):
     """
     Check whether the uploaded file is a valid GenBank file.
@@ -145,6 +158,7 @@ def is_valid_genbank(decoded_text):
     """
     try:
         handle = io.StringIO(decoded_text)
+
         records = list(SeqIO.parse(handle, "genbank"))
 
         if not records:
@@ -961,7 +975,6 @@ def register_callbacks(app):
                 # optional magic check
                 if HAS_MAGIC:
                     try:
-                        print("testttt magic")
                         mime = magic.from_file(fpath, mime=True)
                         low = str(mime).lower()
                         if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
@@ -980,7 +993,6 @@ def register_callbacks(app):
                     try:
                         cd = pyclamd.ClamdNetworkSocket()
                         scan_result = cd.scan_file(fpath)
-                        print("testttt pyclamd")
                         if scan_result:
                             logger.warning("Infected file detected and removed: %s", fpath)
                             try:
@@ -1047,11 +1059,14 @@ def register_callbacks(app):
                 newfile = sanitize_filename(file)
                 filepath = os.path.join(upload_session_dir, newfile)
                 filepaths.append(filepath)
-                if file != newfile:
-                    os.rename(os.path.join(upload_session_dir, file), filepath)
 
+                
+                with open(os.path.join(upload_session_dir, file)) as infile, open(os.path.join(upload_session_dir, newfile+".2"), "w") as outfile:
+                    for line in infile:
+                        outfile.write(fix_locus_line(line))
+                
+                os.rename(os.path.join(upload_session_dir, newfile+".2"), filepath)
                 original_name = os.path.basename(filepath)
-                print(original_name)
 
                 # skip if file already in table
                 if any(r["Stored file"] == original_name for r in rows):
