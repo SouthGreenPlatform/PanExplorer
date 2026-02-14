@@ -112,7 +112,7 @@ pgap_outvcf = run_pgap['outputs'][17]['id']
 pgap_outgfa = run_pgap['outputs'][18]['id']
 pgap_outalign = run_pgap['outputs'][19]['id']
 pgap_outlog = run_pgap['outputs'][20]['id']
-#gi.max_get_attempts = 20
+gi.max_get_attempts = 20
 
 print("Downloading results...")
 
@@ -129,7 +129,7 @@ outheatmaphtml_pgap = gi.datasets.download_dataset(pgap_outheatmap_html, file_pa
 outcogstat_pgap = gi.datasets.download_dataset(pgap_outcogstat, file_path = args.o+"/cog_category_counts.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outcogstat2_pgap = gi.datasets.download_dataset(pgap_outcogstat2, file_path = args.o+"/cog_category_2_counts.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outcogofclusters_pgap = gi.datasets.download_dataset(pgap_outcogofclusters, file_path = args.o+"/cog_of_clusters.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
-# outani_pgap = gi.datasets.download_dataset(pgap_outani, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
+outani_pgap = gi.datasets.download_dataset(pgap_outani, file_path = args.o+"/fastani.out.matrix.complete.xls",maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outanipdf_pgap = gi.datasets.download_dataset(pgap_outanipdf, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outrarefaction_pgap = gi.datasets.download_dataset(pgap_outrarefaction, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outrarefactionsvg_pgap = gi.datasets.download_dataset(pgap_outrarefactionsvg, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
@@ -140,6 +140,7 @@ outvcf_pgap = gi.datasets.download_dataset(pgap_outvcf, file_path = args.o+"/var
 outgfa_pgap = gi.datasets.download_dataset(pgap_outgfa, file_path = args.o+"/pangenome.gfa",maxwait=820000,require_ok_state=False,use_default_filename=False)
 #outalign_pgap = gi.datasets.download_dataset(pgap_outalign, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 history_id = history['id']
+
 print("Done.")
 #gi.histories.delete_history(history_id, purge=True)
 
