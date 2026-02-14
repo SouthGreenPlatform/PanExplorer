@@ -141,11 +141,36 @@ layout = html.Div(
 # --------------------------------------------------
 
 def fix_locus_line(line):
+    MONTH_MAP = {
+        "JAN": "JAN", "JAN.": "JAN",
+        "FEB": "FEB", "FEB.": "FEB",
+        "MAR": "MAR", "MAR.": "MAR",
+        "APR": "APR", "APR.": "APR",
+        "MAY": "MAY", "MAY.": "MAY",
+        "JUN": "JUN", "JUN.": "JUN",
+        "JUL": "JUL", "JUL.": "JUL",
+        "AUG": "AUG", "AUG.": "AUG",
+        "SEP": "SEP", "SEPT": "SEP", "SEPT.": "SEP",
+        "OCT": "OCT", "OCT.": "OCT",
+        "NOV": "NOV", "NOV.": "NOV",
+        "DEC": "DEC", "DEC.": "DEC",
+    }
+    
     if line.startswith("LOCUS"):
         # capture LOCUS + nom + taille collée + unité
         match = re.match(r"(LOCUS\s+)(\w+)\s+(bp|aa)", line)
         if match:
             return f"{match.group(1)}{match.group(2)} 100 {match.group(3)}\n"
+        
+        # correct date format in LOCUS line
+        match = re.search(r'(\d{1,2})-([A-Za-z\.]+)-(\d{4})$', line.strip())
+        if match:
+            day, month, year = match.groups()
+            month = month.upper()
+            if month in MONTH_MAP:
+                month = MONTH_MAP[month]
+                new_date = f"{int(day):02d}-{month}-{year}"
+                line = re.sub(r'\d{1,2}-[A-Za-z\.]+-\d{4}$', new_date, line)
     return line
 
 
