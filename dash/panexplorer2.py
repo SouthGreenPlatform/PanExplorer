@@ -2113,10 +2113,22 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             check=True
         )
 
+    df_cog_of_clusters = pd.DataFrame(columns=['Cluster', 'COG', 'COGcat'])
+    if os.path.exists(directory+"/cog_of_clusters.2.txt") and os.path.getsize(directory+"/cog_of_clusters.2.txt") > 0:
+        df_cog_of_clusters = pd.read_csv(directory+'/cog_of_clusters.2.txt',sep='\t')
+        df_cog_of_clusters.columns = ['Cluster', 'COG', 'COGcat']
 
-    df_cog_of_clusters = pd.read_csv(directory+'/cog_of_clusters.2.txt',sep='\t')
+    # get only values of column ClutserID from df2, and put empty values for COG and COGcat
+    else:
+        df_cog_of_clusters = df2[["ClutserID"]]
+        df_cog_of_clusters['COG'] = ""
+        df_cog_of_clusters['COGcat'] = ""
+        df_cog_of_clusters.rename(columns={'ClutserID': 'Cluster'}, inplace=True)
+        df_cog_of_clusters["Cluster"] = df_cog_of_clusters["Cluster"].astype(int)
     
-    df_cog_of_clusters.columns = ['Cluster', 'COG', 'COGcat']
+        
+    print(df_cog_of_clusters)
+    
 
 
     df2[['ClutserID']] = df2[['ClutserID']].apply(pd.to_numeric)
@@ -2508,41 +2520,46 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ##############################
     # COG graphes
     ##############################
-    data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
-    data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
-    data_COG2 = pd.read_csv(directory+'/cog_category_2_counts.txt',sep='\t')
-    data_COG2 = data_COG2.rename(columns={'COG': 'Genome'})
-    data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
-    data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
+    data_COG1 = pd.DataFrame()
+    data_COG2 = pd.DataFrame()
+    fig_COG1 = None
+    fig_COG2 = None
+    if os.path.exists(directory+"/cog_category_counts.txt") and os.path.getsize(directory+"/cog_category_counts.txt") > 0 and os.path.exists(directory+"/cog_category_2_counts.txt") and os.path.getsize(directory+"/cog_category_2_counts.txt") > 0:
+        data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
+        data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
+        data_COG2 = pd.read_csv(directory+'/cog_category_2_counts.txt',sep='\t')
+        data_COG2 = data_COG2.rename(columns={'COG': 'Genome'})
+        data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
+        data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
 
-    df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
-    df_count.to_csv("COG.count.txt")
+        df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
+        df_count.to_csv("COG.count.txt")
 
-    occur = df_cog_of_clusters.groupby(['COG']).size()
-    top30 = df_cog_of_clusters['COG'].value_counts().head(30).reset_index()
-    top30.columns = ['COG', 'counts']
-    top30_with_cog_term = pd.merge(df_cog_terms, top30, how="right", left_on='COG', right_on='COG')
+        occur = df_cog_of_clusters.groupby(['COG']).size()
+        top30 = df_cog_of_clusters['COG'].value_counts().head(30).reset_index()
+        top30.columns = ['COG', 'counts']
+        top30_with_cog_term = pd.merge(df_cog_terms, top30, how="right", left_on='COG', right_on='COG')
 
-    top30_with_cog_term.to_csv("cog_occurrences.csv")
+        top30_with_cog_term.to_csv("cog_occurrences.csv")
 
-    #dftet = px.data.tips()
-    #dftet.to_csv("COG.count.txt")
+        #dftet = px.data.tips()
+        #dftet.to_csv("COG.count.txt")
 
-    #fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
-    fig_COG_all = px.bar(df_count, x='COGcat', y='counts', title='Distribution of COG categories among all clusters')
-    
-    #data_COG2_selected.to_csv("export_COG.tsv")
-    
-    fig_COG1 = px.bar(data_COG1_selected, x='Genome', y=data_COG1_selected.columns, title="Distribution of COG functional categories")
-    fig_COG2 = px.bar(data_COG2_selected, x='Genome', y=data_COG2_selected.columns, title="Distribution of COG functional categories")
-    fig_COG1.update_layout(
-        yaxis_title="Number of genes with COG category"
-    )
-    fig_COG2.update_layout(
-        yaxis_title="Number of genes with COG category"
-    )
+        #fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
+        fig_COG_all = px.bar(df_count, x='COGcat', y='counts', title='Distribution of COG categories among all clusters')
+        
+        #data_COG2_selected.to_csv("export_COG.tsv")
+        
+        fig_COG1 = px.bar(data_COG1_selected, x='Genome', y=data_COG1_selected.columns, title="Distribution of COG functional categories")
+        fig_COG2 = px.bar(data_COG2_selected, x='Genome', y=data_COG2_selected.columns, title="Distribution of COG functional categories")
+        fig_COG1.update_layout(
+            yaxis_title="Number of genes with COG category"
+        )
+        fig_COG2.update_layout(
+            yaxis_title="Number of genes with COG category"
+        )
 
-    fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
+        fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
 
 
     ############################################################
