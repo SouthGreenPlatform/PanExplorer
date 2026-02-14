@@ -142,17 +142,34 @@ layout = html.Div(
 
 def fix_locus_line(line):
     MONTH_MAP = {
+        # english
         "JAN": "JAN", "JAN.": "JAN",
         "FEB": "FEB", "FEB.": "FEB",
         "MAR": "MAR", "MAR.": "MAR",
         "APR": "APR", "APR.": "APR",
-        "MAY": "MAY", "MAY.": "MAY",
+        "MAY": "MAY",
         "JUN": "JUN", "JUN.": "JUN",
         "JUL": "JUL", "JUL.": "JUL",
         "AUG": "AUG", "AUG.": "AUG",
         "SEP": "SEP", "SEPT": "SEP", "SEPT.": "SEP",
         "OCT": "OCT", "OCT.": "OCT",
         "NOV": "NOV", "NOV.": "NOV",
+        "DEC": "DEC", "DEC.": "DEC",
+
+        # french
+        "JANV": "JAN", "JANV.": "JAN",
+        "FÉVR": "FEB", "FÉVR.": "FEB",
+        "FEVR": "FEB", "FEVR.": "FEB",
+        "MARS": "MAR",
+        "AVR": "APR", "AVR.": "APR",
+        "MAI": "MAY",
+        "JUIN": "JUN",
+        "JUIL": "JUL", "JUIL.": "JUL",
+        "AOÛT": "AUG", "AOUT": "AUG",
+        "SEPT": "SEP", "SEPT.": "SEP",
+        "OCT": "OCT", "OCT.": "OCT",
+        "NOV": "NOV", "NOV.": "NOV",
+        "DÉC": "DEC", "DÉC.": "DEC",
         "DEC": "DEC", "DEC.": "DEC",
     }
     
