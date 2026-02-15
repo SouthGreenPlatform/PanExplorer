@@ -649,17 +649,24 @@ def render_page(search):
     default_value = options[0]["value"] if options else None
     
     # simplified UI inspired from app-pav.py
-    ui = html.Div([
-        
-        html.Div(right_menu,style={"textAlign":"right","marginTop":"0px","marginRight":"2px"}),
-        html.Div([
-            html.Label("Choose a project: "),
-            dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
-        ], style={"marginBottom":"1rem"}),
-        html.Div(id="project-preview"),
-        html.Hr(),
-        html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
-    ], style={"padding":"10px"})
+    if os.path.exists(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") and os.path.getsize(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") == 0:
+        ui = html.Div([
+                html.Br(),
+                dbc.Alert("Error: The pipeline failed with this dataset.", color="danger")
+            ])
+    else:
+
+        ui = html.Div([
+            
+            html.Div(right_menu,style={"textAlign":"right","marginTop":"0px","marginRight":"2px"}),
+            html.Div([
+                html.Label("Choose a project: "),
+                dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
+            ], style={"marginBottom":"1rem"}),
+            html.Div(id="project-preview"),
+            html.Hr(),
+            html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
+        ], style={"padding":"10px"})
 
     return ui
 
@@ -1935,7 +1942,6 @@ def set_reference_value(available_options):
 @app.callback(
         
     Output("update-status", "children"),
-
     Output("nb_of_pangenes",'children'),
     Output('textarea-example-output', 'children'),
     Output('PAV_graph', 'figure'),
@@ -2049,7 +2055,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         for value in df_metadata2['Strain name']:
             list_selected.append(value)
             
-
     
     ####################################################################
     # intersection between ordered list of samples and selected samples
