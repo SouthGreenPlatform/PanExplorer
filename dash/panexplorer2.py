@@ -2282,6 +2282,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     if os.path.exists(gene_position_file) & os.path.exists(gene_position_file2):
         #df_gene_positons = pd.read_csv('data/Xo/'+reference+'.ptt',sep='\t')
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+reference+'.2.ptt',sep='\t')
+        df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "", regex=False)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
@@ -2295,7 +2296,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         print("merged_with_positions")
         df_gene_positons.to_csv("export_gene_positions.csv")
-        print(df_gene_positons)
 
         if len(merged_with_positions) != 0:
 
@@ -4617,6 +4617,7 @@ def init_dataframes(pathname):
     list_continent = ["all"] + df_metadata3["Continent"].unique().tolist()
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
+  
     # Remove lines from ptt
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species[0]+".ptt"):
@@ -4628,13 +4629,12 @@ def init_dataframes(pathname):
         print("Species:"+list_species[0])
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species[0]+'.2.ptt',sep='\t')
+        df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "", regex=False)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
         
     merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
-    print(df_gene_positons)
-
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
