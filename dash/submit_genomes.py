@@ -287,6 +287,30 @@ def is_string_without_special_character(valeur):
 def is_list_GCA(valeur):
     return isinstance(valeur, str) and re.fullmatch(r"[a-zA-Z0-9_, .]+", valeur) is not None
 
+def has_valid_gene_identifiers(records):
+    """
+    Check if GenBank records contain either locus_tag or protein_id qualifiers.
+    Returns (True, None) if valid, (False, error_message) otherwise.
+    """
+    has_locus_tag = False
+    has_protein_id = False
+    
+    for record in records:
+        for feature in record.features:
+            if feature.type == "CDS":
+                if "locus_tag" in feature.qualifiers:
+                    has_locus_tag = True
+                if "protein_id" in feature.qualifiers:
+                    has_protein_id = True
+                
+                if has_locus_tag or has_protein_id:
+                    return True, None
+    
+    if not has_locus_tag and not has_protein_id:
+        return False, "GenBank file must contain either locus_tag or protein_id qualifiers in CDS features"
+    
+    return True, None
+
 def summarize_records(records, original_name, stored_filename):
     """
     Summarize a GenBank file at the FILE level.
@@ -1150,6 +1174,21 @@ def register_callbacks(app):
                             "File name": original_name,
                             "Valid": "❌",
                             "Error": "Genome is not annotated",
+                            "Country": None,
+                            "Number of contigs": None,
+                            "Genome size (bp)": None,
+                            "CDS": None,
+                            "Stored file": None,
+                            })
+                        continue
+                    
+                    # Check for locus_tag or protein_id identifiers
+                    has_identifiers, identifier_error = has_valid_gene_identifiers(records)
+                    if not has_identifiers:
+                        rows.append({
+                            "File name": original_name,
+                            "Valid": "❌",
+                            "Error": identifier_error,
                             "Country": None,
                             "Number of contigs": None,
                             "Genome size (bp)": None,
