@@ -67,6 +67,7 @@ def process_bandage_files(tsv_file, output_directory, top_n=None):
                 hits_metadata[unique_name] = {
                     "id": unique_name,
                     "query": query_name,
+                    "method": "bandage",
                     "path_string": path_str,
                     "sequence": row.get("Sequence", ""),
                     "identity": row.get("Mean hit identity", ""),
@@ -77,7 +78,23 @@ def process_bandage_files(tsv_file, output_directory, top_n=None):
                     "gap_opens": row.get("Total hit gap opens", ""),
                     "length_discrepancy": row.get("Length discrepancy", ""),
                     "relative_length": row.get("Relative length", ""),
-                    "nodes": nodes
+                    # vg giraffe fields (empty for bandage)
+                    "query_length": "",
+                    "query_start": "",
+                    "query_end": "",
+                    "strand": "",
+                    "path_length": "",
+                    "path_start": "",
+                    "path_end": "",
+                    "residue_matches": "",
+                    "block_length": "",
+                    "mapping_quality": "",
+                    "alignment_score": "",
+                    "divergence": "",
+                    "nodes": nodes,
+                    # Pre-populate visualization filenames (written by extract_subgraphs.sh)
+                    "odgi_image":    f"{unique_name}_odgi.png",
+                    "bandage_image": f"{unique_name}_bandage.svg",
                 }
 
                 hits_written += 1

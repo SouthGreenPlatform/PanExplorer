@@ -63,6 +63,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROCESS_BANDAGE_SCRIPT="${SCRIPT_DIR}/process_bandage_hits.py"
 EXTRACT_SUBGRAPH_SCRIPT="${SCRIPT_DIR}/extract_subgraphs.sh"
 
+# ---------------------------------------------------------
+# Read executable paths from panexplorer_config.yaml
+# ---------------------------------------------------------
+CONFIG_FILE="${SCRIPT_DIR}/panexplorer_config.yaml"
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "Warning: panexplorer_config.yaml not found — using default executable names."
+    BANDAGE_EXE="Bandage"
+else
+    BANDAGE_EXE=$(python3 -c "import yaml; d=yaml.safe_load(open('$CONFIG_FILE')); print(d.get('bandage_exe','Bandage'))" 2>/dev/null || echo "Bandage")
+fi
+echo "Bandage executable: $BANDAGE_EXE"
+
 mkdir -p "$OUTPUT_DIR"
 OUTPUT_PREFIX="$OUTPUT_DIR/bandage_out"
 
@@ -71,7 +83,7 @@ echo "Running Bandage querypaths..."
 # We use eval to handle quotes properly if needed, but array is safer.
 # However, BLAST_OPTS is a string.
 
-CMD="Bandage querypaths \"$GFA_FILE\" \"$FASTA_FILE\" \"$OUTPUT_PREFIX\" $QPATH_OPTS --hitsfasta $BLAST_OPTS"
+CMD="$BANDAGE_EXE querypaths \"$GFA_FILE\" \"$FASTA_FILE\" \"$OUTPUT_PREFIX\" $QPATH_OPTS --hitsfasta $BLAST_OPTS"
 echo "Command: $CMD"
 eval $CMD
 

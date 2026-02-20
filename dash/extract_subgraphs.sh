@@ -69,6 +69,23 @@ if [[ -n $NODE_STEPS && -n $BP_STEPS ]]; then
 fi
 
 # ---------------------------------------------------------
+# Read executable paths from panexplorer_config.yaml
+# ---------------------------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="${SCRIPT_DIR}/panexplorer_config.yaml"
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "Warning: panexplorer_config.yaml not found at $CONFIG_FILE — using default executable names."
+    VG_EXE="vg"
+    ODGI_EXE="odgi"
+    BANDAGE_EXE="Bandage"
+else
+    VG_EXE=$(python3 -c "import yaml; d=yaml.safe_load(open('$CONFIG_FILE')); print(d.get('vg_exe','vg'))" 2>/dev/null || echo "vg")
+    ODGI_EXE=$(python3 -c "import yaml; d=yaml.safe_load(open('$CONFIG_FILE')); print(d.get('odgi_exe','odgi'))" 2>/dev/null || echo "odgi")
+    BANDAGE_EXE=$(python3 -c "import yaml; d=yaml.safe_load(open('$CONFIG_FILE')); print(d.get('bandage_exe','Bandage'))" 2>/dev/null || echo "Bandage")
+fi
+echo "Executables: vg=$VG_EXE  odgi=$ODGI_EXE  bandage=$BANDAGE_EXE"
+
+# ---------------------------------------------------------
 # NEW: Logging Setup
 # ---------------------------------------------------------
 LOG_FILE="${OUTPUT_FILE}.log"
@@ -107,7 +124,7 @@ OG_FILE="${INPUT_DIR}/${INPUT_NAME}.og"
 # If the .og file doesn't exist, build it from GFA
 if [[ ! -f "$OG_FILE" ]]; then
     echo "[$(date)] Building optimized graph (.og) from GFA..."
-    odgi build -g "$GFA_FILE" -o "$OG_FILE"
+    "$ODGI_EXE" build -g "$GFA_FILE" -o "$OG_FILE"
 fi
 
 # The graph we will perform operations on
@@ -119,7 +136,7 @@ WORKING_OG="$OG_FILE"
 # ---------------------------------------------------------
 
 echo "[$(date)] Extracting genome list..."
-odgi paths -i "$WORKING_OG" -L | awk -F '#' '{print $1}' | sort | uniq > "${OUTPUT_FILE%.og}_genomes.txt"
+"$ODGI_EXE" paths -i "$WORKING_OG" -L | awk -F '#' '{print $1}' | sort | uniq > "${OUTPUT_FILE%.og}_genomes.txt"
 
 # Convert NODE_LIST to file if provided
 if [[ -n $NODE_LIST ]]; then
@@ -131,32 +148,51 @@ fi
 
 # Convert PATHS_TO_EXTRACT to file if provided
 if [[ -n $PATHS_TO_EXTRACT ]]; then
+    # Get all path names present in the graph
+    GRAPH_PATHS_FILE=$(mktemp)
+    "$ODGI_EXE" paths -i "$WORKING_OG" -L > "$GRAPH_PATHS_FILE"
+    echo "[$(date)] Graph contains $(wc -l < "$GRAPH_PATHS_FILE") paths."
+
+    # For each requested strain, grep the graph path list for a matching line
+    # This avoids any hardcoded naming convention — we let the graph tell us
+    # the exact path identifier(s) that contain the strain name.
     if [[ -f "$PATHS_TO_EXTRACT" ]]; then
-        cat "$PATHS_TO_EXTRACT" > "$PATHS_FILE"
+        REQUESTED_STRAINS=()
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && REQUESTED_STRAINS+=("$line")
+        done < "$PATHS_TO_EXTRACT"
     else
-        IFS=',' read -ra ADDR <<< "$PATHS_TO_EXTRACT"
-        for i in "${ADDR[@]}"; do
-            echo "$i" >> "$PATHS_FILE"
-        done
+        IFS=',' read -ra REQUESTED_STRAINS <<< "$PATHS_TO_EXTRACT"
     fi
-    
-    # NEW: Rename paths to match graph format (Genus_species_STRAIN -> Genus_species_STRAIN#1#STRAIN)
-    echo "[$(date)] Renaming paths in path list to match Graph format..."
-    TEMP_PATHS=$(mktemp)
-    awk '{
-        original = $1;
-        # Create the suffix by removing "Genus_species_" from the start
-        suffix = original;
-        sub(/^Genus_species_/, "", suffix);
-        # Construct the new path: Original + #1# + Suffix
-        new_path = original "#1#" suffix;
-        print new_path;
-    }' "$PATHS_FILE" > "$TEMP_PATHS"
-    mv "$TEMP_PATHS" "$PATHS_FILE"
+
+    MATCHED=0
+    for strain in "${REQUESTED_STRAINS[@]}"; do
+        strain="${strain// /}"          # trim spaces
+        [[ -z "$strain" ]] && continue
+        # grep for lines that contain the strain name (fixed-string, case-sensitive)
+        matches=$(grep -F "$strain" "$GRAPH_PATHS_FILE" || true)
+        if [[ -z "$matches" ]]; then
+            echo "  Warning: no graph path found matching '$strain' — skipping."
+        else
+            echo "$matches" >> "$PATHS_FILE"
+            count=$(echo "$matches" | wc -l)
+            echo "  Matched $count path(s) for '$strain'."
+            MATCHED=$((MATCHED + count))
+        fi
+    done
+
+    rm -f "$GRAPH_PATHS_FILE"
+    echo "[$(date)] Total matched paths: $MATCHED"
+
+    # If nothing matched, clear PATHS_TO_EXTRACT so odgi extract won't use -p
+    if [[ $MATCHED -eq 0 ]]; then
+        echo "  Warning: no paths matched — proceeding without path filter."
+        PATHS_TO_EXTRACT=""
+    fi
 fi
 
 # Build the odgi extract command
-COMMAND="odgi extract -i $WORKING_OG -o $OUTPUT_FILE -d $DISTANCE"
+COMMAND="$ODGI_EXE extract -i $WORKING_OG -o $OUTPUT_FILE -d $DISTANCE"
 
 if [[ -n $NODE_ID ]]; then
     COMMAND+=" -n $NODE_ID"
@@ -217,11 +253,11 @@ if [[ -n $BED_FILE ]]; then
     
     # 3. Step A: odgi procbed (using the RENAMED bed file)
     echo "[$(date)] Running odgi procbed..."
-    odgi procbed -i "$WORKING_OG" -b "$BED_RENAMED" > "$BED_PROCESSED"
+    "$ODGI_EXE" procbed -i "$WORKING_OG" -b "$BED_RENAMED" > "$BED_PROCESSED"
     
     # 4. Step B: odgi inject
     echo "[$(date)] Running odgi inject..."
-    odgi inject -i "$WORKING_OG" -b "$BED_PROCESSED" -o "$INJECTED_OG"
+    "$ODGI_EXE" inject -i "$WORKING_OG" -b "$BED_PROCESSED" -o "$INJECTED_OG"
     
     # Update our working graph to be the injected one
     WORKING_OG="$INJECTED_OG"
@@ -236,7 +272,7 @@ fi
 if $RUN_ODGI; then
     echo "[$(date)] Generating ODGI visualization..."
     ODGI_PNG="${OUTPUT_FILE%.og}_odgi.png"
-    odgi sort -i "$OUTPUT_FILE" -o - -O | odgi viz -i - -o "$ODGI_PNG" -s "#" -M "${OUTPUT_FILE%.og}_genomes.txt"
+    "$ODGI_EXE" sort -i "$OUTPUT_FILE" -o - -O | "$ODGI_EXE" viz -i - -o "$ODGI_PNG" -s "#" -M "${OUTPUT_FILE%.og}_genomes.txt"
     echo "ODGI PNG: $ODGI_PNG"
 fi
 
@@ -245,9 +281,9 @@ if $RUN_VG; then
     echo "[$(date)] Generating VG visualization..."
     SUBGRAPH_GFA="${OUTPUT_FILE%.og}.gfa"
     if [[ ! -f "$SUBGRAPH_GFA" ]]; then
-        odgi view -i "$OUTPUT_FILE" -g > "$SUBGRAPH_GFA"
+        "$ODGI_EXE" view -i "$OUTPUT_FILE" -g > "$SUBGRAPH_GFA"
     fi
-    vg view -g "$SUBGRAPH_GFA" -dpn - | dot -Tsvg -o "${OUTPUT_FILE%.og}_vg.svg"
+    "$VG_EXE" view -g "$SUBGRAPH_GFA" -dpn - | dot -Tsvg -o "${OUTPUT_FILE%.og}_vg.svg"
     echo "VG SVG: ${OUTPUT_FILE%.og}_vg.svg"
 fi
 
@@ -255,13 +291,13 @@ if $RUN_BANDAGE; then
     echo "[$(date)] Generating Bandage visualization..."
     SUBGRAPH_GFA="${OUTPUT_FILE%.og}.gfa"
     if [[ ! -f "$SUBGRAPH_GFA" ]]; then
-        odgi view -i "$OUTPUT_FILE" -g > "$SUBGRAPH_GFA"
+        "$ODGI_EXE" view -i "$OUTPUT_FILE" -g > "$SUBGRAPH_GFA"
     fi
-    Bandage image "$SUBGRAPH_GFA" "${OUTPUT_FILE%.og}_bandage.svg" --names --lengths --depth --colour random --centre --fontsize 12 
+    "$BANDAGE_EXE" image "$SUBGRAPH_GFA" "${OUTPUT_FILE%.og}_bandage.svg" --names --lengths --depth --colour random --centre --fontsize 12 
     echo "Bandage SVG: ${OUTPUT_FILE%.og}_bandage.svg"
 fi 
 
-odgi paths -i "$OUTPUT_FILE" -L > "${OUTPUT_FILE%.og}_paths.txt"
+"$ODGI_EXE" paths -i "$OUTPUT_FILE" -L > "${OUTPUT_FILE%.og}_paths.txt"
 echo "=========================================="
 echo "Finished Successfully: $(date)"
 echo "=========================================="

@@ -11,7 +11,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import dash
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output, State, Patch, callback_context
 import dash_bootstrap_components as dbc
 
 import pandas as pd
@@ -86,41 +86,42 @@ def get_image_dimensions(path):
     
     return width, height
 
+
 def validate_fasta_input(raw_text):
     max_len = 200000
-    if raw_text is None:
+    if not raw_text or not raw_text.strip():
         return False, "", "FASTA input is empty.", ""
 
-    text = raw_text.strip()
-    if not text:
-        return False, "", "FASTA input is empty.", ""
-
-    lines = [line.rstrip() for line in text.splitlines() if line.strip()]
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
     if not lines or not lines[0].startswith(">"):
         return False, "", "FASTA must start with a header line beginning with '>'", ""
 
-    valid_dna = set("ACGTUWSMKRYBDHVN-")
-    valid_protein = set("ACDEFGHIKLMNPQRSTVWYBXZJUO*-")
-    seq_chars = []
+    # Include U for RNA, and standard ambiguity codes
+    valid_chars = set("ACDEFGHIKLMNPQRSTVWYBXZJUO*-")
+    # Core nucleotides used to calculate if the sequence is mostly DNA/RNA
+    core_nucleotides = set("ACGTUN-") 
+    
     total_len = 0
+    nucleotide_count = 0
+    cleaned_lines = []
 
     for line in lines:
         if line.startswith(">"):
+            cleaned_lines.append(line)
             continue
-
-        if line.startswith("$"):
-            return False, "", "Command-like input detected. Paste only FASTA content.", ""
 
         cleaned = re.sub(r"\s+", "", line).upper()
         if not cleaned:
             continue
 
-        total_len += len(cleaned)
-        seq_chars.append(cleaned)
-
         for ch in cleaned:
-            if ch not in valid_dna and ch not in valid_protein:
+            if ch not in valid_chars:
                 return False, "", f"Invalid character in FASTA: '{ch}'", ""
+            if ch in core_nucleotides:
+                nucleotide_count += 1
+
+        total_len += len(cleaned)
+        cleaned_lines.append(cleaned)
 
     if total_len < 20:
         return False, "", "FASTA sequence is too short (min 20 bp/aa).", ""
@@ -128,14 +129,14 @@ def validate_fasta_input(raw_text):
     if total_len > max_len:
         return False, "", f"FASTA sequence is too long (max {max_len} bp/aa).", ""
 
-    is_dna_only = True
-    for seq in seq_chars:
-        if any(ch not in valid_dna for ch in seq):
-            is_dna_only = False
-            break
-
-    seq_type = "dna" if is_dna_only else "protein"
-    return True, text + "\n", "", seq_type
+    # Threshold-based detection: If > 85% of chars are standard DNA/RNA bases, call it DNA.
+    # This prevents proteins composed of ambiguous DNA letters from being misclassified.
+    seq_type = "dna" if (nucleotide_count / total_len) > 0.85 else "protein"
+    
+    # Reconstruct the cleaned FASTA text safely
+    processed_text = "\n".join(cleaned_lines) + "\n"
+    
+    return True, processed_text, "", seq_type
 
 # Optional: ag-grid (used in original app). If absent, fallback to html table.
 try:
@@ -1102,6 +1103,87 @@ def load_project_preview(proj_title):
                     html.Br(),
                     dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
                     html.Br(),
+
+                    # ── Search & Highlight panel ─────────────────────────────────────────
+                    html.Div(style={'padding':'16px','backgroundColor':'#f7faff','border':'1px solid #ccd6f6','borderRadius':'6px','margin':'0 15px'}, children=[
+                        html.H5("Search & Highlight in PAV Matrix", style={'marginBottom':'4px'}),
+                        html.Small(
+                            "Enter node IDs (e.g. 42,85,120) or a gene name/keyword. "
+                            "Auto-detected: all-numeric tokens → node search, text → gene search (matches gene ID and product).",
+                            style={'color':'#666'}
+                        ),
+                        html.Br(), html.Br(),
+                        dbc.Row([
+                            dbc.Col([
+                                dcc.Input(
+                                    id='segment-search-input', type='text',
+                                    placeholder='Node IDs (e.g. 42,85) or gene keyword…',
+                                    debounce=False, className='form-control'
+                                ),
+                            ], width=8),
+                            dbc.Col([
+                                html.Button('Search', id='btn-segment-search', n_clicks=0,
+                                            className='btn btn-primary', style={'width':'100%'}),
+                            ], width=2),
+                            dbc.Col([
+                                html.Button('Clear', id='btn-segment-clear', n_clicks=0,
+                                            className='btn btn-outline-secondary', style={'width':'100%'}),
+                            ], width=2),
+                        ]),
+                        html.Br(),
+                        dcc.Loading(html.Div(id='segment-search-results')),
+                        html.Br(),
+                        dag.AgGrid(
+                            id='segment-search-table',
+                            rowData=[],
+                            columnDefs=[
+                                {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
+                                {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
+                                {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
+                                {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
+                                {'field': 'Products', 'headerName': 'Products',   'flex': 2},
+                            ],
+                            defaultColDef={'filter': 'agTextColumnFilter', 'resizable': True, 'sortable': True},
+                            dashGridOptions={
+                                'pagination': True, 'paginationPageSize': 20,
+                                'animateRows': False,
+                                'rowSelection': 'multiple',
+                            },
+                            style={'height': '320px', 'display': 'none'}
+                        ),
+                        html.Br(),
+                        dbc.Row([
+                            dbc.Col([
+                                html.Button(
+                                    '⬇ Send to Subgraph Extraction',
+                                    id='btn-send-to-subgraph', n_clicks=0,
+                                    className='btn btn-outline-primary btn-sm',
+                                    style={'display': 'none'}
+                                ),
+                            ], width='auto'),
+                            dbc.Col([
+                                html.Button(
+                                    '⬆ Show on PAV',
+                                    id='btn-show-on-pav', n_clicks=0,
+                                    className='btn btn-warning btn-sm',
+                                    style={'display': 'none'}
+                                ),
+                            ], width='auto'),
+                            dbc.Col([
+                                html.Button(
+                                    '✕ Clear PAV highlights',
+                                    id='btn-clear-pav-highlight', n_clicks=0,
+                                    className='btn btn-outline-secondary btn-sm',
+                                    style={'display': 'none'}
+                                ),
+                            ], width='auto'),
+                        ], className='g-2', style={'marginTop': '6px'}),
+                        html.Div(id='send-to-subgraph-feedback', style={'color':'green','marginTop':'4px','fontSize':'0.85em'}),
+                        html.Div(id='show-on-pav-feedback', style={'color':'#b8860b','marginTop':'4px','fontSize':'0.85em'}),
+                    ]),
+                    dcc.Store(id='pav-node-names-store', data=[]),
+
+                    html.Br(),
                     dcc.Loading(
                                         html.Div(children=[
                                             html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
@@ -1111,11 +1193,27 @@ def load_project_preview(proj_title):
                     html.Hr(),
 
                     # subgraph extraction panel
-                    html.Div(id="subgraph-control-panel", style={'display': 'none', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
+                    html.Div(id="subgraph-control-panel", style={'display': 'block', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
                         html.H4("Subgraph Extraction"),
                         html.Small("Define the context size using either Steps OR Base Pairs (not both)."),
                         html.Br(), html.Br(),
-                        
+
+                        dbc.Row([
+                            dbc.Col([
+                                html.Label("Node(s) to extract:"),
+                                dcc.Input(
+                                    id='subgraph-node-list', type='text',
+                                    placeholder='e.g. 42, 85, 120',
+                                    className='form-control'
+                                ),
+                                html.Small(
+                                    "Click a node on the graph above, send from search results, or type IDs manually (comma-separated).",
+                                    style={'color': 'grey'}
+                                )
+                            ], width=12)
+                        ]),
+                        html.Br(),
+
                         dbc.Row([
                             # input 1: node steps
                             dbc.Col([
@@ -1565,43 +1663,300 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
 @app.callback(
 # 1. The visible text area
     Output('selected_node', 'children'),
-    # 2. The hidden memory store (NEW)
+    # 2. The hidden memory store
     Output('stored-node-id', 'data'),
-    # 3. The visibility of the subgraph panel (NEW)
+    # 3. The visibility of the subgraph panel
     Output('subgraph-control-panel', 'style'),
-    # 4. Reset Inputs
+    # 4. Reset context Inputs
     Output('subgraph-steps', 'value'),
     Output('subgraph-bp', 'value'),
     # 5. Reset Visualization Area
     Output('subgraph-result-area', 'children'),
+    # 6. Append clicked node to the node-list input
+    Output('subgraph-node-list', 'value'),
 
     Input('graph_gfa2', 'clickData'),
     State('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
     State('reference', 'value'),
-    State('current_session', 'value')
+    State('current_session', 'value'),
+    State('subgraph-node-list', 'value'),
 )
 
-def display_click_data_GFA(clickData,metadata_table,projets,url,reference,session):
+def display_click_data_GFA(clickData, metadata_table, projets, url, reference, session, current_node_list):
     node = 1
     if clickData:
         wjdata = json.loads(json.dumps(clickData, indent=2))
         node = wjdata['points'][0]['x']
 
     selected_node = "Selected node: " + str(node)
-    infos = get_node_details(node,projets,reference,session)
+    infos = get_node_details(node, projets, reference, session)
     node_data = get_node_genes_metadata(node, projets, reference, session)
-# 3. Define Style to Show the Panel
+
     panel_style = {
-        'display': 'block', 
-        'padding': '20px', 
-        'backgroundColor': '#f9f9f9', 
-        'border': '1px solid #ddd', 
+        'display': 'block',
+        'padding': '20px',
+        'backgroundColor': '#f9f9f9',
+        'border': '1px solid #ddd',
         'marginTop': '20px'
     }
-    return infos, node_data, panel_style, 2, 200, "Select parameters and click extract."
 
+    # Append node to the node-list input (avoid duplicates).
+    # The heatmap x-value has the format "prefix_NODEID" (e.g. "1610_180654");
+    # extract only the numeric part after the last underscore.
+    raw = str(node)
+    parts = raw.split('_')
+    node_str = parts[-1] if len(parts) > 1 and parts[-1].isdigit() else raw
+
+    if current_node_list:
+        existing = [n.strip() for n in current_node_list.split(',') if n.strip()]
+        if node_str not in existing:
+            existing.append(node_str)
+        new_node_list = ', '.join(existing)
+    else:
+        new_node_list = node_str
+
+    return infos, node_data, panel_style, 2, 200, "Select parameters and click extract.", new_node_list
+
+
+#############################################################
+# Search callback — node IDs or gene keyword
+#############################################################
+@app.callback(
+    Output('segment-search-results', 'children'),
+    Output('segment-search-table', 'rowData'),
+    Output('segment-search-table', 'columnDefs'),
+    Output('segment-search-table', 'style'),
+    Output('btn-send-to-subgraph', 'style'),
+    Output('btn-show-on-pav', 'style'),
+    Output('btn-clear-pav-highlight', 'style'),
+    Input('btn-segment-search', 'n_clicks'),
+    Input('btn-segment-clear', 'n_clicks'),
+    State('segment-search-input', 'value'),
+    State('projets', 'value'),
+    State('reference', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def search_and_highlight_segments(n_search, n_clear, search_value, projets, reference, session):
+    ctx = callback_context
+    hidden_table = {'height': '320px', 'display': 'none'}
+    hidden_btn   = {'display': 'none'}
+    col_defs = [
+        {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
+        {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
+        {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
+        {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
+        {'field': 'Products', 'headerName': 'Products',   'flex': 2},
+    ]
+    if not ctx.triggered:
+        return "", [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if trigger_id == 'btn-segment-clear' or not search_value or not session or not reference:
+        return "", [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+
+    # Resolve project directory
+    row = query_db("SELECT path FROM projects WHERE title = ?", (projets,), one=True)
+    proj_directory = row[0] if row else conf["session_dir"] + "/" + str(projets)
+
+    # Load node positions
+    node_pos_file = f"{tmp_dir}/{session}.{reference}.segments.node_positions.tsv"
+    if not os.path.exists(node_pos_file):
+        return html.Div(
+            "Node positions file not found — please run the analysis first.",
+            style={'color': 'red'}
+        ), [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+    df_node_pos = pd.read_csv(node_pos_file, sep='\t')
+
+    # Load gene annotation (.2.ptt)
+    ptt_file = f"{proj_directory}/genomes/genomes/{reference}.2.ptt"
+    df_genes = pd.DataFrame()
+    if os.path.exists(ptt_file):
+        df_genes = pd.read_csv(ptt_file, sep='\t')
+        if 'start' not in df_genes.columns:
+            try:
+                df_genes[['start', 'end']] = df_genes['Location'].str.split(r'\.\.', expand=True).astype(int)
+            except Exception:
+                df_genes['start'] = pd.to_numeric(df_genes.get('start'), errors='coerce')
+                df_genes['end'] = pd.to_numeric(df_genes.get('end'), errors='coerce')
+        else:
+            df_genes['start'] = pd.to_numeric(df_genes['start'], errors='coerce')
+            df_genes['end'] = pd.to_numeric(df_genes['end'], errors='coerce')
+
+    # Auto-detect search mode: all numeric tokens → node IDs, otherwise gene keyword
+    tokens = [t.strip() for t in search_value.split(',') if t.strip()]
+    is_node_search = all(t.isdigit() for t in tokens)
+
+    matched_node_ids = []   # list of str node IDs matching node_names format
+    table_rows = []
+
+    if is_node_search:
+        node_ids = [int(t) for t in tokens]
+        for nid in node_ids:
+            row_match = df_node_pos[df_node_pos['Node'] == nid]
+            if row_match.empty:
+                continue
+            start = int(row_match.iloc[0]['Start'])
+            end = int(row_match.iloc[0]['End'])
+            matched_node_ids.append(str(nid))
+            genes_str, products_str = "", ""
+            if not df_genes.empty:
+                ov = df_genes[(df_genes['start'] < end) & (df_genes['end'] > start)]
+                genes_str = ", ".join(ov['PID'].astype(str).tolist())
+                products_str = ", ".join(ov['Product'].astype(str).tolist()) if 'Product' in ov.columns else ""
+            table_rows.append({'Node': nid, 'Start': start, 'End': end,
+                                'Genes': genes_str, 'Products': products_str})
+    else:
+        # Gene keyword search
+        if df_genes.empty:
+            return html.Div("Gene annotation file (.2.ptt) not found.", style={'color': 'red'}), [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+        kw = search_value.strip().lower()
+        mask = df_genes['PID'].astype(str).str.lower().str.contains(kw, na=False)
+        if 'Product' in df_genes.columns:
+            mask = mask | df_genes['Product'].astype(str).str.lower().str.contains(kw, na=False)
+        matched_genes = df_genes[mask]
+        if matched_genes.empty:
+            return html.Div(f"No genes found matching '{search_value}'.", style={'color': 'orange'}), [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+
+        found_node_ids = set()
+        for _, gr in matched_genes.iterrows():
+            g_start, g_end = int(gr['start']), int(gr['end'])
+            ov_nodes = df_node_pos[
+                (df_node_pos['Start'] < g_end) & (df_node_pos['End'] > g_start)
+            ]
+            for _, nr in ov_nodes.iterrows():
+                nid = int(nr['Node'])
+                if nid in found_node_ids:
+                    continue
+                found_node_ids.add(nid)
+                n_start, n_end = int(nr['Start']), int(nr['End'])
+                ov_all = df_genes[(df_genes['start'] < n_end) & (df_genes['end'] > n_start)]
+                genes_str = ", ".join(ov_all['PID'].astype(str).tolist())
+                products_str = ", ".join(ov_all['Product'].astype(str).tolist()) if 'Product' in ov_all.columns else ""
+                matched_node_ids.append(str(nid))
+                table_rows.append({'Node': nid, 'Start': n_start, 'End': n_end,
+                                   'Genes': genes_str, 'Products': products_str})
+
+    if not table_rows:
+        return html.Div("No matching nodes found.", style={'color': 'orange'}), [], col_defs, hidden_table, hidden_btn, hidden_btn, hidden_btn
+
+    df_result = pd.DataFrame(table_rows).sort_values('Start').reset_index(drop=True)
+
+    summary = html.Div([
+        html.Strong(f"Found {len(matched_node_ids)} node(s) "),
+        html.Span(
+            f"matching '{search_value}'. Select rows then click Show on PAV to highlight, "
+            "or Send to Subgraph Extraction.",
+            style={'color': '#555'}
+        ),
+    ])
+    visible_table = {'height': '320px', 'display': 'block'}
+    visible_btn   = {'display': 'inline-block'}
+    return summary, df_result.to_dict('records'), col_defs, visible_table, visible_btn, visible_btn, visible_btn
+
+
+#############################################################
+# Send selected rows from search table → subgraph node-list
+#############################################################
+@app.callback(
+    Output('subgraph-node-list', 'value', allow_duplicate=True),
+    Output('send-to-subgraph-feedback', 'children'),
+    Input('btn-send-to-subgraph', 'n_clicks'),
+    State('segment-search-table', 'selectedRows'),
+    State('subgraph-node-list', 'value'),
+    prevent_initial_call=True
+)
+def send_selected_to_subgraph(n_clicks, selected_rows, current_list):
+    if not selected_rows:
+        return current_list or "", "No rows selected in the table."
+    new_ids = [str(r['Node']) for r in selected_rows]
+    # Merge with existing IDs, keeping order and avoiding duplicates
+    existing = [n.strip() for n in (current_list or "").split(',') if n.strip()]
+    for nid in new_ids:
+        if nid not in existing:
+            existing.append(nid)
+    merged = ', '.join(existing)
+    feedback = f"Added {len(new_ids)} node(s): {', '.join(new_ids)}"
+    return merged, feedback
+
+
+#############################################################
+# Show on PAV / Clear PAV highlights callbacks
+# Draws yellow rectangle shapes over selected node columns
+# in graph_gfa2 using Plotly Patch (no figure rebuild)
+#############################################################
+@app.callback(
+    Output('graph_gfa2', 'figure', allow_duplicate=True),
+    Output('show-on-pav-feedback', 'children'),
+    Input('btn-show-on-pav', 'n_clicks'),
+    Input('btn-clear-pav-highlight', 'n_clicks'),
+    State('segment-search-table', 'selectedRows'),
+    State('pav-node-names-store', 'data'),
+    prevent_initial_call=True
+)
+def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
+    ctx = callback_context
+    patched = Patch()
+
+    if not ctx.triggered:
+        raise PreventUpdate
+
+    trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    # ── Clear ──────────────────────────────────────────────────────────────
+    if trigger_id == 'btn-clear-pav-highlight':
+        patched['layout']['shapes'] = []
+        return patched, ""
+
+    # ── Show ──────────────────────────────────────────────────────────────
+    if not selected_rows:
+        raise PreventUpdate
+    if not node_names:
+        return patched, html.Span("PAV not loaded yet — run the analysis first.", style={'color':'red'})
+
+    # node_names are in "count_nodeid" format, e.g. ["1_180654", "2_180700", ...]
+    # Build a lookup: plain GFA node ID (str) → 0-based index position on the x-axis
+    node_id_to_index = {}
+    for i, label in enumerate(node_names):
+        parts = str(label).split('_')
+        gfa_id = parts[-1] if len(parts) > 1 else label
+        node_id_to_index[gfa_id] = i
+
+    # Selected rows carry plain integer Node IDs from the search table
+    selected_ids = [str(r['Node']) for r in selected_rows]
+
+    shapes = []
+    matched = []
+    for nid in selected_ids:
+        idx = node_id_to_index.get(nid)
+        if idx is None:
+            continue
+        matched.append(nid)
+        shapes.append(dict(
+            type='rect',
+            xref='x',
+            yref='paper',
+            x0=idx - 0.5,
+            x1=idx + 0.5,
+            y0=0,
+            y1=1,
+            fillcolor='#39FF14',
+            opacity=0.6,
+            line=dict(width=0),
+            layer='above',
+        ))
+
+    if not shapes:
+        return patched, html.Span(f"None of the selected nodes were found on the PAV x-axis.", style={'color':'orange'})
+
+    patched['layout']['shapes'] = shapes
+    feedback = html.Span(
+        f"🟢 {len(matched)} node(s) highlighted on PAV: {', '.join(matched)}",
+        style={'color': '#1a7a00', 'fontWeight': 'bold'}
+    )
+    return patched, feedback
 
 
 #############################################################
@@ -1976,6 +2331,7 @@ def set_reference_value(available_options):
     Output('geo_map', 'figure'),
     #Output('graph_gfa', 'figure'),
     Output('graph_gfa2', 'figure'),
+    Output('pav-node-names-store', 'data'),
     Output('mainloading','children'),
     Output('tab_segments','style'),
     Output('tab_repeats','style'),
@@ -3154,6 +3510,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # GFA viewer
     #############################################################################################
     tab_style_segments = { 'display' : 'none'}
+    node_names = []   # populated below if GFA file is present
     gfa_file = directory+"/pangenome.gfa"
     graph_gfa = go.Figure()
     graph_gfa2 = go.FigureWidget()
@@ -3415,7 +3772,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
+    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
 
 
 @app.callback(
@@ -3442,6 +3799,7 @@ def show_update_button(session_value):
 @app.callback(
     Output("subgraph-result-area", "children", allow_duplicate=True),
     Input("btn-extract-subgraph", "n_clicks"),
+    State("subgraph-node-list", "value"),
     State("stored-node-id", "data"),
     State("subgraph-steps", "value"),
     State("subgraph-bp", "value"),
@@ -3451,11 +3809,23 @@ def show_update_button(session_value):
     State('metadata_table', 'selectedRows'),
     prevent_initial_call=True
 )
-def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
-    if not node_data or "node_id" not in node_data:
-        return dbc.Alert("No node selected!", color="warning")
+def run_subgraph_extraction(n_clicks, node_list_input, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
+    # Prefer the node-list text input; fall back to the stored single node
+    node_ids_raw = ""
+    if node_list_input and node_list_input.strip():
+        node_ids_raw = node_list_input.strip()
+    elif node_data and "node_id" in node_data:
+        node_ids_raw = str(node_data['node_id'])
+    else:
+        return dbc.Alert("No node specified! Enter node IDs in the field above or click a node on the graph.", color="warning")
 
-    node_id = node_data['node_id']
+    # Parse and clean the list
+    node_ids_list = [n.strip() for n in node_ids_raw.split(',') if n.strip().isdigit()]
+    if not node_ids_list:
+        return dbc.Alert("No valid numeric node IDs found. Please enter comma-separated integers.", color="warning")
+
+    node_id = node_ids_list[0]    # primary ID (kept for BED logic / single-node paths)
+    node_ids_csv = ','.join(node_ids_list)  # for -l flag
     
     # --- 1. Setup Paths ---
     row = query_db("SELECT path FROM projects WHERE title = ?", (project_name,), one=True)
@@ -3467,11 +3837,11 @@ def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, sessi
     output_base = os.path.join(tmp_dir, f"{session}_node{node_id}_{timestamp}")
     output_og = output_base + ".og"
 
-    # --- 2. Generate BED File ---
+    # --- 2. Generate BED File (from stored single-node gene metadata, if available) ---
     bed_file_path = output_base + ".genes.bed"
     has_genes = False
-    
-    if "genes" in node_data and len(node_data["genes"]) > 0:
+
+    if node_data and isinstance(node_data, dict) and node_data.get("genes"):
         try:
             with open(bed_file_path, "w") as f:
                 for gene in node_data["genes"]:
@@ -3481,11 +3851,12 @@ def run_subgraph_extraction(n_clicks, node_data, steps, bp_dist, viz_type, sessi
             print(f"Error writing BED: {e}")
 
     # --- 3. Build Command ---
+    # Use -l (comma-separated list) for one or more nodes
     cmd_parts = [
         "bash", "extract_subgraphs.sh",
         "-i", input_gfa,
         "-o", output_og,
-        "-n", str(node_id)
+        "-l", node_ids_csv,
     ]
 
     # Add Selected Genomes (Paths)
@@ -3742,30 +4113,37 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
         print(f"Alignment Error: {e.stderr}")
         return {'display': 'block'}, dbc.Alert("Alignment failed. See server logs for details.", color="danger"), [], None, None, None
 
-    # 5. Parse hits.json
-    manifest_path = os.path.join(output_dir, "hits.json")
+    # 5. Parse hits_metadata.json  (produced by both process_bandage_hits.py and process_gaf.py)
+    manifest_path = os.path.join(output_dir, "hits_metadata.json")
     if not os.path.exists(manifest_path):
-        print("No manifest found.")
-        return {'display': 'block'}, dbc.Alert("No hits manifest found.", color="warning"), [], None, None, None
-        
+        print("No hits_metadata.json found.")
+        return {'display': 'block'}, dbc.Alert("No hits found (hits_metadata.json missing).", color="warning"), [], None, None, None
+
     try:
         with open(manifest_path, 'r') as f:
-            hits_data = json.load(f)
+            hits_dict = json.load(f)
     except Exception as e:
         print(f"JSON Error: {e}")
-        return {'display': 'block'}, dbc.Alert("Failed to parse hits.json.", color="danger"), [], None, None, None
+        return {'display': 'block'}, dbc.Alert("Failed to parse hits_metadata.json.", color="danger"), [], None, None, None
+
+    if not hits_dict:
+        return {'display': 'block'}, dbc.Alert("No hits found in the alignment.", color="warning"), [], None, None, None
+
+    # Convert dict → list (both process_* scripts store dicts keyed by hit_name)
+    hits_data = list(hits_dict.values())
 
     # 6. Populate Dropdown
     options = []
     for hit in hits_data:
-        # Truncate long node lists for display
-        nodes_str = str(hit['nodes'])
-        nodes_display = nodes_str[:30] + "..." if len(nodes_str) > 30 else nodes_str
-        label = f"{hit['id']} (Nodes: {nodes_display})"
+        nodes = hit.get('nodes', [])
+        nodes_str = ",".join(nodes) if isinstance(nodes, list) else str(nodes)
+        nodes_display = nodes_str[:40] + "..." if len(nodes_str) > 40 else nodes_str
+        method_tag = hit.get('method', '')
+        label = f"[{method_tag}] {hit['id']} — {len(nodes) if isinstance(nodes, list) else '?'} nodes"
         options.append({'label': label, 'value': hit['id']})
-    
+
     first_val = options[0]['value'] if options else None
-    
+
     return {'display': 'block'}, "", options, first_val, hits_data, output_dir
 
 # Callback 2: Visualize Selected Hit
@@ -3787,23 +4165,80 @@ def display_selected_hit(hit_id, viz_type, hits_data, output_dir):
     if not selected_hit:
         return html.Div("Hit not found."), ""
     
-    # Metrics Table and Sequence Text
-    metrics_div = html.Div([
-        html.H6(f"Hit Details: {selected_hit.get('query', hit_id)}"),
-        dbc.Row([
-            dbc.Col(dbc.Card([dbc.CardBody([html.H6("Identity", className="card-subtitle"), html.H4(f"{selected_hit.get('identity', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
-            dbc.Col(dbc.Card([dbc.CardBody([html.H6("Query Cov", className="card-subtitle"), html.H4(f"{selected_hit.get('coverage_query', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
-            dbc.Col(dbc.Card([dbc.CardBody([html.H6("E-value", className="card-subtitle"), html.H4(f"{selected_hit.get('e_value_product', 'N/A')}", className="card-title")])], color="light", outline=True), width=3),
-        ], className="mb-2"),
-        
-        html.Label("Hit Sequence:"),
-        dcc.Textarea(
-            value=selected_hit.get('sequence', ''),
-            style={'width': '100%', 'height': 100},
-            readOnly=True,
-            title="Copy this sequence"
-        )
-    ])
+    # Metrics panel — content depends on alignment method
+    method = selected_hit.get('method', 'bandage')
+
+    if method == 'vg_giraffe':
+        metrics_div = html.Div([
+            html.H6([
+                f"Hit: {selected_hit.get('query', hit_id)}",
+                dbc.Badge("vg giraffe", color="primary", className="ms-2")
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Query length", className="card-subtitle"),
+                    html.H4(selected_hit.get('query_length', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=2),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Aligned region", className="card-subtitle"),
+                    html.H4(f"{selected_hit.get('query_start', '?')} – {selected_hit.get('query_end', '?')}", className="card-title")
+                ])], color="light", outline=True), width=3),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Strand", className="card-subtitle"),
+                    html.H4(selected_hit.get('strand', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=1),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Residue matches", className="card-subtitle"),
+                    html.H4(selected_hit.get('residue_matches', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=2),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Mapping quality", className="card-subtitle"),
+                    html.H4(selected_hit.get('mapping_quality', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=2),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Align score / Div", className="card-subtitle"),
+                    html.H4(f"{selected_hit.get('alignment_score', 'N/A')} / {selected_hit.get('divergence', 'N/A')}", className="card-title")
+                ])], color="light", outline=True), width=2),
+            ], className="mb-2"),
+            html.Label("Path (GAF):"),
+            dcc.Textarea(
+                value=selected_hit.get('path_string', ''),
+                style={'width': '100%', 'height': 60},
+                readOnly=True,
+            ),
+        ])
+    else:  # bandage
+        metrics_div = html.Div([
+            html.H6([
+                f"Hit: {selected_hit.get('query', hit_id)}",
+                dbc.Badge("Bandage", color="success", className="ms-2")
+            ]),
+            dbc.Row([
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Identity", className="card-subtitle"),
+                    html.H4(selected_hit.get('identity', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=3),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Query Cov", className="card-subtitle"),
+                    html.H4(selected_hit.get('coverage_query', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=3),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("E-value", className="card-subtitle"),
+                    html.H4(selected_hit.get('e_value_product', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=3),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H6("Length discrepancy", className="card-subtitle"),
+                    html.H4(selected_hit.get('length_discrepancy', 'N/A'), className="card-title")
+                ])], color="light", outline=True), width=3),
+            ], className="mb-2"),
+            html.Label("Hit Sequence:"),
+            dcc.Textarea(
+                value=selected_hit.get('sequence', ''),
+                style={'width': '100%', 'height': 100},
+                readOnly=True,
+                title="Copy this sequence"
+            ),
+        ])
 
     image_filename = ""
     mime_type = ""
