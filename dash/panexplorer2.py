@@ -4664,7 +4664,9 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
                 colorscale=colorscale,  # ou autre
                 colorbar=dict(
                         tickvals=tickval,
-                        ticktext= ticktext
+                        ticktext= ticktext,
+                        y=0.75,
+                        len=0.5
                     ),
                 showscale=True
             ),
@@ -4684,7 +4686,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             col=1
         )
         fig.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
-        fig.update_yaxes(autorange="reversed", row=1, col=1)
+        fig.update_yaxes(autorange="reversed", row=1, col=1,tickmode="linear")
         fig.update_layout(height=1100)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
@@ -4706,7 +4708,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         )
                             
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes',xaxis_title="Gene clusters",yaxis_title="Samples")
-        fig.update_yaxes(autorange="reversed")
+        fig.update_yaxes(autorange="reversed",tickmode="linear")
 
 
     # fig = go.Figure(
