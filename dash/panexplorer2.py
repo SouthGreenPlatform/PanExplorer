@@ -1058,6 +1058,21 @@ def load_project_preview(proj_title):
                         ]),
                     dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Br(),
+                        dbc.Row([
+                            dbc.Col(
+                                html.Label("Colored by: "),style={'width': '150px'},
+                            ),
+                            dbc.Col(
+                                dcc.Dropdown(
+                                                ['Country','Population as defined by sNMF'],
+                                                value='Country',
+                                                id='colorizing_tree1',
+                                                style={'width': '300px'},
+                                                multi=False
+                                            ),
+                            )
+                        ], style={'width': '450px'}),
+                        html.Br(),
                         dbc.Row(
                             [
                                 dcc.Loading(html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
@@ -2341,6 +2356,7 @@ def set_reference_value(available_options):
     Output('current_session','value'),
     Output('colorizing_pca','options'),
     Output('colorizing_tree','options'),
+    Output('colorizing_tree1','options'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -2938,6 +2954,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # get tree in newick format as a variable
     with open(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') as fp:
         newick = fp.read()
+        shutil.copy(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick', tmp_dir+"/"+str(session)+".accessory_based_tree.nwk")
 
     df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
     metadata_csv = ""
@@ -3094,6 +3111,14 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     mlva_table = df_vntr.to_dict('records')
     newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
+    # filter samples
+    selected_file = open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w")
+    list_selected.remove("ID")
+    list_selected.remove("Repeat")
+    list_selected.remove("Flanking")
+    with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
+        f.write("\n".join(list_selected) + "\n")
+
     ##############################################################################################
     # SNP
     ##############################################################################################
@@ -3114,13 +3139,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         #################################################################
         # Phylogenetic tree from SNPs
         #################################################################
-        # filter samples
-        selected_file = open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w")
-        list_selected.remove("ID")
-        list_selected.remove("Repeat")
-        list_selected.remove("Flanking")
-        with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
-            f.write("\n".join(list_selected) + "\n")
+        
 
         cmd_args = [
             plink2_exe, "--vcf", vcf_file,
@@ -3778,7 +3797,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns
 
 
 @app.callback(
@@ -4690,7 +4709,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         fig.update_layout(height=1100)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
-        print(colorscale)
         fig = go.FigureWidget(data=
                               go.Heatmap(
                                     z=z,
@@ -4711,30 +4729,11 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         fig.update_yaxes(autorange="reversed",tickmode="linear")
 
 
-    # fig = go.Figure(
-    #     go.Heatmap(
-    #         z=z,
-    #         x=cluster_names,
-    #         y=list_sp2,
-    #         zmin=0,
-    #         zmax=0.3,
-    #         colorscale=colorscale,  # ou autre
-    #         colorbar=dict(
-    #                 tickvals=tickval,
-    #                 ticktext= ticktext
-    #             ),
-    #         showscale=True
-    #     )
-    # )
-
     fig.update_layout(
         xaxis_title="Gene clusters",
         yaxis_title="Samples",
-        height=1100
+        height=800
     )
-
-    
-
     return fig
 
 
@@ -4758,6 +4757,27 @@ def tree(colorizing_tree,session):
         generate_tree_html(snp_based_newick, df_metadata_selected, colorizing_tree, "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html")
 
     return "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html"
+
+
+@app.callback(
+    Output('iframe-content', 'src', allow_duplicate=True),
+    Input('colorizing_tree1', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True    
+)
+
+def tree1(colorizing_tree,session):
+    
+    with open(tmp_dir+"/"+str(session)+".accessory_based_tree.nwk") as fp:
+        newick = fp.read()
+        list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
+        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+        print(list_selected)
+        df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        generate_tree_html(newick, df_metadata_selected, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
+
+    return "assets/tree."+str(session)+"." + colorizing_tree+".html"
 
 
 
