@@ -897,6 +897,7 @@ def load_project_preview(proj_title):
                                                     dashGridOptions={"pagination": True, "animateRows": False}
                                             ),
                                             html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                            html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
                                             dcc.Download(id="download-dataframe2"),
                                         ]),
                                     ),width=8
@@ -1513,7 +1514,7 @@ def load_project_preview(proj_title):
                 ]),
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_mlva')),
+                    dcc.Loading(dcc.Graph(id='graph_mlva'),style={"height": "1500px"}),
                     html.Button("Download matrix", id="btn-download", n_clicks=0),
                     dcc.Download(id="download-dataframe"),
 
@@ -2357,6 +2358,7 @@ def set_reference_value(available_options):
     Output('colorizing_pca','options'),
     Output('colorizing_tree','options'),
     Output('colorizing_tree1','options'),
+    Output('cog_enrichment','style'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -2713,13 +2715,15 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     fig_gene = px.histogram(df2, x="sum")
 
-
+    cog_enrichment_style = {"visibility": "hidden"}
     #################################################
     # pan-GWAS
     #################################################
     scoary_table = []
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     if specific_to is not None and len(specific_to) > 0:
+
+        cog_enrichment_style = {"visibility": "visible"}
         # write traits file for Scoary
         with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
             f.write(",Trait1\n")
@@ -3108,6 +3112,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                            #y=list_sp2,
                            text_auto=True
                            )
+    graph_mlva.update_yaxes(tickmode="linear") 
     mlva_table = df_vntr.to_dict('records')
     newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
@@ -3507,7 +3512,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             margin=dict(l=200, r=20, t=50, b=150),
             #height=800,
             title="SNP Genotyping matrix (only the first 5000 variants are displayed)"
-    )  
+    )
+    fig_VCF.update_yaxes(tickmode="linear") 
 
     
     
@@ -3717,6 +3723,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 col=1
             )
             graph_gfa2.update_yaxes(title_text="-log10(pvalues)", row=2, col=1)
+            graph_gfa2.update_yaxes(tickmode="linear", row=1, col=1)
             graph_gfa2.update_layout(height=900)
             graph_gfa2.update_layout(title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size. <br>Pan-GWAS results are shown below the PAV matrix.')
 
@@ -3734,6 +3741,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             graph_gfa2.update_layout(
                 title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
             )
+            graph_gfa2.update_yaxes(tickmode="linear")
 
         
     
@@ -3797,25 +3805,27 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
+
+############################################
+# Disable button during loading
+############################################s
+# @app.callback(
+#     Output('btn-update', 'disabled'),
+#     Input('btn-update', 'n_clicks'),
+#     prevent_initial_call=True
+# )
+# def hide_update_button(n_clicks):
+#     return True
 
 
-@app.callback(
-    Output('btn-update', 'disabled'),
-    Input('btn-update', 'n_clicks'),
-    prevent_initial_call=True
-)
-def hide_update_button(n_clicks):
-    return True
-
-
-@app.callback(
-    Output('btn-update', 'disabled', allow_duplicate=True),
-    Input('current_session', 'value'),
-    prevent_initial_call=True
-)
-def show_update_button(session_value):
-    return False
+# @app.callback(
+#     Output('btn-update', 'disabled', allow_duplicate=True),
+#     Input('current_session', 'value'),
+#     prevent_initial_call=True
+# )
+# def show_update_button(session_value):
+#     return False
 
     #############################################################################################
     # Extraction and visualization of a subgraph
@@ -4732,7 +4742,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     fig.update_layout(
         xaxis_title="Gene clusters",
         yaxis_title="Samples",
-        height=800
     )
     return fig
 
@@ -4928,7 +4937,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     testdf = df_vntr[mask]
     newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
     graph_mlva = px.imshow(newdf.T, 
-                           aspect="auto",
+                           #aspect="auto",
                            labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
                            x=repeats,
                            #y=list_sp2,
