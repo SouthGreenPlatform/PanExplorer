@@ -932,16 +932,16 @@ def load_project_preview(proj_title):
                         
                            
                     ]),
-                    dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            html.Div(className="row", id='upset', children=[
-                            dcc.Loading(
-                                    dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','margin-left': '15px'}),
-                            ),
+                    # dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
+                    #         html.Br(),
+                    #         html.Div(className="row", id='upset', children=[
+                    #         dcc.Loading(
+                    #                 dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','margin-left': '15px'}),
+                    #         ),
 
                             
-                        ]),
-                    ]),
+                    #     ]),
+                    # ]),
 
                     dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
@@ -2300,7 +2300,7 @@ def set_reference_value(available_options):
     Output("nb_of_pangenes",'children'),
     Output('textarea-example-output', 'children'),
     Output('PAV_graph', 'figure'),
-    Output('graph_upset', 'figure'),
+    #Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
     Output('table_pangenes','columnDefs'),
         #Output('datatable-paging','srcDoc'),
@@ -2815,19 +2815,24 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
     df_upset = df_upset[list_sp2[:6]]
 
-    upset_plot = plot_upset(
-        dataframes=[df_upset],
-        exclude_zeros=True,
-        sorted_x="d",
-        sorted_y="a",
-        legendgroups=["Strains"],
-        marker_size=11,
-    )
-    upset_plot.update_layout(
-        title_text='Upset plot for accessory genes (for the first 6 samples).',
-        width=1800,
-        height=800
-    )
+    print("df_upset")
+    print(df_upset)
+
+    upset_plot = None
+
+    # upset_plot = plot_upset(
+    #     dataframes=[df_upset],
+    #     exclude_zeros=True,
+    #     sorted_x="d",
+    #     sorted_y="a",
+    #     legendgroups=["Strains"],
+    #     marker_size=11,
+    # )
+    # upset_plot.update_layout(
+    #     title_text='Upset plot for accessory genes (for the first 6 samples).',
+    #     width=1800,
+    #     height=800
+    # )
     
 
 
@@ -3124,6 +3129,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             "--export", "vcf",
             "--max-alleles", "2",
             "--min-alleles", "2",
+            "--geno", "0.001",
             "--out", f"{tmp_dir}/{session}.selected_genomes"
         ]
         subprocess.run(cmd_args, capture_output=True)
@@ -3772,7 +3778,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns
 
 
 @app.callback(
