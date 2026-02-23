@@ -772,6 +772,10 @@ def load_project_preview(proj_title):
         dcc.Input(id='current_session', type='hidden'),
         
     )
+    if df["Strain name"].duplicated().any():
+         children.append(
+            dbc.Alert("Warning: 'Strain name' column contains duplicates. This may cause issues with the heatmap and projections. Consider making sure each strain has a unique name in the metadata.", color="warning")
+        )
     
     
     #children.append(html.Button("Update Graphes", id="btn-update", n_clicks=0))
@@ -2663,12 +2667,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         # create a simplified matrix, with only the first gene if a list of genes for the reference
         simplified_df_matrix = df_matrix
+
         simplified_df_matrix[[reference]] = simplified_df_matrix[reference].str.extract('([^,]+),*', expand=True)
 
         merged_with_positions = pd.merge(simplified_df_matrix, df_gene_positons, left_on=reference, right_on='PID')
         #merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=reference, right_on='PID')
 
-        print("merged_with_positions")
         df_gene_positons.to_csv("export_gene_positions.csv")
 
         if len(merged_with_positions) != 0:
@@ -2697,7 +2701,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     
     core_df['ClutserID'] = core_df['ClutserID'].astype(int)
-    
+
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
