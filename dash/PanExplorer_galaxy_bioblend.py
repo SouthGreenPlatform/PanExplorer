@@ -136,7 +136,7 @@ outani_pgap = gi.datasets.download_dataset(pgap_outani, file_path = args.o+"/fas
 # outalpha_pgap = gi.datasets.download_dataset(pgap_outalpha, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outdist_pgap = gi.datasets.download_dataset(pgap_outdist, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 outvcf_pgap = gi.datasets.download_dataset(pgap_outvcf, file_path = args.o+"/variants.vcf",maxwait=820000,require_ok_state=False,use_default_filename=False)
-#outlog_pgap = gi.datasets.download_dataset(pgap_outlog, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
+outlog_pgap = gi.datasets.download_dataset(pgap_outlog, file_path = args.o+"/panexplorer_workflow.log",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outgfa_pgap = gi.datasets.download_dataset(pgap_outgfa, file_path = args.o+"/pangenome.gfa",maxwait=820000,require_ok_state=False,use_default_filename=False)
 #outalign_pgap = gi.datasets.download_dataset(pgap_outalign, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 history_id = history['id']

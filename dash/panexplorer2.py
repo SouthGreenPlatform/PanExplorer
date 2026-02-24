@@ -901,8 +901,10 @@ def load_project_preview(proj_title):
                                                     dashGridOptions={"pagination": True, "animateRows": False}
                                             ),
                                             html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                            html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
                                             html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
                                             dcc.Download(id="download-dataframe2"),
+                                            dcc.Download(id="download-dataframe3"),
                                         ]),
                                     ),width=8
                                 ),
@@ -5485,7 +5487,28 @@ def download_matrix(n,session,pathname):
         path = row[0]
     directory = path
     df = pd.read_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep='\t')
-    return dcc.send_data_frame(df.to_csv, "search_results.tsv",sep='\t')
+    return dcc.send_data_frame(df.to_csv, "PAV_matrix.xls",sep='\t')
+
+@app.callback(
+    Output("download-dataframe3", "data"),
+    Input("download_table_geneid", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+    df = pd.read_csv(directory+ "/1.Orthologs_Cluster.txt",sep='\t')
+    return dcc.send_data_frame(df.to_csv, "original_matrix.xls",sep='\t')
 
 
 

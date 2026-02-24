@@ -107,7 +107,7 @@ layout = html.Div(
             html.Label("Percentage identity for protein Blast. Must be between 1 and 100."),
 
             html.H5("What is your inputs:"),
-            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of Genbank assembly accessions (GCA)", "value": "public"}, 
+            dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of assembly accessions (GCA or GCF)", "value": "public"}, 
                                                    {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, 
                                                    #{"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}
                                                    ], style={"width":"750px"}),
@@ -672,9 +672,10 @@ def register_callbacks(app):
         Input("check-gca-button", "n_clicks"),
         State("public-genomes", "value"),
         State("session","value"),
+        State("GCA_GCF", "value"),
         prevent_initial_call=True,
     )
-    def check_public_genomes(n_clicks, gca_list,session):
+    def check_public_genomes(n_clicks, gca_list,session,gca_gcf):
         if n_clicks == 0:
             return html.Div("No check performed yet.")
 
@@ -708,9 +709,12 @@ def register_callbacks(app):
         countries = {}
         for accession in gca_accessions:
 
-            x = re.search("^GC[AF]_\d+(\.\d+)?$", accession)
+            if gca_gcf == "GCA":
+                x = re.search("^GCA_\d+(\.\d+)?$", accession)
+            elif gca_gcf == "GCF":
+                x = re.search("^GCF_\d+(\.\d+)?$", accession)
             if not x:
-                return html.Div("Does not respect GCA accession format")
+                return html.Div(f"Does not respect {gca_gcf} accession format. Must be {gca_gcf}_XXXXXX.X only")
             else:
 
                 # cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
@@ -881,7 +885,9 @@ def register_callbacks(app):
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
-                html.H5("Public genomes. Enter a list of Genbank assembly accessions (GCA). Must be annotated (up to 200 genomes)"),
+                html.H5("Public genomes. Enter a list of assembly accessions (GCA or GCF). Must be annotated (up to 200 genomes)"),
+                dcc.Dropdown(id="GCA_GCF", options=[{"label": "GCA (GenBank assembly)", "value": "GCA"}, {"label": "GCF (RefSeq assembly)", "value": "GCF"}], value="GCA", style={"width":"300px"}),
+                html.Label("Restrict the analysis to either GenBank assemblies (GCA) or RefSeq assemblies (GCF)"),
                 dcc.Input(id="public-genomes", type="text", placeholder="GCA_000001234.1,GCA_000005678.1", style={"width": "75%"}),
                 html.Label("Coma separated list (Genbank assembly GCA,GCF)"),
                 html.Button("Check accessions", id="check-gca-button", className="thin-button", n_clicks=0)
