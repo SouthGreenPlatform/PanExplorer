@@ -247,7 +247,7 @@ columnDefs4 = [
 ]
 
 data = ""
-tmp_dir = "tmp"
+
 
 # ---------- Config ----------
 DB_PATH = "example_auth.db"
@@ -265,6 +265,7 @@ vcf2geno_exe = conf.get("vcf2geno_exe") or "vcf2geno"
 scoary_exe = conf.get("scoary_exe") or "scoary2"
 SECRET_KEY = conf.get("secret_key")
 WEB_URL = conf.get("web_url") or "localhost:8050"
+tmp_dir = conf.get("tmp_dir") or "tmp"
 
 # ---------- DB helpers ----------
 def init_db():
@@ -2298,7 +2299,8 @@ def update_pivot(metadata_table,projets,url):
         val = wjdata
         for strain in wjdata:
             strain_name = strain['Strain name']
-            reference_list.append(strain_name)
+            if os.path.exists(directory+"/genomes/genomes/"+strain_name+".ptt"):
+                reference_list.append(strain_name)
 
     return [{'label': i, 'value': i} for i in reference_list] , [{'label': i, 'value': i} for i in reference_list]
 
@@ -3021,7 +3023,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     for sp in list_selected:
         c+=1
         if (c >=1 and c <=(max_nb_strains_macrosynteny)):
-            if validate_session_id(session):
+            if validate_session_id(session) and os.path.exists(directory+"/genomes/genomes/"+sp+".ptt") and os.path.getsize(directory+"/genomes/genomes/"+sp+".ptt") > 0:
                 shutil.copy(directory+"/genomes/genomes/"+sp+".ptt", selection_dir)
                 list_of_species_macrosyneny.append(sp)
 
@@ -5084,9 +5086,12 @@ def init_dataframes(pathname):
         df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
 
     list_species = []
+    list_species_with_ptt = []
     for col in df.columns:
         if col != "ClutserID":
             list_species.append(col)
+            if os.path.exists(directory+"/genomes/genomes/"+col+".ptt"):
+                list_species_with_ptt.append(col)
 
 
     df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
@@ -5096,27 +5101,29 @@ def init_dataframes(pathname):
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
   
+    print
     # Remove lines from ptt
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
-    if os.path.exists(directory+"/genomes/genomes/"+list_species[0]+".ptt"):
+    if os.path.exists(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"):
 
-        cmd_args = ["grep", "-P", "Location|^\d+\.\.", directory+"/genomes/genomes/"+list_species[0]+".ptt"]
-        with open(directory+"/genomes/genomes/"+list_species[0]+".2.ptt", "w") as file:
+        cmd_args = ["grep", "-P", "Location|^\d+\.\.", directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"]
+        with open(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".2.ptt", "w") as file:
             subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
         
-        print("Species:"+list_species[0])
+        print("Species:"+list_species_with_ptt[0])
 
-        df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species[0]+'.2.ptt',sep='\t')
+        df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "", regex=False)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
         
-    merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species[0], right_on='PID')
+    merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
+    
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
     #merged_with_positions.insert(0, 'block_id', 'chr1')
 
