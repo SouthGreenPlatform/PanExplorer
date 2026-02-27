@@ -233,11 +233,16 @@ def validate_gca_accession(accession: str) -> bool:
 
 def validate_email_strict(email: str) -> bool:
     """
-    Validate email address more strictly.
+    Validate email address more strictly and reject Gmail addresses.
     """
     # Simple but effective regex for emails
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return bool(re.match(pattern, email.strip())) and len(email) < 254
+    if not (bool(re.match(pattern, email.strip())) and len(email) < 254):
+        return False
+    # Reject Gmail addresses
+    if email.strip().lower().endswith('@gmail.com'):
+        return False
+    return True
 
 def is_safe_path(path: str, base_dir: str) -> bool:
     """
@@ -849,6 +854,8 @@ def register_callbacks(app):
         if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
             return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
         if (not email_address or not validate_email_strict(email_address)):
+            if email_address and email_address.strip().lower().endswith('@gmail.com'):
+                return dbc.Alert("Error: Gmail addresses are not accepted. Please use your institutional or professional email address.", color="danger") , {"display": "block"}
             return dbc.Alert("Error: Invalid email address.", color="danger") , {"display": "block"}
         if (not min_percentage_identity or not (1 <= int(min_percentage_identity) <= 100)):
             return dbc.Alert("Error: Minimum percentage identity must be between 1 and 100.", color="danger") , {"display": "block"}
