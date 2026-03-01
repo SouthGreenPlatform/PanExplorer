@@ -94,9 +94,9 @@ layout = html.Div(
         dcc.Store(id="session", storage_type="session"),
         html.Div(id="page-submission-content",style={"display": "block"}, children=[
             html.Br(),
-            html.H5("Project name:"),
-            dcc.Input(id="project-name", type="text", placeholder="Enter project name",style={"width":"550px"}),
-            html.Label("Alphanumeric, no spaces, underscores (_) or hyphens (-) only."),
+            # html.H5("Project name:"),
+            # dcc.Input(id="project-name", type="text", placeholder="Enter project name",style={"width":"550px"}),
+            # html.Label("Alphanumeric, no spaces, underscores (_) or hyphens (-) only."),
 
             html.H5("Email address:"),
             dcc.Input(id="email-address", type="email", placeholder="Enter email address", style={"width": "50%"}),
@@ -347,7 +347,7 @@ def summarize_records(records, original_name, stored_filename):
     }
 
 
-def run_external_command(project_name, email_address, valid_list, min_percentage_identity, session, software):
+def run_external_command(email_address, valid_list, min_percentage_identity, session, software):
 
     # Validate session to prevent injection attacks
     if not validate_session_id(session):
@@ -465,9 +465,13 @@ def run_external_command(project_name, email_address, valid_list, min_percentage
         countries = {}
         for accession in accessions:
                     
-                cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
-                       '--filename', os.path.join(tmp_dir, f"{accession}.zip"), '--include', 'genome,gbff,protein']
-                result = subprocess.run(cmd)
+                nb_tries = 1
+                result = None
+                while nb_tries < 6 and not os.path.exists(os.path.join(tmp_dir, f"{accession}.zip")):
+                    nb_tries += 1
+                    cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
+                        '--filename', os.path.join(tmp_dir, f"{accession}.zip"), '--include', 'genome,gbff,protein']
+                    result = subprocess.run(cmd)
                 returned_value = result.returncode
 
                 if returned_value == 0:
@@ -839,7 +843,7 @@ def register_callbacks(app):
         Output("output-area2", "children",allow_duplicate=True),
         Output("page-submission-content", "style", allow_duplicate=True),
         Input("go-button", "n_clicks"),
-        State("project-name", "value"),
+        #State("project-name", "value"),
         State("email-address", "value"),
         State("valid_list", "value"),
         State("software", "value"),
@@ -847,12 +851,12 @@ def register_callbacks(app):
         State("min-percentage-identity", "value"),
         prevent_initial_call=True,
     )
-    def go_to_pipeline_public(n_clicks, project_name, email_address, valid_list, software, session, min_percentage_identity):
+    def go_to_pipeline_public(n_clicks, email_address, valid_list, software, session, min_percentage_identity):
         if n_clicks == 0:
             return html.Div()
 
-        if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
-            return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
+        # if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
+        #     return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
         if (not email_address or not validate_email_strict(email_address)):
             if email_address and email_address.strip().lower().endswith('@gmail.com'):
                 return dbc.Alert("Error: Gmail addresses are not accepted. Please use your institutional or professional email address.", color="danger") , {"display": "block"}
@@ -865,7 +869,7 @@ def register_callbacks(app):
 
         thread = threading.Thread(
             target=run_external_command,
-            args=(project_name, email_address, valid_list, min_percentage_identity, session, software),
+            args=(email_address, valid_list, min_percentage_identity, session, software),
             daemon=True
         )
         thread.start()
