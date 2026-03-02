@@ -678,6 +678,7 @@ def register_callbacks(app):
 
     @app.callback(
         Output("output-area", "children", allow_duplicate=True),
+        Output("check-gca-button", "style", allow_duplicate=True),
         Input("check-gca-button", "n_clicks"),
         State("public-genomes", "value"),
         State("session","value"),
@@ -820,9 +821,13 @@ def register_callbacks(app):
             style={"marginTop": "20px"},
             children=[
                 html.Button(
-                    f"  (Send data to the pipeline ({valid_genome_count} valid genomes)",
+                    f"Step 2: Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
-                    style={"display": "block"},
+                    style={
+                        "display": "block",
+                        "backgroundColor": "#1E90FF",
+                        "color": "white"
+                    },
                     n_clicks=0
                 ),
                 
@@ -835,9 +840,8 @@ def register_callbacks(app):
             divs.append(dcc.Input(id="valid_list", type="hidden", value=",".join(list_of_valid_accessions)))
             divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
 
-        return html.Div(divs)
+        return html.Div(divs), {"display": "none"} if valid_genome_count >= MIN_VALID_GENOMES else {"display": "block","backgroundColor": "#1E90FF","color": "white"}
     
-
 
     @app.callback(
         Output("output-area2", "children",allow_duplicate=True),
@@ -901,7 +905,11 @@ def register_callbacks(app):
                 html.Label("Restrict the analysis to either GenBank assemblies (GCA) or RefSeq assemblies (GCF)"),
                 dcc.Input(id="public-genomes", type="text", placeholder="GCA_000001234.1,GCA_000005678.1", style={"width": "75%"}),
                 html.Label("Coma separated list (Genbank assembly GCA,GCF)"),
-                html.Button("Check accessions", id="check-gca-button", className="thin-button", n_clicks=0)
+                html.Button("Step 1: Check accessions",
+                    style={
+                        "backgroundColor": "#1E90FF",   # bleu
+                        "color": "white"
+                    },id="check-gca-button", n_clicks=0)
             ])
         elif input_type == "upload":
             MAX_GENOMES = 200
@@ -1105,15 +1113,16 @@ def register_callbacks(app):
             return html.Div("No files uploaded yet.")
         
         return html.Div(html.Button(
-                    "Check status of uploaded files",
+                    "Step 1: Check status of uploaded files",
                     id="check-status-button",
-                    style={"display": "block"},
+                    style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
                     n_clicks=0
                 ),
         )
     
     @app.callback(
         Output("output-area3", "children", allow_duplicate=True),
+        Output("check-status-button", "style", allow_duplicate=True),
         Input("check-status-button", "n_clicks"),
         State("session", "value"),
         prevent_initial_call=True,
@@ -1271,9 +1280,9 @@ def register_callbacks(app):
             style={"marginTop": "20px"},
             children=[
                 html.Button(
-                    f"  Send data to the pipeline ({valid_genome_count} valid genomes)",
+                    f"Step 2: Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
-                    style={"display": "block"},
+                    style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
                     n_clicks=0
                 ),
                 
@@ -1281,11 +1290,19 @@ def register_callbacks(app):
         )
         divs = [html.H4("Upload validation summary"), grid]
 
+        # count the number of files in the upload directory
+        nb_uploaded_files = len(os.listdir(UPLOAD_DIR + "/" + session)) - 1  # subtract 1 for the sentinel file
+        nb_rows = len(rows)
+
         if valid_genome_count >= MIN_VALID_GENOMES:
-            divs.append(go_button)
-            divs.append(dcc.Input(id="valid_list", type="hidden", value=""))
-            divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
-        return html.Div(divs)
+
+            if nb_uploaded_files != nb_rows:
+                return html.Div(divs), {"display": "block","backgroundColor": "#1E90FF","color": "white"}
+            else:
+                divs.append(go_button)
+                divs.append(dcc.Input(id="valid_list", type="hidden", value=""))
+                divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
+        return html.Div(divs), {"display": "none"} if valid_genome_count >= MIN_VALID_GENOMES else {"display": "block","backgroundColor": "#1E90FF","color": "white"}
     
 
 
