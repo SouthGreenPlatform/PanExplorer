@@ -2299,8 +2299,7 @@ def update_pivot(metadata_table,projets,url):
         val = wjdata
         for strain in wjdata:
             strain_name = strain['Strain name']
-            if os.path.exists(directory+"/genomes/genomes/"+strain_name+".ptt"):
-                reference_list.append(strain_name)
+            reference_list.append(strain_name)
 
     return [{'label': i, 'value': i} for i in reference_list] , [{'label': i, 'value': i} for i in reference_list]
 
