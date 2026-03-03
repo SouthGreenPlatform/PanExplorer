@@ -2961,19 +2961,22 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     
     newick = ""
+
+    if os.path.exists(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') and os.path.getsize(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') > 0:
     
-    # get tree in newick format as a variable
-    with open(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') as fp:
-        newick = fp.read()
-        shutil.copy(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick', tmp_dir+"/"+str(session)+".accessory_based_tree.nwk")
+        # get tree in newick format as a variable
+        with open(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') as fp:
+            newick = fp.read()
+            shutil.copy(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick', tmp_dir+"/"+str(session)+".accessory_based_tree.nwk")
 
-    df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
-    metadata_csv = ""
-    with open(directory+'/metadata.csv') as fp:
-        metadata_csv = fp.read()
+        df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
+        metadata_csv = ""
+        with open(directory+'/metadata.csv') as fp:
+            metadata_csv = fp.read()
 
-    #generate_tree_html(newick, df_metadata, "Country", tmp_dir + "/" + str(session) + ".tree.html")
-    generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
+        #generate_tree_html(newick, df_metadata, "Country", tmp_dir + "/" + str(session) + ".tree.html")
+        generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
+
 
     print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
