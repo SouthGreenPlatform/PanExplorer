@@ -29,10 +29,15 @@ import threading
 import subprocess
 import time
 
-import dash_uploader as du
+#import dash_uploader as du
 import logging
 
 from pathlib import Path
+
+import uuid
+import json
+
+
 
 # optional libs: python-magic (python-magic-bin on Windows) and pyclamd for ClamAV
 try:
@@ -75,13 +80,11 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 MAX_UPLOAD_SIZE_MB = conf.get("max_upload_size_mb", 50)
 MAX_UPLOAD_SIZE_BYTES = int(MAX_UPLOAD_SIZE_MB * 1024 * 1024)
 ALLOWED_EXT = {"gb", "gbk", "gbff", "genbank"}
-VALIDATION_SENTINEL = ".upload_validation_done"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 #session = random.randint(1, 9000000)
-
 
 
 # --------------------------------------------------
@@ -256,6 +259,7 @@ def is_safe_path(path: str, base_dir: str) -> bool:
     except (OSError, ValueError):
         return False
 
+
 def sanitize_filename(filename: str) -> str:
     """
     Sanitize filename to prevent path traversal and injection attacks.
@@ -265,7 +269,7 @@ def sanitize_filename(filename: str) -> str:
     # Remove any path separators
     filename = os.path.basename(filename)
     # Remove null bytes
-    filename = filename.replace('\x00', '')
+    #filename = filename.replace('\x00', '')
     # Only allow safe characters
     safe_name = re.sub(r'[^a-zA-Z0-9._-]', '', filename)
     # Prevent empty filenames
@@ -674,7 +678,7 @@ https://panexplorer2.ird.fr/browse?session={session}
 # --------------------------------------------------
 
 def register_callbacks(app):
-    du.configure_upload(app, folder=UPLOAD_DIR)
+    #du.configure_upload(app, folder=UPLOAD_DIR)
 
     @app.callback(
         Output("output-area", "children", allow_duplicate=True),
@@ -922,33 +926,33 @@ def register_callbacks(app):
                 html.Label("Upload genbank files (accepted extension: .gb, .gbk, .gbff, .genbank). Selection of multiple files is possible. Must be annotated genomes. "),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
                 
-                du.Upload(
-                    id="upload-genbank",
-                    text="Upload GenBank files",
-                    upload_id=session,
-                    max_files=80,
-                    filetypes=["gb", "gbk", "gbff", "genbank"],
-                ),
-                dcc.Store(id="upload-dir-state", data=None),
-                dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
-
-                # dcc.Upload(
+                # du.Upload(
                 #     id="upload-genbank",
-                #     children=html.Div([
-                #         "Drag and drop GenBank files here or ",
-                #         html.A("select files")
-                #     ]),
-                #     style={
-                #         "width": "100%",
-                #         "height": "80px",
-                #         "lineHeight": "80px",
-                #         "borderWidth": "2px",
-                #         "borderStyle": "dashed",
-                #         "borderRadius": "10px",
-                #         "textAlign": "center",
-                #     },
-                #     multiple=True,
+                #     text="Upload GenBank files",
+                #     upload_id=session,
+                #     max_files=200,
+                #     filetypes=["gb", "gbk", "gbff", "genbank"],
                 # ),
+                # dcc.Store(id="upload-dir-state", data=None),
+                # dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
+
+                dcc.Upload(
+                    id="upload-genbank",
+                    children=html.Div([
+                        "Drag and drop GenBank files here or ",
+                        html.A("select files")
+                    ]),
+                    style={
+                        "width": "100%",
+                        "height": "80px",
+                        "lineHeight": "80px",
+                        "borderWidth": "2px",
+                        "borderStyle": "dashed",
+                        "borderRadius": "10px",
+                        "textAlign": "center",
+                    },
+                    multiple=True,
+                ),
             ])
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
@@ -984,140 +988,207 @@ def register_callbacks(app):
         else:
             return html.Div()
 
-    
+
 
     # @du.callback(
     #     Output("output-area", "children"),
     #     Input("upload-genbank", "contents"),
     #     State("upload-genbank", "filename"),
     # )
-    @du.callback(
-        output=Output("output-area", "children"),
-        id="upload-genbank",
-    )
-    def handle_uploaded_files(uploaded_files):
+    # @du.callback(
+    #     output=Output("output-area", "children"),
+    #     id="upload-genbank",
+    # )
+    # def handle_uploaded_files(uploaded_files):
 
-        # Process any new upload directories under UPLOAD_DIR.
-        # dash_uploader creates a subfolder per upload_id (we configured upload_id=session).
+    #     # Process any new upload directories under UPLOAD_DIR.
+    #     # dash_uploader creates a subfolder per upload_id (we configured upload_id=session).
+    #     processed_any = False
+        
+
+    #     for sub in os.listdir(UPLOAD_DIR):
+    #         subpath = os.path.join(UPLOAD_DIR, sub)
+            
+    #         # Validate session ID format before processing
+    #         if not validate_session_id(sub):
+    #             logger.warning("Skipping invalid session ID: %s", sub)
+    #             continue
+            
+    #         if not os.path.isdir(subpath):
+    #             continue
+            
+    #         # Verify path safety to prevent directory traversal
+    #         if not is_safe_path(subpath, UPLOAD_DIR):
+    #             logger.warning("Path outside allowed directory: %s", subpath)
+    #             continue
+                
+    #         sentinel = os.path.join(subpath, VALIDATION_SENTINEL)
+    #         if os.path.exists(sentinel):
+    #             continue
+
+    #         # process files in this upload folder
+    #         for fname in os.listdir(subpath):
+    #             fpath = os.path.join(subpath, fname)
+    #             if os.path.isdir(fpath):
+    #                 continue
+
+    #             # sanitize name on disk
+    #             safe_name = sanitize_filename(fname)
+    #             safe_path = os.path.join(subpath, safe_name)
+    #             if safe_name != fname:
+    #                 try:
+    #                     os.rename(fpath, safe_path)
+    #                     fpath = safe_path
+    #                 except Exception:
+    #                     pass
+
+
+
+
+    #             # check extension
+    #             ext = os.path.splitext(fpath)[1].lstrip('.').lower()
+    #             if ext not in ALLOWED_EXT:
+    #                 logger.warning("Rejected upload (extension not allowed): %s", fpath)
+    #                 try:
+    #                     os.remove(fpath)
+    #                 except Exception:
+    #                     pass
+    #                 continue
+
+    #             # check size
+    #             try:
+    #                 size = os.path.getsize(fpath)
+    #             except Exception:
+    #                 size = 0
+
+
+    #             print(safe_name + ": size: " + str(size))
+    #             if size > MAX_UPLOAD_SIZE_BYTES:
+    #                 logger.warning("Rejected upload (too large): %s (%d bytes)", fpath, size)
+    #                 try:
+    #                     os.remove(fpath)
+    #                 except Exception:
+    #                     pass
+    #                 continue
+
+    #             # optional magic check
+    #             #if HAS_MAGIC:
+    #             #    try:
+    #             #        mime = magic.from_file(fpath, mime=True)
+    #             #        low = str(mime).lower()
+    #             #        if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
+    #             #            logger.warning("Rejected upload (magic mismatch): %s -> %s", fpath, mime)
+    #             #            try:
+    #             #                os.remove(fpath)
+    #             #            except Exception:
+    #             #                pass
+    #             #            continue
+    #             #    except Exception:
+    #             #        # if magic fails, we continue but log
+    #             #        logger.exception("magic check failed for %s", fpath)
+
+    #             # optional ClamAV scan
+    #             #if HAS_PYCLAMD:
+    #             #    try:
+    #             #        cd = pyclamd.ClamdNetworkSocket()
+    #             #        scan_result = cd.scan_file(fpath)
+    #             #        if scan_result:
+    #             #            logger.warning("Infected file detected and removed: %s", fpath)
+    #             #            try:
+    #             #                os.remove(fpath)
+    #             #            except Exception:
+    #             #                pass
+    #             #            continue
+    #             #    except Exception:
+    #             #        logger.exception("ClamAV scan failed for %s", fpath)
+
+    #             # set restrictive permissions
+    #             try:
+    #                 os.chmod(fpath, 0o600)
+    #             except Exception:
+    #                 pass
+
+    #             processed_any = True
+
+    #         # mark as processed to avoid re-checking
+    #         try:
+    #             open(sentinel, 'w').close()
+    #         except Exception:
+    #             pass
+
+
+    #     if not uploaded_files and not processed_any:
+    #         return html.Div("No files uploaded yet.")
+        
+    #     return html.Div(html.Button(
+    #                 "Step 1: Check status of uploaded files",
+    #                 id="check-status-button",
+    #                 style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
+    #                 n_clicks=0
+    #             ),
+    #     )
+
+    @app.callback(
+        Output("output-area", "children"),
+        Input("upload-genbank", "contents"),
+        State("upload-genbank", "filename"),
+        State("session", "value"),
+        prevent_initial_call=True,
+    )
+    def handle_uploaded_files(contents, filenames, session):
+
+        if not contents:
+            return html.Div("No files uploaded yet.")
+
+        if not validate_session_id(session):
+            return html.Div("Error: Invalid session.")
+
+        upload_session_dir = os.path.join(UPLOAD_DIR, session)
+        os.makedirs(upload_session_dir, exist_ok=True)
+
         processed_any = False
 
-        for sub in os.listdir(UPLOAD_DIR):
-            subpath = os.path.join(UPLOAD_DIR, sub)
-            
-            # Validate session ID format before processing
-            if not validate_session_id(sub):
-                logger.warning("Skipping invalid session ID: %s", sub)
-                continue
-            
-            if not os.path.isdir(subpath):
-                continue
-            
-            # Verify path safety to prevent directory traversal
-            if not is_safe_path(subpath, UPLOAD_DIR):
-                logger.warning("Path outside allowed directory: %s", subpath)
-                continue
-                
-            sentinel = os.path.join(subpath, VALIDATION_SENTINEL)
-            if os.path.exists(sentinel):
-                continue
+        for content, filename in zip(contents, filenames):
 
-            # process files in this upload folder
-            for fname in os.listdir(subpath):
-                fpath = os.path.join(subpath, fname)
-                if os.path.isdir(fpath):
-                    continue
+            safe_name = sanitize_filename(filename)
+            filepath = os.path.join(upload_session_dir, safe_name)
 
-                # sanitize name on disk
-                safe_name = sanitize_filename(fname)
-                safe_path = os.path.join(subpath, safe_name)
-                if safe_name != fname:
-                    try:
-                        os.rename(fpath, safe_path)
-                        fpath = safe_path
-                    except Exception:
-                        pass
-
-
-                # check extension
-                ext = os.path.splitext(fpath)[1].lstrip('.').lower()
-                if ext not in ALLOWED_EXT:
-                    logger.warning("Rejected upload (extension not allowed): %s", fpath)
-                    try:
-                        os.remove(fpath)
-                    except Exception:
-                        pass
-                    continue
-
-                # check size
-                try:
-                    size = os.path.getsize(fpath)
-                except Exception:
-                    size = 0
-
-
-                print(safe_name + ": size: " + str(size))
-                if size > MAX_UPLOAD_SIZE_BYTES:
-                    logger.warning("Rejected upload (too large): %s (%d bytes)", fpath, size)
-                    try:
-                        os.remove(fpath)
-                    except Exception:
-                        pass
-                    continue
-
-                # optional magic check
-                if HAS_MAGIC:
-                    try:
-                        mime = magic.from_file(fpath, mime=True)
-                        low = str(mime).lower()
-                        if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
-                            logger.warning("Rejected upload (magic mismatch): %s -> %s", fpath, mime)
-                            try:
-                                os.remove(fpath)
-                            except Exception:
-                                pass
-                            continue
-                    except Exception:
-                        # if magic fails, we continue but log
-                        logger.exception("magic check failed for %s", fpath)
-
-                # optional ClamAV scan
-                if HAS_PYCLAMD:
-                    try:
-                        cd = pyclamd.ClamdNetworkSocket()
-                        scan_result = cd.scan_file(fpath)
-                        if scan_result:
-                            logger.warning("Infected file detected and removed: %s", fpath)
-                            try:
-                                os.remove(fpath)
-                            except Exception:
-                                pass
-                            continue
-                    except Exception:
-                        logger.exception("ClamAV scan failed for %s", fpath)
-
-                # set restrictive permissions
-                try:
-                    os.chmod(fpath, 0o600)
-                except Exception:
-                    pass
-
-                processed_any = True
-
-            # mark as processed to avoid re-checking
             try:
-                open(sentinel, 'w').close()
+                content_type, content_string = content.split(',')
+                decoded = base64.b64decode(content_string)
+            except Exception:
+                continue
+
+            # extension check
+            ext = os.path.splitext(safe_name)[1].lstrip('.').lower()
+            if ext not in ALLOWED_EXT:
+                continue
+
+            # size check
+            if len(decoded) > MAX_UPLOAD_SIZE_BYTES:
+                continue
+
+            # write file
+            with open(filepath, "wb") as f:
+                f.write(decoded)
+
+            try:
+                os.chmod(filepath, 0o600)
             except Exception:
                 pass
 
-        if not uploaded_files and not processed_any:
-            return html.Div("No files uploaded yet.")
-        
-        return html.Div(html.Button(
-                    "Step 1: Check status of uploaded files",
-                    id="check-status-button",
-                    style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
-                    n_clicks=0
-                ),
+            processed_any = True
+
+        if not processed_any:
+            return html.Div("No valid files uploaded.")
+
+        return html.Div(
+            html.Label(
+                "Minimum 3 genomes to process an analysis...",
+                id="check-status-button",
+                #style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
+                #n_clicks=0
+            )
         )
     
     @app.callback(
@@ -1147,6 +1218,8 @@ def register_callbacks(app):
             return html.Div("Error: Upload directory not found.")
 
         for file in os.listdir(upload_session_dir):
+
+
             original_name = os.path.basename(file)
             if file.endswith(".gb") or file.endswith(".gbk") or file.endswith(".gbff") or file.endswith(".genbank"):
                 newfile = sanitize_filename(file)
@@ -1280,7 +1353,7 @@ def register_callbacks(app):
             style={"marginTop": "20px"},
             children=[
                 html.Button(
-                    f"Step 2: Send data to the pipeline ({valid_genome_count} valid genomes)",
+                    f"Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
                     style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
                     n_clicks=0
@@ -1291,7 +1364,7 @@ def register_callbacks(app):
         divs = [html.H4("Upload validation summary"), grid]
 
         # count the number of files in the upload directory
-        nb_uploaded_files = len(os.listdir(UPLOAD_DIR + "/" + session)) - 1  # subtract 1 for the sentinel file
+        nb_uploaded_files = len(os.listdir(UPLOAD_DIR + "/" + session))  
         nb_rows = len(rows)
 
         if valid_genome_count >= MIN_VALID_GENOMES:
