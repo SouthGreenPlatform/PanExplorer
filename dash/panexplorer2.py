@@ -6,6 +6,8 @@ import uuid
 from functools import wraps
 import time as time_module
 
+from werkzeug.utils import secure_filename
+
 from flask import Flask, render_template_string, request, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -40,6 +42,7 @@ import folium.plugins
 
 import subprocess
 
+from flask import request, jsonify
 
 import dash_bio as dash_bio
 
@@ -380,6 +383,7 @@ def sync_projects_from_yaml():
 # ---------- Flask + Login ----------
 server = Flask(__name__)
 server.secret_key = SECRET_KEY
+server.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500 MB
 server.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 server.config['SESSION_COOKIE_SECURE'] = True  # Only send over HTTPS
 server.config['SESSION_COOKIE_HTTPONLY'] = True  # No JavaScript access
@@ -447,6 +451,79 @@ input[type="submit"]:hover { background-color: #0056b3; }
 </html>
 """
 
+ALLOWED_EXTENSIONS = {".gbk", ".gbff", ".gb", ".genbank"}
+
+def allowed_file(filename):
+    return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def is_likely_genbank(file_stream, max_lines=50):
+    """
+    Vérifie rapidement si un fichier ressemble à un GenBank.
+    Lit uniquement les premières lignes (rapide et safe).
+    """
+
+    try:
+        # Lire les premières lignes seulement
+        file_stream.seek(0)
+        head = file_stream.read(4096).decode("utf-8", errors="ignore")
+        file_stream.seek(0)
+
+        lines = head.splitlines()
+
+        # On regarde les 50 premières lignes max
+        lines = lines[:max_lines]
+
+        # Flags des champs typiques GenBank
+        has_locus = False
+        has_definition = False
+        has_origin = False
+
+        for line in lines:
+            line = line.strip()
+
+            if line.startswith("LOCUS"):
+                has_locus = True
+            elif line.startswith("DEFINITION"):
+                has_definition = True
+            elif line.startswith("ORIGIN"):
+                has_origin = True
+
+        # Critère minimal
+        return has_locus and has_definition
+
+    except Exception:
+        return False
+
+
+@server.route("/upload", methods=["POST"])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file"}), 400
+
+    f = request.files['file']
+    filename = secure_filename(f.filename)
+
+    # check extension
+    if not allowed_file(filename):
+        return jsonify({"error": "Invalid file type"}), 400
+    
+    # check genbank content
+    if not is_likely_genbank(f.stream):
+        return jsonify({"error": "Not a valid GenBank file"}), 400
+    
+    session = request.form.get("session")
+
+    UPLOAD_DIR = conf.get("upload_dir", "uploads")
+
+    upload_path = os.path.join(UPLOAD_DIR, str(session))
+    os.makedirs(upload_path, exist_ok=True)
+
+    filepath = os.path.join(upload_path, filename)
+    f.save(filepath)
+
+    return jsonify({"status": "ok", "filename": filename})
+
 @server.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
@@ -493,7 +570,10 @@ def logout():
 # ---------- Dash App ----------
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+app.server.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 app.title = "PanExplorer v2"
+
+print("MAX_CONTENT_LENGTH =", app.server.config.get('MAX_CONTENT_LENGTH'))
 
 # IDs used: 'url', 'projets', 'metadata_table', 'project_detail' (keeps similarity with original)
 def main_layout():
@@ -707,7 +787,7 @@ def load_project_preview(proj_title):
         
         grid = dag.AgGrid(id="metadata_table",
                           #columnDefs=[{"field": c} for c in df.columns],
-                          #style={'width': '100vh','margin-left': '15px'},
+                          #style={'width': '100vh','padding': '15px'},
                           columnDefs=columnDefs,
                           selectedRows=df.to_dict("records"),
                           
@@ -801,150 +881,150 @@ def load_project_preview(proj_title):
                     dcc.Tabs(id='tab2', style=tabs_styles, children=[
                         
                     dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Br(),
-                        html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
-                            html.Div([
-                                html.Label("Colors:"),
-                                dcc.Dropdown(
-                                        ['Presence/absence','Level of presence','Organism','Continent','Country'],
-                                        id='colorizing',
-                                        value = 'Presence/absence',
-                                        style={'width': '200px'},
-                                        multi=False
-                                    ),
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
-                            html.Div([
-                                html.Label("Highlight:"),
-                                dcc.Dropdown(
-                                        ['None','Reference genome','Core-genes','Strain-specific genes'],
-                                        id='highlight',
-                                        value = 'None',
-                                        style={'width': '200px'},
-                                        multi=False
-                                    ),
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
-                            html.Div([
-                                html.Label("Sample ordering:"),
-                                dcc.Dropdown(
-                                        ['Hierarchical clustering','Population as defined by sNMF'],
-                                        id='sample_ordering',
-                                        value = 'Hierarchical clustering',
-                                        style={'width': '200px'},
-                                        multi=False
-                                    ),
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                        html.Div(id='pav_tab_content', children=[
+                            
+                            
+                            html.Br(),
+                            html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
+                                html.Div([
+                                    html.Label("Colors:"),
+                                    dcc.Dropdown(
+                                            ['Presence/absence','Level of presence','Organism','Continent','Country'],
+                                            id='colorizing',
+                                            value = 'Presence/absence',
+                                            style={'width': '200px'},
+                                            multi=False
+                                        ),
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                                html.Div([
+                                    html.Label("Highlight:"),
+                                    dcc.Dropdown(
+                                            ['None','Reference genome','Core-genes','Strain-specific genes'],
+                                            id='highlight',
+                                            value = 'None',
+                                            style={'width': '200px'},
+                                            multi=False
+                                        ),
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                                html.Div([
+                                    html.Label("Sample ordering:"),
+                                    dcc.Dropdown(
+                                            ['Hierarchical clustering','Population as defined by sNMF'],
+                                            id='sample_ordering',
+                                            value = 'Hierarchical clustering',
+                                            style={'width': '200px'},
+                                            multi=False
+                                        ),
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
 
-                            html.Div([
-                                html.Label("Cluster ordering:"),
-                                dcc.Dropdown(
-                                        ['Hierarchical clustering','Position in genome used for projection'],
-                                        value = 'Hierarchical clustering',
-                                        id='ordering',
-                                        style={'width': '300px'},
-                                        multi=False
-                                    ),  
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
-                            html.Div([
-                                html.Label("Highlight clusters by keyword or COG:"),
-                                dcc.Input(
-                                        id='cluster_search',
-                                        style={'width': '300px'},
-                                        value = '',
-                                    ),
-                                
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
-                            html.Div([
-                                html.Label("Highlight genomic intervals (bedfile):"),
-                                dcc.Textarea(
-                                        id='bedfile',
-                                        style={'width': '300px', 'height': 30},
-                                        value = '',
-                                    ),
-                                
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                html.Div([
+                                    html.Label("Cluster ordering:"),
+                                    dcc.Dropdown(
+                                            ['Hierarchical clustering','Position in genome used for projection'],
+                                            value = 'Hierarchical clustering',
+                                            id='ordering',
+                                            style={'width': '300px'},
+                                            multi=False
+                                        ),  
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                html.Div([
+                                    html.Label("Highlight clusters by keyword or COG:"),
+                                    dcc.Input(
+                                            id='cluster_search',
+                                            style={'width': '300px'},
+                                            value = '',
+                                        ),
+                                    
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                html.Div([
+                                    html.Label("Highlight genomic intervals (bedfile):"),
+                                    dcc.Textarea(
+                                            id='bedfile',
+                                            style={'width': '300px', 'height': 30},
+                                            value = '',
+                                        ),
+                                    
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
 
-                            html.Div([
-                                
-                                html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
-                                 ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
-                        ]),
-                        
-                        html.Br(),
-                        # html.Div([
-                        #     "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
-                        #     dcc.Textarea(
-                        #         id='bedfile',
-                        #         style={'width': '100%', 'height': 50},
-                        #     ),
-                        # ], style={'width': '600px', 'display': 'inline-block'}),
-                        html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
+                                html.Div([
+                                    
+                                    html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
+                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                            ]),
+                            
+                            html.Br(),
+                            # html.Div([
+                            #     "Search for clusters in these intervals (copy/paste a BED file with intervals of regions): ",
+                            #     dcc.Textarea(
+                            #         id='bedfile',
+                            #         style={'width': '100%', 'height': 50},
+                            #     ),
+                            # ], style={'width': '600px', 'display': 'inline-block'}),
+                            html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
 
-                        html.Br(),
-                        dcc.Loading(dcc.Graph(id='PAV_graph')),
-                        #html.Br(),
-                        #html.Div(className="row", id='titles', children=[
-                        #     html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
-                        #     dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
-                        # ]),
+                            html.Br(),
+                            dcc.Loading(dcc.Graph(id='PAV_graph')),
+                            #html.Br(),
+                            #html.Div(className="row", id='titles', children=[
+                            #     html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
+                            #     dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
+                            # ]),
 
-                        
-                        dbc.Row([
-                                dbc.Col(
-                                    dcc.Loading(
-                                        html.Div(children=[
-                                            html.H5(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
-                                            html.H5(id="clustersearch", style={'color': 'red'}),
-                                            dag.AgGrid(
-                                                    id="table_pangenes",
-                                                    rowData=[],
-                                                    defaultColDef={"filter": "agTextColumnFilter"},
-                                                    #getRowId="params.data.State",
-                                                    dashGridOptions={"pagination": True, "animateRows": False}
-                                            ),
-                                            html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                                            html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
-                                            html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
-                                            dcc.Download(id="download-dataframe2"),
-                                            dcc.Download(id="download-dataframe3"),
-                                        ]),
-                                    ),width=8
-                                ),
-                                dbc.Col(
-                                    dcc.Loading(
-                                        html.Div(children=[
-                                            html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
-                                            dag.AgGrid(
-                                                        id="genes_cluster",
+                            
+                            dbc.Row([
+                                    dbc.Col(
+                                        dcc.Loading(
+                                            html.Div(children=[
+                                                html.H5(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
+                                                html.H5(id="clustersearch", style={'color': 'red'}),
+                                                dag.AgGrid(
+                                                        id="table_pangenes",
                                                         rowData=[],
-                                                        columnDefs=columnDefs4,
-                                                        defaultColDef={"filter": True},
-                                                        #columnSize="sizeToFit",
+                                                        defaultColDef={"filter": "agTextColumnFilter"},
                                                         #getRowId="params.data.State",
                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                 ),
-                                            html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
-                                            html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
-                                        ]),
-                                    ),width=4
-                                    
-                                ),
-                        ]),
-                        html.Br(),
-                        html.Br(),
-                        dcc.Loading(
-                                        html.Div(id='default-alignment-viewer-output')
+                                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                                html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
+                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
+                                                dcc.Download(id="download-dataframe2"),
+                                                dcc.Download(id="download-dataframe3"),
+                                            ]),
+                                        ),width=8
                                     ),
-                        
-                        
-                        
-                        
-                           
+                                    dbc.Col(
+                                        dcc.Loading(
+                                            html.Div(children=[
+                                                html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
+                                                dag.AgGrid(
+                                                            id="genes_cluster",
+                                                            rowData=[],
+                                                            columnDefs=columnDefs4,
+                                                            defaultColDef={"filter": True},
+                                                            #columnSize="sizeToFit",
+                                                            #getRowId="params.data.State",
+                                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                                    ),
+                                                html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
+                                                html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
+                                            ]),
+                                        ),width=4
+                                        
+                                    ),
+                            ]),
+                            html.Br(),
+                            html.Br(),
+                            dcc.Loading(
+                                            html.Div(id='default-alignment-viewer-output')
+                                        ),
+                        ], style={"paddingLeft": "15px"}
+                        ),
                     ]),
                     # dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
                     #         html.Br(),
                     #         html.Div(className="row", id='upset', children=[
                     #         dcc.Loading(
-                    #                 dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','margin-left': '15px'}),
+                    #                 dcc.Graph(id='graph_upset',style={'width': '200vh', 'height': '50vh','padding': '15px'}),
                     #         ),
 
                             
@@ -957,13 +1037,13 @@ def load_project_preview(proj_title):
                             dcc.Loading(
                                 dbc.Row([
                                     dbc.Col(
-                                        dcc.Graph(id='graph_gene2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                        dcc.Graph(id='graph_gene2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
                                     ),
                                     dbc.Col(
-                                        dcc.Graph(id='graph_pie2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                        dcc.Graph(id='graph_pie2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
                                     ),
                                     dbc.Col(
-                                        dcc.Graph(id='rarefaction2',style={'width': '50vh', 'height': '50vh','margin-left': '15px'}),
+                                        dcc.Graph(id='rarefaction2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
                                     )
                                 ]),
                             ),
@@ -1065,42 +1145,48 @@ def load_project_preview(proj_title):
                             ),
                         ]),
                     dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Br(),
-                        dbc.Row([
-                            dbc.Col(
-                                html.Label("Colored by: "),style={'width': '150px'},
+                        html.Div(id='tree_tab_content', children=[
+                            html.Br(),
+                            dbc.Row([
+                                dbc.Col(
+                                    html.Label("Colored by: "),style={'width': '150px'},
+                                ),
+                                dbc.Col(
+                                    dcc.Dropdown(
+                                                    ['Country','Population as defined by sNMF'],
+                                                    value='Country',
+                                                    id='colorizing_tree1',
+                                                    style={'width': '300px'},
+                                                    multi=False
+                                                ),
+                                )
+                            ], style={'width': '450px'}),
+                            html.Br(),
+                            dbc.Row(
+                                [
+                                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
+                                ],
+                                align="center",
                             ),
-                            dbc.Col(
-                                dcc.Dropdown(
-                                                ['Country','Population as defined by sNMF'],
-                                                value='Country',
-                                                id='colorizing_tree1',
-                                                style={'width': '300px'},
-                                                multi=False
-                                            ),
-                            )
-                        ], style={'width': '450px'}),
-                        html.Br(),
-                        dbc.Row(
-                            [
-                                dcc.Loading(html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
-                            ],
-                            align="center",
+                            html.Br(),
+                        ], style={"paddingLeft": "15px"}
                         ),
-                        html.Br(),
                         ]),
                     dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Br(),
-                        html.Div([
-                            html.Label('Chromosome: '),
-                            dcc.Dropdown(
-                                        ['1','2','3','4','5','6','7','8','9','10','11','12'],
-                                        id='chromosome',
-                                        value = '1',
-                                        style={'width': '200px'},
-                                        multi=False
-                                    ),
-                        ], style={'display': 'inline-block', 'margin-right': '20px'}),
+                        html.Div(id='macrosynteny_tab_content', children=[
+                            html.Br(),
+                            html.Div([
+                                html.Label('Chromosome: '),
+                                dcc.Dropdown(
+                                            ['1','2','3','4','5','6','7','8','9','10','11','12'],
+                                            id='chromosome',
+                                            value = '1',
+                                            style={'width': '200px'},
+                                            multi=False
+                                        ),
+                            ], style={'display': 'inline-block', 'margin-right': '20px'}),
+                        ], style={"paddingLeft": "15px"}
+                        ),
 
                         
                         html.Div([
@@ -1114,17 +1200,17 @@ def load_project_preview(proj_title):
                                     ),
                         ], style={'display': 'inline-block', 'margin-right': '20px'}),
 
-                        dcc.Loading(html.Div(id='clinker'),style={'width': '150vh', 'height': '200vh','margin-left': '15px'}),
+                        dcc.Loading(html.Div(id='clinker'),style={'width': '150vh', 'height': '200vh','padding': '15px'}),
                         html.Br(),
                         html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
+                        dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '150vh', 'height': '100vh','padding': '15px'})),
                         
                         ]),
                     ]),
                 ]),
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
                     html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','margin-left': '15px'})),
+                    dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','padding': '15px'})),
                     html.Br(),
 
                     # ── Search & Highlight panel ─────────────────────────────────────────
@@ -1445,115 +1531,129 @@ def load_project_preview(proj_title):
                     dcc.Tabs(id='tab3', style=tabs_styles, children=[
                         
                         dcc.Tab(label='Genotyping matrix', style=tab_style, selected_style=tab_selected_style, children=[
-
-                            html.Br(),
-                            html.H3(id='nb_of_snps', style={'width': '60vh','margin-left': '1px'}),
-                            html.Br(),
-                            dcc.Loading(dcc.Graph(id='VCF_graph')),
+                            html.Div(id='genotypingmatrix_tab_content', children=[
+                                html.Br(),
+                                html.H3(id='nb_of_snps', style={'width': '60vh','margin-left': '1px'}),
+                                html.Br(),
+                                dcc.Loading(dcc.Graph(id='VCF_graph')),
+                            ], style={"paddingLeft": "15px"}
+                            ),
                             
                         ]),
                         dcc.Tab(label='Population structure', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','margin-left': '15px'})),
-                            dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                            html.Div(id='structure_tab_content', children=[
+                                html.Br(),
+                                dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','padding': '15px'})),
+                                dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','padding': '15px'})),
+                            ], style={"paddingLeft": "15px"}
+                            ),
                         ]),
                         dcc.Tab(label='PCA', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            dbc.Row([
-                                    dbc.Col(
-                                        html.Label("Colored by: "),style={'width': '150px'},
-                                    ),
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                                ['Country','Population as defined by sNMF'],
-                                                value='Country',
-                                                id='colorizing_pca',
-                                                style={'width': '300px'},
-                                                multi=False
-                                            )
-                                    ),
-                                    dbc.Col(
-                                        html.Label("Number of axes: "),style={'width': '150px'},
-                                    ),
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                                ['2D','3D'],
-                                                value='3D',
-                                                id='dimension_pca',
-                                                style={'width': '100px'},
-                                                multi=False
-                                            )
+                            html.Div(id='pca_tab_content', children=[
+                                html.Br(),
+                                dbc.Row([
+                                        dbc.Col(
+                                            html.Label("Colored by: "),style={'width': '150px'},
+                                        ),
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                    ['Country','Population as defined by sNMF'],
+                                                    value='Country',
+                                                    id='colorizing_pca',
+                                                    style={'width': '300px'},
+                                                    multi=False
+                                                )
+                                        ),
+                                        dbc.Col(
+                                            html.Label("Number of axes: "),style={'width': '150px'},
+                                        ),
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                    ['2D','3D'],
+                                                    value='3D',
+                                                    id='dimension_pca',
+                                                    style={'width': '100px'},
+                                                    multi=False
+                                                )
+                                            
+                                        ),
                                         
-                                    ),
-                                    
-                                ],style={'width': '700px'}),
-                            html.Br(),html.Br(),
-                            dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','margin-left': '15px'})),
+                                    ],style={'width': '700px'}),
+                                html.Br(),html.Br(),
+                                dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','padding': '15px'})),
+                            ], style={"paddingLeft": "15px"}
+                            ),
                         ]),
                         dcc.Tab(label='SNP-based distance tree', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            dbc.Row([
-                                    dbc.Col(
-                                        html.Label("Colored by: "),style={'width': '150px'},
-                                    ),
-                                    dbc.Col(
-                                        dcc.Dropdown(
-                                                ['Country','Population as defined by sNMF'],
-                                                value='Country',
-                                                id='colorizing_tree',
-                                                style={'width': '300px'},
-                                                multi=False
-                                            )
-                                    ),
-                                    
-                                ],style={'width': '450px'}),
-                            html.Br(),
-                            dbc.Row(
-                                [
-                                    dcc.Loading(html.Iframe(id='iframe-snptree',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
-                                ],
-                                align="center",
+                            html.Div(id='snptree_tab_content', children=[
+                                html.Br(),
+                                dbc.Row([
+                                        dbc.Col(
+                                            html.Label("Colored by: "),style={'width': '150px'},
+                                        ),
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                    ['Country','Population as defined by sNMF'],
+                                                    value='Country',
+                                                    id='colorizing_tree',
+                                                    style={'width': '300px'},
+                                                    multi=False
+                                                )
+                                        ),
+                                        
+                                    ],style={'width': '450px'}),
+                                html.Br(),
+                                dbc.Row(
+                                    [
+                                        dcc.Loading(html.Iframe(id='iframe-snptree',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
+                                    ],
+                                    align="center",
+                                ),
+                                html.Br(),
+                            ], style={"paddingLeft": "15px"}
                             ),
-                            html.Br(),
                         ]),
                     ]),
                     
                 ]),
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
-                    html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_mlva'),style={"height": "1500px"}),
-                    html.Button("Download matrix", id="btn-download", n_clicks=0),
-                    dcc.Download(id="download-dataframe"),
+                    html.Div(id='mlva_tab_content', children=[
+                        html.Br(),
+                        dcc.Loading(dcc.Graph(id='graph_mlva'),style={"height": "1500px"}),
+                        html.Button("Download matrix", id="btn-download", n_clicks=0),
+                        dcc.Download(id="download-dataframe"),
 
-                    html.H3(id='nb_of_repeats', style={'width': '60vh','margin-left': '1px'}),
-                    dbc.Row([
-                        dbc.Col(
-                            dcc.Loading(
-                                    dag.AgGrid(
-                                        id="mlva_table",
-                                        #style={'width': '180vh','height': '50vh','margin-left': '15px'},
-                                        columnDefs=columnDefs2,
-                                        rowData=[],
-                                        columnSize="sizeToFit",
-                                        selectAll=True,
-                                        defaultColDef={"filter": True},
-                                        dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                    ), 
-                                ),
-                        ),
-                    ]),
-                    
-                    
-                    html.Br(),
-                    html.Button('Update heatmap and generate haplotype network', 
-                                style={
-                                    "backgroundColor": "#1E90FF",   # bleu
-                                    "color": "white",
-                                },
-                                id='submit-vntr', 
-                                n_clicks=0),
-                    html.Br(),
-                    dcc.Loading(html.Div(id='dynamic_network')),
+                        html.H3(id='nb_of_repeats', style={'width': '60vh','margin-left': '1px'}),
+                        dbc.Row([
+                            dbc.Col(
+                                dcc.Loading(
+                                        dag.AgGrid(
+                                            id="mlva_table",
+                                            #style={'width': '180vh','height': '50vh','padding': '15px'},
+                                            columnDefs=columnDefs2,
+                                            rowData=[],
+                                            columnSize="sizeToFit",
+                                            selectAll=True,
+                                            defaultColDef={"filter": True},
+                                            dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                                        ), 
+                                    ),
+                            ),
+                        ]),
+                        
+                        
+                        html.Br(),
+                        html.Button('Update heatmap and generate haplotype network', 
+                                    style={
+                                        "backgroundColor": "#1E90FF",   # bleu
+                                        "color": "white",
+                                    },
+                                    id='submit-vntr', 
+                                    n_clicks=0),
+                        html.Br(),
+                        dcc.Loading(html.Div(id='dynamic_network')),
+                    ], style={"paddingLeft": "15px"}
+                     ), 
                 ]),
                 
                 dcc.Tab(label='ANI', id='tab_ani', style=tab_style, selected_style=tab_selected_style, children=[
@@ -1562,7 +1662,7 @@ def load_project_preview(proj_title):
                     ]),
                 dcc.Tab(label='Geographical map', id='tab_geo', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
-                        dcc.Loading(dcc.Graph(id='geo_map',style={'width': '150vh', 'height': '100vh','margin-left': '15px'})),
+                        dcc.Loading(dcc.Graph(id='geo_map',style={'width': '150vh', 'height': '100vh','padding': '15px'})),
                     ]),
             ]),
 
@@ -3168,6 +3268,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         ]
         subprocess.run(cmd_args, capture_output=True)
 
+    if os.path.exists(f"{tmp_dir}/{session}.selected_genomes.vcf"):
+
         
         vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
 
@@ -3191,11 +3293,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         ]
         subprocess.run(cmd_args, capture_output=True)
 
-        with open(f"{tmp_dir}/{session}.dataset.dist.id", "r") as infile, \
-            open(f"{tmp_dir}/{session}.dataset.dist.id.2", "w") as outfile:
-            for line in infile:
-                if not line.startswith("#FID"):
-                    outfile.write(line)
+        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id"):
+            with open(f"{tmp_dir}/{session}.dataset.dist.id", "r") as infile, \
+                open(f"{tmp_dir}/{session}.dataset.dist.id.2", "w") as outfile:
+                for line in infile:
+                    if not line.startswith("#FID"):
+                        outfile.write(line)
 
 
         #################################################################
@@ -3207,6 +3310,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         list_sp2 = list_sp2_sorted
 
 
+        # only if vcf_file exists
 
         try:
             df_vcf = parse_vcf(vcf_file, int(5000), list_sp2)
@@ -3230,37 +3334,38 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         from skbio import DistanceMatrix
         from skbio.tree import nj
 
-        nb_of_snps = "SNPs (" + str(sum(1 for line in open(vcf_file)) - 1) + ")"
+        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id") and os.path.exists(vcf_file):
+            nb_of_snps = "SNPs (" + str(sum(1 for line in open(vcf_file)) - 1) + ")"
 
-        # Charger les identifiants
-        ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
-        ids = ids[1].tolist()
+            # Charger les identifiants
+            ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
+            ids = ids[1].tolist()
 
-        # Charger la matrice de distances
-        D = np.loadtxt(tmp_dir + "/" + str(session) + ".dataset.dist")
+            # Charger la matrice de distances
+            D = np.loadtxt(tmp_dir + "/" + str(session) + ".dataset.dist")
 
-        # Construire la matrice de distances scikit-bio
-        dm = DistanceMatrix(D, ids)
+            # Construire la matrice de distances scikit-bio
+            dm = DistanceMatrix(D, ids)
 
-        # Construire un arbre neighbor-joining
-        tree = nj(dm)
+            # Construire un arbre neighbor-joining
+            tree = nj(dm)
 
-        rooted_tree = tree.root_at_midpoint()
+            rooted_tree = tree.root_at_midpoint()
 
-        # Sauvegarder au format Newick
-        with open(tmp_dir + "/" + str(session) + ".dataset.tree", "w") as f:
-            f.write(str(rooted_tree))
+            # Sauvegarder au format Newick
+            with open(tmp_dir + "/" + str(session) + ".dataset.tree", "w") as f:
+                f.write(str(rooted_tree))
 
-        # Extraire l'ordre des taxons dans l'arbre
-        individual_order_by_Pop1 = [tip.name for tip in rooted_tree.tips()]
+            # Extraire l'ordre des taxons dans l'arbre
+            individual_order_by_Pop1 = [tip.name for tip in rooted_tree.tips()]
 
-        snp_based_newick = ""
-        # get tree in newick format as a variable
-        with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
-            snp_based_newick = fp.read()
-            df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
-            df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
-            generate_tree_html(snp_based_newick, df_metadata_selected, "Country", "assets/snp_based_tree."+str(session)+".html")
+            snp_based_newick = ""
+            # get tree in newick format as a variable
+            with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
+                snp_based_newick = fp.read()
+                df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+                df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+                generate_tree_html(snp_based_newick, df_metadata_selected, "Country", "assets/snp_based_tree."+str(session)+".html")
 
 
 
@@ -5103,7 +5208,7 @@ def init_dataframes(pathname):
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
   
-    print
+    
     # Remove lines from ptt
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"):
@@ -5115,7 +5220,10 @@ def init_dataframes(pathname):
         print("Species:"+list_species_with_ptt[0])
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
-        df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "", regex=False)
+        
+        # WARNING, TO CHECK, must it be replaced by "_" or by ""
+        # with "_" works for some situations
+        df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "_", regex=False)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
@@ -5124,8 +5232,6 @@ def init_dataframes(pathname):
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
-
-    
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
     #merged_with_positions.insert(0, 'block_id', 'chr1')
 
