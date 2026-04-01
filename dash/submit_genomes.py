@@ -77,9 +77,34 @@ ncbi_datasets_exe = conf.get("ncbi_datasets_exe") or "datasets"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Upload safety configuration
-MAX_UPLOAD_SIZE_MB = conf.get("max_upload_size_mb", 50)
+MAX_UPLOAD_SIZE_MB = conf.get("max_upload_size_mb", 300)
 MAX_UPLOAD_SIZE_BYTES = int(MAX_UPLOAD_SIZE_MB * 1024 * 1024)
 ALLOWED_EXT = {"gb", "gbk", "gbff", "genbank"}
+
+ALLOWED_EXTENSIONS = {'.gb', '.gbk', '.gbff'}
+
+def is_allowed_filename(filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext in ALLOWED_EXTENSIONS
+
+def is_text_file(decoded_bytes, blocksize=512):
+    # heuristique simple : vérifier s'il y a des bytes non textuels
+    textchars = bytearray({7, 8, 9, 10, 12, 13, 27}
+                          | set(range(0x20, 0x100)))
+    return not bool(decoded_bytes.translate(None, textchars))
+
+def parse_contents(contents, filename):
+    if not is_allowed_filename(filename):
+        return "Extension not allowed"
+
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+
+    # Check binary
+    if not is_text_file(decoded):
+        return False
+
+    return True
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -95,6 +120,8 @@ layout = html.Div(
     
     children=[
         dcc.Store(id="session", storage_type="session"),
+        dcc.Store(id="file-count", data=0),
+        dcc.Store(id="upload-counts"),
         html.Div(id="page-submission-content",style={"display": "block"}, children=[
             html.Br(),
             # html.H5("Project name:"),
@@ -116,6 +143,7 @@ layout = html.Div(
                                                    ], style={"width":"750px"}),
 
             html.Br(),
+
             html.Div(id="input-options"),
             #dcc.Input(id="session", type="hidden", value=str(session)),
             html.Br(),
@@ -685,7 +713,7 @@ def register_callbacks(app):
         Output("check-gca-button", "style", allow_duplicate=True),
         Input("check-gca-button", "n_clicks"),
         State("public-genomes", "value"),
-        State("session","value"),
+        State("session","data"),
         State("GCA_GCF", "value"),
         prevent_initial_call=True,
     )
@@ -855,7 +883,7 @@ def register_callbacks(app):
         State("email-address", "value"),
         State("valid_list", "value"),
         State("software", "value"),
-        State("session", "value"),
+        State("session", "data"),
         State("min-percentage-identity", "value"),
         prevent_initial_call=True,
     )
@@ -891,16 +919,26 @@ def register_callbacks(app):
             ],
             color="success",
         ) , {"display": "none"}
-        
+       
+    @app.callback(
+        Output("session", "data"),
+        Input("session", "data"),
+        prevent_initial_call=False
+    )
+    def init_session(session):
+        if session is None:
+            return str(uuid.uuid4())
+        return session
+
     @app.callback(
         Output("input-options", "children"),
         Input("input-type", "value"),
     )
     def apply_import(input_type):
-        session = str(uuid.uuid4())  # Generate secure UUID instead of random number
+        #session = str(uuid.uuid4())  # Generate secure UUID instead of random number
         if input_type == "public":
             return html.Div([
-                dcc.Input(id="session", type="hidden", value=str(session)),
+                #dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
@@ -918,7 +956,7 @@ def register_callbacks(app):
         elif input_type == "upload":
             MAX_GENOMES = 200
             return html.Div([
-                dcc.Input(id="session", type="hidden", value=str(session)),
+                #dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
 
@@ -936,28 +974,82 @@ def register_callbacks(app):
                 # dcc.Store(id="upload-dir-state", data=None),
                 # dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
 
-                dcc.Upload(
-                    id="upload-genbank",
-                    children=html.Div([
-                        "Drag and drop GenBank files here or ",
-                        html.A("select files")
-                    ]),
-                    style={
-                        "width": "100%",
-                        "height": "80px",
-                        "lineHeight": "80px",
-                        "borderWidth": "2px",
-                        "borderStyle": "dashed",
-                        "borderRadius": "10px",
-                        "textAlign": "center",
-                    },
-                    multiple=True,
-                ),
+                # dcc.Upload(
+                #     id="upload-genbank",
+                #     max_size=15 * 1024 * 1024,
+                #     children=html.Div([
+                #         "Drag and drop GenBank files here or ",
+                #         html.A("select files")
+                #     ]),
+                #     style={
+                #         "width": "100%",
+                #         "height": "80px",
+                #         "lineHeight": "80px",
+                #         "borderWidth": "2px",
+                #         "borderStyle": "dashed",
+                #         "borderRadius": "10px",
+                #         "textAlign": "center",
+                #     },
+                #     multiple=True,
+                # ),
+
+                html.Div([
+                    #html.H5("Upload GenBank files"),
+
+                    # # ✅ ZONE DROPZONE ISOLÉE
+                    # html.Div(
+                    #     id="dropzone-wrapper",
+                    #     children=[
+                    #         html.Div(
+                    #             id="dropzone",
+                    #             children="Drag & drop files here or click to upload",
+                    #             style={
+                    #                 "border": "2px dashed #007bff",
+                    #                 "padding": "40px",
+                    #                 "textAlign": "center",
+                    #                 "borderRadius": "10px",
+                    #                 "backgroundColor": "#f8f9fa",
+                    #                 "cursor": "pointer"
+                    #             }
+                    #         )
+                    #     ]
+                    # ),
+
+                    dcc.Upload(
+                        id="upload-files",
+                        accept='.gb,.gbk,.genbank,.gbff',
+                        children=html.Div([
+                            "Drag & drop Genbank files here or ",
+                            html.A("click to upload")
+                        ]),
+                        multiple=True,
+                        style={
+                            "width": "100%",
+                            "height": "100px",
+                            "lineHeight": "100px",
+                            "borderWidth": "2px",
+                            "borderStyle": "dashed",
+                            "borderRadius": "10px",
+                            "textAlign": "center",
+                        },
+                    ),
+                    dcc.Loading(html.Div(id="file-list")),
+                    html.Div(id="upload-list", style={"marginTop": "20px"}),
+                    html.Div(id="upload-status", style={"marginTop": "20px"}),
+                    #html.H5("Step 2/3: Check the upload status of your files and their compatibility by clicking the button below"),
+                    # html.Button(
+                    #     "Check uploaded files",
+                    #     id="check-status-button",
+                    #     style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
+                    #     n_clicks=0
+                    # ),
+                ])
+
             ])
         elif input_type == "eukaryotic":
             MAX_GENOMES = 20
             return html.Div([
-                dcc.Input(id="session", type="hidden", value=str(session)),
+                #dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "Orthofinder", "value": "orthofinder"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="orthofinder", style={"width":"300px"}),
 
@@ -1128,80 +1220,204 @@ def register_callbacks(app):
     #             ),
     #     )
 
+    #@app.callback(
+    #    #Output("file-count", "data"),
+    #    #Output("file-list", "children"),
+    #    Output("output-area", "children"),
+    #    Input("upload-files", "contents"),
+    #    State("upload-files", "filename"),
+    #    State("session", "data"),
+    #    State("file-count", "data"),
+    #    prevent_initial_call=True
+    #)
+
+
+
+    # @app.callback(
+    #     Output("output-area", "children"),
+    #     Input("upload-status", "children"),
+    #     State("session", "data"),
+    #     prevent_initial_call=True,
+    # )
+    # def handle_uploaded_files(content,session):
+
+    #     upload_session_dir = os.path.join(UPLOAD_DIR, session)
+    #     if os.path.exists(upload_session_dir):
+    #         for element in  os.listdir(upload_session_dir):
+    #             print(element)
+    #     else:
+    #         return html.Div("No files uploaded yet in: ")
+            
     @app.callback(
-        Output("output-area", "children"),
-        Input("upload-genbank", "contents"),
-        State("upload-genbank", "filename"),
-        State("session", "value"),
-        prevent_initial_call=True,
+        Output("file-count", "data"),
+        Output("file-list", "children"),
+        #Output("output-area3", "children", allow_duplicate=True),
+        #Output("check-status-button", "style", allow_duplicate=True),
+        Input("upload-files", "contents"),
+        State("upload-files", "filename"),
+        State("session", "data"),
+        State("file-count", "data"),
+        prevent_initial_call=True
     )
-    def handle_uploaded_files(contents, filenames, session):
 
-        if not contents:
-            return html.Div("No files uploaded yet.")
 
-        if not validate_session_id(session):
-            return html.Div("Error: Invalid session.")
+    
+    def handle_upload(contents, filenames, session, current_count):
+        if contents is None:
+            return current_count, ""
 
-        upload_session_dir = os.path.join(UPLOAD_DIR, session)
-        os.makedirs(upload_session_dir, exist_ok=True)
+        session_dir = os.path.join(UPLOAD_DIR, str(session))
+        os.makedirs(session_dir, exist_ok=True)
 
-        processed_any = False
+        saved_files = []
 
         for content, filename in zip(contents, filenames):
 
-            safe_name = sanitize_filename(filename)
-            filepath = os.path.join(upload_session_dir, safe_name)
-
-            try:
-                content_type, content_string = content.split(',')
-                decoded = base64.b64decode(content_string)
-            except Exception:
+            if not parse_contents(content, filename):
                 continue
+        
+            content_type, content_string = content.split(",")
 
-            # extension check
-            ext = os.path.splitext(safe_name)[1].lstrip('.').lower()
-            if ext not in ALLOWED_EXT:
-                continue
+            decoded = base64.b64decode(content_string)
 
-            # size check
-            if len(decoded) > MAX_UPLOAD_SIZE_BYTES:
-                continue
+            filepath = os.path.join(session_dir, filename)
 
-            # write file
             with open(filepath, "wb") as f:
                 f.write(decoded)
 
-            try:
-                os.chmod(filepath, 0o600)
-            except Exception:
-                pass
+            saved_files.append(filename)
 
-            processed_any = True
+        new_count = current_count + len(saved_files)
 
-        if not processed_any:
-            return html.Div("No valid files uploaded.")
+        # liste des fichiers présents dans le dossier
+        all_files = os.listdir(session_dir)
 
-        return html.Div(
-            html.Label(
-                "Minimum 3 genomes to process an analysis...",
-                id="check-status-button",
-                #style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
-                #n_clicks=0
-            )
-        )
+        return new_count, html.Div([
+            html.H5(f"{len(all_files)} files uploaded "),
+            html.Div(id="has_to_be_checked"),
+            #html.Ul([html.Li(f) for f in all_files])
+        ])
+    
+    # def handle_upload(contents, filenames, session, current_count):
+    #     if contents is None:
+    #         return current_count, "No file uploaded"
+
+    #     session_dir = os.path.join(UPLOAD_DIR, str(session))
+    #     os.makedirs(session_dir, exist_ok=True)
+
+    #     saved_files = []
+
+    #     for content, filename in zip(contents, filenames):
+
+    #         if not parse_contents(content, filename):
+    #             continue
+        
+    #         content_type, content_string = content.split(",")
+
+    #         decoded = base64.b64decode(content_string)
+
+    #         filepath = os.path.join(session_dir, filename)
+
+    #         with open(filepath, "wb") as f:
+    #             f.write(decoded)
+
+    #         saved_files.append(filename)
+
+    #     new_count = current_count + len(saved_files)
+
+    #     # liste des fichiers présents dans le dossier
+    #     all_files = os.listdir(session_dir)
+
+    #     return new_count, html.Div([
+    #         html.H5(f"{len(all_files)} fichiers dans la session " + str(session)),
+    #         html.Ul([html.Li(f) for f in all_files])
+    #     ])
+
+    # @app.callback(
+    #     Output("output-area", "children"),
+    #     Input("upload-genbank", "contents"),
+    #     State("upload-genbank", "filename"),
+    #     State("session", "value"),
+    #     prevent_initial_call=True,
+    # )
+    # def handle_uploaded_files(contents, filenames, session):
+
+    #     #if contents is None:
+    #     #    return html.Div("No files uploaded yet.")
+            
+
+    #     if contents is None:
+    #         return html.Div("No files uploaded yet.")
+
+    #     #if not validate_session_id(session):
+    #     #    return html.Div("Error: Invalid session.")
+    
+    #     #with open("/data/dash-docker/app/tmp/testttt", "a") as f:
+    #     #    f.write("Now the file has more content!")
+
+    #     upload_session_dir = os.path.join(UPLOAD_DIR, session)
+    #     os.makedirs(upload_session_dir, exist_ok=True)
+
+    #     processed_any = False
+
+    #     for content, filename in zip(contents, filenames):
+
+    #         safe_name = sanitize_filename(filename)
+    #         filepath = os.path.join(upload_session_dir, safe_name)
+
+    #         try:
+    #             content_type, content_string = content.split(',')
+    #             decoded = base64.b64decode(content_string)
+    #         except Exception:
+    #             continue
+
+    #         # extension check
+    #         ext = os.path.splitext(safe_name)[1].lstrip('.').lower()
+    #         if ext not in ALLOWED_EXT:
+    #             continue
+
+    #         # size check
+    #         #if len(decoded) > MAX_UPLOAD_SIZE_BYTES:
+    #         #    continue
+
+    #         # write file
+    #         with open(filepath, "wb") as f:
+    #             f.write(decoded)
+
+    #         try:
+    #             os.chmod(filepath, 0o600)
+    #         except Exception:
+    #             pass
+
+    #         processed_any = True
+
+    #     if not processed_any:
+    #         return html.Div("No valid files uploaded.")
+
+    #     return html.Div(
+    #         html.Label(
+    #             "Minimum 3 genomes to process an analysis...",
+    #             id="check-status-button",
+    #             #style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
+    #             #n_clicks=0
+    #         )
+    #     )
     
     @app.callback(
         Output("output-area3", "children", allow_duplicate=True),
-        Output("check-status-button", "style", allow_duplicate=True),
-        Input("check-status-button", "n_clicks"),
-        State("session", "value"),
+        #Output("check-status-button", "style", allow_duplicate=True),
+        #Input("check-status-button", "n_clicks"),
+        Input("has_to_be_checked","data"),
+        State("session", "data"),
+        State("upload-counts", "data"),
         prevent_initial_call=True,
     )
-    def refresh_table(n_clicks, session):
+    def refresh_table(n_clicks, session, upload_counts):
 
         if not validate_session_id(session):
-            return html.Div("Error: Invalid session.")
+            return html.Div("Error: Invalid session."+session)
+        
+        print("counts: " + str(upload_counts))
 
         filepaths = []
 
@@ -1352,6 +1568,7 @@ def register_callbacks(app):
         go_button = html.Div(
             style={"marginTop": "20px"},
             children=[
+                #html.H5("Step 3/3: Once you have verified that all the genomes you want are listed in the table above, you can submit them to the analysis pipeline"),
                 html.Button(
                     f"Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
@@ -1375,9 +1592,24 @@ def register_callbacks(app):
                 divs.append(go_button)
                 divs.append(dcc.Input(id="valid_list", type="hidden", value=""))
                 divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
-        return html.Div(divs), {"display": "none"} if valid_genome_count >= MIN_VALID_GENOMES else {"display": "block","backgroundColor": "#1E90FF","color": "white"}
-    
+        #return html.Div(divs), {"display": "block","backgroundColor": "#1E90FF","color": "white"} if valid_genome_count >= MIN_VALID_GENOMES else {"display": "block","backgroundColor": "#1E90FF","color": "white"}
+        return html.Div(divs)
 
 
+from dash import clientside_callback
 
+clientside_callback(
+    """
+    function(session_id) {
+        if (session_id) {
+            session_id = String(session_id).replace(/^"+|"+$/g, '');
+            window.sessionStorage.setItem("session", session_id);
+            console.log("SYNC SESSION =", session_id);
+        }
+        return "";
+    }
+    """,
+    Output("upload-status", "children"),
+    Input("session", "data")
+)
 
