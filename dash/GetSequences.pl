@@ -91,7 +91,7 @@ die $usage
 			system("$Configuration::TOOLS_DIR/gffread/gffread -y $inputdir/$strain.faa -x $inputdir/$strain.fna -g $inputdir/$strain.fasta $inputdir/$strain.gff");
 			open(PTT,">$inputdir/$strain.ptt");
 
-			print PTT "Location\tStrand\tLength\tPID\tGene\tSynonym Code\tCOG\tProduct\n";
+			print PTT "Location\tStrand\tLength\tPID\tGene\tSynonym Code\tCOG\tProduct\tblock_id\n";
 			open(GFF,"$inputdir/$strain.gff");
 			while(my $line = <GFF>){
 				chomp($line);
@@ -106,7 +106,20 @@ die $usage
 					my $product = $2;
 					$gene =~s/\|/_/g;
 					$gene =~s/:/_/g;
-					print PTT "$start..$end\t$strand\t\t$gene\t$gene\t\t\t$product\n";
+					print PTT "$start..$end\t$strand\t\t$gene\t$gene\t\t\t$product\t$chr\n";
+				}
+				elsif ($feature eq "mRNA" && $line =~/ID=([^;]*);.*Note=([^;]*);/){
+					my $gene = $1;
+					my $product = $2;
+					$gene =~s/\|/_/g;
+					$gene =~s/:/_/g;
+					print PTT "$start..$end\t$strand\t\t$gene\t$gene\t\t\t$product\t$chr\n";
+				}
+				elsif ($feature eq "mRNA" && $line =~/ID=([^;]*);/){
+					my $gene = $1;
+					$gene =~s/\|/_/g;
+					$gene =~s/:/_/g;
+					print PTT "$start..$end\t$strand\t\t$gene\t$gene\t\t\t\t$chr\n";
 				}
 			}
 			close(GFF);
