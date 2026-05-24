@@ -14,6 +14,9 @@ import sys
 import shlex
 import secrets
 
+import gzip
+import zipfile
+
 import pandas as pd
 import json
 import yaml
@@ -29,7 +32,7 @@ import threading
 import subprocess
 import time
 
-#import dash_uploader as du
+import dash_uploader as du
 import logging
 
 from pathlib import Path
@@ -37,6 +40,8 @@ from pathlib import Path
 import uuid
 import json
 
+
+from dash.exceptions import PreventUpdate
 
 
 # optional libs: python-magic (python-magic-bin on Windows) and pyclamd for ClamAV
@@ -117,7 +122,6 @@ logging.basicConfig(level=logging.INFO)
 # --------------------------------------------------
 
 layout = html.Div(
-    
     children=[
         dcc.Store(id="session", storage_type="session"),
         dcc.Store(id="file-count", data=0),
@@ -127,6 +131,8 @@ layout = html.Div(
             # html.H5("Project name:"),
             # dcc.Input(id="project-name", type="text", placeholder="Enter project name",style={"width":"550px"}),
             # html.Label("Alphanumeric, no spaces, underscores (_) or hyphens (-) only."),
+
+            #dbc.Alert("Import of new genomes is not available temporarily...", color="danger"),
 
             html.H5("Email address:"),
             dcc.Input(id="email-address", type="email", placeholder="Enter email address", style={"width": "50%"}),
@@ -139,7 +145,7 @@ layout = html.Div(
             html.H5("What is your inputs:"),
             dcc.Dropdown(id="input-type", options=[{"label": "Prokaryotic public genomes: Enter a list of assembly accessions (GCA or GCF)", "value": "public"}, 
                                                    {"label": "Prokaryotic private genomes: Upload genbank files", "value": "upload"}, 
-                                                   #{"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}
+                                                   {"label": "Eukaryotic genomes: Upload FASTA + GFF files", "value": "eukaryotic"}
                                                    ], style={"width":"750px"}),
 
             html.Br(),
@@ -379,7 +385,240 @@ def summarize_records(records, original_name, stored_filename):
     }
 
 
-def run_external_command(email_address, valid_list, min_percentage_identity, session, software):
+def process_genbank_files(input_dir, output_dir):
+
+    input_dir = Path(input_dir)
+    output_dir = Path(output_dir)
+    forzip_dir = output_dir / "forzip"
+
+    forzip_dir.mkdir(parents=True, exist_ok=True)
+
+    duplicate_definitions = {}
+    nb_files_ok = 0
+
+    for file_path in input_dir.iterdir():
+
+        if not file_path.is_file():
+            continue
+
+        filename = file_path.name
+        clean_filename = re.sub(r"[_\.\-]", "", filename)
+
+        evidences_LOCUS = 0
+        evidences_ACCESSION = 0
+        evidences_gene = 0
+        evidences_seq = 0
+
+        nb_locus_tag = 0
+        nb_protein_id = 0
+
+        locus_num = 0
+        current_locus = None
+
+        concat = []
+
+        print(filename)
+
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as fi:
+
+            for line in fi:
+
+                if "product=" in line:
+                    evidences_gene += 1
+
+                if "locus_tag=" in line:
+                    nb_locus_tag += 1
+
+                if "protein_id=" in line:
+                    nb_protein_id += 1
+
+                # LOCUS
+                m = re.match(r"^LOCUS\s+([^\s]+)\s+", line)
+                if m:
+                    locus_num += 1
+                    current_locus = m.group(1)
+
+                    new_locus_name = f"{clean_filename}{locus_num}"
+
+                    line = line.replace(current_locus, new_locus_name)
+
+                    evidences_LOCUS += 1
+
+                # ACCESSION
+                if line.startswith("ACCESSION"):
+                    evidences_ACCESSION += 1
+
+                    new_locus_name = f"{clean_filename}{locus_num}"
+                    line = f"ACCESSION   {new_locus_name}\n"
+
+                # DEFINITION
+                m = re.match(r"^DEFINITION  (.*)$", line)
+                if m:
+
+                    strain = m.group(1).split(",")[0]
+                    strain = re.sub(r"[^\w_ ]", "", strain)
+
+                    informations_strain = strain.split()
+
+                    # annotation bakta
+                    if strain == "chromosome":
+                        strain = "Genus species"
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    elif (
+                        "contig" in strain
+                        or "scaffold" in strain
+                        or re.search(r"NODE_\d+", strain)
+                    ):
+                        strain = "Genus species"
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    # annotation dfast
+                    elif "Genus sp unspecified DNA" in strain:
+                        strain = "Genus species"
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    # annotation prokka
+                    elif "Genus species strain" in line:
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    # definition not explicit enough
+                    elif len(informations_strain) < 10:
+                        duplicate_definitions[strain] = (
+                            duplicate_definitions.get(strain, 0) + 1
+                        )
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    elif duplicate_definitions.get(strain, 0) > 1:
+                        line = f"DEFINITION  {clean_filename}\n"
+
+                    else:
+                        duplicate_definitions[strain] = (
+                            duplicate_definitions.get(strain, 0) + 1
+                        )
+
+                # ORIGIN
+                if line.startswith("ORIGIN"):
+                    evidences_seq += 1
+
+                concat.append(line)
+
+        # Validation des fichiers
+        if (
+            evidences_gene > 45
+            and evidences_seq > 0
+            and (nb_locus_tag > 0 or nb_protein_id > 0)
+            and evidences_ACCESSION > 0
+        ):
+
+            output_file = forzip_dir / f"{clean_filename}.gb"
+
+            with open(output_file, "w", encoding="utf-8") as outgb:
+                outgb.writelines(concat)
+
+            nb_files_ok += 1
+
+        else:
+
+            if evidences_gene <= 45:
+                error = (
+                    f"{clean_filename}: ERROR: Too few genes detected "
+                    "(less than 45)"
+                )
+
+            elif evidences_seq == 0:
+                error = (
+                    f"{clean_filename}: ERROR: "
+                    "Genbank file does not contain genomic sequence"
+                )
+
+            elif evidences_ACCESSION == 0:
+                error = (
+                    f"{clean_filename}: ERROR: "
+                    "Genbank file does not contain ACCESSION tag"
+                )
+
+            elif nb_protein_id == 0 and nb_locus_tag == 0:
+                error = (
+                    f"{clean_filename}: ERROR: "
+                    "No locus_tag or protein_id found"
+                )
+
+            else:
+                error = f"{clean_filename}: ERROR"
+
+            print(error)
+
+    # Création du ZIP
+    zip_path = output_dir / "genomes.zip"
+
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+
+        for gb_file in forzip_dir.glob("*.gb"):
+            zipf.write(gb_file, arcname=gb_file.name)
+
+    print(f"\n{nb_files_ok} fichiers valides traités.")
+    print(f"Archive créée : {zip_path}")
+
+def check_fasta(fichier_fasta: str) -> bool:
+
+    chemin = Path(fichier_fasta)
+    if not chemin.is_file():
+        return False
+
+    if chemin.suffix.lower() not in [".fa", ".fasta", ".fna"]:
+        return False
+
+    caracteres_valides = set("ACGTNacgtn")
+
+    try:
+        sequences = list(SeqIO.parse(fichier_fasta, "fasta"))
+
+        # Aucun contig/chromosome trouvé
+        if len(sequences) == 0:
+            return False
+
+        for record in sequences:
+            seq = str(record.seq)
+
+            if len(seq) == 0:
+                return False
+
+            if not set(seq).issubset(caracteres_valides):
+                return False
+
+        return True
+
+    except Exception:
+        return False
+
+def check_gff(gff_file: str) -> bool:
+
+    chemin = Path(gff_file)
+    if not chemin.is_file():
+        return False
+    if chemin.suffix.lower() not in [".gff", ".gff3", ".gtf"]:
+        return False
+    try:
+        with open(chemin, "r", encoding="utf-8") as f:
+            for ligne in f:
+                ligne = ligne.strip()
+
+                if not ligne or ligne.startswith("#"):
+                    continue
+
+                colonnes = ligne.split("\t")
+
+                if len(colonnes) != 9:
+                    return False
+
+            return True
+
+    except Exception:
+        return False
+
+
+def run_external_command(email_address, valid_list, min_percentage_identity, session, software,input_type):
 
     # Validate session to prevent injection attacks
     if not validate_session_id(session):
@@ -388,8 +627,67 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
 
     path = UPLOAD_DIR + "/" + str(session)
 
-    if os.path.exists(path) and os.path.exists(f"{session_dir}/{session}/summary_upload.csv"):
+    if input_type == "eukaryotic" and os.path.exists(path) and os.path.exists(f"{session_dir}/{session}/summary_upload.csv"):
 
+        countries = {}
+        dict_strains = {}
+
+        # Remove invalid genomes before proceeding
+        df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
+        upload_path = os.path.join(UPLOAD_DIR, session)
+        output_dir = Path(upload_path)
+        forzip_dir = output_dir / "forzip"
+        forzip_dir.mkdir(parents=True, exist_ok=True)
+
+        for row in df.itertuples():
+            basename = row[1]
+            valid = row[2]
+            if valid == "✅":
+                shutil.copyfile(f"{upload_path}/{basename}.gff", f"{upload_path}/forzip/{basename}.gff")
+                shutil.copyfile(f"{upload_path}/{basename}.fasta", f"{upload_path}/forzip/{basename}.fasta")
+
+                subprocess.run(["gzip", f"{upload_path}/forzip/{basename}.fasta"], check=True)
+
+                dict_strains[basename] = basename
+                # with gzip.open(f"{upload_path}/{basename}.fasta.gz", "rb") as f_in:
+                #     with open(f"{upload_path}/forzip/{basename}.fasta", "wb") as f_out:
+                #         shutil.copyfileobj(f_in, f_out)
+
+                source = os.path.join(upload_path, f"{basename}.gff")
+                dest = os.path.join(session_dir, session, "genomes", "genomes", f"{basename}.gff")
+                
+                if is_safe_path(dest, session_dir):
+                    subprocess.run(['mv', source, dest], check=True)
+
+                pass
+            else:
+                file_to_remove = os.path.join(UPLOAD_DIR, session, file_name)
+                if is_safe_path(file_to_remove, UPLOAD_DIR) and os.path.exists(file_to_remove):
+                    os.remove(file_to_remove)
+        
+
+        with zipfile.ZipFile(f"{upload_path}/gff.zip", "w") as zipf:
+            for gff_file in forzip_dir.glob("*.gff"):
+                zipf.write(gff_file, arcname=gff_file.name)
+
+        with zipfile.ZipFile(f"{upload_path}/fastas.zip", "w") as zipf:
+            for fasta_file in forzip_dir.glob("*.fasta.gz"):
+                zipf.write(fasta_file, arcname=fasta_file.name)
+
+        subprocess.run(['perl', 'GetSequences.pl', '-i', os.path.join(session_dir, session, "genomes", "genomes")], check=True)
+
+        metadata_file = os.path.join(session_dir, session, "metadata.xls")
+        if is_safe_path(metadata_file, session_dir):
+            with open(metadata_file, "w") as f:
+                f.write("Strain name\tCountry\tContinent\tOrganism\n")
+                for accession, strain in dict_strains.items():
+                    country = countries.get(strain, "")
+                    f.write(f"{strain}\t{country}\t\t\n")
+            os.chmod(metadata_file, 0o644)
+        
+    
+    elif os.path.exists(path) and os.path.exists(f"{session_dir}/{session}/summary_upload.csv"):
+            
             countries = {}
             # Remove invalid genomes before proceeding
             df = pd.read_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t")
@@ -407,24 +705,38 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
                     file_to_remove = os.path.join(UPLOAD_DIR, session, file_name)
                     if is_safe_path(file_to_remove, UPLOAD_DIR) and os.path.exists(file_to_remove):
                         os.remove(file_to_remove)
-            
             upload_path = os.path.join(UPLOAD_DIR, session)
-            result = subprocess.run(['perl', 'modifyGenbank.pl', upload_path, upload_path],
-                                   capture_output=True, text=True)
 
+            # process = subprocess.run(
+            #     ['python', 'modifyGenbank.py', upload_path, upload_path]
+            # )
+
+            process_genbank_files(upload_path, upload_path)
+
+            
             dict_strains = {}
             filepaths = []
             forzip_dir = os.path.join(UPLOAD_DIR, session, "forzip")
+
             if os.path.isdir(forzip_dir):
                 for file in os.listdir(forzip_dir):
+                    print(file)
                     if file.endswith(".gb"):
+                        print("yes")
                         filepaths.append(os.path.join(forzip_dir, file))
-                    
+            
+            print(filepaths)
             for filepath in filepaths:
                 name = os.path.basename(filepath)
                 safe_name = sanitize_filename(name)
 
+                
+
                 dest_gbff = os.path.join(session_dir, session, "genomes", "genomes", f"{safe_name}.gbff")
+
+                print(filepath)
+                print(dest_gbff)
+
                 if not is_safe_path(dest_gbff, session_dir):
                     logger.warning("Path traversal attempt detected: %s", dest_gbff)
                     continue
@@ -499,16 +811,20 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
                     
                 nb_tries = 1
                 result = None
+                if os.path.exists(os.path.join(tmp_dir, f"{accession}.zip")):
+                    os.remove(os.path.join(tmp_dir, f"{accession}.zip"))
                 while nb_tries < 6 and not os.path.exists(os.path.join(tmp_dir, f"{accession}.zip")):
                     nb_tries += 1
                     cmd = [ncbi_datasets_exe, 'download', 'genome', 'accession', accession, 
                         '--filename', os.path.join(tmp_dir, f"{accession}.zip"), '--include', 'genome,gbff,protein']
+                    
+                    print(cmd)
                     result = subprocess.run(cmd)
                 returned_value = result.returncode
 
                 if returned_value == 0:
                     filepath = os.path.join(tmp_dir, f"{accession}.zip")
-                    import zipfile
+                    
                     extract_dir = os.path.join(tmp_dir, accession)
                     os.makedirs(extract_dir, exist_ok=True)
                     with zipfile.ZipFile(filepath, 'r') as zip_ref:
@@ -597,12 +913,28 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
         logpath = os.path.join(tmp_dir, f"panexplorer_{session}.log")
 
         cmd_args = None
-        upload_genomes_zip = os.path.join(UPLOAD_DIR, session, "forzip", "genomes.zip")
+        upload_genomes_zip = os.path.join(UPLOAD_DIR, session, "genomes.zip")
+        upload_fastas_zip = os.path.join(UPLOAD_DIR, session, "fastas.zip")
+        upload_gff_zip = os.path.join(UPLOAD_DIR, session, "gff.zip")
+
         if os.path.exists(upload_genomes_zip) and validate_session_id(session) and is_string_without_special_character(software):
             try:
                 pct_identity = int(min_percentage_identity)
                 if 1 <= pct_identity <= 100:
-                    cmd_args = [sys.executable, script_path, "--z", upload_genomes_zip,
+                    cmd_args = [sys.executable, script_path, 
+                                "--z", upload_genomes_zip,
+                                "--o", os.path.join(session_dir, str(session)), "--p", str(pct_identity),
+                                "--s", software, "--n", str(session)]
+            except (ValueError, TypeError):
+                logger.error("Invalid min_percentage_identity: %s", min_percentage_identity)
+
+        elif os.path.exists(upload_fastas_zip) and os.path.exists(upload_gff_zip) and validate_session_id(session) and is_string_without_special_character(software):
+            try:
+                pct_identity = int(min_percentage_identity)
+                if 1 <= pct_identity <= 100:
+                    cmd_args = [sys.executable, script_path, 
+                                "--z", upload_gff_zip,
+                                "--f", upload_fastas_zip,
                                 "--o", os.path.join(session_dir, str(session)), "--p", str(pct_identity),
                                 "--s", software, "--n", str(session)]
             except (ValueError, TypeError):
@@ -621,6 +953,7 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
         if cmd_args:
             os.makedirs(tmp_dir, exist_ok=True)
             with open(logpath, "ab") as logf:
+
                 popen_kwargs = {"stdout": logf, "stderr": subprocess.STDOUT, "stdin": subprocess.DEVNULL}
                 if os.name != "nt":
                     popen_kwargs["start_new_session"] = True
@@ -706,7 +1039,7 @@ https://panexplorer2.ird.fr/browse?session={session}
 # --------------------------------------------------
 
 def register_callbacks(app):
-    #du.configure_upload(app, folder=UPLOAD_DIR)
+    du.configure_upload(app, folder=UPLOAD_DIR)
 
     @app.callback(
         Output("output-area", "children", allow_duplicate=True),
@@ -716,10 +1049,16 @@ def register_callbacks(app):
         State("session","data"),
         State("GCA_GCF", "value"),
         prevent_initial_call=True,
+        background=True
     )
     def check_public_genomes(n_clicks, gca_list,session,gca_gcf):
+
+        if n_clicks is None:
+            raise PreventUpdate
+        
         if n_clicks == 0:
-            return html.Div("No check performed yet.")
+            raise PreventUpdate
+        
 
         if not validate_session_id(session):
             return html.Div("Error: Invalid session.")
@@ -875,9 +1214,10 @@ def register_callbacks(app):
         return html.Div(divs), {"display": "none"} if valid_genome_count >= MIN_VALID_GENOMES else {"display": "block","backgroundColor": "#1E90FF","color": "white"}
     
 
+
     @app.callback(
         Output("output-area2", "children",allow_duplicate=True),
-        Output("page-submission-content", "style", allow_duplicate=True),
+        Output("page-submission-content", "style"),
         Input("go-button", "n_clicks"),
         #State("project-name", "value"),
         State("email-address", "value"),
@@ -885,11 +1225,17 @@ def register_callbacks(app):
         State("software", "value"),
         State("session", "data"),
         State("min-percentage-identity", "value"),
-        prevent_initial_call=True,
+        State("input-type", "value"),
+        prevent_initial_call=True
     )
-    def go_to_pipeline_public(n_clicks, email_address, valid_list, software, session, min_percentage_identity):
+    def go_to_pipeline_public(n_clicks, email_address, valid_list, software, session, min_percentage_identity,input_type):
+
+        if n_clicks is None:
+            raise PreventUpdate
+        
         if n_clicks == 0:
-            return html.Div()
+            raise PreventUpdate
+
 
         # if (not project_name or not re.match("^[A-Za-z0-9_-]+$", project_name)):
         #     return dbc.Alert("Error: Invalid project name. Must be alphanumeric with no spaces, underscores (_) or hyphens (-) only.", color="danger") , {"display": "block"}
@@ -905,7 +1251,7 @@ def register_callbacks(app):
 
         thread = threading.Thread(
             target=run_external_command,
-            args=(email_address, valid_list, min_percentage_identity, session, software),
+            args=(email_address, valid_list, min_percentage_identity, session, software,input_type),
             daemon=True
         )
         thread.start()
@@ -919,7 +1265,8 @@ def register_callbacks(app):
             ],
             color="success",
         ) , {"display": "none"}
-       
+        #) , {"display": "block"}
+    
     @app.callback(
         Output("session", "data"),
         Input("session", "data"),
@@ -933,8 +1280,9 @@ def register_callbacks(app):
     @app.callback(
         Output("input-options", "children"),
         Input("input-type", "value"),
+        Input("session", "data"),
     )
-    def apply_import(input_type):
+    def apply_import(input_type,session):
         #session = str(uuid.uuid4())  # Generate secure UUID instead of random number
         if input_type == "public":
             return html.Div([
@@ -959,90 +1307,30 @@ def register_callbacks(app):
                 #dcc.Input(id="session", type="hidden", value=str(session)),
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "PanACoTA (faster)", "value": "panacota"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="panacota", style={"width":"300px"}),
-
-                html.H5("Upload your own genomes. Must be annotated (up to 200 genomes)"),
+                html.Br(),
+                html.H5("Step 1/3: Upload your own genomes. Must be annotated (up to 200 genomes)"),
                 html.Label("Upload genbank files (accepted extension: .gb, .gbk, .gbff, .genbank). Selection of multiple files is possible. Must be annotated genomes. "),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
                 
-                # du.Upload(
-                #     id="upload-genbank",
-                #     text="Upload GenBank files",
-                #     upload_id=session,
-                #     max_files=200,
-                #     filetypes=["gb", "gbk", "gbff", "genbank"],
-                # ),
-                # dcc.Store(id="upload-dir-state", data=None),
-                # dcc.Interval(id="upload-watchdog", interval=1500, disabled=True),
-
-                # dcc.Upload(
-                #     id="upload-genbank",
-                #     max_size=15 * 1024 * 1024,
-                #     children=html.Div([
-                #         "Drag and drop GenBank files here or ",
-                #         html.A("select files")
-                #     ]),
-                #     style={
-                #         "width": "100%",
-                #         "height": "80px",
-                #         "lineHeight": "80px",
-                #         "borderWidth": "2px",
-                #         "borderStyle": "dashed",
-                #         "borderRadius": "10px",
-                #         "textAlign": "center",
-                #     },
-                #     multiple=True,
-                # ),
 
                 html.Div([
-                    #html.H5("Upload GenBank files"),
-
-                    # # ✅ ZONE DROPZONE ISOLÉE
-                    # html.Div(
-                    #     id="dropzone-wrapper",
-                    #     children=[
-                    #         html.Div(
-                    #             id="dropzone",
-                    #             children="Drag & drop files here or click to upload",
-                    #             style={
-                    #                 "border": "2px dashed #007bff",
-                    #                 "padding": "40px",
-                    #                 "textAlign": "center",
-                    #                 "borderRadius": "10px",
-                    #                 "backgroundColor": "#f8f9fa",
-                    #                 "cursor": "pointer"
-                    #             }
-                    #         )
-                    #     ]
-                    # ),
-
-                    dcc.Upload(
-                        id="upload-files",
-                        accept='.gb,.gbk,.genbank,.gbff',
-                        children=html.Div([
-                            "Drag & drop Genbank files here or ",
-                            html.A("click to upload")
-                        ]),
-                        multiple=True,
-                        style={
-                            "width": "100%",
-                            "height": "100px",
-                            "lineHeight": "100px",
-                            "borderWidth": "2px",
-                            "borderStyle": "dashed",
-                            "borderRadius": "10px",
-                            "textAlign": "center",
-                        },
+                    
+                    du.Upload(
+                        id='upload-files',
+                        text='Upload GenBank files',
+                        max_files=500,
+                        filetypes=['gb', 'gbk', 'gbff'],
+                        upload_id=session
                     ),
                     dcc.Loading(html.Div(id="file-list")),
                     html.Div(id="upload-list", style={"marginTop": "20px"}),
                     html.Div(id="upload-status", style={"marginTop": "20px"}),
-                    #html.H5("Step 2/3: Check the upload status of your files and their compatibility by clicking the button below"),
-                    # html.Button(
-                    #     "Check uploaded files",
-                    #     id="check-status-button",
-                    #     style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
-                    #     n_clicks=0
-                    # ),
+                    html.H5("Step 2/3: Check upload status and compatibility by clicking the button below"),
+                    html.Button(
+                         "Check uploaded files",
+                         id="check-status-button",
+                         style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"}
+                    ),
                 ])
 
             ])
@@ -1053,28 +1341,28 @@ def register_callbacks(app):
                 html.H5("Choose the pan-genome software"),
                 dcc.Dropdown(id="software", options=[{"label": "Orthofinder", "value": "orthofinder"}, {"label": "PGGB (Pan Genome Graph Builder)", "value": "pggb"}], value="orthofinder", style={"width":"300px"}),
 
-                html.H5("Eukaryotic genomes. Upload your own annotated genomes (FASTA + GFF files) (up to 20 genomes)"),
+                html.H5("Step 1/3: Eukaryotic genomes. Upload your own annotated genomes (FASTA + GFF files) (up to 20 genomes)"),
                 html.Label("For each genome, upload a gzipped FASTA file of the genome sequence + a GFF annotation file."),
-                html.Label("In order to make the association between sequence and annotation, they must be named with the same basename as follows: genome1.fasta.gz, genome1.gff, myspeciesXXX.fasta.gz, myspeciesXXX.gff... "),
+                html.Label("In order to make the association between sequence and annotation, they must be named with the same basename as follows: genome1.fasta, genome1.gff, myspeciesXXX.fasta, myspeciesXXX.gff... "),
                 html.Label("Selection of multiple files is possible."),
                 html.Label(f"Maximum: {MAX_GENOMES} genomes."),
                 
                 du.Upload(
-                    id="upload-gff-fasta",
-                    children=html.Div([
-                        "Drag and drop GenBank files here or ",
-                        html.A("select files")
-                    ]),
-                    style={
-                        "width": "100%",
-                        "height": "80px",
-                        "lineHeight": "80px",
-                        "borderWidth": "2px",
-                        "borderStyle": "dashed",
-                        "borderRadius": "10px",
-                        "textAlign": "center",
-                    },
-                    multiple=True,
+                        id='upload-gff-fasta',
+                        text='Upload GFF files and fasta files',
+                        max_files=40,
+                        filetypes=['gff', 'fasta'],
+                        upload_id=session
+                    ),
+
+                dcc.Loading(html.Div(id="file-list")),
+                html.Div(id="upload-list", style={"marginTop": "20px"}),
+                html.Div(id="upload-status", style={"marginTop": "20px"}),
+                html.H5("Step 2/3: Check upload status and compatibility by clicking the button below"),
+                html.Button(
+                    "Check uploaded files",
+                    id="check-status-button-eukaryotic",
+                    style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"}
                 ),
             ])
         else:
@@ -1082,335 +1370,149 @@ def register_callbacks(app):
 
 
 
-    # @du.callback(
-    #     Output("output-area", "children"),
-    #     Input("upload-genbank", "contents"),
-    #     State("upload-genbank", "filename"),
-    # )
-    # @du.callback(
-    #     output=Output("output-area", "children"),
-    #     id="upload-genbank",
-    # )
-    # def handle_uploaded_files(uploaded_files):
-
-    #     # Process any new upload directories under UPLOAD_DIR.
-    #     # dash_uploader creates a subfolder per upload_id (we configured upload_id=session).
-    #     processed_any = False
-        
-
-    #     for sub in os.listdir(UPLOAD_DIR):
-    #         subpath = os.path.join(UPLOAD_DIR, sub)
-            
-    #         # Validate session ID format before processing
-    #         if not validate_session_id(sub):
-    #             logger.warning("Skipping invalid session ID: %s", sub)
-    #             continue
-            
-    #         if not os.path.isdir(subpath):
-    #             continue
-            
-    #         # Verify path safety to prevent directory traversal
-    #         if not is_safe_path(subpath, UPLOAD_DIR):
-    #             logger.warning("Path outside allowed directory: %s", subpath)
-    #             continue
-                
-    #         sentinel = os.path.join(subpath, VALIDATION_SENTINEL)
-    #         if os.path.exists(sentinel):
-    #             continue
-
-    #         # process files in this upload folder
-    #         for fname in os.listdir(subpath):
-    #             fpath = os.path.join(subpath, fname)
-    #             if os.path.isdir(fpath):
-    #                 continue
-
-    #             # sanitize name on disk
-    #             safe_name = sanitize_filename(fname)
-    #             safe_path = os.path.join(subpath, safe_name)
-    #             if safe_name != fname:
-    #                 try:
-    #                     os.rename(fpath, safe_path)
-    #                     fpath = safe_path
-    #                 except Exception:
-    #                     pass
-
-
-
-
-    #             # check extension
-    #             ext = os.path.splitext(fpath)[1].lstrip('.').lower()
-    #             if ext not in ALLOWED_EXT:
-    #                 logger.warning("Rejected upload (extension not allowed): %s", fpath)
-    #                 try:
-    #                     os.remove(fpath)
-    #                 except Exception:
-    #                     pass
-    #                 continue
-
-    #             # check size
-    #             try:
-    #                 size = os.path.getsize(fpath)
-    #             except Exception:
-    #                 size = 0
-
-
-    #             print(safe_name + ": size: " + str(size))
-    #             if size > MAX_UPLOAD_SIZE_BYTES:
-    #                 logger.warning("Rejected upload (too large): %s (%d bytes)", fpath, size)
-    #                 try:
-    #                     os.remove(fpath)
-    #                 except Exception:
-    #                     pass
-    #                 continue
-
-    #             # optional magic check
-    #             #if HAS_MAGIC:
-    #             #    try:
-    #             #        mime = magic.from_file(fpath, mime=True)
-    #             #        low = str(mime).lower()
-    #             #        if not (low.startswith('text') or 'genbank' in low or 'plain' in low):
-    #             #            logger.warning("Rejected upload (magic mismatch): %s -> %s", fpath, mime)
-    #             #            try:
-    #             #                os.remove(fpath)
-    #             #            except Exception:
-    #             #                pass
-    #             #            continue
-    #             #    except Exception:
-    #             #        # if magic fails, we continue but log
-    #             #        logger.exception("magic check failed for %s", fpath)
-
-    #             # optional ClamAV scan
-    #             #if HAS_PYCLAMD:
-    #             #    try:
-    #             #        cd = pyclamd.ClamdNetworkSocket()
-    #             #        scan_result = cd.scan_file(fpath)
-    #             #        if scan_result:
-    #             #            logger.warning("Infected file detected and removed: %s", fpath)
-    #             #            try:
-    #             #                os.remove(fpath)
-    #             #            except Exception:
-    #             #                pass
-    #             #            continue
-    #             #    except Exception:
-    #             #        logger.exception("ClamAV scan failed for %s", fpath)
-
-    #             # set restrictive permissions
-    #             try:
-    #                 os.chmod(fpath, 0o600)
-    #             except Exception:
-    #                 pass
-
-    #             processed_any = True
-
-    #         # mark as processed to avoid re-checking
-    #         try:
-    #             open(sentinel, 'w').close()
-    #         except Exception:
-    #             pass
-
-
-    #     if not uploaded_files and not processed_any:
-    #         return html.Div("No files uploaded yet.")
-        
-    #     return html.Div(html.Button(
-    #                 "Step 1: Check status of uploaded files",
-    #                 id="check-status-button",
-    #                 style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
-    #                 n_clicks=0
-    #             ),
-    #     )
-
-    #@app.callback(
-    #    #Output("file-count", "data"),
-    #    #Output("file-list", "children"),
-    #    Output("output-area", "children"),
-    #    Input("upload-files", "contents"),
-    #    State("upload-files", "filename"),
-    #    State("session", "data"),
-    #    State("file-count", "data"),
-    #    prevent_initial_call=True
-    #)
-
-
-
-    # @app.callback(
-    #     Output("output-area", "children"),
-    #     Input("upload-status", "children"),
-    #     State("session", "data"),
-    #     prevent_initial_call=True,
-    # )
-    # def handle_uploaded_files(content,session):
-
-    #     upload_session_dir = os.path.join(UPLOAD_DIR, session)
-    #     if os.path.exists(upload_session_dir):
-    #         for element in  os.listdir(upload_session_dir):
-    #             print(element)
-    #     else:
-    #         return html.Div("No files uploaded yet in: ")
-            
-    @app.callback(
-        Output("file-count", "data"),
-        Output("file-list", "children"),
-        #Output("output-area3", "children", allow_duplicate=True),
-        #Output("check-status-button", "style", allow_duplicate=True),
-        Input("upload-files", "contents"),
-        State("upload-files", "filename"),
-        State("session", "data"),
-        State("file-count", "data"),
-        prevent_initial_call=True
-    )
-
-
-    
-    def handle_upload(contents, filenames, session, current_count):
-        if contents is None:
-            return current_count, ""
-
-        session_dir = os.path.join(UPLOAD_DIR, str(session))
-        os.makedirs(session_dir, exist_ok=True)
-
-        saved_files = []
-
-        for content, filename in zip(contents, filenames):
-
-            if not parse_contents(content, filename):
-                continue
-        
-            content_type, content_string = content.split(",")
-
-            decoded = base64.b64decode(content_string)
-
-            filepath = os.path.join(session_dir, filename)
-
-            with open(filepath, "wb") as f:
-                f.write(decoded)
-
-            saved_files.append(filename)
-
-        new_count = current_count + len(saved_files)
-
-        # liste des fichiers présents dans le dossier
-        all_files = os.listdir(session_dir)
-
-        return new_count, html.Div([
-            html.H5(f"{len(all_files)} files uploaded "),
-            html.Div(id="has_to_be_checked"),
-            #html.Ul([html.Li(f) for f in all_files])
-        ])
-    
-    # def handle_upload(contents, filenames, session, current_count):
-    #     if contents is None:
-    #         return current_count, "No file uploaded"
-
-    #     session_dir = os.path.join(UPLOAD_DIR, str(session))
-    #     os.makedirs(session_dir, exist_ok=True)
-
-    #     saved_files = []
-
-    #     for content, filename in zip(contents, filenames):
-
-    #         if not parse_contents(content, filename):
-    #             continue
-        
-    #         content_type, content_string = content.split(",")
-
-    #         decoded = base64.b64decode(content_string)
-
-    #         filepath = os.path.join(session_dir, filename)
-
-    #         with open(filepath, "wb") as f:
-    #             f.write(decoded)
-
-    #         saved_files.append(filename)
-
-    #     new_count = current_count + len(saved_files)
-
-    #     # liste des fichiers présents dans le dossier
-    #     all_files = os.listdir(session_dir)
-
-    #     return new_count, html.Div([
-    #         html.H5(f"{len(all_files)} fichiers dans la session " + str(session)),
-    #         html.Ul([html.Li(f) for f in all_files])
-    #     ])
-
-    # @app.callback(
-    #     Output("output-area", "children"),
-    #     Input("upload-genbank", "contents"),
-    #     State("upload-genbank", "filename"),
-    #     State("session", "value"),
-    #     prevent_initial_call=True,
-    # )
-    # def handle_uploaded_files(contents, filenames, session):
-
-    #     #if contents is None:
-    #     #    return html.Div("No files uploaded yet.")
-            
-
-    #     if contents is None:
-    #         return html.Div("No files uploaded yet.")
-
-    #     #if not validate_session_id(session):
-    #     #    return html.Div("Error: Invalid session.")
-    
-    #     #with open("/data/dash-docker/app/tmp/testttt", "a") as f:
-    #     #    f.write("Now the file has more content!")
-
-    #     upload_session_dir = os.path.join(UPLOAD_DIR, session)
-    #     os.makedirs(upload_session_dir, exist_ok=True)
-
-    #     processed_any = False
-
-    #     for content, filename in zip(contents, filenames):
-
-    #         safe_name = sanitize_filename(filename)
-    #         filepath = os.path.join(upload_session_dir, safe_name)
-
-    #         try:
-    #             content_type, content_string = content.split(',')
-    #             decoded = base64.b64decode(content_string)
-    #         except Exception:
-    #             continue
-
-    #         # extension check
-    #         ext = os.path.splitext(safe_name)[1].lstrip('.').lower()
-    #         if ext not in ALLOWED_EXT:
-    #             continue
-
-    #         # size check
-    #         #if len(decoded) > MAX_UPLOAD_SIZE_BYTES:
-    #         #    continue
-
-    #         # write file
-    #         with open(filepath, "wb") as f:
-    #             f.write(decoded)
-
-    #         try:
-    #             os.chmod(filepath, 0o600)
-    #         except Exception:
-    #             pass
-
-    #         processed_any = True
-
-    #     if not processed_any:
-    #         return html.Div("No valid files uploaded.")
-
-    #     return html.Div(
-    #         html.Label(
-    #             "Minimum 3 genomes to process an analysis...",
-    #             id="check-status-button",
-    #             #style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
-    #             #n_clicks=0
-    #         )
-    #     )
-    
     @app.callback(
         Output("output-area3", "children", allow_duplicate=True),
-        #Output("check-status-button", "style", allow_duplicate=True),
-        #Input("check-status-button", "n_clicks"),
-        Input("has_to_be_checked","data"),
+        Input("check-status-button-eukaryotic","n_clicks"),
         State("session", "data"),
         State("upload-counts", "data"),
         prevent_initial_call=True,
+        background=True
+    )
+    def refresh_table_eukaryotic(n_clicks, session, upload_counts):
+
+        if not validate_session_id(session):
+            return html.Div("Error: Invalid session."+session)
+        
+        print("counts: " + str(upload_counts))
+
+        filepaths = []
+
+        session_genomes_dir = f"{session_dir}/{session}/genomes/genomes"
+        os.makedirs(session_genomes_dir, exist_ok=True)
+
+        rows = []
+        valid_genome_count = 0
+        
+        dict_strains_gff = {}
+        dict_strains_fasta = {}
+        dict_strains = {}
+
+        upload_session_dir = f"{UPLOAD_DIR}/{session}"
+        for file in os.listdir(upload_session_dir):
+            original_name = os.path.basename(file)
+
+            if file.endswith(".gff"):
+                basename = Path(original_name).stem
+                dict_strains[basename]=1
+
+                newfile = sanitize_filename(file)
+
+                print(f"Processing uploaded file: {file} -> {newfile}")
+                filepath = os.path.join(upload_session_dir, newfile)
+                filepaths.append(filepath)
+
+                if check_gff(filepath):
+                    dict_strains_gff[basename]=1
+
+            
+            if file.endswith(".fasta"):
+                basename1 = Path(original_name).stem
+                basename = Path(basename1).stem
+                dict_strains[basename]=1
+
+                newfile = sanitize_filename(file)
+
+                print(f"Processing uploaded file: {file} -> {newfile}")
+                filepath = os.path.join(upload_session_dir, newfile)
+                filepaths.append(filepath)
+
+                if check_fasta(filepath):
+                    dict_strains_fasta[basename]=1
+
+        for basename in dict_strains:
+            if basename in dict_strains_fasta and basename in dict_strains_gff:
+                valid_genome_count += 1
+                rows.append({
+                            "File name": basename,
+                            "Valid": "✅",
+                            "Fasta": "ok",
+                            "GFF": "ok",
+                            })
+            elif basename in dict_strains_fasta and basename not in dict_strains_gff:
+                rows.append({
+                            "File name": basename,
+                            "Valid": "❌",
+                            "Fasta": "ok",
+                            "GFF": "not ok",
+                            })
+            elif basename not in dict_strains_fasta and basename in dict_strains_gff:
+                rows.append({
+                            "File name": basename,
+                            "Valid": "❌",
+                            "Fasta": "not ok",
+                            "GFF": "ok",
+                            })
+            else:
+                rows.append({
+                            "File name": basename,
+                            "Valid": "❌",
+                            })
+            print(basename)
+
+        df = pd.DataFrame(rows)
+        df.to_csv(f"{session_dir}/{session}/summary_upload.csv", sep="\t", index=False)
+
+        grid = dag.AgGrid(
+            rowData=df.to_dict("records"),
+            columnDefs=[
+                {
+                    "headerName": col,
+                    "field": col,
+                    "sortable": True,
+                    "filter": True,
+                }
+                for col in df.columns
+            ],
+            defaultColDef={
+                "resizable": True,
+                "minWidth": 120,
+            },
+            dashGridOptions={
+                "pagination": True,
+                "paginationPageSize": 10,
+            },
+            style={"height": "420px", "width": "100%"},
+        )
+
+        go_button = html.Div(
+            style={"marginTop": "20px"},
+            children=[
+                html.H5("Step 3/3: Once you have verified that all the genomes you want are listed in the table above, you can submit them to the analysis pipeline"),
+                html.Button(
+                    f"Send data to the pipeline ({valid_genome_count} valid genomes)",
+                    id="go-button",
+                    style={"display": "block", "backgroundColor": "#1E90FF", "color": "white"},
+                    n_clicks=0
+                ),
+                
+            ]
+        )
+        divs = [html.H4("Upload validation summary"), grid]
+
+        if valid_genome_count >= MIN_VALID_GENOMES:
+            divs.append(go_button)
+            divs.append(dcc.Input(id="valid_list", type="hidden", value=""))
+            divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
+        return html.Div(divs)
+
+    
+    @app.callback(
+        Output("output-area3", "children", allow_duplicate=True),
+        Input("check-status-button","n_clicks"),
+        State("session", "data"),
+        State("upload-counts", "data"),
+        prevent_initial_call=True,
+        background=True
     )
     def refresh_table(n_clicks, session, upload_counts):
 
@@ -1430,8 +1532,8 @@ def register_callbacks(app):
         dict_strains = {}
 
         upload_session_dir = f"{UPLOAD_DIR}/{session}"
-        if not os.path.isdir(upload_session_dir):
-            return html.Div("Error: Upload directory not found.")
+        #if not os.path.isdir(upload_session_dir):
+        #    return html.Div("Error: Upload directory not found.")
 
         for file in os.listdir(upload_session_dir):
 
@@ -1458,10 +1560,6 @@ def register_callbacks(app):
                 # skip if file already in table
                 if any(r["Stored file"] == original_name for r in rows):
                     continue
-
-                #records = list(SeqIO.parse(filepath, "genbank"))
-                #summary = summarize_records(records, original_name, original_name)
-                #rows.append(summary)
 
                 try:
 
@@ -1568,7 +1666,7 @@ def register_callbacks(app):
         go_button = html.Div(
             style={"marginTop": "20px"},
             children=[
-                #html.H5("Step 3/3: Once you have verified that all the genomes you want are listed in the table above, you can submit them to the analysis pipeline"),
+                html.H5("Step 3/3: Once you have verified that all the genomes you want are listed in the table above, you can submit them to the analysis pipeline"),
                 html.Button(
                     f"Send data to the pipeline ({valid_genome_count} valid genomes)",
                     id="go-button",
