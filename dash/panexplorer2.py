@@ -1,4 +1,4 @@
-# app.py — Application Dash unique + authentification SQLite + mode "session-only"
+# app.py — Application Dash unique + authentification SQLite + mode "session-only"f
 import os
 import sqlite3
 from datetime import datetime, time, timedelta
@@ -13,8 +13,10 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import dash
-from dash import html, dcc, Input, Output, State, Patch, callback_context
+from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager
 import dash_bootstrap_components as dbc
+
+import diskcache
 
 import pandas as pd
 import yaml
@@ -53,6 +55,9 @@ import homepage
 
 import xml.etree.ElementTree as ET
 import struct
+
+cache = diskcache.Cache("./cache")
+long_callback_manager = DiskcacheManager(cache)
 
 # Helper to get image dimensions without external heavy dependencies
 def get_image_dimensions(path):
@@ -569,7 +574,7 @@ def logout():
 
 # ---------- Dash App ----------
 external_stylesheets = [dbc.themes.BOOTSTRAP]
-app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True, background_callback_manager=long_callback_manager)
 app.server.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 app.title = "PanExplorer v2"
 
@@ -2506,7 +2511,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     session = str(uuid.uuid4())
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
-    
+    df.to_csv("exportdf.csv")    
     list_of_lists = []
     # with clusterID
     df_metadata2 = df_metadata
@@ -2560,31 +2565,33 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     nb_specific_genes = 0
     cluster_names=[]
     cluster_indexes=[]
-    
-    
-    df2 = df[list_sp]
+    df2 = df[list_sp].copy()
 
-    
     # add sum column indicating the number of strains holding the gene
     df2['sum'] = df2.drop('ClutserID', axis=1).sum(axis=1)
-    
 
-    # get only if at least one gene is present
-    df2 = df2[df2["sum"] > 0]
+    # keep only rows with at least one gene
+    df2 = df2[df2["sum"] > 0].copy()
     
-    # remove CLUSTER tag (TODO: to be removed)
-    df2['ClutserID']= df2['ClutserID'].astype(str)
+    # reset clean index
+    df2.reset_index(drop=True, inplace=True)
+
+    # remove CLUSTER tag
+    df2['ClutserID'] = df2['ClutserID'].astype(str)
     df2['ClutserID'] = df2['ClutserID'].str.replace('CLUSTER000','')
     df2['ClutserID'] = df2['ClutserID'].str.replace('CLUSTER00','')
     df2['ClutserID'] = df2['ClutserID'].str.replace('CLUSTER0','')
     df2['ClutserID'] = df2['ClutserID'].str.replace('CLUSTER','')
-    cluster_names = df2["ClutserID"]
-    
-    print("df2")
-    print(df2)
+
+    # initialize type column
+    df2['type'] = ''
+
     df2.loc[df2['sum'] == 1, 'type'] = 'Strain-specific'
     df2.loc[df2['sum'] == len(list_sp2), 'type'] = 'Core-gene'
-    df2.loc[(df2['sum'] < len(list_sp2)) & (df2['sum'] > 1), 'type'] = 'Dispensable-gene'
+    df2.loc[
+        (df2['sum'] < len(list_sp2)) & (df2['sum'] > 1),
+        'type'
+    ] = 'Dispensable-gene'
     
     df2.to_csv("export_df2.csv")
     df.to_csv("export_df.csv")
@@ -2675,7 +2682,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     for strain in list_sp2:
         strain_index+=1
         for number in range(3):
-            df_random = df01_only.sample(n=strain_index, axis='columns') 
+            df_random = df01_only.sample(n=strain_index, axis='columns')
+            print(df_random)
             
             df_random['sum'] = df_random.sum(axis=1)
             # get pangenes: keep only if at least one gene is present
@@ -5181,13 +5189,18 @@ def init_dataframes(pathname):
     print("yeahhhh: "+str(df_matrix.size))
 
     df_matrix = df_matrix.replace(to_replace=':', value='_', regex=True)
+
+    df_matrix_init = df_matrix.copy()
+
     df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
     df = df_matrix_modified.replace(to_replace ='-', value = 0, regex = True)
+
 
     #df['ClutserID'].replace(to_replace ='\d', value ='CLUSTER',regex = True,inplace=True)
     df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
     
 
+    
     df_ANI = pd.DataFrame()  
     if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
         df_ANI = pd.read_csv(directory+'/fastani.out.matrix.complete.xls',sep='\t')
@@ -5207,10 +5220,10 @@ def init_dataframes(pathname):
     list_continent = ["all"] + df_metadata3["Continent"].unique().tolist()
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
-  
-    
+
     # Remove lines from ptt
     df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
+    df_gene_positons2 = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"):
 
         cmd_args = ["grep", "-P", "Location|^\d+\.\.", directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"]
@@ -5220,15 +5233,24 @@ def init_dataframes(pathname):
         print("Species:"+list_species_with_ptt[0])
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
+        df_gene_positons2 = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         
         # WARNING, TO CHECK, must it be replaced by "_" or by ""
         # with "_" works for some situations
         df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "_", regex=False)
+        df_gene_positons2["PID"] = df_gene_positons2["PID"].str.replace(":", "", regex=False)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
+        if 'block_id' not in df_gene_positons2.columns:
+            df_gene_positons2.insert(0, 'block_id', 'chr1')
         
-    merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
+    
+    merged_with_positions = pd.merge(df_matrix_init, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
+    print(df_matrix_init)
+    if merged_with_positions.empty:
+        merged_with_positions = pd.merge(df_matrix_init, df_gene_positons2, left_on=list_species_with_ptt[0], right_on='PID')
+
 
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
