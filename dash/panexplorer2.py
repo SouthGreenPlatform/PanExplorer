@@ -3021,16 +3021,16 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ##############################
     # COG graphes
     ##############################
-    data_COG1 = pd.DataFrame()
+    #data_COG1 = pd.DataFrame()
     data_COG2 = pd.DataFrame()
     fig_COG1 = None
     fig_COG2 = None
     if os.path.exists(directory+"/cog_category_counts.txt") and os.path.getsize(directory+"/cog_category_counts.txt") > 0 and os.path.exists(directory+"/cog_category_2_counts.txt") and os.path.getsize(directory+"/cog_category_2_counts.txt") > 0:
-        data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
-        data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
+        #data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
+        #data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
         data_COG2 = pd.read_csv(directory+'/cog_category_2_counts.txt',sep='\t')
         data_COG2 = data_COG2.rename(columns={'COG': 'Genome'})
-        data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
+        #data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
         data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
 
         df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
@@ -3051,11 +3051,11 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         
         #data_COG2_selected.to_csv("export_COG.tsv")
         
-        fig_COG1 = px.bar(data_COG1_selected, x='Genome', y=data_COG1_selected.columns, title="Distribution of COG functional categories")
+        #fig_COG1 = px.bar(data_COG1_selected, x='Genome', y=data_COG1_selected.columns, title="Distribution of COG functional categories")
         fig_COG2 = px.bar(data_COG2_selected, x='Genome', y=data_COG2_selected.columns, title="Distribution of COG functional categories")
-        fig_COG1.update_layout(
-            yaxis_title="Number of genes with COG category"
-        )
+        #fig_COG1.update_layout(
+        #    yaxis_title="Number of genes with COG category"
+        #)
         fig_COG2.update_layout(
             yaxis_title="Number of genes with COG category"
         )
@@ -3667,7 +3667,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     node_names = []   # populated below if GFA file is present
     gfa_file = directory+"/pangenome.gfa"
     graph_gfa = go.Figure()
-    graph_gfa2 = go.FigureWidget()
+    graph_gfa2 = go.Figure()
     if os.path.exists(gfa_file) and os.path.getsize(gfa_file) > 0:
 
         tab_style_segments = tab_style  
@@ -3852,7 +3852,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         else:
 
-            graph_gfa2 = go.FigureWidget(data=go.Heatmap(
+            graph_gfa2 = go.Figure(data=go.Heatmap(
                     z=z_symlog,
                     y=list_sp2,
                     x=node_names,
@@ -4842,7 +4842,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         fig.update_layout(height=1100)
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes. Pan-GWAS results are shown below the PAV matrix.')
     else:
-        fig = go.FigureWidget(data=
+        fig = go.Figure(data=
                               go.Heatmap(
                                     z=z,
                                     x=cluster_names,
