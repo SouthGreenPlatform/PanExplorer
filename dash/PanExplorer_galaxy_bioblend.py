@@ -126,7 +126,7 @@ outtree_pgap = gi.datasets.download_dataset(pgap_outtree, file_path = args.o+"/h
 # outupset_pgap = gi.datasets.download_dataset(pgap_outpdf, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outheatmap_pgap = gi.datasets.download_dataset(pgap_outheatmap, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 outheatmaphtml_pgap = gi.datasets.download_dataset(pgap_outheatmap_html, file_path = args.o+"/vntr_matrix.tsv",maxwait=820000,require_ok_state=False,use_default_filename=False)
-outcogstat_pgap = gi.datasets.download_dataset(pgap_outcogstat, file_path = args.o+"/cog_category_counts.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
+outkeggofclusters_pgap = gi.datasets.download_dataset(pgap_outcogstat, file_path = args.o+"/kegg_of_clusters.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outcogstat2_pgap = gi.datasets.download_dataset(pgap_outcogstat2, file_path = args.o+"/cog_category_2_counts.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outcogofclusters_pgap = gi.datasets.download_dataset(pgap_outcogofclusters, file_path = args.o+"/cog_of_clusters.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outani_pgap = gi.datasets.download_dataset(pgap_outani, file_path = args.o+"/fastani.out.matrix.complete.xls",maxwait=820000,require_ok_state=False,use_default_filename=False)
