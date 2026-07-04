@@ -349,7 +349,7 @@ def has_valid_gene_identifiers(records):
                 #if has_locus_tag or has_protein_id:
                 #    return True, None
     
-    if not has_locus_tag or not has_protein_id:
+    if not has_locus_tag:
         return False, "GenBank file must contain locus_tag qualifiers in CDS features"
     
     return True, None
@@ -507,7 +507,7 @@ def process_genbank_files(input_dir, output_dir):
         if (
             evidences_gene > 45
             and evidences_seq > 0
-            and (nb_locus_tag > 0 or nb_protein_id > 0)
+            and (nb_locus_tag > 0)
             and evidences_ACCESSION > 0
         ):
 
@@ -538,7 +538,7 @@ def process_genbank_files(input_dir, output_dir):
                     "Genbank file does not contain ACCESSION tag"
                 )
 
-            elif nb_protein_id == 0 and nb_locus_tag == 0:
+            elif nb_locus_tag == 0:
                 error = (
                     f"{clean_filename}: ERROR: "
                     "No locus_tag or protein_id found"
