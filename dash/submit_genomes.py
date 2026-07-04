@@ -346,8 +346,8 @@ def has_valid_gene_identifiers(records):
                 if "protein_id" in feature.qualifiers:
                     has_protein_id = True
                 
-                if has_locus_tag or has_protein_id:
-                    return True, None
+                #if has_locus_tag or has_protein_id:
+                #    return True, None
     
     if not has_locus_tag or not has_protein_id:
         return False, "GenBank file must contain locus_tag qualifiers in CDS features"
