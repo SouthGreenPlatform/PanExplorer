@@ -1122,7 +1122,7 @@ def load_project_preview(proj_title):
                     ]),
                     
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='kegg_tab_content', children=[
+                        html.Div(id='cog_tab_content', children=[
                             html.Br(),
                             # dcc.Loading(dcc.Graph(id='graph_COG_all')),
                             # html.Br(),
@@ -3098,7 +3098,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     fig_pathways = None
     if os.path.exists(directory+"/kegg_of_clusters.txt") and os.path.getsize(directory+"/kegg_of_clusters.txt") > 0 :
 
-        data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"],dtype=str)
+        data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"])
         data_kegg = data_kegg.replace(r'^\s*$', np.nan, regex=True)
         # # Les lignes sans 4e colonne deviennent NaN
         data_kegg["present"] = data_kegg["cluster"].notna()
@@ -3106,78 +3106,70 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         data_modules = data_kegg[data_kegg["module"].str.startswith("M")]
         data_pathways = data_kegg[data_kegg["module"].str.startswith("map")]
 
-        
+        genomes = df.columns[1:]
 
-        # synthesis per module
-        summary_modules = (
-            data_modules.groupby(["module", "module_name"])
-            .agg(
-                total_KO=("KO", "count"),
-                found_KO=("present", "sum")
-            )
-            .reset_index()
+        df_heatmap_modules = pd.merge(df, data_modules, left_on='ClutserID', right_on='cluster')
+        heat = (
+            df_heatmap_modules
+            .groupby("module_name")[genomes]
+            .sum()
         )
+        total = data_modules.groupby("module_name").size()
+        heat = heat.div(total, axis=0) * 100
+        heat = heat.T
 
-        summary_modules["completeness"] = (
-            100 * summary_modules["found_KO"] / summary_modules["total_KO"]
-        ).round(1)
-
-        summary_modules = summary_modules.sort_values("completeness")
-        # summary_modules["KEGG_module"] = (
-        #     summary_modules["module"] +
-        #     " - " +
-        #     summary_modules["module_name"]
-        # )
-        summary_modules["KEGG_module"] = summary_modules["module_name"]
-        fig_modules = px.bar(
-            summary_modules,
-            x="completeness",
-            y="KEGG_module",
-            color="completeness",
-            color_continuous_scale="Viridis",
-            custom_data=["KEGG_module","module"],
-            orientation="h",
-            hover_data=[
-                "module_name",
-                "found_KO",
-                "total_KO"
-            ]
+        fig_modules = go.Figure(
+            go.Heatmap(
+                z=heat.values,
+                x=heat.columns,
+                y=heat.index,
+                colorscale="Viridis",
+                #custom_data=["KEGG_module","module"],
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "%{x}<br>"
+                    "%{z:.1f}%<extra></extra>"
+                )
+            )
         )
         fig_modules.update_layout(
-            title="KEGG modules: KEGG module completeness considering all pangenes",
-            yaxis={"categoryorder":"total ascending"}
+            title="KEGG modules: KEGG module completeness per genome",
+            yaxis_title="Genomes",
+            xaxis_title="KEGG modules"
         )
 
-        # synthesis per pathway
-        summary_pathways = (
-            data_pathways.groupby(["module", "module_name"])
-            .agg(
-                total_KO=("KO", "count"),
-                found_KO=("present", "sum")
-            )
-            .reset_index()
+        df_heatmap_pathways = pd.merge(df, data_pathways, left_on='ClutserID', right_on='cluster')
+        heat = (
+            df_heatmap_pathways
+            .groupby("module_name")[genomes]
+            .sum()
         )
-        summary_pathways["KEGG_pathway"] = summary_pathways["module_name"]
-        #summary_pathways.rename(columns={'module_name': 'KEGG_pathway'}, inplace=True)
-        
-        summary_pathways = summary_pathways.sort_values("found_KO")
-        fig_pathways = px.bar(
-            summary_pathways,
-            x="found_KO",
-            y="KEGG_pathway",
-            color="found_KO",
-            color_continuous_scale="Viridis",
-            custom_data=["KEGG_pathway","module"],
-            orientation="h",
-            hover_data=[
-                "KEGG_pathway",
-                "found_KO",
-            ]
+        total = data_pathways.groupby("module_name").size()
+        #heat = heat.div(total, axis=0) * 100
+        heat = heat.T
+
+        fig_pathways = go.Figure(
+            go.Heatmap(
+                z=heat.values,
+                x=heat.columns,
+                y=heat.index,
+                colorscale="Viridis",
+                #custom_data=["KEGG_module","module"],
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "%{x}<br>"
+                    "%{z}<extra></extra>"
+                )
+            )
         )
         fig_pathways.update_layout(
-            title="KEGG pathways: Number of pangenes identified for each KEGG pathways",
-            yaxis={"categoryorder":"total ascending"}
+            title="KEGG pathways: Number of genes involved in KEGG pathways for each genome",
+            yaxis_title="Genomes",
+            xaxis_title="KEGG pathways"
         )
+
+
+
 
     ############################################################
     # accessory-based tree
@@ -4447,11 +4439,15 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
     directory = path
 
     selected_module = None
+    selected_module_id = None
     if ctx.triggered_id == "graph_modules":
         click = module_click
+        selected_module = click["points"][0]["x"]
 
     elif ctx.triggered_id == "graph_pathways":
         click = pathway_click
+        selected_module = click["points"][0]["x"]
+        #selected_module_id = click["points"][0]["customdata"][1]
 
     else:
         return go.Figure()
@@ -4459,9 +4455,8 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
     if click is None:
         return go.Figure()
 
-    selected_module = click["points"][0]["customdata"][0]
-    selected_module_id = click["points"][0]["customdata"][1]
     
+    print(selected_module)
     
     data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"])
     data_kegg = data_kegg.replace(r'^\s*$', np.nan, regex=True)
@@ -4494,7 +4489,7 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
         )
     )
                 
-    fig.update_layout(title_text=selected_module_id + ": " + selected_module,xaxis_title="Gene clusters",yaxis_title="Genomes")
+    fig.update_layout(title_text=selected_module,xaxis_title="Gene clusters",yaxis_title="Genomes")
     return fig
 
 
