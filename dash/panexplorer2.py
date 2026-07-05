@@ -13,7 +13,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import dash
-from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager
+from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx
 import dash_bootstrap_components as dbc
 
 import diskcache
@@ -161,7 +161,8 @@ tabs_styles = {
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
     'padding': '6px',
-    'fontWeight': 'bold'
+    'fontWeight': 'bold',
+    'paddingLeft': "25px"
 }
 
 tab_selected_style = {
@@ -1149,6 +1150,28 @@ def load_project_preview(proj_title):
                             
                             ),
                         ]),
+                    dcc.Tab(label='KEGG pathways', style=tab_style, selected_style=tab_selected_style, children=[
+                        html.Div(id='tree_tab_content', children=[
+                            html.Br(),
+                            html.Div(className="row", id='keggs', children=[
+                                dcc.Loading(
+                                    dbc.Row([
+                                        dbc.Col(
+                                            dcc.Graph(id='graph_modules',style={'width': '90vh', 'height': '50vh','padding': '1px'},config={"scrollZoom": False}),
+                                            
+                                        ),
+                                        dbc.Col(
+                                            dcc.Graph(id='graph_pathways',style={'width': '90vh', 'height': '50vh','padding': '1px'},config={"scrollZoom": False}),
+                                        ),
+                                        
+                                    ]),
+                                ),
+                            ]),
+                            html.Br(),
+                            dcc.Loading(dcc.Graph(id='heatmap_of_pathway')),
+                        ], style={"paddingLeft": "15px"}
+                        ),
+                    ]),
                     dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='tree_tab_content', children=[
                             html.Br(),
@@ -1300,7 +1323,7 @@ def load_project_preview(proj_title):
                     html.Br(),
                     dcc.Loading(
                                         html.Div(children=[
-                                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '1px'}),
+                                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '20px'}),
                                             
                                         ]),
                                     ),
@@ -1527,7 +1550,6 @@ def load_project_preview(proj_title):
                                             ]),
                                         ]
                                     ),
-                                    
                                     dcc.Store(id='store-alignment-hits'),
                                     dcc.Store(id='store-alignment-path')
                                 ])
@@ -2438,6 +2460,8 @@ def set_reference_value(available_options):
     #Output('graph_COG_all', 'figure'),
     #Output('graph_COG1', 'figure'),
     Output('graph_COG2', 'figure'),
+    Output('graph_modules', 'figure'),
+    Output('graph_pathways', 'figure'),
     Output('rarefaction2', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
@@ -2784,7 +2808,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         merged_with_positions = pd.merge(simplified_df_matrix, df_gene_positons, left_on=reference, right_on='PID')
         #merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=reference, right_on='PID')
 
-        df_gene_positons.to_csv("export_gene_positions.csv")
 
         if len(merged_with_positions) != 0:
 
@@ -2813,7 +2836,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     core_df['ClutserID'] = core_df['ClutserID'].astype(int)
 
+    
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
+    print(merged_with_positions.columns)
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
     core_list_dict = core_df_merged_with_positions.to_dict('records')
@@ -3063,6 +3088,94 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
 
 
+    ##############################
+    # KEGG graphes
+    ##############################
+    fig_modules = None
+    fig_pathways = None
+    if os.path.exists(directory+"/kegg_of_clusters.txt") and os.path.getsize(directory+"/kegg_of_clusters.txt") > 0 :
+
+        data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"],dtype=str)
+        data_kegg = data_kegg.replace(r'^\s*$', np.nan, regex=True)
+        # # Les lignes sans 4e colonne deviennent NaN
+        data_kegg["present"] = data_kegg["cluster"].notna()
+
+        data_modules = data_kegg[data_kegg["module"].str.startswith("M")]
+        data_pathways = data_kegg[data_kegg["module"].str.startswith("map")]
+
+        
+
+        # synthesis per module
+        summary_modules = (
+            data_modules.groupby(["module", "module_name"])
+            .agg(
+                total_KO=("KO", "count"),
+                found_KO=("present", "sum")
+            )
+            .reset_index()
+        )
+
+        summary_modules["completeness"] = (
+            100 * summary_modules["found_KO"] / summary_modules["total_KO"]
+        ).round(1)
+
+        summary_modules = summary_modules.sort_values("completeness")
+        # summary_modules["KEGG_module"] = (
+        #     summary_modules["module"] +
+        #     " - " +
+        #     summary_modules["module_name"]
+        # )
+        summary_modules["KEGG_module"] = summary_modules["module_name"]
+        fig_modules = px.bar(
+            summary_modules,
+            x="completeness",
+            y="KEGG_module",
+            color="completeness",
+            color_continuous_scale="Viridis",
+            custom_data=["KEGG_module","module"],
+            orientation="h",
+            hover_data=[
+                "module_name",
+                "found_KO",
+                "total_KO"
+            ]
+        )
+        fig_modules.update_layout(
+            title="KEGG modules: KEGG module completeness considering all pangenes",
+            yaxis={"categoryorder":"total ascending"}
+        )
+
+        # synthesis per pathway
+        summary_pathways = (
+            data_pathways.groupby(["module", "module_name"])
+            .agg(
+                total_KO=("KO", "count"),
+                found_KO=("present", "sum")
+            )
+            .reset_index()
+        )
+        summary_pathways["KEGG_pathway"] = summary_pathways["module_name"]
+        #summary_pathways.rename(columns={'module_name': 'KEGG_pathway'}, inplace=True)
+        
+        summary_pathways = summary_pathways.sort_values("found_KO")
+        fig_pathways = px.bar(
+            summary_pathways,
+            x="found_KO",
+            y="KEGG_pathway",
+            color="found_KO",
+            color_continuous_scale="Viridis",
+            custom_data=["KEGG_pathway","module"],
+            orientation="h",
+            hover_data=[
+                "KEGG_pathway",
+                "found_KO",
+            ]
+        )
+        fig_pathways.update_layout(
+            title="KEGG pathways: Number of pangenes identified for each KEGG pathways",
+            yaxis={"categoryorder":"total ascending"}
+        )
+
     ############################################################
     # accessory-based tree
     ############################################################
@@ -3228,6 +3341,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                            labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
                            x=repeat_names,
                            #y=list_sp2,
+                           title='Genotyping matrix showing the number of repeats for each VNTR loci',
                            text_auto=True
                            )
     graph_mlva.update_yaxes(tickmode="linear") 
@@ -3822,8 +3936,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             graph_gfa2.add_trace(
                 go.Heatmap(
                         z=z_symlog,
-                        y=list_sp2,
                         x=node_names,
+			y=list_sp2,
                         colorscale='RdBu',
                         zmid=0,
                         customdata=z_original,
@@ -3854,17 +3968,20 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
             graph_gfa2 = go.Figure(data=go.Heatmap(
                     z=z_symlog,
-                    y=list_sp2,
                     x=node_names,
+                    y=list_sp2,
                     colorscale='RdBu',
                     zmid=0,
+                    showscale=True,
                     customdata=z_original,
                     hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
                     hoverongaps = False))
+            graph_gfa2.update_yaxes(autorange="reversed")
             graph_gfa2.update_layout(
                 title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
             )
-            graph_gfa2.update_yaxes(tickmode="linear")
+	    #graph_gfa2.update_layout(width=600,margin=dict(r=10))
+            #graph_gfa2.update_yaxes(tickmode="linear")
 
         
     
@@ -3928,7 +4045,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
     
-    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
+    return "",nb_of_pangenes,text_stat,fig,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
 
 ############################################
 # Disable button during loading
@@ -4303,6 +4420,82 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
     first_val = options[0]['value'] if options else None
 
     return {'display': 'block'}, "", options, first_val, hits_data, output_dir
+
+    
+    
+
+@app.callback(
+    Output("heatmap_of_pathway", "figure"),
+    Input("graph_modules", "clickData"),
+    Input("graph_pathways", "clickData"),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def update_heatmap_KEGG(module_click, pathway_click, proj_title):
+
+    if not proj_title:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + proj_title
+    else:
+        path = row[0]
+    directory = path
+
+    selected_module = None
+    if ctx.triggered_id == "graph_modules":
+        click = module_click
+
+    elif ctx.triggered_id == "graph_pathways":
+        click = pathway_click
+
+    else:
+        return go.Figure()
+
+    if click is None:
+        return go.Figure()
+
+    selected_module = click["points"][0]["customdata"][0]
+    selected_module_id = click["points"][0]["customdata"][1]
+    
+    
+    data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"])
+    data_kegg = data_kegg.replace(r'^\s*$', np.nan, regex=True)
+    data_kegg["present"] = data_kegg["cluster"].notna()
+
+    filtered_df = data_kegg[(data_kegg['module_name'] == selected_module) & (data_kegg['present'] == True)]
+
+    df_pav = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt', sep='\t')
+    df_heatmap = pd.merge(filtered_df, df_pav, left_on='cluster', right_on='ClutserID')
+    df_heatmap.drop(['module', 'module_name','present','ClutserID'], axis='columns', inplace=True)
+    df_heatmap = df_heatmap.T
+
+    x_labels = [
+        f"{ko}-{int(cluster)}"
+        if pd.notna(cluster) else ko
+        for ko, cluster in zip(df_heatmap.loc["KO"], df_heatmap.loc["cluster"])
+    ]
+
+    heat = df_heatmap.iloc[2:].copy().astype(int)
+        
+    fig = go.Figure(data=
+        go.Heatmap(
+            z=heat.values,
+            x=x_labels,
+            y=heat.index,
+            zmin=0,
+            zmax=1,
+            colorscale = [[0, 'whitesmoke'], [1, 'teal']],
+            showscale=True
+        )
+    )
+                
+    fig.update_layout(title_text=selected_module_id + ": " + selected_module,xaxis_title="Gene clusters",yaxis_title="Genomes")
+    return fig
+
+
+
 
 # Callback 2: Visualize Selected Hit
 @app.callback(
@@ -5066,6 +5259,8 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
                            #y=list_sp2,
                            text_auto=True
                            )
+    graph_mlva.update_layout(title='Genotyping matrix indicating number of repeats for each VNTR loci')
+
     mlva_table = df_vntr.to_dict('records')
     newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
@@ -5231,10 +5426,12 @@ def init_dataframes(pathname):
             subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
         
         print("Species:"+list_species_with_ptt[0])
+        
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         df_gene_positons2 = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
-        
+        print(df_gene_positons)
+
         # WARNING, TO CHECK, must it be replaced by "_" or by ""
         # with "_" works for some situations
         df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "_", regex=False)
@@ -5247,11 +5444,10 @@ def init_dataframes(pathname):
         
     
     merged_with_positions = pd.merge(df_matrix_init, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
-    print(df_matrix_init)
     if merged_with_positions.empty:
         merged_with_positions = pd.merge(df_matrix_init, df_gene_positons2, left_on=list_species_with_ptt[0], right_on='PID')
 
-
+    
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
@@ -5280,7 +5476,7 @@ def init_dataframes(pathname):
 
 
     
-    return df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix
+    return df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix_init
 
 
 ###############################################
