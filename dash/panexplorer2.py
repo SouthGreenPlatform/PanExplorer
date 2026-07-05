@@ -1122,36 +1122,39 @@ def load_project_preview(proj_title):
                     ]),
                     
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Br(),
-                        # dcc.Loading(dcc.Graph(id='graph_COG_all')),
-                        # html.Br(),
-                        # dcc.Loading(dcc.Graph(id='graph_COG1')),
-                        # html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_COG2')),
-                        html.Br(),
-                        html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
-                                    id='submit-enrichment', 
-                                    style={
-                                        "backgroundColor": "#1E90FF",   # bleu
-                                        "color": "white",
-                                    },
-                                    n_clicks=0),
-                        html.Br(),
-                        html.Br(),
-                        dcc.Loading(
-                            #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
-                            dag.AgGrid(
-                                            id="enrichment_table",
-                                            style={'display': 'none'},
-                                            columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
-                                            rowData=[],
-                                        ),
-                            
-                            
-                            ),
-                        ]),
+                        html.Div(id='kegg_tab_content', children=[
+                            html.Br(),
+                            # dcc.Loading(dcc.Graph(id='graph_COG_all')),
+                            # html.Br(),
+                            # dcc.Loading(dcc.Graph(id='graph_COG1')),
+                            # html.Br(),
+                            dcc.Loading(dcc.Graph(id='graph_COG2')),
+                            html.Br(),
+                            html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
+                                        id='submit-enrichment', 
+                                        style={
+                                            "backgroundColor": "#1E90FF",   # bleu
+                                            "color": "white",
+                                        },
+                                        n_clicks=0),
+                            html.Br(),
+                            html.Br(),
+                            dcc.Loading(
+                                #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
+                                dag.AgGrid(
+                                                id="enrichment_table",
+                                                style={'display': 'none'},
+                                                columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
+                                                rowData=[],
+                                            ),
+                                
+                                
+                                ),
+                        ], style={"paddingLeft": "15px"}
+                        ),
+                    ]),
                     dcc.Tab(label='KEGG pathways', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='tree_tab_content', children=[
+                        html.Div(id='kegg_tab_content', children=[
                             html.Br(),
                             html.Div(className="row", id='keggs', children=[
                                 dcc.Loading(
@@ -3050,7 +3053,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     data_COG2 = pd.DataFrame()
     fig_COG1 = None
     fig_COG2 = None
-    if os.path.exists(directory+"/cog_category_counts.txt") and os.path.getsize(directory+"/cog_category_counts.txt") > 0 and os.path.exists(directory+"/cog_category_2_counts.txt") and os.path.getsize(directory+"/cog_category_2_counts.txt") > 0:
+    if os.path.exists(directory+"/cog_category_2_counts.txt") and os.path.getsize(directory+"/cog_category_2_counts.txt") > 0:
         #data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
         #data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
         data_COG2 = pd.read_csv(directory+'/cog_category_2_counts.txt',sep='\t')
