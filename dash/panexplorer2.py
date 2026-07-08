@@ -1160,17 +1160,19 @@ def load_project_preview(proj_title):
                                 dcc.Loading(
                                     dbc.Row([
                                         dbc.Col(
-                                            dcc.Graph(id='graph_modules',style={'width': '90vh', 'height': '50vh','padding': '1px'},config={"scrollZoom": False}),
+                                            dcc.Graph(id='graph_modules',style={'width': '80vh', 'height': '50vh','padding': '5px'},config={"scrollZoom": False}),
                                             
                                         ),
                                         dbc.Col(
-                                            dcc.Graph(id='graph_pathways',style={'width': '90vh', 'height': '50vh','padding': '1px'},config={"scrollZoom": False}),
+                                            dcc.Graph(id='graph_pathways',style={'width': '80vh', 'height': '50vh','padding': '5px'},config={"scrollZoom": False}),
                                         ),
                                         
                                     ]),
                                 ),
                             ]),
                             html.Br(),
+                            html.H5(id='pathway_info', style={'width': '60vh','margin-left': '1px'}),
+                            
                             dcc.Loading(dcc.Graph(id='heatmap_of_pathway')),
                         ], style={"paddingLeft": "15px"}
                         ),
@@ -3111,10 +3113,10 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         df_heatmap_modules = pd.merge(df, data_modules, left_on='ClutserID', right_on='cluster')
         heat = (
             df_heatmap_modules
-            .groupby("module_name")[genomes]
+            .groupby("module")[genomes]
             .sum()
         )
-        total = data_modules.groupby("module_name").size()
+        total = data_modules.groupby("module").size()
         heat = heat.div(total, axis=0) * 100
         heat = heat.T
 
@@ -3141,10 +3143,10 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         df_heatmap_pathways = pd.merge(df, data_pathways, left_on='ClutserID', right_on='cluster')
         heat = (
             df_heatmap_pathways
-            .groupby("module_name")[genomes]
+            .groupby("module")[genomes]
             .sum()
         )
-        total = data_pathways.groupby("module_name").size()
+        total = data_pathways.groupby("module").size()
         #heat = heat.div(total, axis=0) * 100
         heat = heat.T
 
@@ -4421,6 +4423,7 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
 
 @app.callback(
     Output("heatmap_of_pathway", "figure"),
+    Output("pathway_info","children"),
     Input("graph_modules", "clickData"),
     Input("graph_pathways", "clickData"),
     State('projets', 'value'),
@@ -4447,7 +4450,6 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
     elif ctx.triggered_id == "graph_pathways":
         click = pathway_click
         selected_module = click["points"][0]["x"]
-        #selected_module_id = click["points"][0]["customdata"][1]
 
     else:
         return go.Figure()
@@ -4456,16 +4458,19 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
         return go.Figure()
 
     
-    print(selected_module)
+    
     
     data_kegg = pd.read_csv(directory+'/kegg_of_clusters.txt',sep='\t',header=None,names=["module", "module_name", "KO", "cluster"])
     data_kegg = data_kegg.replace(r'^\s*$', np.nan, regex=True)
     data_kegg["present"] = data_kegg["cluster"].notna()
 
-    filtered_df = data_kegg[(data_kegg['module_name'] == selected_module) & (data_kegg['present'] == True)]
+    filtered_df = data_kegg[(data_kegg['module'] == selected_module) & (data_kegg['present'] == True)]
 
     df_pav = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt', sep='\t')
     df_heatmap = pd.merge(filtered_df, df_pav, left_on='cluster', right_on='ClutserID')
+    module_id = valeur = df_heatmap["module"].iloc[0]
+    module_name = valeur = df_heatmap["module_name"].iloc[0]
+
     df_heatmap.drop(['module', 'module_name','present','ClutserID'], axis='columns', inplace=True)
     df_heatmap = df_heatmap.T
 
@@ -4488,9 +4493,13 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
             showscale=True
         )
     )
+
+    link = html.A(f"{module_id} : {module_name}",href=f"https://www.kegg.jp/pathway/{module_id}",target="_blank")
+    if ctx.triggered_id == "graph_modules":
+        link = html.A(f"{module_id} : {module_name}",href=f"https://www.kegg.jp/module/{module_id}",target="_blank")
                 
     fig.update_layout(title_text=selected_module,xaxis_title="Gene clusters",yaxis_title="Genomes")
-    return fig
+    return fig,link
 
 
 
