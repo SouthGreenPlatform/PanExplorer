@@ -3116,26 +3116,32 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             .groupby("module")[genomes]
             .sum()
         )
-        total = data_modules.groupby("module").size()
-        heat = heat.div(total, axis=0) * 100
-        heat = heat.T
+
+        heat = (
+            df_heatmap_modules
+            .groupby("module")[genomes]
+            .sum()
+            .T
+        )
+        
+        # normalization by the mean
+        heat_norm = heat.sub(heat.mean(axis=0), axis=1)
 
         fig_modules = go.Figure(
             go.Heatmap(
-                z=heat.values,
-                x=heat.columns,
-                y=heat.index,
-                colorscale="Viridis",
-                #custom_data=["KEGG_module","module"],
-                hovertemplate=(
-                    "<b>%{y}</b><br>"
-                    "%{x}<br>"
-                    "%{z:.1f}%<extra></extra>"
-                )
+                z=heat_norm.values,
+                x=heat_norm.columns,
+                y=heat_norm.index,
+                colorscale="RdBu",
+                zmid=0,
+                colorbar_title="Deviation from module mean (KO)"
             )
         )
+
+
+        
         fig_modules.update_layout(
-            title="KEGG modules: KEGG module completeness per genome",
+            title="KEGG modules: Relative KEGG module completeness across genomes",
             yaxis_title="Genomes",
             xaxis_title="KEGG modules"
         )
@@ -3145,27 +3151,23 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             df_heatmap_pathways
             .groupby("module")[genomes]
             .sum()
+            .T
         )
-        total = data_pathways.groupby("module").size()
-        #heat = heat.div(total, axis=0) * 100
-        heat = heat.T
+        # normalization by the mean
+        heat_norm = heat.sub(heat.mean(axis=0), axis=1)
 
         fig_pathways = go.Figure(
             go.Heatmap(
-                z=heat.values,
-                x=heat.columns,
-                y=heat.index,
-                colorscale="Viridis",
-                #custom_data=["KEGG_module","module"],
-                hovertemplate=(
-                    "<b>%{y}</b><br>"
-                    "%{x}<br>"
-                    "%{z}<extra></extra>"
-                )
+                z=heat_norm.values,
+                x=heat_norm.columns,
+                y=heat_norm.index,
+                colorscale="RdBu",
+                zmid=0,
+                colorbar_title="Deviation from pathway mean (KO)"
             )
         )
         fig_pathways.update_layout(
-            title="KEGG pathways: Number of genes involved in KEGG pathways for each genome",
+            title="KEGG pathways: Relative KEGG pathways completeness across genomes",
             yaxis_title="Genomes",
             xaxis_title="KEGG pathways"
         )
@@ -4473,6 +4475,7 @@ def update_heatmap_KEGG(module_click, pathway_click, proj_title):
 
     df_heatmap.drop(['module', 'module_name','present','ClutserID'], axis='columns', inplace=True)
     df_heatmap = df_heatmap.T
+
 
     x_labels = [
         f"{ko}-{int(cluster)}"
