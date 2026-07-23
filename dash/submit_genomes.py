@@ -1071,6 +1071,9 @@ def register_callbacks(app):
         
         gca_accessions = [gca.strip() for gca in gca_list.split(",") if gca.strip()]
 
+        # remove duplicates
+        gca_accessions = list(set(gca_accessions))
+
         # Validate each accession format
         for accession in gca_accessions:
             if not validate_gca_accession(accession):
