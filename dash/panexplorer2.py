@@ -258,6 +258,12 @@ columnDefs4 = [
     {"field": "Species","width": 400},
     {"field": "Genes","width": 400},
 ]
+columnDefs5 = [
+    {"field": "ClutserID","width": 200},
+    {"field": "COG term","width": 400},
+    {"field": "type","width": 200},
+    {"field": "sum","width": 100},
+]
 
 data = ""
 
@@ -1031,6 +1037,7 @@ def load_project_preview(proj_title):
                         ),
                     ]),
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
+                        html.Div(id='upset_tab_content', children=[
                             html.Br(),
                             html.Div(className="row", id='upset', children=[
                                 dcc.Loading(
@@ -1038,8 +1045,26 @@ def load_project_preview(proj_title):
                                         dcc.Graph(id='graph_upset'),
                                         
                                 ),
-                                html.H5(id='combination', style={'width': '60vh','margin-left': '1px'}),
-                            
+                                
+                                dcc.Loading(
+                                    html.Div(children=[
+                                        #html.H5(id='selected_clusters', style={'width': '60vh','margin-left': '1px'}),
+                                        dag.AgGrid(
+                                            id="table_selected_clusters",
+                                            style={'width': '200vh','margin-left': '1px'},
+                                            rowData=[],
+                                            columnDefs=columnDefs5,
+                                            defaultColDef={"filter": "agTextColumnFilter"},
+                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                        ),
+                                        html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
+                                        #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
+                                        dcc.Download(id="download-dataframe4"),
+                                    ], style={"paddingLeft": "15px"}),
+                                )
+
+                                #html.H5(id='combination', style={'width': '60vh','margin-left': '1px'}),
+                        ], style={"paddingLeft": "15px"}),
                         ]),
                     ]),
 
@@ -2654,8 +2679,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         df_cog_of_clusters.rename(columns={'ClutserID': 'Cluster'}, inplace=True)
         df_cog_of_clusters["Cluster"] = df_cog_of_clusters["Cluster"].astype(int)
     
-        
-    print(df_cog_of_clusters)
     
 
 
@@ -2663,7 +2686,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     # get only the first COG assigned to a cluster
     df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters.groupby('Cluster').first()
-    print(df_cog_of_clusters_grouped_by_cluster)
 
     #df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters_grouped_by_cluster.astype({"Cluster": int})
     merged_with_cog = pd.merge(df2, df_cog_of_clusters_grouped_by_cluster, how="left", left_on='ClutserID', right_on='Cluster')
@@ -2691,7 +2713,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     nb_coregenes = len(core_df)
     nb_accessory = nb_pangenes - nb_specific_genes - nb_coregenes
 
-    print("Nb specific: "+str(nb_specific_genes))
 
     #################################################
     # pie chart
@@ -2718,7 +2739,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         strain_index+=1
         for number in range(3):
             df_random = df01_only.sample(n=strain_index, axis='columns')
-            print(df_random)
             
             df_random['sum'] = df_random.sum(axis=1)
             # get pangenes: keep only if at least one gene is present
@@ -2849,7 +2869,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
-    print(merged_with_positions.columns)
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
     core_list_dict = core_df_merged_with_positions.to_dict('records')
@@ -2985,10 +3004,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ################
     df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
 
-    print("df_upset")
-    print(df_upset)
-
-    
 
     upset_plot = None
 
@@ -3002,17 +3017,15 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         marker_size=11,
     )
 
-    height = max(
-        500,
-        50 * len(list_sp2)
-    )
     
     upset_plot.update_layout(
-        title_text='Upset plot for accessory genes',
+        title_text='Upset plot of gene content across genomes (only top 30 intersections are displayed)',
         width=2000,
-        height=height,
-
+        height=800
     )
+    df_upset.to_csv(tmp_dir + "/" + str(session) + ".df_upset.csv")
+
+
 
 
     #######################
@@ -3024,7 +3037,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     tab_style_ani = {'display': 'none'}
     if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
         tab_style_ani = tab_style 
-        print(list_sp2)
         df_ANI_selected = df_ANI[df_ANI["Genomes"].isin(list_sp2)]
         df_ANI_selected = df_ANI_selected[list_sp2]
         df_ANI_selected.to_csv("export_ani.tsv")
@@ -3212,7 +3224,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
 
 
-    print("resulats recherche cluster: "+str(len(search_res2)))
     nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
 
     clustersearch = ""
@@ -3223,7 +3234,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # Calculate coordinates of core-genes for macrosynteny
     ############################################################
 
-    print("Number of genes:")
     # remove duplicates from a list
     list_selected = list(dict.fromkeys(list_selected))
     
@@ -3237,12 +3247,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     if len(list_selected) < max_nb_strains_macrosynteny:
         max_nb_strains_macrosynteny = len(list_selected)
 
-    print("Max nb for synteny: " + str(max_nb_strains_macrosynteny))
-    print(list_selected)
 
     
     selection_dir = tmp_dir+"/selection."+str(session)
-    print(selection_dir)
 
     try:
         os.makedirs(selection_dir)
@@ -3285,7 +3292,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     df_macrosynteny = pd.read_csv(tmp_dir + "/" + str(session) + ".syntenic_blocks.txt",sep=',')
     list_of_species_macrosyneny = df_macrosynteny.columns.tolist()
-    print(list_of_species_macrosyneny)
     list_of_species_macrosyneny.remove("num_block")
     list_of_species_macrosyneny.remove("Unnamed: 0")
     graph_macrosynteny = go.Figure()
@@ -5847,6 +5853,28 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "PAV_matrix.xls",sep='\t')
 
 @app.callback(
+    Output("download-dataframe4", "data"),
+    Input("download_table_selected_clusters", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+".selected_clusters.csv",sep='\t')
+    return dcc.send_data_frame(df.to_csv, "selected_clusters.xls",sep='\t')
+
+
+@app.callback(
     Output("download-dataframe3", "data"),
     Input("download_table_geneid", "n_clicks"),
     State("current_session", 'value'),
@@ -5868,17 +5896,32 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "original_matrix.xls",sep='\t')
 
 @app.callback(
-    Output("combination","children"),
-    Input("graph_upset","clickData")
+    Output("table_selected_clusters","rowData"),
+    Input("graph_upset","clickData"),
+    State("current_session", 'value'),
 )
-def f(click):
+def show_cluster_with_combination(click,session):
 
     if click is None:
         return
 
-    combinaison = click["points"][0]["customdata"]
+    combination = click["points"][0]["customdata"]
 
-    return combinaison[0]
+    df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
+    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+
+    mask = pd.Series(
+        list(map(int, combination[0])),
+        index=df_upset.columns
+    )
+
+    selected = (df_upset == mask).all(axis=1)
+    df_selected = df_upset.loc[selected]
+    df_selected = df2[selected]
+    df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+    dictionary = df_selected.to_dict('records')
+
+    return dictionary
 
 
 # Register dashboard callbacks
