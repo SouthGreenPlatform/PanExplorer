@@ -1039,19 +1039,17 @@ def load_project_preview(proj_title):
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='upset_tab_content', children=[
                             html.Br(),
-                            html.Div(className="row", id='upset', children=[
+                            #html.Div(className="row", id='upset', children=[
                                 dcc.Loading(
-                                        #dcc.Graph(id='graph_upset',style={'width': '500vh', 'height': '500vh','padding': '15px'}),
-                                        dcc.Graph(id='graph_upset'),
-                                        
+                                        dcc.Graph(id='graph_upset'),  
                                 ),
-                                
+                                html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 dcc.Loading(
                                     html.Div(children=[
-                                        #html.H5(id='selected_clusters', style={'width': '60vh','margin-left': '1px'}),
+                                        
                                         dag.AgGrid(
                                             id="table_selected_clusters",
-                                            style={'width': '200vh','margin-left': '1px'},
+                                            style={'margin-left': '1px',"paddingRight": "15px"},
                                             rowData=[],
                                             columnDefs=columnDefs5,
                                             defaultColDef={"filter": "agTextColumnFilter"},
@@ -1060,11 +1058,11 @@ def load_project_preview(proj_title):
                                         html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
                                         #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
                                         dcc.Download(id="download-dataframe4"),
-                                    ], style={"paddingLeft": "15px"}),
+                                    ], style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 )
 
                                 #html.H5(id='combination', style={'width': '60vh','margin-left': '1px'}),
-                        ], style={"paddingLeft": "15px"}),
+                        #], style={"paddingLeft": "15px","paddingRight": "15px"}),
                         ]),
                     ]),
 
