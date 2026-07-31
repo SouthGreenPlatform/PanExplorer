@@ -1052,8 +1052,9 @@ def load_project_preview(proj_title):
                                             style={'margin-left': '1px',"paddingRight": "15px"},
                                             rowData=[],
                                             columnDefs=columnDefs5,
-                                            defaultColDef={"filter": "agTextColumnFilter"},
-                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                            defaultColDef={"filter": True},
+                                            #defaultColDef={"filter": "agTextColumnFilter"},
+                                            #dashGridOptions={"pagination": True, "animateRows": False}
                                         ),
                                         html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
                                         #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
@@ -5900,13 +5901,15 @@ def download_matrix(n,session,pathname):
 )
 def show_cluster_with_combination(click,session):
 
-    if click is None:
-        return
-
-    combination = click["points"][0]["customdata"]
 
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+
+    if click is None:
+        dictionary = df2.to_dict('records')
+        return dictionary
+
+    combination = click["points"][0]["customdata"]
 
     mask = pd.Series(
         list(map(int, combination[0])),
