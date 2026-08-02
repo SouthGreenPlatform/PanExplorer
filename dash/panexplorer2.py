@@ -1008,26 +1008,29 @@ def load_project_preview(proj_title):
                                             ]),
                                         ),width=8
                                     ),
-                                    dbc.Col(
-                                        dcc.Loading(
-                                            html.Div(children=[
-                                                html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
-                                                dag.AgGrid(
-                                                            id="genes_cluster",
-                                                            rowData=[],
-                                                            columnDefs=columnDefs4,
-                                                            defaultColDef={"filter": True},
-                                                            #columnSize="sizeToFit",
-                                                            #getRowId="params.data.State",
-                                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                                    ),
-                                                html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
-                                                html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
-                                            ]),
-                                        ),width=4
-                                        
-                                    ),
+                                    
                             ]),
+                            dbc.Row([
+                                dbc.Col(
+                                                                        dcc.Loading(
+                                                                            html.Div(children=[
+                                                                                html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
+                                                                                dag.AgGrid(
+                                                                                            id="genes_cluster",
+                                                                                            rowData=[],
+                                                                                            columnDefs=columnDefs4,
+                                                                                            defaultColDef={"filter": True},
+                                                                                            #columnSize="sizeToFit",
+                                                                                            #getRowId="params.data.State",
+                                                                                            dashGridOptions={"pagination": True, "animateRows": False}
+                                                                                    ),
+                                                                                html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
+                                                                                html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
+                                                                            ]),
+                                                                        ),width=4
+                                                                        
+                                                                    ),
+                            ]),   
                             html.Br(),
                             html.Br(),
                             dcc.Loading(
@@ -1054,7 +1057,7 @@ def load_project_preview(proj_title):
                                             columnDefs=columnDefs5,
                                             defaultColDef={"filter": True},
                                             #defaultColDef={"filter": "agTextColumnFilter"},
-                                            #dashGridOptions={"pagination": True, "animateRows": False}
+                                            dashGridOptions={"pagination": True, "animateRows": False}
                                         ),
                                         html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
                                         #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
@@ -2192,7 +2195,8 @@ def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
         list_strains = get_combination(cluster,pathname,list_of_strains)
 
 
-    
+
+    print(get_combination(cluster,pathname,list_of_strains))
         
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
     return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains
@@ -5535,6 +5539,8 @@ def get_combination(cluster,pathname,list_of_strains):
     list_of_list = []
     nb_presence = 0
     specific_to = []
+
+    combination = []
     for item in mini_df.columns:
         
         if item != 'ClutserID' and item in list_of_strains:
@@ -5545,15 +5551,17 @@ def get_combination(cluster,pathname,list_of_strains):
             
             for gene in genes:
                 if gene == 0:
+                    combination.append("0")
                     keep = False
             if keep:
                 list_genes = ','.join(map(str,genes)) 
                 list = [cluster,item,list_genes]
                 list_of_list.append(list)
+                combination.append("1")
                 nb_presence+=1
                 specific_to.append(str(item))
-
-    
+    sep = ","
+    combinaison = sep.join(combination)
     return specific_to
 
 # Utility: create a session code for a project (admin)
