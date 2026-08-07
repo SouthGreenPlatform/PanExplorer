@@ -854,12 +854,7 @@ def load_project_preview(proj_title):
         ], style={'width': '100%', 'display': 'inline-block'}),
 
     )
-    children.append(
-        dcc.Checklist(
-                id='heatmap_selection',
-                options=[{'label': ' By checking this box, the selection can be done by clicking in the Heatmap: only genomes harboring the clicked gene will be included.', 'value':'heatmap_selection'}],
-            )
-    )
+
     children.append(html.Br())
     children.append(
         dcc.Input(id='current_cluster', type='hidden'),
@@ -879,7 +874,7 @@ def load_project_preview(proj_title):
     #children.append(html.Div(id="update-status"))
 
     children+= [
-        
+        html.Br(),
         html.Button("Update graphes", 
                     id="btn-update", 
                     style={
@@ -1046,7 +1041,8 @@ def load_project_preview(proj_title):
                                 dcc.Loading(
                                         dcc.Graph(id='graph_upset'),  
                                 ),
-                                html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                html.H5("Selected group of clusters", id='nb_of_pangenes2', style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 dcc.Loading(
                                     html.Div(children=[
                                         
@@ -2155,15 +2151,17 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output('genes_cluster', 'rowData'),
     Output("current_cluster",'options'),
     Output("specific_to",'value'),
+    Output("table_pangenes",'rowData'),
+    Output("nb_of_pangenes",'children'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
-    State('heatmap_selection','value'),
+    State("current_session", 'value'),
     #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
+def display_click_data(clickData,metadata_table,projets,url,session):
          
     cluster = 1
     pathname = projets
@@ -2190,16 +2188,26 @@ def display_click_data(clickData,metadata_table,projets,url,heatmap_selection):
     infos_cluster = os.popen(cmd).read().split("\t")
     selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
 
-    list_strains = []
-    if (heatmap_selection and 'heatmap_selection' in heatmap_selection):
-        list_strains = get_combination(cluster,pathname,list_of_strains)
 
-
-
-    print(get_combination(cluster,pathname,list_of_strains))
+    ##########################################
+    # get clusters respecting combination
+    ##########################################
+    list_strains,combination = get_combination(cluster,pathname,list_of_strains)
+    df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
+    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    print(combination)
+    mask = pd.Series(
+        list(map(int, combination)),
+        index=df_upset.columns
+    )
+    selected = (df_upset == mask).all(axis=1)
+    df_selected = df_upset.loc[selected]
+    df_selected = df2[selected]
+    df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+    dictionary_selected = df_selected.to_dict('records')
         
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters"
 
 
 ##########################################
@@ -5560,9 +5568,9 @@ def get_combination(cluster,pathname,list_of_strains):
                 combination.append("1")
                 nb_presence+=1
                 specific_to.append(str(item))
-    sep = ","
+    sep = ""
     combinaison = sep.join(combination)
-    return specific_to
+    return specific_to,combinaison
 
 # Utility: create a session code for a project (admin)
 def generate_session_code_for_project(project_id, hours_valid=24):
@@ -5904,6 +5912,7 @@ def download_matrix(n,session,pathname):
 
 @app.callback(
     Output("table_selected_clusters","rowData"),
+    Output("nb_of_pangenes2",'children'),
     Input("graph_upset","clickData"),
     State("current_session", 'value'),
 )
@@ -5924,13 +5933,14 @@ def show_cluster_with_combination(click,session):
         index=df_upset.columns
     )
 
+
     selected = (df_upset == mask).all(axis=1)
     df_selected = df_upset.loc[selected]
     df_selected = df2[selected]
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary = df_selected.to_dict('records')
 
-    return dictionary
+    return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
 
 
 # Register dashboard callbacks
