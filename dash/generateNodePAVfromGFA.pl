@@ -21,6 +21,7 @@ if (defined $list_individuals && $list_individuals ne "") {
 }
 
 my %paths;
+my $links = 0;
 open(GFA, $gfa_file) or die "Cannot open pangenome.gfa: $!";
 while(<GFA>) {
     chomp;
@@ -30,6 +31,9 @@ while(<GFA>) {
         my $segment_seq = $2;
         my $length = length($segment_seq);
         $node_lengths{$segment_id} = $length;
+    }
+    if (/^L/) {
+        $links++;
     }
     if (/^P\t([^\s]+)\t([^\s]+)\t/){
         my $path_name = $1;
@@ -56,6 +60,10 @@ while(<GFA>) {
     }
 }   
 close(GFA);
+
+open(STATS,">$output_basename.stats.txt");
+print STATS scalar keys(%node_lengths).",$links\n";
+close(STATS);
 
 
 

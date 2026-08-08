@@ -677,7 +677,7 @@ def display_page(pathname):
             html.Hr(),
             html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
         ], style={"padding":"10px"})
-
+        
         return ui
     
 
@@ -779,8 +779,8 @@ def load_project_preview(proj_title):
         return html.Div("Aucun projet sélectionné.")
     row = query_db("SELECT id, title, path, is_public FROM projects WHERE title = ?", (proj_title,), one=True)
 
-    
-    print(proj_title)
+
+
     proj = None
     if not row:
         #return html.Div(f"Project not found in database. {proj_title}")
@@ -889,9 +889,84 @@ def load_project_preview(proj_title):
             dcc.Tabs(id='tab1', style=tabs_styles, children=[
                 
                 dcc.Tab(label='Genes (Pangene Atlas)', style=tab_style, selected_style=tab_selected_style, children=[
+                    
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#3B82F6"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_genomes', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
+                                                    html.Div("Genomes analysed")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#10B981"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_pangenes', style={"fontSize": "42px","fontWeight": "bold","color": "#10B981"}),
+                                                    html.Div("Pangenes (Pangenome size)")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#EF4444"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_coregenes', style={"fontSize": "42px","fontWeight": "bold","color": "#EF4444"}),
+                                                    html.Div("Core-genes")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),      
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#8B5CF6"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_singletons', style={"fontSize": "42px","fontWeight": "bold","color": "#8B5CF6"}),
+                                                    html.Div("Singletons")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                     
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),
+
                     dcc.Tabs(id='tab2', style=tabs_styles, children=[
+
                         
-                    dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[
+                    dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[                        
+
+                                                    
                         html.Div(id='pav_tab_content', children=[
                             
                             
@@ -974,19 +1049,38 @@ def load_project_preview(proj_title):
                             html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
 
                             html.Br(),
-                            dcc.Loading(dcc.Graph(id='PAV_graph')),
+
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='PAV_graph'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                        
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),  
+
+                                                        
                             #html.Br(),
                             #html.Div(className="row", id='titles', children=[
                             #     html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
                             #     dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
                             # ]),
 
-                            
+
+                            html.H5("Pangenes", id="nb_of_selected_clusters"),
                             dbc.Row([
                                     dbc.Col(
                                         dcc.Loading(
                                             html.Div(children=[
-                                                html.H5(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
                                                 html.H5(id="clustersearch", style={'color': 'red'}),
                                                 dag.AgGrid(
                                                         id="table_pangenes",
@@ -1038,9 +1132,26 @@ def load_project_preview(proj_title):
                         html.Div(id='upset_tab_content', children=[
                             html.Br(),
                             #html.Div(className="row", id='upset', children=[
-                                dcc.Loading(
-                                        dcc.Graph(id='graph_upset'),  
-                                ),
+                                
+
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_upset'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                        
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ), 
+
                                 html.H5("Selected group of clusters", id='nb_of_pangenes2', style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 dcc.Loading(
@@ -1070,94 +1181,160 @@ def load_project_preview(proj_title):
                             html.Br(),
                             html.Div(className="row", id='stats2', children=[
                             dcc.Loading(
-                                dbc.Row([
-                                    dbc.Col(
-                                        dcc.Graph(id='graph_gene2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
-                                    ),
-                                    dbc.Col(
-                                        dcc.Graph(id='graph_pie2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
-                                    ),
-                                    dbc.Col(
-                                        dcc.Graph(id='rarefaction2',style={'width': '50vh', 'height': '50vh','padding': '15px'}),
-                                    )
-                                ]),
+
+                                dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_pie2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='rarefaction2'),
+                                                    
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),      
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_gene2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                     
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),                                
                             ),
                         ]),
                     ]),
                     dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Br(),
+
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.Div([
+                                                                                        html.Div([
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#e74205",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Forward genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#1609fd",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Reverse genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#7e099b",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Core-genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': '#2ca02c',
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Strain-specific genes", style={'marginRight': '20px'}),
+                                                                                        ]),
+                                                                                        dash_bio.Circos(
+                                                                                            id="my-dashbio-default-circos",
+                                                                                            layout=[],
+                                                                                            config=layout_config,
+                                                                                            tracks=[
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config1
+                                                                                                    },
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config2
+                                                                                                    },
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config3
+                                                                                                    },
+                                                                                                {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config4
+                                                                                                    }
+                                                                                                ],
+                                                                                        ), 
+                                                                                    ]),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                        
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ), 
+
+
+                                                        
                             #dcc.Loading(dcc.Graph(id='circos_graph')),
                             dcc.Loading(
-                                html.Div([
-                                    html.Div([
-                                            html.Span(style={'display': 'inline-block',
-                                                'width': '10px',
-                                                'height': '10px',
-                                                'backgroundColor': "#e74205",
-                                                'borderRadius': '3px',
-                                                'marginRight': '6px'}),
-                                            html.Span("Forward genes", style={'marginRight': '20px'}),
-                                            html.Span(style={'display': 'inline-block',
-                                                'width': '10px',
-                                                'height': '10px',
-                                                'backgroundColor': "#1609fd",
-                                                'borderRadius': '3px',
-                                                'marginRight': '6px'}),
-                                            html.Span("Reverse genes", style={'marginRight': '20px'}),
-                                            html.Span(style={'display': 'inline-block',
-                                                'width': '10px',
-                                                'height': '10px',
-                                                'backgroundColor': "#7e099b",
-                                                'borderRadius': '3px',
-                                                'marginRight': '6px'}),
-                                            html.Span("Core-genes", style={'marginRight': '20px'}),
-                                            html.Span(style={'display': 'inline-block',
-                                                'width': '10px',
-                                                'height': '10px',
-                                                'backgroundColor': '#2ca02c',
-                                                'borderRadius': '3px',
-                                                'marginRight': '6px'}),
-                                            html.Span("Strain-specific genes", style={'marginRight': '20px'}),
-                                    ]),
-                                    dash_bio.Circos(
-                                        id="my-dashbio-default-circos",
-                                        layout=[],
-                                        config=layout_config,
-                                        tracks=[
-                                                {
-                                                    "type": "HIGHLIGHT",
-                                                    "data": [],
-                                                    "config": highlight_config1
-                                                },
-                                                {
-                                                    "type": "HIGHLIGHT",
-                                                    "data": [],
-                                                    "config": highlight_config2
-                                                },
-                                                {
-                                                    "type": "HIGHLIGHT",
-                                                    "data": [],
-                                                    "config": highlight_config3
-                                                },
-                                            {
-                                                    "type": "HIGHLIGHT",
-                                                    "data": [],
-                                                    "config": highlight_config4
-                                                }
-                                            ],
-                                    ), 
-                                ]),
+                                
                         ),
                     ]),
                     
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='cog_tab_content', children=[
                             html.Br(),
-                            # dcc.Loading(dcc.Graph(id='graph_COG_all')),
-                            # html.Br(),
-                            # dcc.Loading(dcc.Graph(id='graph_COG1')),
-                            # html.Br(),
-                            dcc.Loading(dcc.Graph(id='graph_COG2')),
+
+                            dbc.Row(
+                                    [
+                                        dbc.Col(dbc.Card(
+                                            [
+                                                dbc.CardBody(
+                                                    [
+                                                        dcc.Graph(id='graph_COG2'),
+                                                    ],
+                                                    style={"textAlign": "center"}
+                                                ),
+                                            ],
+                                            style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                        )),                                                                                                      
+                                        
+                                    ],
+                                style= {"padding":"15px"}
+                            ),                                
+                                
+
                             html.Br(),
                             html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
                                         id='submit-enrichment', 
@@ -1226,10 +1403,24 @@ def load_project_preview(proj_title):
                             html.Br(),
                             dbc.Row(
                                 [
-                                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'})
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
                                 ],
-                                align="center",
-                            ),
+                                style= {"padding":"15px"}
+                            ), 
+
+                                                        
+                            
                             html.Br(),
                         ], style={"paddingLeft": "15px"}
                         ),
@@ -1272,7 +1463,81 @@ def load_project_preview(proj_title):
                 ]),
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
                     html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_gfa2',style={'width': '100%', 'height': '50vh','padding': '15px'})),
+
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#3B82F6"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_genomes2', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
+                                                    html.Div("Paths (Genomes analysed)")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#10B981"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_segments', style={"fontSize": "42px","fontWeight": "bold","color": "#10B981"}),
+                                                    html.Div("Segments/Nodes (Pangenome size)")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#EF4444"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_edges', style={"fontSize": "42px","fontWeight": "bold","color": "#EF4444"}),
+                                                    html.Div("Edges/Links")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),      
+                                                                                                                                         
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),
+
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_gfa2')
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                    ),                     
+                    
                     html.Br(),
 
                     # ── Search & Highlight panel ─────────────────────────────────────────
@@ -1589,14 +1854,70 @@ def load_project_preview(proj_title):
                                 ])
                         ]), 
                 dcc.Tab(label='Core-SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
+
+
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#3B82F6"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_genomes3', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
+                                                    html.Div("Genomes analysed")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#10B981"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_snps', style={"fontSize": "42px","fontWeight": "bold","color": "#10B981"}),
+                                                    html.Div("SNPs")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                                                         
+                                ],
+                            style= {"padding":"15px"}
+                            ),
+
                     dcc.Tabs(id='tab3', style=tabs_styles, children=[
                         
                         dcc.Tab(label='Genotyping matrix', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Div(id='genotypingmatrix_tab_content', children=[
                                 html.Br(),
-                                html.H3(id='nb_of_snps', style={'width': '60vh','margin-left': '1px'}),
-                                html.Br(),
-                                dcc.Loading(dcc.Graph(id='VCF_graph')),
+
+                                dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            dcc.Graph(id='VCF_graph')
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),                                                                                                      
+                                                        
+                                        ],
+                                        style= {"padding":"15px"}
+                                ),
+
                             ], style={"paddingLeft": "15px"}
                             ),
                             
@@ -1604,8 +1925,35 @@ def load_project_preview(proj_title):
                         dcc.Tab(label='Population structure', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Div(id='structure_tab_content', children=[
                                 html.Br(),
-                                dcc.Loading(dcc.Graph(id='sNMF',style={'width': '100vh', 'height': '100vh','padding': '15px'})),
-                                dcc.Loading(dcc.Graph(id='sNMF_cross_entropy',style={'width': '100vh', 'height': '50vh','padding': '15px'})),
+
+                                dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            dcc.Graph(id='sNMF')
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),     
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            dcc.Graph(id='sNMF_cross_entropy')
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),                                                                                                                                               
+                                                        
+                                        ],
+                                        style= {"padding":"15px"}
+                                ),
                             ], style={"paddingLeft": "15px"}
                             ),
                         ]),
@@ -1641,7 +1989,24 @@ def load_project_preview(proj_title):
                                         
                                     ],style={'width': '700px'}),
                                 html.Br(),html.Br(),
-                                dcc.Loading(dcc.Graph(id='PCA',style={'width': '100vh', 'height': '50vh','padding': '15px'})),
+                                dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            dcc.Loading(dcc.Graph(id='PCA'))
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),                                                                                                      
+                                                        
+                                        ],
+                                        style= {"padding":"15px"}
+                                ),
+
                             ], style={"paddingLeft": "15px"}
                             ),
                         ]),
@@ -1680,11 +2045,67 @@ def load_project_preview(proj_title):
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Div(id='mlva_tab_content', children=[
                         html.Br(),
-                        dcc.Loading(dcc.Graph(id='graph_mlva'),style={"height": "1500px"}),
+                        dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#3B82F6"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_genomes4', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
+                                                    html.Div("Genomes analysed")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={
+                                                "height": "8px",
+                                                "backgroundColor": "#10B981"
+                                            }),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("158", id='nb_of_vntr', style={"fontSize": "42px","fontWeight": "bold","color": "#10B981"}),
+                                                    html.Div("VNTR loci")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                                                         
+                                ],
+                            style= {"padding":"15px"}
+                            ),
+
+
+                        dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_mlva')
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                        ),                
+                                              
                         html.Button("Download matrix", id="btn-download", n_clicks=0),
                         dcc.Download(id="download-dataframe"),
 
-                        html.H3(id='nb_of_repeats', style={'width': '60vh','margin-left': '1px'}),
+                        
                         dbc.Row([
                             dbc.Col(
                                 dcc.Loading(
@@ -1719,7 +2140,23 @@ def load_project_preview(proj_title):
                 
                 dcc.Tab(label='ANI', id='tab_ani', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
-                    dcc.Loading(dcc.Graph(id='graph_ANI')),
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_ANI')
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                    ),                
                     ]),
                 dcc.Tab(label='Geographical map', id='tab_geo', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Br(),
@@ -2152,7 +2589,7 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("current_cluster",'options'),
     Output("specific_to",'value'),
     Output("table_pangenes",'rowData'),
-    Output("nb_of_pangenes",'children'),
+    Output("nb_of_selected_clusters",'children'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2494,8 +2931,17 @@ def set_reference_value(available_options):
 @app.callback(
         
     Output("update-status", "children"),
+    Output("nb_of_genomes",'children'),
     Output("nb_of_pangenes",'children'),
-    Output('textarea-example-output', 'children'),
+    Output("nb_of_coregenes",'children'),
+    Output("nb_of_singletons",'children'),
+    Output("nb_of_genomes2",'children'),
+    Output("nb_of_segments",'children'),
+    Output("nb_of_edges",'children'),
+    Output("nb_of_vntr",'children'),
+    Output("nb_of_genomes3",'children'),
+    Output("nb_of_snps",'children'),
+    Output("nb_of_genomes4",'children'),
     Output('PAV_graph', 'figure'),
     Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
@@ -2517,13 +2963,12 @@ def set_reference_value(available_options):
     Output("graph_macrosynteny", 'figure'),
     Output('clinker','children'),
     Output('mlva_table', 'rowData'),
-    Output('nb_of_repeats', 'children'),
     Output('graph_mlva', 'figure', allow_duplicate=True),
     Output('PCA','figure'),
     Output('iframe-content', 'src'),
     Output('iframe-snptree', 'src'),
     Output('results', 'style'),
-    Output("nb_of_snps",'children'),
+    
     Output('VCF_graph', 'figure'),
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
@@ -2975,7 +3420,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     df.to_csv(tmp_dir + "/" + str(session) + ".df.csv")
     fig = heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
-    text_stat="Number of genomes: " + str(len(list_sp2)) + ", Pangenome size: " + str(nb_pangenes)+" pan-genes and "+str(nb_coregenes)+" core-genes and "+str(nb_specific_genes)+" strain-specific genes"
+    
     #fig.update_traces(showscale=False)
     fig.update_layout(clickmode='event+select')
 
@@ -3235,8 +3680,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
 
 
-    nb_of_pangenes = "Pan-genes (" + str(nb_pangenes) + ")"
-
     clustersearch = ""
     if len(search_res2) > 1:
         clustersearch = str(len(search_res2)) + " clusters (specifically present in selected strains)"
@@ -3362,7 +3805,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     repeat_names = df_vntr["ID"].astype(str).tolist()
 
     df_vntr.to_csv(tmp_dir + "/" + str(session) + ".vntr_matrix.tsv",sep='\t',index=False)
-    nb_of_repeats = "VNTR loci (" + str(len(repeat_names)) + ")"
+    nb_of_vntr = str(len(repeat_names))
+
 
 
     newdf = df_vntr.drop(["ID","Repeat","Flanking"], axis='columns')
@@ -3424,6 +3868,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         
         vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
+
+        nb_of_snps = str(sum(1 for line in open(vcf_file)) - 1)
 
         # make bed
         cmd_args = [
@@ -3487,7 +3933,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         from skbio.tree import nj
 
         if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id") and os.path.exists(vcf_file):
-            nb_of_snps = "SNPs (" + str(sum(1 for line in open(vcf_file)) - 1) + ")"
+            
 
             # Charger les identifiants
             ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
@@ -3812,6 +4258,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     gfa_file = directory+"/pangenome.gfa"
     graph_gfa = go.Figure()
     graph_gfa2 = go.Figure()
+    nb_segments = 0
+    nb_links = 0
     if os.path.exists(gfa_file) and os.path.getsize(gfa_file) > 0:
 
         tab_style_segments = tab_style  
@@ -3824,6 +4272,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             ",".join(list_sp2)
         ]
         subprocess.run(cmd_args, capture_output=True)
+
+        with open(tmp_dir +"/"+str(session) + "." + str(reference)+".segments.stats.txt",'r') as file:
+            for line in file:
+                infos = line.split(",")
+                nb_segments = infos[0]
+                nb_links = infos[1]
 
 
         x_segments = []
@@ -4074,8 +4528,11 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
+
+    nb_genomes = str(len(list_sp2))
+
     
-    return "",nb_of_pangenes,text_stat,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, nb_of_repeats, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, nb_of_snps, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
 
 ############################################
 # Disable button during loading
