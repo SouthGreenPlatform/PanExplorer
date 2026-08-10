@@ -1069,62 +1069,197 @@ def load_project_preview(proj_title):
                             ),  
 
                                                         
-                            #html.Br(),
-                            #html.Div(className="row", id='titles', children=[
-                            #     html.H3(id='nb_of_pangenes', style={'width': '60vh','margin-left': '1px'}),
-                            #     dcc.Loading(html.H3(id='selected_cluster', style={'width': '60vh','margin-left': '1px'})),
-                            # ]),
-
-
-                            html.H5("Pangenes", id="nb_of_selected_clusters"),
-                            dbc.Row([
+                            dbc.Row(
+                                [
                                     dbc.Col(
-                                        dcc.Loading(
-                                            html.Div(children=[
-                                                html.H5(id="clustersearch", style={'color': 'red'}),
-                                                dag.AgGrid(
-                                                        id="table_pangenes",
-                                                        rowData=[],
-                                                        defaultColDef={"filter": "agTextColumnFilter"},
-                                                        #getRowId="params.data.State",
-                                                        dashGridOptions={"pagination": True, "animateRows": False}
-                                                ),
-                                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                                                html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
-                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
-                                                dcc.Download(id="download-dataframe2"),
-                                                dcc.Download(id="download-dataframe3"),
-                                            ]),
-                                        ),width=8
-                                    ),
-                                    
-                            ]),
-                            dbc.Row([
-                                dbc.Col(
-                                                                        dcc.Loading(
-                                                                            html.Div(children=[
-                                                                                html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
-                                                                                dag.AgGrid(
-                                                                                            id="genes_cluster",
-                                                                                            rowData=[],
-                                                                                            columnDefs=columnDefs4,
-                                                                                            defaultColDef={"filter": True},
-                                                                                            #columnSize="sizeToFit",
-                                                                                            #getRowId="params.data.State",
-                                                                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                                                                    ),
-                                                                                html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
-                                                                                html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
-                                                                            ]),
-                                                                        ),width=4
-                                                                        
-                                                                    ),
-                            ]),   
-                            html.Br(),
-                            html.Br(),
-                            dcc.Loading(
-                                            html.Div(id='default-alignment-viewer-output')
+                                        dbc.Card(
+                                            [
+                                                dbc.CardBody(
+                                                    [
+                                                        
+                                                        html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
+                                                        dcc.Loading(dag.AgGrid(
+                                                                                                id="genes_cluster",
+                                                                                                rowData=[],
+                                                                                                columnDefs=columnDefs4,
+                                                                                                defaultColDef={"filter": True},
+                                                                                                style={'width': '80vh','margin-left': '1px'},
+                                                                                                dashGridOptions={"pagination": True, "animateRows": False}
+                                                                                            )),
+                                                        html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
+                                                        html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),   
+                                                    ],
+                                                    
+                                                )
+                                            ],
+                                            style={
+                                                    "padding": "0",
+                                                    "backgroundColor": "transparent",
+                                                    "border": "none",
+                                            }
                                         ),
+                                        width=6
+                                    ),
+
+                                    dbc.Col(
+                                        dbc.Card(
+                                            [
+                                                dbc.CardBody(
+                                                    [
+                                                        dcc.Loading(html.Div(id='default-alignment-viewer-output'))
+                                                        
+                                                    ],
+                                                    style={
+                                                        "padding": "20px"
+                                                    }
+                                                )
+                                            ],
+                                            style={
+                                                "border": "none",
+                                                "borderRadius": "16px",
+                                                "overflow": "hidden",
+                                                "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
+                                                "height": "100%"
+                                            }
+                                        ),
+                                        width=6
+                                    )
+                                ],
+                                className="g-4",
+                                style={
+                                    "margin": "0"
+                                }
+                            ),   
+
+                            dcc.Tooltip(
+                                id="circos-tooltip",
+                                style={
+                                    "backgroundColor": "white",
+                                    "border": "1px solid #ccc",
+                                    "borderRadius": "5px",
+                                    "padding": "8px",
+                                    "boxShadow": "0 2px 8px rgba(0,0,0,0.15)",
+                                },
+                            ),                       
+                            
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                         dbc.Card(
+                                             [
+                                                 dbc.CardBody(
+                                                     [
+                                                        dcc.Loading(
+                                                            html.Div(children=[
+                                                                html.H5(id="clustersearch", style={'color': 'red'}),
+                                                                html.H5("Pangenes", id="nb_of_selected_clusters"),
+                                                                dag.AgGrid(
+                                                                        id="table_pangenes",
+                                                                        rowData=[],
+                                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                                        style={'width': '80vh',"height": '800px','margin-left': '1px'},
+                                                                        #getRowId="params.data.State",
+                                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                                ),
+                                                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
+                                                                html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
+                                                                html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
+                                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
+                                                                dcc.Download(id="download-dataframe2"),
+                                                                dcc.Download(id="download-dataframe3"),
+                                                            ]),
+                                                        )                                                       
+                                                     ],
+                                                     
+                                                 )
+                                             ],
+                                             style={
+                                                     "padding": "0",
+                                                     "backgroundColor": "transparent",
+                                                     "border": "none",
+                                             }
+                                         ),
+                                         width=6
+                                     ),                                   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.Div([
+                                                                                        html.Div([
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#e74205",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Forward genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#1609fd",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Reverse genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': "#7e099b",
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Core-genes", style={'marginRight': '20px'}),
+                                                                                                html.Span(style={'display': 'inline-block',
+                                                                                                    'width': '10px',
+                                                                                                    'height': '10px',
+                                                                                                    'backgroundColor': '#2ca02c',
+                                                                                                    'borderRadius': '3px',
+                                                                                                    'marginRight': '6px'}),
+                                                                                                html.Span("Strain-specific genes", style={'marginRight': '20px'}),
+                                                                                        ]),
+                                                                                        dash_bio.Circos(
+                                                                                            id="my-dashbio-default-circos",
+                                                                                            layout=[],
+                                                                                            config=layout_config,
+                                                                                            selectEvent={ "0": "click", "1": "click", "2": "click", "3": "click"},
+                                                                                            style={
+                                                                                                "height": "800px"
+                                                                                            },
+                                                                                            tracks=[
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config1
+                                                                                                    },
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config2
+                                                                                                    },
+                                                                                                    {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config3
+                                                                                                    },
+                                                                                                {
+                                                                                                        "type": "HIGHLIGHT",
+                                                                                                        "data": [],
+                                                                                                        "config": highlight_config4
+                                                                                                    }
+                                                                                                ],
+                                                                                        ), 
+                                                                                    ]),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                        
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),                            
+                 
+                                    
                         ], style={"paddingLeft": "15px"}
                         ),
                     ]),
@@ -1199,7 +1334,7 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Graph(id='rarefaction2'),
+                                                    dcc.Graph(id='graph_gene2'),
                                                     
                                                 ],
                                                 style={"textAlign": "center"}
@@ -1211,7 +1346,7 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Graph(id='graph_gene2'),
+                                                    dcc.Graph(id='rarefaction2'),
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -1225,92 +1360,7 @@ def load_project_preview(proj_title):
                             ),
                         ]),
                     ]),
-                    dcc.Tab(label='Circos', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-
-                            dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    html.Div([
-                                                                                        html.Div([
-                                                                                                html.Span(style={'display': 'inline-block',
-                                                                                                    'width': '10px',
-                                                                                                    'height': '10px',
-                                                                                                    'backgroundColor': "#e74205",
-                                                                                                    'borderRadius': '3px',
-                                                                                                    'marginRight': '6px'}),
-                                                                                                html.Span("Forward genes", style={'marginRight': '20px'}),
-                                                                                                html.Span(style={'display': 'inline-block',
-                                                                                                    'width': '10px',
-                                                                                                    'height': '10px',
-                                                                                                    'backgroundColor': "#1609fd",
-                                                                                                    'borderRadius': '3px',
-                                                                                                    'marginRight': '6px'}),
-                                                                                                html.Span("Reverse genes", style={'marginRight': '20px'}),
-                                                                                                html.Span(style={'display': 'inline-block',
-                                                                                                    'width': '10px',
-                                                                                                    'height': '10px',
-                                                                                                    'backgroundColor': "#7e099b",
-                                                                                                    'borderRadius': '3px',
-                                                                                                    'marginRight': '6px'}),
-                                                                                                html.Span("Core-genes", style={'marginRight': '20px'}),
-                                                                                                html.Span(style={'display': 'inline-block',
-                                                                                                    'width': '10px',
-                                                                                                    'height': '10px',
-                                                                                                    'backgroundColor': '#2ca02c',
-                                                                                                    'borderRadius': '3px',
-                                                                                                    'marginRight': '6px'}),
-                                                                                                html.Span("Strain-specific genes", style={'marginRight': '20px'}),
-                                                                                        ]),
-                                                                                        dash_bio.Circos(
-                                                                                            id="my-dashbio-default-circos",
-                                                                                            layout=[],
-                                                                                            config=layout_config,
-                                                                                            tracks=[
-                                                                                                    {
-                                                                                                        "type": "HIGHLIGHT",
-                                                                                                        "data": [],
-                                                                                                        "config": highlight_config1
-                                                                                                    },
-                                                                                                    {
-                                                                                                        "type": "HIGHLIGHT",
-                                                                                                        "data": [],
-                                                                                                        "config": highlight_config2
-                                                                                                    },
-                                                                                                    {
-                                                                                                        "type": "HIGHLIGHT",
-                                                                                                        "data": [],
-                                                                                                        "config": highlight_config3
-                                                                                                    },
-                                                                                                {
-                                                                                                        "type": "HIGHLIGHT",
-                                                                                                        "data": [],
-                                                                                                        "config": highlight_config4
-                                                                                                    }
-                                                                                                ],
-                                                                                        ), 
-                                                                                    ]),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                        
-                                    
-                                ],
-                            style= {"padding":"15px"}
-                            ), 
-
-
-                                                        
-                            #dcc.Loading(dcc.Graph(id='circos_graph')),
-                            dcc.Loading(
-                                
-                        ),
-                    ]),
+                    
                     
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='cog_tab_content', children=[
@@ -2233,9 +2283,9 @@ def display_alignment(display_alignment,current_cluster,metadata_table,projets,s
     fig = dash_bio.AlignmentChart(
         id='alignment',
         data=data,
-        height=600,
+        height=400,
         tilewidth=30,
-        width=1800
+        #width=1800
     ),
     return fig
 
@@ -2590,15 +2640,20 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("specific_to",'value'),
     Output("table_pangenes",'rowData'),
     Output("nb_of_selected_clusters",'children'),
+    Output('default-alignment-viewer-output', 'children'),
+    Output("my-dashbio-default-circos", "layout"),
+    Output("my-dashbio-default-circos", "tracks"),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
     State("current_session", 'value'),
+    State("my-dashbio-default-circos", "layout"),
+    State("my-dashbio-default-circos", "tracks"),
     #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url,session):
+def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks):
          
     cluster = 1
     pathname = projets
@@ -2642,9 +2697,11 @@ def display_click_data(clickData,metadata_table,projets,url,session):
     df_selected = df2[selected]
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
-        
+
+    current_layout = []
+    current_tracks = []
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters"
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters", None, current_layout, current_tracks
 
 
 ##########################################
@@ -2654,6 +2711,7 @@ def display_click_data(clickData,metadata_table,projets,url,session):
     Output('selected_cluster', 'children', allow_duplicate=True),
     Output('genes_cluster', 'rowData', allow_duplicate=True),
     Output("current_cluster",'options', allow_duplicate=True),
+    Output('default-alignment-viewer-output', 'children', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2669,7 +2727,6 @@ def display_click_data(cell,metadata_table,projets,url):
     list_of_strains = []
 
     if metadata_table:
-        print("ok")
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
         for strain in wjdata1:
             strain_name = strain['Strain name']
@@ -2684,7 +2741,52 @@ def display_click_data(cell,metadata_table,projets,url):
         selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
         
         #return selected_cluster,dictionary, data, [{'label': str(cluster), 'value': str(cluster)}]
+        return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],None
+
+
+    else:
+        #return "",[],"",[]
+        return "",[],[],None
+
+
+##########################################
+# when clicking in the circos
+##########################################
+@app.callback(
+    Output('selected_cluster', 'children', allow_duplicate=True),
+    Output('genes_cluster', 'rowData', allow_duplicate=True),
+    Output("current_cluster",'options', allow_duplicate=True),
+    Input('metadata_table','selectedRows'),
+    Input("my-dashbio-default-circos", "eventDatum"),
+    State('projets', 'value'),
+    State('url','hash'),
+    prevent_initial_call=True
+)
+def display_click_data(metadata_table,event_circos,projets,url):
+         
+    pathname = projets
+    if url:
+        pathname=url
+    cluster = 1
+    list_of_strains = []
+
+    if metadata_table:
+        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata1:
+            strain_name = strain['Strain name']
+            list_of_strains.append(strain_name)  
+
+    if event_circos:
+        cluster = event_circos['name']
+        print(cluster)
+        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
+        
+        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
+        infos_cluster = os.popen(cmd).read().split("\t")
+        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
+                
         return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}]
+
     else:
         #return "",[],"",[]
         return "",[],[]
@@ -3339,7 +3441,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     #specific_df_merged_with_positions.to_csv(directory+"/specific.txt",index=False,sep='\t')
     
-    fig_gene = px.histogram(df2, x="sum")
+    fig_gene = px.histogram(df2, x="sum", title='Gene clusters frequency distribution')
 
     cog_enrichment_style = {"visibility": "hidden"}
     #################################################
@@ -6367,6 +6469,8 @@ def download_matrix(n,session,pathname):
     df = pd.read_csv(directory+ "/1.Orthologs_Cluster.txt",sep='\t')
     return dcc.send_data_frame(df.to_csv, "original_matrix.xls",sep='\t')
 
+
+
 @app.callback(
     Output("table_selected_clusters","rowData"),
     Output("nb_of_pangenes2",'children'),
@@ -6398,6 +6502,21 @@ def show_cluster_with_combination(click,session):
     dictionary = df_selected.to_dict('records')
 
     return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
+
+##############################################
+# Tooltip Circos
+##############################################
+# @app.callback(
+#     Output("circos-tooltip", "children"),
+#     Input("my-dashbio-default-circos", "eventDatum"),
+# )
+# def update_circos_tooltip(event):
+
+#     if not event:
+#         return ""
+
+#     print(event)
+#     return ""
 
 
 # Register dashboard callbacks
