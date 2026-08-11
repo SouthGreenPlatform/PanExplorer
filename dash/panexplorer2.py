@@ -1214,9 +1214,9 @@ def load_project_preview(proj_title):
                                                                                                     'backgroundColor': '#2ca02c',
                                                                                                     'borderRadius': '3px',
                                                                                                     'marginRight': '6px'}),
-                                                                                                html.Span("Strain-specific genes", style={'marginRight': '20px'}),
+                                                                                                html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
                                                                                         ]),
-                                                                                        dash_bio.Circos(
+                                                                                        dcc.Loading(dash_bio.Circos(
                                                                                             id="my-dashbio-default-circos",
                                                                                             layout=[],
                                                                                             config=layout_config,
@@ -1246,7 +1246,7 @@ def load_project_preview(proj_title):
                                                                                                         "config": highlight_config4
                                                                                                     }
                                                                                                 ],
-                                                                                        ), 
+                                                                                        )), 
                                                                                     ]),
                                                 ],
                                                 style={"textAlign": "center"}
@@ -2329,6 +2329,27 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
     return fig
 
 #############################################################
+# Callback for circos viewer
+#############################################################
+#@app.callback(
+#     #Output("my-dashbio-default-circos", "layout"),
+#     Output("my-dashbio-default-circos", "tracks"),
+#     Output('default-alignment-viewer-output', 'children'),
+#     Input('display_circos', 'n_clicks'),
+#     # State('metadata_table','selectedRows'),
+#     # State('projets', 'value'),
+#     # State('current_session', 'value'),
+#     #State("my-dashbio-default-circos", "layout"),
+#     #State("my-dashbio-default-circos", "tracks"),
+# )
+
+# def display_circos(display_circos): #metadata_table,projets,session):
+    
+#     print(display_circos)
+    
+#     return None,None
+
+#############################################################
 # Callback for node selection from heatmap
 #############################################################
 @app.callback(
@@ -2643,6 +2664,7 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output('default-alignment-viewer-output', 'children'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
+    Output("circos_legend", 'children'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2650,10 +2672,11 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     State("current_session", 'value'),
     State("my-dashbio-default-circos", "layout"),
     State("my-dashbio-default-circos", "tracks"),
+    State("reference",'value')
     #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks):
+def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference):
          
     cluster = 1
     pathname = projets
@@ -2698,10 +2721,19 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
 
-    current_layout = []
-    current_tracks = []
+
+    ##########################################
+    # update circos
+    ##########################################
+    df_merged_with_positions = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv", index_col=0)
+    merged_with_positions = pd.merge(df_selected, df_merged_with_positions, left_on='ClutserID', right_on='name')
+    merged_with_positions = merged_with_positions[['name','block_id','start', 'end','color','Strand']]
+    dict_list_genes = merged_with_positions.to_dict('records')
+
+    current_tracks[3].update(data=dict_list_genes,type="HIGHLIGHT",config=highlight_config4)
+
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters", None, current_layout, current_tracks
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters", None, current_layout, current_tracks, ["Selected group of clusters"]
 
 
 ##########################################
@@ -3361,7 +3393,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
-    
+
+    print("ok0")
     #################################################
     # manage Circos
     #################################################
@@ -3395,6 +3428,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         simplified_df_matrix[[reference]] = simplified_df_matrix[reference].str.extract('([^,]+),*', expand=True)
 
         merged_with_positions = pd.merge(simplified_df_matrix, df_gene_positons, left_on=reference, right_on='PID')
+        
         #merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=reference, right_on='PID')
 
 
@@ -3527,7 +3561,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     fig.update_layout(clickmode='event+select')
 
 
-
+    print("ok1")
 
 ###################
 # TODO: pour ajouter legende sur le circos
@@ -3677,6 +3711,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
 
 
+    print("ok2")
+
     ##############################
     # KEGG graphes
     ##############################
@@ -3804,7 +3840,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         max_nb_strains_macrosynteny = len(list_selected)
 
 
-    
+    print("ok3")
+
     selection_dir = tmp_dir+"/selection."+str(session)
 
     try:
@@ -3931,6 +3968,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_selected.remove("Flanking")
     with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
         f.write("\n".join(list_selected) + "\n")
+
+    print("ok4")
 
     ##############################################################################################
     # SNP
@@ -4218,7 +4257,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                 list_keys_to_removed = []
                 for key in dict_renaming.keys():
                     value = dict_renaming[key]
-                    print("key: " + key + " => " + value)
                     list_values = value.split(",")
                     
                     if len(list_values) > 1:
@@ -4226,7 +4264,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
                         for val in list_values:
                             print("val: " + val)
                             if val not in dict_done:
-                                print("to be adjusted :" + val + "=>" + key)
                                 has_been_adjusted = 1
                                 dict_renaming[key] = val
                         if has_been_adjusted == 0:
@@ -4409,9 +4446,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         for key in dict_segments_x.keys():
             if key in dict_segments_y:
                 sample = key
-                print("key: " + key)
                 x_segments = dict_segments_x[key].split(",")
-                print(x_segments)
                 for i in range(0, len(x_segments)):
                     if x_segments[i] != 'None':
                         x_segments[i] = int(x_segments[i])
