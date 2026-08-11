@@ -3160,6 +3160,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     session = str(uuid.uuid4())
 
+    print("Initialisation of dataframes")
+
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
     df.to_csv("exportdf.csv")    
     list_of_lists = []
@@ -3249,6 +3251,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     ##############################################
     # Generate Core-gene and accessory files
     ##############################################
+    print("Generate Core-gene and accessory files")
     with open(directory+"/cog_of_clusters.2.txt", "w") as out:
         subprocess.run(
             ["awk" , "{print $1\"\t\"$2\"\t\"$3}", directory+"/cog_of_clusters.txt"],
@@ -3318,30 +3321,33 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # Generate rarefaction curve. Takes randomly N columns from dataframe
     # and counts number of pan- and core-genes
     ####################################################################
+    print("Generate rarefaction curve")
     strain_index = 0
     df01_only = df[list_sp2]
     
     list1 = []
     list2 = []
     list3 = []
-    
-    for strain in list_sp2:
-        strain_index+=1
-        for number in range(3):
-            df_random = df01_only.sample(n=strain_index, axis='columns')
-            
-            df_random['sum'] = df_random.sum(axis=1)
-            # get pangenes: keep only if at least one gene is present
-            df_random = df_random[df_random["sum"] > 0]
-            n_pangenes = len(df_random)
-            df_random = df_random[df_random["sum"] == strain_index]
-            n_coregenes = len(df_random)
-            list1.append(str(strain_index))
-            list1.append(str(strain_index))
-            list2.append(str(n_pangenes))
-            list2.append(str(n_coregenes))
-            list3.append("Pan-genes")
-            list3.append("Core-genes")
+
+    # compute only for small datasets (otherwise it is too long to compute)
+    if len(list_sp2) < 60:
+        for strain in list_sp2:
+            strain_index+=1
+            for number in range(3):
+                df_random = df01_only.sample(n=strain_index, axis='columns')
+                
+                df_random['sum'] = df_random.sum(axis=1)
+                # get pangenes: keep only if at least one gene is present
+                df_random = df_random[df_random["sum"] > 0]
+                n_pangenes = len(df_random)
+                df_random = df_random[df_random["sum"] == strain_index]
+                n_coregenes = len(df_random)
+                list1.append(str(strain_index))
+                list1.append(str(strain_index))
+                list2.append(str(n_pangenes))
+                list2.append(str(n_coregenes))
+                list3.append("Pan-genes")
+                list3.append("Core-genes")
 
     data = {'Number strains': list1,'Number genes': list2,"Type": list3}
     df_rarefaction = pd.DataFrame(data)
