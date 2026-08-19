@@ -213,22 +213,22 @@ stack_config = {
 highlight_config1 = {
     "innerRadius": 330,
     "outerRadius": 350,
-    "color": "blue",
+    "color": "#20A277",
 }
 highlight_config2 = {
     "innerRadius": 300,
     "outerRadius": 320,
-    "color": "red",
+    "color": "#4be950",
 }
 highlight_config3 = {
     "innerRadius": 260,
     "outerRadius": 280,
-    "color": "purple",
+    "color": "red",
 }
 highlight_config4 = {
     "innerRadius": 230,
     "outerRadius": 250,
-    "color": "green",
+    "color": "purple",
 }
 columnDefs = [
     {
@@ -1056,17 +1056,25 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Graph(id='PAV_graph'),
+                                                    #dcc.Graph(id='PAV_graph',config={"displayModeBar": True,"modeBarButtonsToAdd": ["fullscreen"]}),
+                                                    fullscreen_graph("PAV_graph",height="600px"),
+                                                                                                      
+                                                    #html.A("🔎 Ouvrir en grand",href="/graph1",target="_blank")
+
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
+                                                                                      
                                         ],
                                         style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                        
-                                    
+                                    )),                                                                                                                                          
                                 ],
                             style= {"padding":"15px"}
                             ),  
+                            html.Button("Download PAV matrix", id="download_table", className="thin-button", n_clicks=0),
+                            html.Button("Download PAV matrix with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
+                            dcc.Download(id="download-dataframe2"),
+                            dcc.Download(id="download-dataframe3"),                               
 
                                                         
                             dbc.Row(
@@ -1130,17 +1138,7 @@ def load_project_preview(proj_title):
                                     "margin": "0"
                                 }
                             ),   
-
-                            dcc.Tooltip(
-                                id="circos-tooltip",
-                                style={
-                                    "backgroundColor": "white",
-                                    "border": "1px solid #ccc",
-                                    "borderRadius": "5px",
-                                    "padding": "8px",
-                                    "boxShadow": "0 2px 8px rgba(0,0,0,0.15)",
-                                },
-                            ),                       
+                       
                             
                             dbc.Row(
                                 [
@@ -1152,21 +1150,39 @@ def load_project_preview(proj_title):
                                                         dcc.Loading(
                                                             html.Div(children=[
                                                                 html.H5(id="clustersearch", style={'color': 'red'}),
-                                                                html.H5("Pangenes", id="nb_of_selected_clusters"),
+                                                                html.H5("Core-genes", id="nb_of_selected_clusters", style={'color': 'red'}),
                                                                 dag.AgGrid(
                                                                         id="table_pangenes",
                                                                         rowData=[],
                                                                         defaultColDef={"filter": "agTextColumnFilter"},
-                                                                        style={'width': '80vh',"height": '800px','margin-left': '1px'},
+                                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
                                                                         #getRowId="params.data.State",
                                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                                 ),
-                                                                html.Button("Download table", id="download_table", className="thin-button", n_clicks=0),
-                                                                html.Button("Download table with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
-                                                                html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
+                                                                
+                                                                #html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
                                                                 html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
-                                                                dcc.Download(id="download-dataframe2"),
-                                                                dcc.Download(id="download-dataframe3"),
+
+                                                                # html.H5("Accessory genes", id='nb_of_selected_clusters2', style={'color': 'purple'}),
+                                                                # dag.AgGrid(
+                                                                #         id="table_accessory",
+                                                                #         rowData=[],
+                                                                #         defaultColDef={"filter": "agTextColumnFilter"},
+                                                                #         style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                                #         dashGridOptions={"pagination": True, "animateRows": False}
+                                                                # ),
+                                                                # html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
+                                                                # dcc.Download(id="download-dataframe5"),
+                                                                html.H5("Singletons / specific genes", id='nb_of_selected_clusters2', style={'color': 'purple'}),
+                                                                dag.AgGrid(
+                                                                        id="table_accessory",
+                                                                        rowData=[],
+                                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                                ),
+                                                                
+                                                                
                                                             ]),
                                                         )                                                       
                                                      ],
@@ -1190,28 +1206,28 @@ def load_project_preview(proj_title):
                                                                                                 html.Span(style={'display': 'inline-block',
                                                                                                     'width': '10px',
                                                                                                     'height': '10px',
-                                                                                                    'backgroundColor': "#e74205",
+                                                                                                    'backgroundColor': "#20A277",
                                                                                                     'borderRadius': '3px',
                                                                                                     'marginRight': '6px'}),
                                                                                                 html.Span("Forward genes", style={'marginRight': '20px'}),
                                                                                                 html.Span(style={'display': 'inline-block',
                                                                                                     'width': '10px',
                                                                                                     'height': '10px',
-                                                                                                    'backgroundColor': "#1609fd",
+                                                                                                    'backgroundColor': "#4be950",
                                                                                                     'borderRadius': '3px',
                                                                                                     'marginRight': '6px'}),
                                                                                                 html.Span("Reverse genes", style={'marginRight': '20px'}),
                                                                                                 html.Span(style={'display': 'inline-block',
                                                                                                     'width': '10px',
                                                                                                     'height': '10px',
-                                                                                                    'backgroundColor': "#7e099b",
+                                                                                                    'backgroundColor': "#e31a1a",
                                                                                                     'borderRadius': '3px',
                                                                                                     'marginRight': '6px'}),
-                                                                                                html.Span("Core-genes", style={'marginRight': '20px'}),
+                                                                                                html.Span("Core-genes", id="circos_legend2", style={'marginRight': '20px'}),
                                                                                                 html.Span(style={'display': 'inline-block',
                                                                                                     'width': '10px',
                                                                                                     'height': '10px',
-                                                                                                    'backgroundColor': '#2ca02c',
+                                                                                                    'backgroundColor': '#7e099b',
                                                                                                     'borderRadius': '3px',
                                                                                                     'marginRight': '6px'}),
                                                                                                 html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
@@ -1263,6 +1279,36 @@ def load_project_preview(proj_title):
                         ], style={"paddingLeft": "15px"}
                         ),
                     ]),
+                    # dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
+                    #         dbc.Row(
+                    #             [
+                    #                 dbc.Col(dbc.Card(
+                    #                     [
+                    #                         dbc.CardBody(
+                    #                             [
+                    #                                 dcc.Graph(id='graph_upset'),
+                    #                             ],
+                    #                             style={"textAlign": "center"}
+                    #                         ),
+                    #                     ],
+                    #                     style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                    #                 )),                                                                                                        
+                                    
+                    #             ],
+                    #         style= {"padding":"15px"}
+                    #         ), 
+                    #         html.H5("Selected group of clusters", id='nb_of_pangenes2', style={"paddingLeft": "15px","paddingRight": "15px"}),
+                    #         dag.AgGrid(
+                    #                         id="table_selected_clusters3",
+                    #                         style={'margin-left': '1px',"paddingRight": "15px"},
+                    #                         rowData=[],
+                    #                         columnDefs=columnDefs5,
+                    #                         defaultColDef={"filter": True},
+                    #                         #defaultColDef={"filter": "agTextColumnFilter"},
+                    #                         dashGridOptions={"pagination": True, "animateRows": False}
+                    #                     ),                            
+
+                    # ]),
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='upset_tab_content', children=[
                             html.Br(),
@@ -1291,9 +1337,8 @@ def load_project_preview(proj_title):
                                 #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 dcc.Loading(
                                     html.Div(children=[
-                                        
                                         dag.AgGrid(
-                                            id="table_selected_clusters",
+                                            id="table_selected_clusters3",
                                             style={'margin-left': '1px',"paddingRight": "15px"},
                                             rowData=[],
                                             columnDefs=columnDefs5,
@@ -1305,7 +1350,7 @@ def load_project_preview(proj_title):
                                         #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
                                         dcc.Download(id="download-dataframe4"),
                                     ], style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                )
+                                ),
 
                                 #html.H5(id='combination', style={'width': '60vh','margin-left': '1px'}),
                         #], style={"paddingLeft": "15px","paddingRight": "15px"}),
@@ -2661,10 +2706,14 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("specific_to",'value'),
     Output("table_pangenes",'rowData'),
     Output("nb_of_selected_clusters",'children'),
+    Output("table_accessory",'rowData'),
+    Output("nb_of_selected_clusters2",'children'),
     Output('default-alignment-viewer-output', 'children'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
     Output("circos_legend", 'children'),
+    Output("circos_legend2", 'children'),
+    Output('PAV_graph', 'figure'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2672,11 +2721,18 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     State("current_session", 'value'),
     State("my-dashbio-default-circos", "layout"),
     State("my-dashbio-default-circos", "tracks"),
-    State("reference",'value')
+    State("reference",'value'),
+    State('projets', 'value'),
+    State('ordering', 'value'),
+    State('sample_ordering', 'value'),
+    State('colorizing', 'value'),
+    State('highlight', 'value'),
+    State('cluster_search','value'),
+    State('bedfile','value'),
     #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference):
+def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,sample_ordering,colorizing,highlight,cluster_search,bedfile):
          
     cluster = 1
     pathname = projets
@@ -2707,10 +2763,9 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     ##########################################
     # get clusters respecting combination
     ##########################################
-    list_strains,combination = get_combination(cluster,pathname,list_of_strains)
+    list_strains,combination,combination_opposite = get_combination(cluster,pathname,list_of_strains)
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
-    print(combination)
     mask = pd.Series(
         list(map(int, combination)),
         index=df_upset.columns
@@ -2721,6 +2776,18 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
 
+    ##########################################
+    # get clusters respecting opposite combination
+    ##########################################
+    mask_opposite = pd.Series(
+        list(map(int, combination_opposite)),
+        index=df_upset.columns
+    )
+    selected = (df_upset == mask_opposite).all(axis=1)
+    df_selected_opposite = df_upset.loc[selected]
+    df_selected_opposite = df2[selected]
+    df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+    dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
 
     ##########################################
     # update circos
@@ -2729,11 +2796,17 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     merged_with_positions = pd.merge(df_selected, df_merged_with_positions, left_on='ClutserID', right_on='name')
     merged_with_positions = merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     dict_list_genes = merged_with_positions.to_dict('records')
+    current_tracks[2].update(data=dict_list_genes,type="HIGHLIGHT",config=highlight_config3)
 
+    merged_with_positions = pd.merge(df_selected_opposite, df_merged_with_positions, left_on='ClutserID', right_on='name')
+    merged_with_positions = merged_with_positions[['name','block_id','start', 'end','color','Strand']]
+    dict_list_genes = merged_with_positions.to_dict('records')
     current_tracks[3].update(data=dict_list_genes,type="HIGHLIGHT",config=highlight_config4)
 
+    fig = heatmap_PAV(proj_title,session,list_strains,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Selected group of clusters: "+str(len(dictionary_selected))+ " clusters", None, current_layout, current_tracks, ["Selected group of clusters"]
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],fig
 
 
 ##########################################
@@ -3080,6 +3153,8 @@ def set_reference_value(available_options):
     Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
     Output('table_pangenes','columnDefs'),
+    Output('table_accessory', 'rowData'),
+    Output('table_accessory','columnDefs'),
         #Output('datatable-paging','srcDoc'),
     Output('graph_ANI', 'figure'),
     Output('graph_gene2', 'figure'),
@@ -4635,7 +4710,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         )
 
 
-
+    print("ok5")
     
     ##############################################################################################
     # merge main cluster table and cluster search in order to report the same columns
@@ -4674,8 +4749,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     nb_genomes = str(len(list_sp2))
 
-    
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
+    print("ok6")
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_core,columnDefs3,table_specific,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
 
 ############################################
 # Disable button during loading
@@ -5444,9 +5519,18 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     ##############################################
     elif specific_to is not None and len(specific_to) > 0:
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'purple'], [0.8, 'purple'], [0.8, 'red'], [1, 'red']]
+
         ticktext.append("Presence")
+        ticktext.append("fdf")
         tickval.append(0.67)
-        list_of_clusters = [1000]
+        list_of_clusters = []
+
+        
+        
+        #specific_to = specific_to_opposite
+
         
         # 1) get clusters for which gene is present for these samples
         if "ClutserID" not in specific_to:
@@ -5473,10 +5557,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         
         # 3) get overlapping clusters between the two dataframes
         intersected_list = [value for value in list1 if value in list2]
-        print(intersected_list)
-        print("Nb specific genes:")
-        print(specific_to)
-        print(len(intersected_list))
 
         
         
@@ -5488,16 +5568,30 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
 
         df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
 
-        
-
-
         search_res2 = df_search.to_dict('records')
+
+
+        print("size of list of clusters")
+        print(str(len(list_of_clusters)))
+        if len(list_of_clusters) > 0:
+            list_strains,combination,combination_opposite = get_combination(list_of_clusters[0],proj_title,list_sp2)
+            df_opposite = get_clusters_respecting_combination(session,combination_opposite)     
+            list_of_clusters2 = df_opposite["ClutserID"].tolist()
+            print("size of opposite")
+            print(str(len(list_of_clusters2)))
+            list_of_clusters.extend(list_of_clusters2)
+            #for sample in list_sp2:
+            #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters2)==False),0.67,df2[sample])
+
         
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+        for sample in list_sp2:
+            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters2)==True),0.76,df2[sample])
+
+        
             
-        print(len(search_res2))
-        print("specific to: "+str(specific_to))
+
     elif cluster_search != "":
         
         #cmd = "grep -P '"+cluster_search+"' "+directory+"/1.Orthologs_Cluster.txt | awk {'print $1'}"
@@ -6149,6 +6243,7 @@ def get_combination(cluster,pathname,list_of_strains):
     specific_to = []
 
     combination = []
+    combination_opposite = []
     for item in mini_df.columns:
         
         if item != 'ClutserID' and item in list_of_strains:
@@ -6160,17 +6255,20 @@ def get_combination(cluster,pathname,list_of_strains):
             for gene in genes:
                 if gene == 0:
                     combination.append("0")
+                    combination_opposite.append("1")
                     keep = False
             if keep:
                 list_genes = ','.join(map(str,genes)) 
                 list = [cluster,item,list_genes]
                 list_of_list.append(list)
                 combination.append("1")
+                combination_opposite.append("0")
                 nb_presence+=1
                 specific_to.append(str(item))
     sep = ""
     combinaison = sep.join(combination)
-    return specific_to,combinaison
+    combinaison_opposite = sep.join(combination_opposite)
+    return specific_to,combinaison,combinaison_opposite
 
 # Utility: create a session code for a project (admin)
 def generate_session_code_for_project(project_id, hours_valid=24):
@@ -6513,51 +6611,78 @@ def download_matrix(n,session,pathname):
 
 
 @app.callback(
-    Output("table_selected_clusters","rowData"),
+    Output("table_selected_clusters3","rowData"),
     Output("nb_of_pangenes2",'children'),
     Input("graph_upset","clickData"),
     State("current_session", 'value'),
 )
 def show_cluster_with_combination(click,session):
 
+    upset_file = tmp_dir + "/" + str(session) + ".df_upset.csv"
+    if os.path.exists(upset_file):
+        df_upset = pd.read_csv(upset_file, index_col=0)
+        df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
 
-    df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
-    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+        if click is None:
+            dictionary = df2.to_dict('records')
+            return dictionary
 
-    if click is None:
-        dictionary = df2.to_dict('records')
-        return dictionary
+        combination = click["points"][0]["customdata"]
 
-    combination = click["points"][0]["customdata"]
+        mask = pd.Series(
+            list(map(int, combination[0])),
+            index=df_upset.columns
+        )
 
-    mask = pd.Series(
-        list(map(int, combination[0])),
-        index=df_upset.columns
+
+        selected = (df_upset == mask).all(axis=1)
+        df_selected = df_upset.loc[selected]
+        df_selected = df2[selected]
+        df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+        dictionary = df_selected.to_dict('records')
+
+        return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
+
+def fullscreen_graph(graph_id, height="600px"):
+    return html.Div(
+        [
+            html.Button(
+                "⛶",
+                className="fullscreen-button",
+                title="Afficher en plein écran",
+            ),
+
+            dcc.Graph(
+                id=graph_id,
+                className="dash-graph",
+                style={
+                    "width": "100%",
+                    "height": height,
+                },
+            ),
+        ],
+        id=f"fullscreen-container-{graph_id}",
+        className="fullscreen-container",
+        style={
+            "height": height,
+        },
     )
 
-
+def get_clusters_respecting_combination(session,combination):
+    df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
+    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    mask = pd.Series(
+        list(map(int, combination)),
+        index=df_upset.columns
+    )
     selected = (df_upset == mask).all(axis=1)
     df_selected = df_upset.loc[selected]
     df_selected = df2[selected]
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
-    dictionary = df_selected.to_dict('records')
+    dictionary_selected = df_selected.to_dict('records')
 
-    return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
+    return df_selected
 
-##############################################
-# Tooltip Circos
-##############################################
-# @app.callback(
-#     Output("circos-tooltip", "children"),
-#     Input("my-dashbio-default-circos", "eventDatum"),
-# )
-# def update_circos_tooltip(event):
-
-#     if not event:
-#         return ""
-
-#     print(event)
-#     return ""
 
 
 # Register dashboard callbacks
@@ -6568,5 +6693,4 @@ submit_genomes.register_callbacks(app)
 if __name__ == "__main__":
     init_db()
     sync_projects_from_yaml()
-    print("Base initialisée, projets synchronisés.")
     server.run(host= '0.0.0.0',debug=True, port=8050)
