@@ -63,6 +63,34 @@ import struct
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheManager(cache)
 
+cog_labels = {
+    "J": "Translation, ribosomal structure and biogenesis",
+    "K": "Transcription",
+    "A": "RNA processing and modification",
+    "B": "Chromatin structure and dynamics",
+    "L": "Replication, recombination and repair",
+    "D": "Cell cycle control, cell division, chromosome partitioning",
+    "V": "Defense mechanisms",
+    "T": "Signal transduction mechanisms",
+    "M": "Cell wall/membrane/envelope biogenesis",
+    "N": "Cell motility",
+    "U": "Intracellular trafficking, secretion, and vesicular transport",
+    "O": "Posttranslational modification, protein turnover, chaperones",
+    "C": "Energy production and conversion",
+    "E": "Amino acid transport and metabolism",
+    "F": "Nucleotide transport and metabolism",
+    "G": "Carbohydrate transport and metabolism",
+    "H": "Coenzyme transport and metabolism",
+    "I": "Lipid transport and metabolism",
+    "P": "Inorganic ion transport and metabolism",
+    "Q": "Secondary metabolites biosynthesis, transport and catabolism",
+    "R": "General function prediction only",
+    "S": "Function unknown",
+    "Y": "Nuclear structure",
+    "Z": "Cytoskeleton",
+    "W": "Extracellular structures"
+}
+
 # Helper to get image dimensions without external heavy dependencies
 def get_image_dimensions(path):
     width, height = 800, 600 # Default fallback
@@ -968,9 +996,13 @@ def load_project_preview(proj_title):
 
                                                     
                         html.Div(id='pav_tab_content', children=[
-                            
-                            
+
                             html.Br(),
+                            # html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
+                            #     html.Label("Display as:"),
+                            #     dcc.RadioItems(['PAV matrix', 'UpSet plot'], 'PAV matrix', id='display_type', inline=True),
+                            # ]),
+
                             html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
                                 html.Div([
                                     html.Label("Colors:"),
@@ -1095,7 +1127,8 @@ def load_project_preview(proj_title):
                                                                                                 dashGridOptions={"pagination": True, "animateRows": False}
                                                                                             )),
                                                         html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
-                                                        html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),   
+                                                        html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
+                                                        
                                                     ],
                                                     
                                                 )
@@ -1108,7 +1141,8 @@ def load_project_preview(proj_title):
                                         ),
                                         width=6
                                     ),
-
+                                    
+                                                                       
                                     dbc.Col(
                                         dbc.Card(
                                             [
@@ -1118,7 +1152,7 @@ def load_project_preview(proj_title):
                                                         
                                                     ],
                                                     style={
-                                                        "padding": "20px"
+                                                        "padding": "2px"
                                                     }
                                                 )
                                             ],
@@ -1161,18 +1195,8 @@ def load_project_preview(proj_title):
                                                                 ),
                                                                 
                                                                 #html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
-                                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
+                                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0),
 
-                                                                # html.H5("Accessory genes", id='nb_of_selected_clusters2', style={'color': 'purple'}),
-                                                                # dag.AgGrid(
-                                                                #         id="table_accessory",
-                                                                #         rowData=[],
-                                                                #         defaultColDef={"filter": "agTextColumnFilter"},
-                                                                #         style={'width': '80vh',"height": '350px','margin-left': '1px'},
-                                                                #         dashGridOptions={"pagination": True, "animateRows": False}
-                                                                # ),
-                                                                # html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
-                                                                # dcc.Download(id="download-dataframe5"),
                                                                 html.H5("Singletons / specific genes", id='nb_of_selected_clusters2', style={'color': 'purple'}),
                                                                 dag.AgGrid(
                                                                         id="table_accessory",
@@ -1181,6 +1205,7 @@ def load_project_preview(proj_title):
                                                                         style={'width': '80vh',"height": '350px','margin-left': '1px'},
                                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                                 ),
+                                                                html.Button("Calculate COG enrichment", id="cog_enrichment2", className="thin-button", n_clicks=0),
                                                                 
                                                                 
                                                             ]),
@@ -1201,6 +1226,7 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
+                                                    html.Div("Pangenome Gene Projection onto the Reference Genome"),
                                                     html.Div([
                                                                                         html.Div([
                                                                                                 html.Span(style={'display': 'inline-block',
@@ -1232,6 +1258,28 @@ def load_project_preview(proj_title):
                                                                                                     'marginRight': '6px'}),
                                                                                                 html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
                                                                                         ]),
+                                                                                        html.Div(
+                                                                                                    [
+                                                                                                        html.Span(
+                                                                                                            "Ref genome",
+                                                                                                            id="ref_genome",
+                                                                                                            style={
+                                                                                                                "fontSize": "14px",
+                                                                                                                "fontStyle": "italic",
+                                                                                                                "fontWeight": "bold"
+                                                                                                            }
+                                                                                                        )
+                                                                                                    ],
+                                                                                                    style={
+                                                                                                        "position": "absolute",
+                                                                                                        "top": "50%",
+                                                                                                        "left": "50%",
+                                                                                                        "transform": "translate(-50%, -50%)",
+                                                                                                        "textAlign": "center",
+                                                                                                        "pointerEvents": "none",
+                                                                                                        "zIndex": 10
+                                                                                                    }
+                                                                                                ),                                                                                       
                                                                                         dcc.Loading(dash_bio.Circos(
                                                                                             id="my-dashbio-default-circos",
                                                                                             layout=[],
@@ -1278,37 +1326,28 @@ def load_project_preview(proj_title):
                                     
                         ], style={"paddingLeft": "15px"}
                         ),
-                    ]),
-                    # dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
-                    #         dbc.Row(
-                    #             [
-                    #                 dbc.Col(dbc.Card(
-                    #                     [
-                    #                         dbc.CardBody(
-                    #                             [
-                    #                                 dcc.Graph(id='graph_upset'),
-                    #                             ],
-                    #                             style={"textAlign": "center"}
-                    #                         ),
-                    #                     ],
-                    #                     style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                    #                 )),                                                                                                        
-                                    
-                    #             ],
-                    #         style= {"padding":"15px"}
-                    #         ), 
-                    #         html.H5("Selected group of clusters", id='nb_of_pangenes2', style={"paddingLeft": "15px","paddingRight": "15px"}),
-                    #         dag.AgGrid(
-                    #                         id="table_selected_clusters3",
-                    #                         style={'margin-left': '1px',"paddingRight": "15px"},
-                    #                         rowData=[],
-                    #                         columnDefs=columnDefs5,
-                    #                         defaultColDef={"filter": True},
-                    #                         #defaultColDef={"filter": "agTextColumnFilter"},
-                    #                         dashGridOptions={"pagination": True, "animateRows": False}
-                    #                     ),                            
 
-                    # ]),
+                        dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(fullscreen_graph("graph_COG_selected",height="600px")),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                          
+                                                                                                                                         
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),                                                                     
+                    ]),
+                    
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='upset_tab_content', children=[
                             html.Br(),
@@ -1347,7 +1386,6 @@ def load_project_preview(proj_title):
                                             dashGridOptions={"pagination": True, "animateRows": False}
                                         ),
                                         html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
-                                        #html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0, style={"visibility": "hidden"}),
                                         dcc.Download(id="download-dataframe4"),
                                     ], style={"paddingLeft": "15px","paddingRight": "15px"}),
                                 ),
@@ -2373,26 +2411,7 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
     fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
     return fig
 
-#############################################################
-# Callback for circos viewer
-#############################################################
-#@app.callback(
-#     #Output("my-dashbio-default-circos", "layout"),
-#     Output("my-dashbio-default-circos", "tracks"),
-#     Output('default-alignment-viewer-output', 'children'),
-#     Input('display_circos', 'n_clicks'),
-#     # State('metadata_table','selectedRows'),
-#     # State('projets', 'value'),
-#     # State('current_session', 'value'),
-#     #State("my-dashbio-default-circos", "layout"),
-#     #State("my-dashbio-default-circos", "tracks"),
-# )
 
-# def display_circos(display_circos): #metadata_table,projets,session):
-    
-#     print(display_circos)
-    
-#     return None,None
 
 #############################################################
 # Callback for node selection from heatmap
@@ -2713,7 +2732,9 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("my-dashbio-default-circos", "tracks"),
     Output("circos_legend", 'children'),
     Output("circos_legend2", 'children'),
+    Output("ref_genome", 'children'),
     Output('PAV_graph', 'figure'),
+    Output('graph_COG_selected','figure'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2805,8 +2826,13 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
 
     fig = heatmap_PAV(proj_title,session,list_strains,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
+    ##########################################
+    # empty COG figure
+    ##########################################
+    fig_COG = empty_figure()
+
     #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],fig
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,fig_COG
 
 
 ##########################################
@@ -2818,12 +2844,13 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     Output("current_cluster",'options', allow_duplicate=True),
     Output('default-alignment-viewer-output', 'children', allow_duplicate=True),
     Input('table_pangenes', 'cellClicked'),
+    Input('table_accessory', 'cellClicked'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
     prevent_initial_call=True
 )
-def display_click_data(cell,metadata_table,projets,url):
+def display_click_data(cell1,cell2, metadata_table,projets,url):
          
     pathname = projets
     if url:
@@ -2831,26 +2858,30 @@ def display_click_data(cell,metadata_table,projets,url):
     cluster = 1
     list_of_strains = []
 
+    triggered_table = ctx.triggered_id
+
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
         for strain in wjdata1:
             strain_name = strain['Strain name']
             list_of_strains.append(strain_name)  
-    if cell:
-        wjdata = json.loads(json.dumps(cell, indent=2))
-        cluster = wjdata['value']
-        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
 
+    cluster = 0
+    if triggered_table == "table_pangenes":
+        wjdata = json.loads(json.dumps(cell1, indent=2))
+        cluster = wjdata['value']
+    elif triggered_table == "table_accessory":
+        wjdata = json.loads(json.dumps(cell2, indent=2))
+        cluster = wjdata['value']
+
+    if cluster:
+        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
         cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
         infos_cluster = os.popen(cmd).read().split("\t")
         selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-        
-        #return selected_cluster,dictionary, data, [{'label': str(cluster), 'value': str(cluster)}]
-        return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],None
-
+        return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],None        
 
     else:
-        #return "",[],"",[]
         return "",[],[],None
 
 
@@ -2893,7 +2924,6 @@ def display_click_data(metadata_table,event_circos,projets,url):
         return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}]
 
     else:
-        #return "",[],"",[]
         return "",[],[]
 
 
@@ -3167,6 +3197,7 @@ def set_reference_value(available_options):
     Output('rarefaction2', 'figure'),
     Output("my-dashbio-default-circos", "layout"),
     Output("my-dashbio-default-circos", "tracks"),
+    Output("ref_genome", 'children'),
     #Output("table_of_search",'rowData'),
     Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
@@ -3195,7 +3226,7 @@ def set_reference_value(available_options):
     Output('colorizing_pca','options'),
     Output('colorizing_tree','options'),
     Output('colorizing_tree1','options'),
-    Output('cog_enrichment','style'),
+    Output('graph_COG_selected','figure'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3558,7 +3589,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     fig_gene = px.histogram(df2, x="sum", title='Gene clusters frequency distribution')
 
-    cog_enrichment_style = {"visibility": "hidden"}
     #################################################
     # pan-GWAS
     #################################################
@@ -3566,7 +3596,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     if specific_to is not None and len(specific_to) > 0:
 
-        cog_enrichment_style = {"visibility": "visible"}
         # write traits file for Scoary
         with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
             f.write(",Trait1\n")
@@ -4749,8 +4778,15 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     nb_genomes = str(len(list_sp2))
 
+    # save dataframes
+    core_df = merged_with_cog[merged_with_cog['type'] == "Core-gene"]
+    singletons_df = merged_with_cog[merged_with_cog['type'] == "Strain-specific"]
+
+    core_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+    singletons_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_core,columnDefs3,table_specific,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns,cog_enrichment_style
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_core,columnDefs3,table_specific,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure()
 
 ############################################
 # Disable button during loading
@@ -6638,10 +6674,117 @@ def show_cluster_with_combination(click,session):
         selected = (df_upset == mask).all(axis=1)
         df_selected = df_upset.loc[selected]
         df_selected = df2[selected]
-        df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
         dictionary = df_selected.to_dict('records')
 
         return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
+
+@app.callback(
+    Output("graph_COG_selected","figure"),
+    Input("cog_enrichment","n_clicks"),
+    Input("cog_enrichment2","n_clicks"),
+    State("current_session", 'value'),
+)
+def show_cog_enrichment(click,click2,session):
+
+    df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
+    if ctx.triggered_id == "cog_enrichment":
+        df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
+    elif ctx.triggered_id == "cog_enrichment2":
+        df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv", index_col=0)
+
+
+    cog_order = [
+        "J", "A", "K", "L", "B",
+        "D", "Y", "V", "T", "M", "N", "U", "O",
+        "C", "E", "F", "G", "H", "I", "P", "Q", "R", "S"
+    ]
+    cog_groups = {
+        "Information storage and processing": [
+            "J", "A", "K", "L", "B"
+        ],
+
+        "Cellular processes and signaling": [
+            "D", "Y", "V", "T", "M", "N", "U", "O"
+        ],
+
+        "Metabolism": [
+            "C", "E", "F", "G", "H", "I", "P", "Q"
+        ],
+
+        "Poorly characterized": [
+            "R", "S"
+        ]
+    }
+    df_cog = df.copy()
+
+    df_cog["COGcat"] = (
+        df_cog["COG term"]
+        .astype(str)
+        .str.extract(r"\[([A-Z]+)\]", expand=False)
+        .str.findall(r"[A-Z]")
+    )
+
+    df_cog = df_cog.explode("COGcat")
+
+    cog_counts = (
+        df_cog["COGcat"]
+        .value_counts()
+        .reindex(cog_order, fill_value=0)
+        .rename_axis("COGcat")
+        .reset_index(name="count")
+    )    
+
+    cat_to_group = {
+        cat: group
+        for group, cats in cog_groups.items()
+        for cat in cats
+    }
+
+    cog_counts["COGgroup"] = cog_counts["COGcat"].map(cat_to_group)
+
+
+    cog_counts["COGterm"] = cog_counts["COGcat"].map(
+        lambda x: f"{x} — {cog_labels.get(x, 'Unknown')}"
+    )
+    group_colors = {
+        "Information storage and processing": "#4C78A8",
+        "Cellular processes and signaling": "#F58518",
+        "Metabolism": "#54A24B",
+        "Poorly characterized": "#B279A2"
+    }
+    category_order = [
+        f"{x} — {cog_labels.get(x, 'Unknown')}"
+        for x in cog_order
+    ]
+
+    fig = px.bar(
+        cog_counts,
+        x="count",
+        y="COGterm",
+        orientation="h",
+        color="COGgroup",
+        text="count",
+        title='COG composition for selected clusters',
+        color_discrete_map=group_colors,
+        category_orders={
+            "COGterm": category_order
+        }
+    )
+
+    fig.update_traces(
+        textposition="outside"
+    )
+
+    fig.update_layout(
+        #height=600,
+        showlegend=True,
+        legend_title="COG functional class",
+        xaxis_title="Number of genes",
+        yaxis_title="COG categories"
+    )
+    
+    return fig
+
 
 def fullscreen_graph(graph_id, height="600px"):
     return html.Div(
@@ -6678,13 +6821,32 @@ def get_clusters_respecting_combination(session,combination):
     selected = (df_upset == mask).all(axis=1)
     df_selected = df_upset.loc[selected]
     df_selected = df2[selected]
-    df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
 
     return df_selected
 
 
-
+def empty_figure():
+    fig = go.Figure()
+    fig.update_layout(
+            xaxis={"visible": False},
+            yaxis={"visible": False},
+            annotations=[
+                dict(
+                    text="No data",
+                    x=0.5,
+                    y=0.5,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    font=dict(size=18)
+                )
+            ],
+            plot_bgcolor="white",
+            paper_bgcolor="white"
+    )
+    return fig
+    
 # Register dashboard callbacks
 
 submit_genomes.register_callbacks(app)
