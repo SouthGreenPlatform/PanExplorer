@@ -2758,6 +2758,7 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("ref_genome", 'children'),
     Output('PAV_graph', 'figure'),
     Output('graph_COG_selected','figure'),
+    Output('graph_COG_enrichment', 'figure'),
     Input('PAV_graph', 'clickData'),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
@@ -2855,12 +2856,9 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
 
     fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
-    ##########################################
-    # empty COG figure
-    ##########################################
-    fig_COG = empty_figure()
 
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,fig_COG
+
+    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,empty_figure(), empty_figure()
 
 
 ##########################################
@@ -3253,6 +3251,7 @@ def set_reference_value(available_options):
     Output('colorizing_tree','options'),
     Output('colorizing_tree1','options'),
     Output('graph_COG_selected','figure'),
+    Output('graph_COG_enrichment','figure'),
     Output("nb_of_selected_clusters",'children'),
     Output("nb_of_selected_clusters2",'children'),
 
@@ -4861,7 +4860,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2
 
 ############################################
 # Disable button during loading
