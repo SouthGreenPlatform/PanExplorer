@@ -1,14 +1,17 @@
-# app.py — Application Dash unique + authentification SQLite + mode "session-only"f
+# app.py — Application Dash unique + authentification SQLite + mode "session-only"
 import os
 import sqlite3
-from datetime import datetime, time, timedelta
+import secrets
+import logging
 import uuid
+from datetime import datetime, time, timedelta
 from functools import wraps
+from typing import Tuple, Optional, List, Dict, Any
 import time as time_module
 
 from werkzeug.utils import secure_filename
 
-from flask import Flask, render_template_string, request, redirect, flash
+from flask import Flask, render_template_string, request, redirect, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -26,8 +29,8 @@ import random
 import re
 import shutil
 import base64
-import io
 import glob
+import struct
 
 import numpy as np
 
@@ -38,13 +41,10 @@ from plotly.subplots import make_subplots
 from dash.dependencies import Output, Input
 from dash.exceptions import PreventUpdate
 
-import pandas as pd
 import folium
 import folium.plugins
 
 import subprocess
-
-from flask import request, jsonify
 
 import dash_bio as dash_bio
 
@@ -58,7 +58,10 @@ import submit_genomes
 import homepage
 
 import xml.etree.ElementTree as ET
-import struct
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 cache = diskcache.Cache("./cache")
 long_callback_manager = DiskcacheManager(cache)
@@ -91,28 +94,20 @@ cog_labels = {
     "W": "Extracellular structures"
 }
 
-# Helper to get image dimensions without external heavy dependencies
-def get_image_dimensions(path):
-    width, height = 800, 600 # Default fallback
+def get_image_dimensions(path: str) -> Tuple[float, float]:
+    """Get image dimensions without external dependencies."""
+    width, height = 800, 600
     try:
         if path.endswith('.png'):
             with open(path, 'rb') as f:
                 head = f.read(24)
                 if len(head) == 24 and head.startswith(b'\211PNG\r\n\032\n'):
-                    # PNG header: 8 bytes magic + 4 bytes chunk len + 4 bytes 'IHDR' + 4 bytes width + 4 bytes height
-                    check = struct.unpack('>i', head[4:8])[0]
-                    if check != 0x0d0a1a0a: # Check for not matching IHDR (rare)
-                        width, height = struct.unpack('>ii', head[16:24])
-                    else:
-                        width, height = struct.unpack('>ii', head[16:24])
+                    width, height = struct.unpack('>ii', head[16:24])
         elif path.endswith('.svg') or path.endswith('svg'):
-            # Simple SVG parsing
             tree = ET.parse(path)
             root = tree.getroot()
-            # Try width/height attributes
             w_str = root.attrib.get('width', '')
             h_str = root.attrib.get('height', '')
-            # Try viewBox if width/height missing
             if not w_str or not h_str:
                 viewbox = root.attrib.get('viewBox', '').split()
                 if len(viewbox) == 4:
@@ -122,12 +117,12 @@ def get_image_dimensions(path):
                 width = float(w_str.replace('px', '').replace('pt', ''))
                 height = float(h_str.replace('px', '').replace('pt', ''))
     except Exception as e:
-        print(f"Could not determine image dimensions: {e}")
-    
+        logger.warning("Could not determine image dimensions for %s: %s", path, e)
     return width, height
 
 
-def validate_fasta_input(raw_text):
+def validate_fasta_input(raw_text: str) -> Tuple[bool, str, str, str]:
+    """Validate FASTA input and return (is_valid, processed_text, error_msg, seq_type)."""
     max_len = 200000
     if not raw_text or not raw_text.strip():
         return False, "", "FASTA input is empty.", ""
@@ -186,6 +181,11 @@ except Exception:
     AGGRID_AVAILABLE = False
 
 colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#C0C0C0', '#808080']
+
+# Constants
+METADATA_PREVIEW_ROWS = 500
+DEFAULT_COLORS = colors
+MAX_LEGACY_SESSION_LENGTH = 12
 
 tabs_styles = {
     'height': '44px'
@@ -310,54 +310,48 @@ plink2_exe = conf.get("plink2_exe") or "plink2"
 snmf_exe = conf.get("snmf_exe") or "sNMF"
 vcf2geno_exe = conf.get("vcf2geno_exe") or "vcf2geno"
 scoary_exe = conf.get("scoary_exe") or "scoary2"
-SECRET_KEY = conf.get("secret_key")
+SECRET_KEY = conf.get("secret_key") or secrets.token_hex(32) or secrets.token_hex(32)
 WEB_URL = conf.get("web_url") or "localhost:8050"
 tmp_dir = conf.get("tmp_dir") or "tmp"
 
 # ---------- DB helpers ----------
 def init_db():
     need_create = not os.path.exists(DB_PATH)
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    if need_create:
-        c.execute("""
-            CREATE TABLE users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL
-            )
-        """)
-        c.execute("""
-            CREATE TABLE projects (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                path TEXT NOT NULL,
-                is_public INTEGER NOT NULL DEFAULT 1,
-                owner_id INTEGER,
-                session_code TEXT,
-                session_expiration TEXT,
-                FOREIGN KEY(owner_id) REFERENCES users(id)
-            )
-        """)
-
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        if need_create:
+            c.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL
+                )
+            """)
+            c.execute("""
+                CREATE TABLE IF NOT EXISTS projects (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL,
+                    path TEXT NOT NULL,
+                    is_public INTEGER NOT NULL DEFAULT 1,
+                    owner_id INTEGER,
+                    session_code TEXT,
+                    session_expiration TEXT,
+                    FOREIGN KEY(owner_id) REFERENCES users(id)
+                )
+            """)
         conn.commit()
-    conn.close()
 
 
 def query_db(query, args=(), one=False):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute(query, args)
-    rows = cur.fetchall()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        cur = conn.execute(query, args)
+        rows = cur.fetchall()
     return (rows[0] if rows else None) if one else rows
 
 def execute_db(query, args=()):
-    conn = sqlite3.connect(DB_PATH)
-    cur = conn.cursor()
-    cur.execute(query, args)
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute(query, args)
+        conn.commit()
 
 # ---------- Login Rate Limiting ----------
 login_attempts = {}  # {username: [(timestamp, success), ...]}
@@ -393,6 +387,9 @@ def check_rate_limit(username):
         # Check if user is in lockout period
         if now - recent_failures[-1] < LOCKOUT_DURATION:
             return False, "Too many login attempts. Try again later."
+        else:
+            # Lockout period expired – clear old failures so user can retry
+            login_attempts[username] = []
     
     return True, ""
 
@@ -661,8 +658,8 @@ def validate_session_id(session_id):
         uuid.UUID(str(session_id))
         return True
     except (ValueError, AttributeError):
-        # Also accept legacy numeric sessions for backward compatibility
-        return isinstance(session_id, str) and session_id.isdigit()
+        # Also accept legacy numeric sessions for backward compatibility (bounded length)
+        return isinstance(session_id, str) and session_id.isdigit() and len(session_id) <= MAX_LEGACY_SESSION_LENGTH
 
 # Helper: project by session code
 def get_project_by_session(code):
@@ -679,6 +676,26 @@ def list_visible_projects(user):
         rows = query_db("""SELECT id, title, path, is_public, owner_id FROM projects
                            WHERE is_public = 1 OR owner_id = ? ORDER BY title""", (user['id'],))
     return [{"id": r[0], "title": r[1], "path": r[2], "is_public": bool(r[3]), "owner_id": r[4]} for r in rows]
+
+
+def make_project_options(visible_projects, session_code):
+    """Build dropdown options for project selection."""
+    if session_code:
+        return [{"label": session_code, "value": session_code}]
+    return [
+        {"label": p["title"] + ("" if p["is_public"] else " (private)"), "value": p["title"]}
+        for p in visible_projects
+    ]
+
+# Helper: build dropdown options for project selector
+def make_project_options(visible_projects, session_code):
+    """Return list of option dicts for the project dropdown."""
+    if session_code:
+        return [{"label": session_code, "value": session_code}]
+    return [
+        {"label": f"{p['title']}{'(private)' if not p['is_public'] else ''}", "value": p['title']}
+        for p in visible_projects
+    ]
 
 
 @app.callback(
@@ -764,11 +781,7 @@ def render_page(search):
         user_obj = None
 
     visible = list_visible_projects(user_obj)
-    options = []
-    if session_code:
-        options = [{"label": session_code, "value": session_code} ]
-    else:
-        options = [{"label": p["title"] + ("" if p["is_public"] else " (private)"), "value": p["title"]} for p in visible]
+    options = make_project_options(visible, session_code)
 
 
     # default selection
@@ -1183,7 +1196,6 @@ def load_project_preview(proj_title):
                                                      [
                                                         dcc.Loading(
                                                             html.Div(children=[
-                                                                html.H5(id="clustersearch", style={'color': 'red'}),
                                                                 html.H5("Core-genes", id="nb_of_selected_clusters", style={'color': 'red'}),
                                                                 dag.AgGrid(
                                                                         id="table_pangenes",
@@ -1333,19 +1345,30 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Loading(fullscreen_graph("graph_COG_selected",height="600px")),
+                                                    dcc.Loading(fullscreen_graph("graph_COG_selected")),
                                                 ],
-                                                style={"textAlign": "center"}
+                                                style={"textAlign": "center", "height": "100%"}
                                             ),
                                         ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),   
-                                          
-                                                                                                                                         
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),   
                                     
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(fullscreen_graph("graph_COG_enrichment")),
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),                                           
+                                                                                                                                            
+                                
                                 ],
-                            style= {"padding":"15px"}
-                            ),                                                                     
+                            style= {"padding":"15px", "height": "800px"}
+                            ),
                     ]),
                     
                     dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
@@ -2785,15 +2808,17 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     # get clusters respecting combination
     ##########################################
     list_strains,combination,combination_opposite = get_combination(cluster,pathname,list_of_strains)
+    print(combination)
+    print(combination_opposite)
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
     mask = pd.Series(
         list(map(int, combination)),
         index=df_upset.columns
     )
-    selected = (df_upset == mask).all(axis=1)
-    df_selected = df_upset.loc[selected]
-    df_selected = df2[selected]
+    selected1 = (df_upset == mask).all(axis=1)
+    df_selected = df_upset.loc[selected1]
+    df_selected = df2[selected1]
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
 
@@ -2804,9 +2829,10 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
         list(map(int, combination_opposite)),
         index=df_upset.columns
     )
-    selected = (df_upset == mask_opposite).all(axis=1)
-    df_selected_opposite = df_upset.loc[selected]
-    df_selected_opposite = df2[selected]
+    selected2 = (df_upset == mask_opposite).all(axis=1)
+    df_selected_opposite = df_upset.loc[selected2]
+    print(df_upset)
+    df_selected_opposite = df2[selected2]
     df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
     dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
 
@@ -2824,14 +2850,16 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     dict_list_genes = merged_with_positions.to_dict('records')
     current_tracks[3].update(data=dict_list_genes,type="HIGHLIGHT",config=highlight_config4)
 
-    fig = heatmap_PAV(proj_title,session,list_strains,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+    list_clusters1 = df_selected["ClutserID"].tolist()
+    list_clusters2 = df_selected_opposite["ClutserID"].tolist()
+
+    fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
     ##########################################
     # empty COG figure
     ##########################################
     fig_COG = empty_figure()
 
-    #return selected_cluster,dictionary,data, [{'label': str(cluster), 'value': str(cluster)}],list_strains
     return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,fig_COG
 
 
@@ -3199,7 +3227,6 @@ def set_reference_value(available_options):
     Output("my-dashbio-default-circos", "tracks"),
     Output("ref_genome", 'children'),
     #Output("table_of_search",'rowData'),
-    Output("clustersearch",'children'),
     Output("graph_macrosynteny", 'figure'),
     Output('clinker','children'),
     Output('mlva_table', 'rowData'),
@@ -3208,7 +3235,6 @@ def set_reference_value(available_options):
     Output('iframe-content', 'src'),
     Output('iframe-snptree', 'src'),
     Output('results', 'style'),
-    
     Output('VCF_graph', 'figure'),
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
@@ -3227,6 +3253,9 @@ def set_reference_value(available_options):
     Output('colorizing_tree','options'),
     Output('colorizing_tree1','options'),
     Output('graph_COG_selected','figure'),
+    Output("nb_of_selected_clusters",'children'),
+    Output("nb_of_selected_clusters2",'children'),
+
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3269,7 +3298,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     print("Initialisation of dataframes")
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
-    df.to_csv("exportdf.csv")    
     list_of_lists = []
     # with clusterID
     df_metadata2 = df_metadata
@@ -3351,8 +3379,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         'type'
     ] = 'Dispensable-gene'
     
-    df2.to_csv("export_df2.csv")
-    df.to_csv("export_df.csv")
 
     ##############################################
     # Generate Core-gene and accessory files
@@ -3395,7 +3421,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     merged_with_cog = merged_with_cog_term
     merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
-    #merged_with_cog_term.to_csv(directory+"/merged_with_cog_term.txt")
 
 
 
@@ -3480,14 +3505,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
         # remove CLUSTER tag (TODO: to be removed)
 
-        df_specific_to.to_csv("df_specific_to.csv")
         list1 = df_specific_to['ClutserID'].tolist()
         #list1bis = [eval(i) for i in list1]
         
         
         # 2) get clusters for which the number of presence correspond to the number of selected samples
         same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
-        same_number_df.to_csv("df_specific_to2.csv")
         list2 = same_number_df['ClutserID'].tolist()
         
         # 3) get overlapping clusters between the two dataframes
@@ -3502,8 +3525,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
         search_res2 = df_search.to_dict('records')
         
-        for sample in list_sp2:
-            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+        #for sample in list_sp2:
+        #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
     print("ok0")
@@ -3580,14 +3603,37 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     specific_df['ClutserID'] = specific_df['ClutserID'].astype(int)
     specific_df_merged_with_positions = pd.merge(specific_df, merged_with_positions, left_on='ClutserID', right_on='name')
     specific_df_merged_with_positions = specific_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
-    specific_df_merged_with_positions.to_csv(directory+"/specific.txt",index=False,sep='\t')
     specific_list_dict = specific_df_merged_with_positions.to_dict('records')
 
     
-
-    #specific_df_merged_with_positions.to_csv(directory+"/specific.txt",index=False,sep='\t')
-    
     fig_gene = px.histogram(df2, x="sum", title='Gene clusters frequency distribution')
+
+
+    ################
+    # Upset plot
+    ################
+    df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
+    
+
+    upset_plot = None
+
+    upset_plot = plotly_upset.plotting.plot_upset(
+        dataframes=[df_upset],
+        exclude_zeros=True,
+        sorted_x=None,
+        sorted_y="a",
+        max_intersections=30,
+        legendgroups=["Strains"],
+        marker_size=11,
+    )
+
+    
+    upset_plot.update_layout(
+        title_text='Upset plot of gene content across genomes (only top 30 intersections are displayed)',
+        width=2000,
+        height=800
+    )
+    df_upset.to_csv(tmp_dir + "/" + str(session) + ".df_upset.csv")    
 
     #################################################
     # pan-GWAS
@@ -3596,67 +3642,68 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     if specific_to is not None and len(specific_to) > 0:
 
-        # write traits file for Scoary
-        with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
-            f.write(",Trait1\n")
-            for strain in list_selected:
-                if strain != "ClutserID":
-                    f.write(str(strain))
-                    f.write(",")
-                    if strain in specific_to:
-                        f.write("1\n")
-                    else:
-                        f.write("0\n")
+        print("TO BE MOVED")
+        # # write traits file for Scoary
+        # with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
+        #     f.write(",Trait1\n")
+        #     for strain in list_selected:
+        #         if strain != "ClutserID":
+        #             f.write(str(strain))
+        #             f.write(",")
+        #             if strain in specific_to:
+        #                 f.write("1\n")
+        #             else:
+        #                 f.write("0\n")
 
-        # write input file for Scoary
-        with open(tmp_dir + "/" + str(session) + ".scoary_input.csv", "a") as i:
-            df_for_scoary = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
-            col_position = df.columns.get_loc("ClutserID") + 1
-            df_for_scoary.insert(col_position, "Non-unique Gene name", None)
-            df_for_scoary.insert(col_position + 1, "Annotation", None)
-            df_for_scoary.insert(col_position + 2, "No. isolates", None)
-            df_for_scoary.insert(col_position + 3, "No. sequences", None)
-            df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
-            df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
-            df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
-            df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
-            df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
-            df_for_scoary.insert(col_position + 9, "QC", None)
-            df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
-            df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
-            df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
-            df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
-            df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
+        # # write input file for Scoary
+        # with open(tmp_dir + "/" + str(session) + ".scoary_input.csv", "a") as i:
+        #     df_for_scoary = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
+        #     col_position = df.columns.get_loc("ClutserID") + 1
+        #     df_for_scoary.insert(col_position, "Non-unique Gene name", None)
+        #     df_for_scoary.insert(col_position + 1, "Annotation", None)
+        #     df_for_scoary.insert(col_position + 2, "No. isolates", None)
+        #     df_for_scoary.insert(col_position + 3, "No. sequences", None)
+        #     df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
+        #     df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
+        #     df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
+        #     df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
+        #     df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
+        #     df_for_scoary.insert(col_position + 9, "QC", None)
+        #     df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
+        #     df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
+        #     df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
+        #     df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
+        #     df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
 
-        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
-        if validate_session_id(session):
-            subprocess.run(
-                [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
-                check=True
-            )
+        # #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
+        # if validate_session_id(session):
+        #     subprocess.run(
+        #         [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
+        #         check=True
+        #     )
 
-            src_pattern = f"{tmp_dir}/{session}_scoary_output/*results.csv"
-            src_files = glob.glob(src_pattern)
-            if src_files:
-                dst = f"{tmp_dir}/{session}.scoary_results.txt"
-                shutil.copy(src_files[0], dst)
+        #     src_pattern = f"{tmp_dir}/{session}_scoary_output/*results.csv"
+        #     src_files = glob.glob(src_pattern)
+        #     if src_files:
+        #         dst = f"{tmp_dir}/{session}.scoary_results.txt"
+        #         shutil.copy(src_files[0], dst)
                 
-        #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
-        #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
+        # #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
+        # #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
 
-        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
-        df_scoary_results = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
+        # merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
+        # df_scoary_results = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
 
-        if os.path.exists(scoary_output_file):
+        # if os.path.exists(scoary_output_file):
 
-            df_scoary_results = pd.read_csv(scoary_output_file)
+        #     df_scoary_results = pd.read_csv(scoary_output_file)
 
-            merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+        #     merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
 
-            #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
-            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
+        #     #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+        #     merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
 
-        scoary_table = df_scoary_results.to_dict('records')
+        # scoary_table = df_scoary_results.to_dict('records')
         
     df_matrix.to_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
     df2.to_csv(tmp_dir + "/" + str(session) + ".df2.csv")
@@ -3664,7 +3711,75 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     df_metadata3.to_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
     merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
     df.to_csv(tmp_dir + "/" + str(session) + ".df.csv")
-    fig = heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+
+    core_df = merged_with_cog[merged_with_cog['type'] == "Core-gene"]
+    singletons_df = merged_with_cog[merged_with_cog['type'] == "Strain-specific"]
+    
+    list_clusters1 = []
+    list_clusters2 = []
+    nb_of_selected_clusters = ""
+    nb_of_selected_clusters2 = ""
+    table_cluster1 = core_df.to_dict('records')
+    table_cluster2 = specific_df.to_dict('records')
+    if specific_to:
+        ##########################################
+        # get clusters respecting combination
+        ##########################################
+        combination = ""
+        combination_opposite = ""
+        for item in list_sp2:
+            if item != 'ClutserID' and item in specific_to:
+                combination = combination + "1"
+                combination_opposite = combination_opposite + "0"
+            else:
+                combination = combination + "0"
+                combination_opposite = combination_opposite + "1"
+
+        df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
+        df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+        mask = pd.Series(
+            list(map(int, combination)),
+            index=df_upset.columns
+        )
+        selected = (df_upset == mask).all(axis=1)
+        df_selected = df_upset.loc[selected]
+        df_selected = df2[selected]
+        df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+        dictionary_selected = df_selected.to_dict('records')
+
+        ##########################################
+        # get clusters respecting opposite combination
+        ##########################################
+        mask_opposite = pd.Series(
+            list(map(int, combination_opposite)),
+            index=df_upset.columns
+        )
+        selected = (df_upset == mask_opposite).all(axis=1)
+        df_selected_opposite = df_upset.loc[selected]
+        print("df upset")
+        print(df_upset)
+        df_selected_opposite = df2[selected]
+        df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+        dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
+
+
+        list_clusters1 = df_selected["ClutserID"].tolist()
+        list_clusters2 = df_selected_opposite["ClutserID"].tolist()        
+
+        nb_of_selected_clusters = "Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters"
+        nb_of_selected_clusters2 = "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters"
+
+        table_cluster1 = dictionary_selected
+        table_cluster2 = dictionary_selected_opposite
+
+    else:
+        core_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+        singletons_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+
+        nb_of_selected_clusters = "Core-genes: " +str(len(core_df))+ " clusters"
+        nb_of_selected_clusters2 = "Singletons / Specific genes: " +str(len(singletons_df))+ " clusters"
+
+    fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
     
     #fig.update_traces(showscale=False)
@@ -3700,34 +3815,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # )
 
 
-    
-    ################
-    # Upset plot
-    ################
-    df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
-
-
-    upset_plot = None
-
-    upset_plot = plotly_upset.plotting.plot_upset(
-        dataframes=[df_upset],
-        exclude_zeros=True,
-        sorted_x=None,
-        sorted_y="a",
-        max_intersections=30,
-        legendgroups=["Strains"],
-        marker_size=11,
-    )
-
-    
-    upset_plot.update_layout(
-        title_text='Upset plot of gene content across genomes (only top 30 intersections are displayed)',
-        width=2000,
-        height=800
-    )
-    df_upset.to_csv(tmp_dir + "/" + str(session) + ".df_upset.csv")
-
-
 
 
     #######################
@@ -3741,7 +3828,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         tab_style_ani = tab_style 
         df_ANI_selected = df_ANI[df_ANI["Genomes"].isin(list_sp2)]
         df_ANI_selected = df_ANI_selected[list_sp2]
-        df_ANI_selected.to_csv("export_ani.tsv")
         
         fig_ANI = dash_bio.Clustergram(
             data=df_ANI_selected,
@@ -3761,8 +3847,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     #df_ANI_selected.to_csv("export2.tsv")
 
-    table_specific = specific_df.to_dict('records')
-    table_core = core_df.to_dict('records')
+    
     
     table_pangenes = merged_with_cog.to_dict('records')
     merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".export_merged_with_cog.csv")
@@ -3799,15 +3884,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         top30.columns = ['COG', 'counts']
         top30_with_cog_term = pd.merge(df_cog_terms, top30, how="right", left_on='COG', right_on='COG')
 
-        top30_with_cog_term.to_csv("cog_occurrences.csv")
-
         #dftet = px.data.tips()
-        #dftet.to_csv("COG.count.txt")
+
 
         #fig_COG_all = px.pie(df_count, values='counts', names='COGcat', title='Distribution of COG categories among all clusters')
         fig_COG_all = px.bar(df_count, x='COGcat', y='counts', title='Distribution of COG categories among all clusters')
         
-        #data_COG2_selected.to_csv("export_COG.tsv")
         
         #fig_COG1 = px.bar(data_COG1_selected, x='Genome', y=data_COG1_selected.columns, title="Distribution of COG functional categories")
         fig_COG2 = px.bar(data_COG2_selected, x='Genome', y=data_COG2_selected.columns, title="Distribution of COG functional categories")
@@ -3928,9 +4010,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
 
 
-    clustersearch = ""
-    if len(search_res2) > 1:
-        clustersearch = str(len(search_res2)) + " clusters (specifically present in selected strains)"
 
     ############################################################
     # Calculate coordinates of core-genes for macrosynteny
@@ -4588,52 +4667,54 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         scoary_table2 = []
         scoary_output_file2 = tmp_dir + "/" + str(session) + ".scoary_results2.txt"
         if specific_to is not None and len(specific_to) > 0:
-            with open(tmp_dir + "/" + str(session) + ".scoary_input2.csv", "a") as i:
-                df_for_scoary = pd.read_csv(tmp_dir + "/" + str(session) + "." + str(reference) + ".segments.node_pav.tsv",sep='\t')
-                col_position = df_for_scoary.columns.get_loc("Node") + 1
-                df_for_scoary.insert(col_position, "Non-unique Gene name", None)
-                df_for_scoary.insert(col_position + 1, "Annotation", None)
-                df_for_scoary.insert(col_position + 2, "No. isolates", None)
-                df_for_scoary.insert(col_position + 3, "No. sequences", None)
-                df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
-                df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
-                df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
-                df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
-                df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
-                df_for_scoary.insert(col_position + 9, "QC", None)
-                df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
-                df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
-                df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
-                df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
-                df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input2.csv",index=False)
 
-            cmd_args = [
-                scoary_exe,
-                "-g", f"{tmp_dir}/{session}.scoary_input2.csv",
-                "-t", f"{tmp_dir}/{session}.traits.csv",
-                "-o", f"{tmp_dir}/{session}_scoary_output2"
-            ]
-            subprocess.run(cmd_args, capture_output=True)
+            print("TO BE MOVED")
+            # with open(tmp_dir + "/" + str(session) + ".scoary_input2.csv", "a") as i:
+            #     df_for_scoary = pd.read_csv(tmp_dir + "/" + str(session) + "." + str(reference) + ".segments.node_pav.tsv",sep='\t')
+            #     col_position = df_for_scoary.columns.get_loc("Node") + 1
+            #     df_for_scoary.insert(col_position, "Non-unique Gene name", None)
+            #     df_for_scoary.insert(col_position + 1, "Annotation", None)
+            #     df_for_scoary.insert(col_position + 2, "No. isolates", None)
+            #     df_for_scoary.insert(col_position + 3, "No. sequences", None)
+            #     df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
+            #     df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
+            #     df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
+            #     df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
+            #     df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
+            #     df_for_scoary.insert(col_position + 9, "QC", None)
+            #     df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
+            #     df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
+            #     df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
+            #     df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
+            #     df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input2.csv",index=False)
 
-            src_pattern = f"{tmp_dir}/{session}_scoary_output2/*results.csv"
-            src_files = glob.glob(src_pattern)
-            if src_files:
-                dst = f"{tmp_dir}/{session}.scoary_results2.txt"
-                shutil.copy(src_files[0], dst)
+            # cmd_args = [
+            #     scoary_exe,
+            #     "-g", f"{tmp_dir}/{session}.scoary_input2.csv",
+            #     "-t", f"{tmp_dir}/{session}.traits.csv",
+            #     "-o", f"{tmp_dir}/{session}_scoary_output2"
+            # ]
+            # subprocess.run(cmd_args, capture_output=True)
 
-            #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
-            df_scoary_results2 = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
+            # src_pattern = f"{tmp_dir}/{session}_scoary_output2/*results.csv"
+            # src_files = glob.glob(src_pattern)
+            # if src_files:
+            #     dst = f"{tmp_dir}/{session}.scoary_results2.txt"
+            #     shutil.copy(src_files[0], dst)
 
-            if os.path.exists(scoary_output_file2):
+            # #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
+            # df_scoary_results2 = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
 
-                df_scoary_results2 = pd.read_csv(scoary_output_file2)
+            # if os.path.exists(scoary_output_file2):
 
-                #merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+            #     df_scoary_results2 = pd.read_csv(scoary_output_file2)
 
-                #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
-                df_scoary_results2["log_pval"] = -np.log10(df_scoary_results2["Naive_p"])
+            #     #merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
 
-            scoary_table2 = df_scoary_results2.to_dict('records')
+            #     #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+            #     df_scoary_results2["log_pval"] = -np.log10(df_scoary_results2["Naive_p"])
+
+            # scoary_table2 = df_scoary_results2.to_dict('records')
 
         df_pav_node = pd.read_csv(tmp_dir +"/"+str(session) + "." + str(reference) + ".segments.node_pav.tsv", sep="\t")
         list_strains = df_pav_node.columns.tolist()
@@ -4777,16 +4858,10 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     list_metadata_columns.remove("Strain name")
 
     nb_genomes = str(len(list_sp2))
-
-    # save dataframes
-    core_df = merged_with_cog[merged_with_cog['type'] == "Core-gene"]
-    singletons_df = merged_with_cog[merged_with_cog['type'] == "Strain-specific"]
-
-    core_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
-    singletons_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+    
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_core,columnDefs3,table_specific,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, clustersearch, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure()
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2
 
 ############################################
 # Disable button during loading
@@ -5434,7 +5509,7 @@ def pca(dimension_pca,colorizing_pca,session):
     Input('highlight_button', 'n_clicks'),
     prevent_initial_call=True    
 )
-def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
+def heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -5458,6 +5533,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
             strain_name = strain['Strain name']
             list_sp2.append(strain_name)
 
+    print("Heatmap PAV function")
     cluster_names=[]
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     df_matrix = pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
@@ -5467,6 +5543,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     merged_with_positions2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
     transposed_df = pd.DataFrame()
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
+
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
     search_res2 = []
@@ -5474,7 +5551,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     tickval = ['0']
     colorscale = []
     zmax = 1
-    if highlight != "None" or cluster_search != "" or bedfile != "" or (specific_to is not None and len(specific_to) > 0):
+    if highlight != "None" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     else:
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
@@ -5553,71 +5630,71 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif specific_to is not None and len(specific_to) > 0:
-        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
+    elif list_clusters1 is not None and len(list_clusters1) > 0:
 
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'purple'], [0.8, 'purple'], [0.8, 'red'], [1, 'red']]
 
         ticktext.append("Presence")
-        ticktext.append("fdf")
         tickval.append(0.67)
-        list_of_clusters = []
+        list_of_clusters = list_clusters1
+        list_of_clusters2 = list_clusters2
+        list_of_clusters.extend(list_of_clusters2)
+
+
+        
+        # #specific_to = specific_to_opposite
+
+        
+        # # 1) get clusters for which gene is present for these samples
+        # if "ClutserID" not in specific_to:
+        #     specific_to.append("ClutserID")
+        # df_specific_to = df[specific_to]
+        # df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
+        # # get only if at least one gene is present
+        # df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
+        # # remove CLUSTER tag (TODO: to be removed)
+
+        # #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
+        # #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
+        # #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
+        # #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
+        # df_specific_to.to_csv("df_specific_to.csv")
+        # list1 = df_specific_to['ClutserID'].tolist()
+        # #list1bis = [eval(i) for i in list1]
+        
+        
+        # # 2) get clusters for which the number of presence correspond to the number of selected samples
+        # same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
+        # same_number_df.to_csv("df_specific_to2.csv")
+        # list2 = same_number_df['ClutserID'].tolist()
+        
+        # # 3) get overlapping clusters between the two dataframes
+        # intersected_list = [value for value in list1 if value in list2]
 
         
         
-        #specific_to = specific_to_opposite
+        # df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
+        # search_res2 = df_search.to_dict('records')
+        # #df_specific_final2.to_csv("df_specific_to.csv")
+        
+        # list_of_clusters = intersected_list
 
-        
-        # 1) get clusters for which gene is present for these samples
-        if "ClutserID" not in specific_to:
-            specific_to.append("ClutserID")
-        df_specific_to = df[specific_to]
-        df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
-        # get only if at least one gene is present
-        df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
-        # remove CLUSTER tag (TODO: to be removed)
+        # df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
 
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER000','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER00','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER0','')
-        #df_specific_to['ClutserID'] = df_specific_to['ClutserID'].str.replace('CLUSTER','')
-        df_specific_to.to_csv("df_specific_to.csv")
-        list1 = df_specific_to['ClutserID'].tolist()
-        #list1bis = [eval(i) for i in list1]
-        
-        
-        # 2) get clusters for which the number of presence correspond to the number of selected samples
-        same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
-        same_number_df.to_csv("df_specific_to2.csv")
-        list2 = same_number_df['ClutserID'].tolist()
-        
-        # 3) get overlapping clusters between the two dataframes
-        intersected_list = [value for value in list1 if value in list2]
-
-        
-        
-        df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
-        #df_specific_final2.to_csv("df_specific_to.csv")
-        
-        list_of_clusters = intersected_list
-
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-
-        search_res2 = df_search.to_dict('records')
+        # search_res2 = df_search.to_dict('records')
 
 
-        print("size of list of clusters")
-        print(str(len(list_of_clusters)))
-        if len(list_of_clusters) > 0:
-            list_strains,combination,combination_opposite = get_combination(list_of_clusters[0],proj_title,list_sp2)
-            df_opposite = get_clusters_respecting_combination(session,combination_opposite)     
-            list_of_clusters2 = df_opposite["ClutserID"].tolist()
-            print("size of opposite")
-            print(str(len(list_of_clusters2)))
-            list_of_clusters.extend(list_of_clusters2)
-            #for sample in list_sp2:
-            #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters2)==False),0.67,df2[sample])
+        # print("size of list of clusters")
+        # print(str(len(list_of_clusters)))
+        # if len(list_of_clusters) > 0:
+        #     list_strains,combination,combination_opposite = get_combination(list_of_clusters[0],proj_title,list_sp2)
+        #     df_opposite = get_clusters_respecting_combination(session,combination_opposite)     
+        #     list_of_clusters2 = df_opposite["ClutserID"].tolist()
+        #     print("size of opposite")
+        #     print(str(len(list_of_clusters2)))
+        #     list_of_clusters.extend(list_of_clusters2)
+        #     #for sample in list_sp2:
+        #     #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters2)==False),0.67,df2[sample])
 
         
         for sample in list_sp2:
@@ -5625,7 +5702,6 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
         for sample in list_sp2:
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters2)==True),0.76,df2[sample])
 
-        
             
 
     elif cluster_search != "":
@@ -5749,7 +5825,7 @@ def heatmap_PAV(proj_title,session,specific_to,ordering,sample_ordering,metadata
     print("color scale:")
     print(colorscale)
 
-    if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
+    if list_clusters1 is not None and len(list_clusters1) > 0 and os.path.exists(scoary_output_file):
 
         df_scoary_results = pd.read_csv(scoary_output_file)
         df_scoary_results["log_pval"] = -np.log10(df_scoary_results["Naive_p"])
@@ -6144,13 +6220,9 @@ def init_dataframes(pathname):
     #directory = get_directory(pathname)
     directory = pathname
 
-    #https://panexplorer.southgreen.fr/tmp/86740638254871261615/1.Orthologs_Cluster.txt
     myfile = directory+'/1.Orthologs_Cluster.txt'
-    print(myfile)
     
     df_matrix = pd.read_csv(myfile, sep='\t')
-    #df_matrix = pd.read_csv("https://panexplorer.southgreen.fr/tmp/86740638254871261615/1.Orthologs_Cluster.txt")
-    #df_matrix = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/solar.csv")
     
     print("yeahhhh: "+str(df_matrix.size))
 
@@ -6680,6 +6752,7 @@ def show_cluster_with_combination(click,session):
 
 @app.callback(
     Output("graph_COG_selected","figure"),
+    Output("graph_COG_enrichment","figure"),
     Input("cog_enrichment","n_clicks"),
     Input("cog_enrichment2","n_clicks"),
     State("current_session", 'value'),
@@ -6691,7 +6764,6 @@ def show_cog_enrichment(click,click2,session):
         df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
     elif ctx.triggered_id == "cog_enrichment2":
         df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv", index_col=0)
-
 
     cog_order = [
         "J", "A", "K", "L", "B",
@@ -6776,15 +6848,407 @@ def show_cog_enrichment(click,click2,session):
     )
 
     fig.update_layout(
-        #height=600,
+        height=600,
         showlegend=True,
         legend_title="COG functional class",
         xaxis_title="Number of genes",
         yaxis_title="COG categories"
     )
-    
-    return fig
 
+    ####################################################
+    # calculate enrichment (odds ratios and pvalues)
+    ####################################################
+    df_selected_clusters = df["ClutserID"]
+    selected_clusters_file = tmp_dir + "/" + str(session) + ".selected_clusters.txt"
+    df_selected_clusters.to_csv(selected_clusters_file,sep='\t',index=False)
+
+    # get COGcat of pangenes
+    annotation_file = tmp_dir + "/" + str(session) + ".annotations.txt"
+    df_pangenes = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    
+    df_pangenes["COGcat"] = (
+            df_pangenes["COG term"]
+            .astype(str)
+            .str.extract(r"\[([A-Z]+)\]", expand=False)
+            .str.findall(r"[A-Z]")
+    )
+    
+    df_pangenes = df_pangenes.explode("COGcat")
+    df_pangenes_reduced = df_pangenes[['ClutserID', 'COGcat']]
+    df_pangenes_reduced.to_csv(annotation_file,sep='\t',index=False)
+    
+    cmd_args = ["python", "enrichment.py", "--subsetA",selected_clusters_file, "--annotations", annotation_file, "--out", tmp_dir + "/" + str(session) + ".enrichment.txt"]
+    with open(f"{tmp_dir}/{session}.enrichment.log", "a") as log_file:
+        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+
+    df_enrichment = pd.read_csv(tmp_dir + "/" + str(session) + ".enrichment.txt", sep="\t")
+    df_enrichment = df_enrichment.drop(df_enrichment.index[df_enrichment['term'] == 'COGcat'])
+    fig_enrichment = plot_cog_enrichment(df_enrichment, cog_labels, cog_order[::-1])
+    
+    return fig, fig_enrichment
+
+def plot_cog_enrichment(df, cog_labels, category_order):
+
+    df = df.copy()
+
+    # =========================================================
+    # 1. Labels complets des catégories COG
+    # =========================================================
+
+    df["term"] = df["term"].astype(str)
+
+    df["label"] = df["term"].map(
+        lambda x: f"{x} — {cog_labels.get(x, x)}"
+    )
+
+    # Toutes les catégories de category_order, y compris les absentes
+    enrichment_category_order = [
+        f"{x} — {cog_labels.get(x, x)}"
+        for x in category_order
+    ]
+
+    # Ajouter les catégories manquantes avec des valeurs nulles
+    existing_terms = set(df["term"].astype(str))
+    for x in category_order:
+        if x not in existing_terms:
+            new_row = pd.DataFrame([{
+                "term": x,
+                "label": f"{x} — {cog_labels.get(x, x)}",
+                "odds_ratio": np.nan,
+                "FDR": np.nan,
+            }])
+            # Recopier les colonnes restantes si elles existent
+            for col in df.columns:
+                if col not in new_row.columns:
+                    new_row[col] = np.nan
+            df = pd.concat([df, new_row], ignore_index=True)
+
+    df["label"] = pd.Categorical(
+        df["label"],
+        categories=enrichment_category_order,
+        ordered=True
+    )
+
+    df = df.sort_values("label")
+
+    # =========================================================
+    # 2. Calcul log2(Odds Ratio)
+    # =========================================================
+
+    # OR = 0  -> -inf
+    # OR = inf -> +inf
+
+    df["log2_OR"] = np.where(
+        df["odds_ratio"] > 0,
+        np.log2(df["odds_ratio"]),
+        -np.inf
+    )
+
+    # =========================================================
+    # 3. Significativité
+    # =========================================================
+
+    df["neg_log10_FDR"] = -np.log10(
+        df["FDR"].clip(lower=1e-300)
+    )
+
+    # =========================================================
+    # 4. Déterminer les limites du graphique
+    # =========================================================
+
+    finite_df = df[np.isfinite(df["log2_OR"])].copy()
+
+    if not finite_df.empty:
+
+        xmin = finite_df["log2_OR"].min()
+        xmax = finite_df["log2_OR"].max()
+
+        # Cas où toutes les valeurs sont identiques
+        if xmin == xmax:
+            xmin -= 1
+            xmax += 1
+
+        span = xmax - xmin
+
+        # Marge suffisamment grande pour les labels
+        margin = max(span * 0.25, 1)
+
+        xmin_plot = xmin - margin
+        xmax_plot = xmax + margin
+
+    else:
+
+        xmin_plot = -2
+        xmax_plot = 2
+
+    # =========================================================
+    # 5. Position des valeurs infinies
+    # =========================================================
+
+    plot_span = xmax_plot - xmin_plot
+
+    left_inf = xmin_plot + 0.08 * plot_span
+    right_inf = xmax_plot - 0.08 * plot_span
+
+    # =========================================================
+    # 6. Figure
+    # =========================================================
+
+    fig = go.Figure()
+
+    # =========================================================
+    # 7. Points avec OR fini
+    # =========================================================
+
+    finite_points = df[np.isfinite(df["log2_OR"])].copy()
+
+    if not finite_points.empty:
+
+        fig.add_trace(
+            go.Scatter(
+                x=finite_points["log2_OR"],
+                y=finite_points["label"],
+                mode="markers",
+
+                marker=dict(
+                    size=12,
+                    color=finite_points["neg_log10_FDR"],
+                    colorscale="Viridis",
+                    showscale=True,
+                    colorbar=dict(
+                        title="-log₁₀(FDR)"
+                    ),
+                    line=dict(
+                        width=1
+                    )
+                ),
+
+                customdata=np.stack(
+                    [
+                        finite_points["odds_ratio"],
+                        finite_points["p_value"],
+                        finite_points["FDR"],
+                        finite_points["a"],
+                        finite_points["b"],
+                        finite_points["c"],
+                        finite_points["d"],
+                    ],
+                    axis=-1
+                ),
+
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Odds ratio: %{customdata[0]:.3g}<br>"
+                    "log₂(OR): %{x:.2f}<br>"
+                    "Clusters: %{customdata[3]}<br>"
+                    "p-value: %{customdata[1]:.3g}<br>"
+                    "FDR: %{customdata[2]:.3g}"
+                    "<br><br>"
+                    "a = %{customdata[3]}<br>"
+                    "b = %{customdata[4]}<br>"
+                    "c = %{customdata[5]}<br>"
+                    "d = %{customdata[6]}"
+                    "<extra></extra>"
+                ),
+
+                name="COG categories"
+            )
+        )
+
+    # =========================================================
+    # 8. OR = +inf
+    # =========================================================
+
+    inf_points = df[
+        np.isposinf(df["log2_OR"])
+    ].copy()
+
+    if not inf_points.empty:
+
+        fig.add_trace(
+            go.Scatter(
+                x=[right_inf] * len(inf_points),
+                y=inf_points["label"],
+                mode="markers+text",
+
+                marker=dict(
+                    size=13,
+                    symbol="diamond",
+                    color=inf_points["neg_log10_FDR"],
+                    colorscale="Viridis",
+                    showscale=False,
+                    line=dict(
+                        width=1
+                    )
+                ),
+
+                text=["+∞"] * len(inf_points),
+                textposition="middle right",
+
+                customdata=np.stack(
+                    [
+                        inf_points["p_value"],
+                        inf_points["FDR"],
+                        inf_points["a"],
+                    ],
+                    axis=-1
+                ),
+
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Odds ratio: ∞<br>"
+                    "log₂(OR): +∞<br>"
+                    "Clusters: %{customdata[2]}<br>"
+                    "p-value: %{customdata[0]:.3g}<br>"
+                    "FDR: %{customdata[1]:.3g}"
+                    "<extra></extra>"
+                ),
+
+                name="OR = ∞"
+            )
+        )
+
+    # =========================================================
+    # 9. OR = 0
+    # =========================================================
+
+    zero_points = df[
+        df["odds_ratio"] == 0
+    ].copy()
+
+    if not zero_points.empty:
+
+        fig.add_trace(
+            go.Scatter(
+                x=[left_inf] * len(zero_points),
+                y=zero_points["label"],
+                mode="markers+text",
+
+                marker=dict(
+                    size=13,
+                    symbol="diamond",
+                    color=zero_points["neg_log10_FDR"],
+                    colorscale="Viridis",
+                    showscale=False,
+                    line=dict(
+                        width=1
+                    )
+                ),
+
+                text=["−∞"] * len(zero_points),
+                textposition="middle left",
+
+                customdata=np.stack(
+                    [
+                        zero_points["p_value"],
+                        zero_points["FDR"],
+                        zero_points["a"],
+                    ],
+                    axis=-1
+                ),
+
+                hovertemplate=(
+                    "<b>%{y}</b><br>"
+                    "Odds ratio: 0<br>"
+                    "log₂(OR): −∞<br>"
+                    "Clusters: %{customdata[2]}<br>"
+                    "p-value: %{customdata[0]:.3g}<br>"
+                    "FDR: %{customdata[1]:.3g}"
+                    "<extra></extra>"
+                ),
+
+                name="OR = 0"
+            )
+        )
+
+    # =========================================================
+    # 10. Ligne de référence : OR = 1
+    # =========================================================
+
+    fig.add_vline(
+        x=0,
+        line_dash="dash",
+        line_width=1
+    )
+
+    # =========================================================
+    # 11. Annotations
+    # =========================================================
+
+    fig.add_annotation(
+        x=xmin_plot + 0.22 * (0 - xmin_plot),
+        y=1.08,
+        xref="x",
+        yref="paper",
+        text="<b>Underrepresented</b>",
+        showarrow=False,
+        xanchor="center",
+        font=dict(size=13)
+    )
+
+    fig.add_annotation(
+        x=0,
+        y=1.08,
+        xref="x",
+        yref="paper",
+        text="No enrichment",
+        showarrow=False,
+        xanchor="center",
+        font=dict(size=11)
+    )
+
+    fig.add_annotation(
+        x=xmax_plot - 0.22 * (xmax_plot - 0),
+        y=1.08,
+        xref="x",
+        yref="paper",
+        text="<b>Enriched</b>",
+        showarrow=False,
+        xanchor="center",
+        font=dict(size=13)
+    )
+
+    # =========================================================
+    # 12. Layout
+    # =========================================================
+
+    fig.update_layout(
+
+        template="plotly_white",
+
+        title=dict(
+            text="COG enrichment relative to the pangenome",
+            x=0.5
+        ),
+        
+        xaxis=dict(
+            title="log₂(Odds ratio)",
+            range=[
+                xmin_plot,
+                xmax_plot
+            ],
+            zeroline=False
+        ),
+
+        yaxis=dict(
+            title=None,
+            categoryorder="array",
+            categoryarray=enrichment_category_order
+        ),
+
+        showlegend=False,
+
+        margin=dict(
+            l=350,
+            r=100,
+            t=100,
+            b=60
+        ),
+
+        height=600
+    )
+
+    return fig
 
 def fullscreen_graph(graph_id, height="600px"):
     return html.Div(
@@ -6792,7 +7256,7 @@ def fullscreen_graph(graph_id, height="600px"):
             html.Button(
                 "⛶",
                 className="fullscreen-button",
-                title="Afficher en plein écran",
+                title="Full screen mode",
             ),
 
             dcc.Graph(
