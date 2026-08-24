@@ -18,6 +18,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import dash
 from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx
 import dash_bootstrap_components as dbc
+import dash_leaflet as dl
 
 import diskcache
 
@@ -58,6 +59,8 @@ import submit_genomes
 import homepage
 
 import xml.etree.ElementTree as ET
+
+from countryinfo import CountryInfo
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -839,6 +842,66 @@ def load_project_preview(proj_title):
         return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
     children = [ html.H4(f" {len(df)} genomes")]
+
+    ##########################################################################
+    # geographical map
+    ##########################################################################
+
+    df_country = (
+        df.groupby("Country")
+        .size()
+        .reset_index(name="count")
+    )
+    df_country["Country"] = df_country["Country"].str.split(":", n=1).str[0]
+    df_country["lat"] = df_country["Country"].apply(get_lat)
+    df_country["lon"] = df_country["Country"].apply(get_lon)
+    df_country = df_country[df_country["lat"].notna()]
+    max_strains = df_country["count"].max()
+    markers = []
+    panel_map = ""
+    if df_country.size > 1:
+        for _, row in df_country.iterrows():
+
+            radius = 5 + 20 * (row["count"] / max_strains) ** 0.5
+
+            markers.append(
+                dl.CircleMarker(
+                    center=[row["lat"], row["lon"]],
+                    radius=radius,
+                    children=[
+                        dl.Tooltip(
+                            f"{row['Country']}: {row['count']} strains"
+                        )
+                    ],
+                    color="black",
+                    fillColor="red",
+                    fillOpacity=0.7,
+                    weight=1,
+                )
+            )
+
+        map = dl.Map(
+                    id ="map_of_samples",
+                    children=[
+                        dl.TileLayer(),
+                        dl.LayerGroup(markers, id="country-markers")
+                    ],
+                    center=[20, 0],
+                    zoom=3,
+                    style={"width": "100%", "height": "400px"},
+                )
+        panel_map = dbc.Col(dbc.Card(
+                                                            [
+                                                                dbc.CardBody(
+                                                                    [
+                                                                        map
+                                                                    ],
+                                                                    style={"textAlign": "center"}
+                                                                ),
+                                                            ],
+                                                            style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                                        ))
+    
     if AGGRID_AVAILABLE:
         
         
@@ -858,10 +921,32 @@ def load_project_preview(proj_title):
                           #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
                           
                           )
-        
-                          
 
-        children.append(grid)
+        
+        
+        children+= [
+
+            dbc.Row(
+                                            [
+                                                dbc.Col(dbc.Card(
+                                                    [
+                                                        dbc.CardBody(
+                                                            [
+                                                                grid
+                                                            ],
+                                                        ),
+                                                    ],
+                                                    
+                                                )),
+                                                  
+                                                panel_map                                                                                                   
+                                                
+                                            ],
+                                        style= {"padding":"15px"}
+                                        ),
+        ]   
+        #children.append(grid)
+        #children.append(map)
         children.append(html.Br())
         children.append(html.Label('Reference Genome for projection ', style={'margin-right': '15px'}))
         children.append(
@@ -6750,6 +6835,51 @@ def show_cluster_with_combination(click,session):
         return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
 
 @app.callback(
+    Output("country-markers", "children"),
+    Input('metadata_table','selectedRows')
+)
+def update_markers(value):
+
+    markers = []
+
+    df = pd.DataFrame(value)
+
+    df_country = (
+            df.groupby("Country")
+            .size()
+            .reset_index(name="count")
+        )
+
+    print(value)
+    
+    df_country["Country"] = df_country["Country"].str.split(":", n=1).str[0]
+    df_country["lat"] = df_country["Country"].apply(get_lat)
+    df_country["lon"] = df_country["Country"].apply(get_lon)
+    df_country = df_country[df_country["lat"].notna()]
+    max_strains = df_country["count"].max()
+    
+    for _, row in df_country.iterrows():
+
+         radius = 5 + 20 * (row["count"] / max_strains) ** 0.5
+         markers.append(
+             dl.CircleMarker(
+                center=[row["lat"], row["lon"]],
+                radius=radius,
+                children=[
+                        dl.Tooltip(
+                            f"{row['Country']}: {row['count']} strains"
+                        )
+                    ],
+                    color="black",
+                    fillColor="red",
+                    fillOpacity=0.7,
+                    weight=1,
+             )
+         )
+
+    return markers
+
+@app.callback(
     Output("graph_COG_selected","figure"),
     Output("graph_COG_enrichment","figure"),
     Input("cog_enrichment","n_clicks"),
@@ -7309,6 +7439,18 @@ def empty_figure():
             paper_bgcolor="white"
     )
     return fig
+
+def get_lat(country):
+    try:
+        return CountryInfo(country).latlng()[0]
+    except:
+        return None
+
+def get_lon(country):
+    try:
+        return CountryInfo(country).latlng()[1]
+    except:
+        return None
     
 # Register dashboard callbacks
 
