@@ -838,6 +838,7 @@ def load_project_preview(proj_title):
     # read metadata (first 500 rows for safety)
     try:
         df = pd.read_csv(meta_path, sep="\t", nrows=500)
+        df["Country"] = df["Country"].str.split(":", n=1).str[0]
     except Exception as e:
         return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
