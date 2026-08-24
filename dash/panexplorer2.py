@@ -847,6 +847,7 @@ def load_project_preview(proj_title):
             .str.strip()
         )
         
+        
     except Exception as e:
         return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
@@ -861,15 +862,7 @@ def load_project_preview(proj_title):
         .size()
         .reset_index(name="count")
     )
-    #df_country["Country"] = df_country["Country"].str.split(":", n=1).str[0]
-    df_country["Country"] = (
-                df_country["Country"]
-                .fillna("")
-                .astype(str)
-                .str.split(":", n=1)
-                .str[0]
-                .str.strip()
-            )
+    
     
     df_country["lat"] = df_country["Country"].apply(get_lat)
     df_country["lon"] = df_country["Country"].apply(get_lon)
@@ -6887,8 +6880,6 @@ def update_markers(value):
             .size()
             .reset_index(name="count")
         )
-
-    print(value)
     
     #df_country["Country"] = df_country["Country"].str.split(":", n=1).str[0]
     df_country["Country"] = (
@@ -6899,6 +6890,7 @@ def update_markers(value):
                             .str[0]
                             .str.strip()
                         )
+    df_country = df_country[df_country["Country"] != ""]
     df_country["lat"] = df_country["Country"].apply(get_lat)
     df_country["lon"] = df_country["Country"].apply(get_lon)
     df_country = df_country[df_country["lat"].notna()]
