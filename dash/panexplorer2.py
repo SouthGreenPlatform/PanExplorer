@@ -838,7 +838,7 @@ def load_project_preview(proj_title):
     # read metadata (first 500 rows for safety)
     try:
         df = pd.read_csv(meta_path, sep="\t", nrows=500)
-        df["Country"] = df["Country"].str.split(":", n=1).str[0]
+        df["Country"] = df["Country"].str.split(": ", n=1).str[0]
     except Exception as e:
         return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
@@ -4087,6 +4087,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             shutil.copy(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick', tmp_dir+"/"+str(session)+".accessory_based_tree.nwk")
 
         df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
+        df_metadata["Country"] = df_metadata["Country"].str.split(": ", n=1).str[0]
         metadata_csv = ""
         with open(directory+'/metadata.csv') as fp:
             metadata_csv = fp.read()
@@ -6338,6 +6339,7 @@ def init_dataframes(pathname):
 
 
     df_metadata = pd.read_csv(directory+'/metadata.xls',sep='\t')
+    df_metadata["Country"] = df_metadata["Country"].str.split(": ", n=1).str[0]
     df_metadata.loc[len(df_metadata.index)] = ['ClutserID', 'none','none','none'] 
     df_metadata3 = df_metadata[(df_metadata["Continent"] != "none")]
     list_continent = ["all"] + df_metadata3["Continent"].unique().tolist()
