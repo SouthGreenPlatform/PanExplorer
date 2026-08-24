@@ -161,3 +161,11 @@
     height: 100vh;
     background: white;
 }
+
+.leaflet-tooltip {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    padding: 10px 15px !important;
+    min-width: 150px !important;
+    white-space: nowrap !important;
+}
