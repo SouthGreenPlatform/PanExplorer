@@ -868,9 +868,10 @@ def load_project_preview(proj_title):
     df_country["lon"] = df_country["Country"].apply(get_lon)
     df_country = df_country[df_country["lat"].notna()]
     max_strains = df_country["count"].max()
+    list_lat = df_country['lat'].tolist()
     markers = []
     panel_map = ""
-    if df_country.size > 1:
+    if len(list_lat) > 1:
         for _, row in df_country.iterrows():
 
             radius = 5 + 20 * (row["count"] / max_strains) ** 0.5
@@ -893,6 +894,7 @@ def load_project_preview(proj_title):
 
         map = dl.Map(
                     id ="map_of_samples",
+                    
                     children=[
                         dl.TileLayer(),
                         dl.LayerGroup(markers, id="country-markers")
@@ -3350,7 +3352,8 @@ def set_reference_value(available_options):
     Output('graph_COG_enrichment','figure'),
     Output("nb_of_selected_clusters",'children'),
     Output("nb_of_selected_clusters2",'children'),
-
+    Output("circos_legend", 'children'),
+    Output("circos_legend2", 'children'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3586,42 +3589,42 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     # ##########################################################
     search_res2 = []
  
-    # ##############################################
-    # # get clusters specific to a subset of samples
-    # ##############################################
-    if specific_to is not None and len(specific_to) > 0:
-        list_of_clusters = [1000]
+    # # ##############################################
+    # # # get clusters specific to a subset of samples
+    # # ##############################################
+    # if specific_to is not None and len(specific_to) > 0:
+    #     list_of_clusters = [1000]
         
-        # 1) get clusters for which gene is present for these samples
-        specific_to.append("ClutserID")
-        df_specific_to = df[specific_to]
-        df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
-        # get only if at least one gene is present
-        df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
-        # remove CLUSTER tag (TODO: to be removed)
+    #     # 1) get clusters for which gene is present for these samples
+    #     specific_to.append("ClutserID")
+    #     df_specific_to = df[specific_to]
+    #     df_specific_to['sum'] = df_specific_to.drop('ClutserID', axis=1).sum(axis=1)
+    #     # get only if at least one gene is present
+    #     df_specific_to = df_specific_to[df_specific_to["sum"] == len(specific_to)-1]
+    #     # remove CLUSTER tag (TODO: to be removed)
 
-        list1 = df_specific_to['ClutserID'].tolist()
-        #list1bis = [eval(i) for i in list1]
+    #     list1 = df_specific_to['ClutserID'].tolist()
+    #     #list1bis = [eval(i) for i in list1]
         
         
-        # 2) get clusters for which the number of presence correspond to the number of selected samples
-        same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
-        list2 = same_number_df['ClutserID'].tolist()
+    #     # 2) get clusters for which the number of presence correspond to the number of selected samples
+    #     same_number_df = merged_with_cog[merged_with_cog["sum"] == len(specific_to)-1]
+    #     list2 = same_number_df['ClutserID'].tolist()
         
-        # 3) get overlapping clusters between the two dataframes
-        intersected_list = [value for value in list1 if value in list2]
+    #     # 3) get overlapping clusters between the two dataframes
+    #     intersected_list = [value for value in list1 if value in list2]
 
-        df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
-        #df_specific_final2.to_csv("df_specific_to.csv")
+    #     df_search = pd.DataFrame(intersected_list, columns=['ClutserID'])
+    #     search_res2 = df_search.to_dict('records')
+    #     #df_specific_final2.to_csv("df_specific_to.csv")
         
-        list_of_clusters = intersected_list
+    #     list_of_clusters = intersected_list
 
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
+    #     df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
+    #     search_res2 = df_search.to_dict('records')
         
-        #for sample in list_sp2:
-        #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+    #     #for sample in list_sp2:
+    #     #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
     print("ok0")
@@ -3687,9 +3690,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
     
-    core_df['ClutserID'] = core_df['ClutserID'].astype(int)
-
     
+    core_df['ClutserID'] = core_df['ClutserID'].astype(int)
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
@@ -3698,8 +3700,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     specific_df['ClutserID'] = specific_df['ClutserID'].astype(int)
     specific_df_merged_with_positions = pd.merge(specific_df, merged_with_positions, left_on='ClutserID', right_on='name')
     specific_df_merged_with_positions = specific_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
-    specific_list_dict = specific_df_merged_with_positions.to_dict('records')
-
+    specific_list_dict = specific_df_merged_with_positions.to_dict('records')    
     
     fig_gene = px.histogram(df2, x="sum", title='Gene clusters frequency distribution')
 
@@ -3816,6 +3817,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     nb_of_selected_clusters2 = ""
     table_cluster1 = core_df.to_dict('records')
     table_cluster2 = specific_df.to_dict('records')
+    circos_legend2 = ["Core-genes"]
+    circos_legend = ["Strain-specific genes"]
     if specific_to:
         ##########################################
         # get clusters respecting combination
@@ -3867,12 +3870,26 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         table_cluster1 = dictionary_selected
         table_cluster2 = dictionary_selected_opposite
 
+        # for circos
+        df_selected_merged_with_positions = pd.merge(df_selected, merged_with_positions, left_on='ClutserID', right_on='name')
+        df_selected_merged_with_positions = df_selected_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
+        core_list_dict = df_selected_merged_with_positions.to_dict('records')
+
+        df_selected_opposite_merged_with_positions = pd.merge(df_selected_opposite, merged_with_positions, left_on='ClutserID', right_on='name')
+        df_selected_opposite_merged_with_positions = df_selected_opposite_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
+        specific_list_dict = df_selected_opposite_merged_with_positions.to_dict('records')
+
+        circos_legend2 = ["Clusters respecting PAV pattern"]
+        circos_legend = ["Clusters respecting opposite PAV pattern"]
+
     else:
         core_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
         singletons_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
 
         nb_of_selected_clusters = "Core-genes: " +str(len(core_df))+ " clusters"
         nb_of_selected_clusters2 = "Singletons / Specific genes: " +str(len(singletons_df))+ " clusters"
+
+            
 
     fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
@@ -4966,7 +4983,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2
 
 ############################################
 # Disable button during loading
