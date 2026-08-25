@@ -1,5 +1,7 @@
 # app.py — Application Dash unique + authentification SQLite + mode "session-only"
 import os
+import io
+import base64
 import sqlite3
 import secrets
 import logging
@@ -61,6 +63,8 @@ import homepage
 import xml.etree.ElementTree as ET
 
 from countryinfo import CountryInfo
+
+from draw_haplotype_network import plot_haplotype_network
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -2368,10 +2372,12 @@ def load_project_preview(proj_title):
                                             #style={'width': '180vh','height': '50vh','padding': '15px'},
                                             columnDefs=columnDefs2,
                                             rowData=[],
+                                            selectedRows=[],
                                             columnSize="sizeToFit",
                                             selectAll=True,
                                             defaultColDef={"filter": True},
-                                            dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                                            dashGridOptions={"rowSelection": "multiple"},
+                                            #dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
                                         ), 
                                     ),
                             ),
@@ -2387,7 +2393,14 @@ def load_project_preview(proj_title):
                                     id='submit-vntr', 
                                     n_clicks=0),
                         html.Br(),
-                        dcc.Loading(html.Div(id='dynamic_network')),
+                        #dcc.Loading(html.Div(id='dynamic_network')),
+                        dcc.Loading(html.Img(
+                            id="haplotype-network",
+                            style={
+                                "width": "90%",
+                                "height": "auto"
+                            }
+                        ))
                     ], style={"paddingLeft": "15px"}
                      ), 
                 ]),
@@ -4388,7 +4401,9 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
             
 
             # Charger les identifiants
-            ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
+            #ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
+            ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", sep=r"\s+", header=None)
+
             ids = ids[1].tolist()
 
             # Charger la matrice de distances
@@ -6143,8 +6158,9 @@ def enrichment(submit_enrichment,metadata_table,proj_title,session):
 
 
 @app.callback(
-        Output('dynamic_network','children'),
+        #Output('dynamic_network','children'),
         Output('graph_mlva', 'figure'),
+        Output("haplotype-network", "src"),
         Input('submit-vntr', 'n_clicks'),
         State('mlva_table','selectedRows'),
         State('metadata_table','selectedRows'),
@@ -6240,24 +6256,51 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
 
     # concatenate numbers of repeats as an haplotype value for each sample
     transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
+    
+    #transposed_newdf = transposed_newdf.reset_index().rename(columns={"index": "Strain_name"})
 
     # assign metadata to haplotype
-    df_metadata_tmp = pd.read_csv(directory+'/metadata.tmp.xls',sep='\t')
+     
+    
+    df_metadata_tmp = pd.read_csv(directory+'/metadata.xls',sep='\t')
     dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
     dict_haplo = {}
     dict_element_for_colorizing = {}
+    #concat_metadata = ""
     for strain, row in transposed_newdf.iterrows():
         country = dict_metadata[strain]
         dict_element_for_colorizing[country]=1
+        #haplo_metadata_file.write(row.haplotype_name)
+        #concat_metadata = concat_metadata + str(strain) + "," + row.haplotype_name + "," + str(country) + "\n"
         if row.haplotype in dict_haplo.keys():
             dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + str(country)
         else:
             dict_haplo[row.haplotype] = str(country)
 
     transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
+    transposed_newdf = transposed_newdf.reset_index()
+    transposed_newdf = transposed_newdf.rename(
+        columns={
+            "index": "Strain_name"
+        }
+    )
 
-    #dictionary_haplotype_of_strain = transposed_newdf.set_index('strains')['haplotype'].to_dict()
+    haplotype_ids = {
+        haplotype: f"haplo{i}"
+        for i, haplotype in enumerate(
+            transposed_newdf["haplotype"].unique(),
+            start=1
+        )
+    }
 
+    transposed_newdf["Haplotype"] = (
+        transposed_newdf["haplotype"]
+        .map(haplotype_ids)
+    )
+
+    df_network_metadata = pd.merge(transposed_newdf, df_metadata_tmp, left_on='Strain_name', right_on='Strain name')
+    df_network_metadata = df_network_metadata[["Strain_name","Haplotype","Country"]]
+    df_network_metadata.to_csv(tmp_dir+"/"+str(session)+".haplotype_metadata.csv")
     
 
 
@@ -6265,6 +6308,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
     haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
     haplotype_freq_df.to_csv(tmp_dir+"/"+str(session)+".haplotype_frequency.txt")
+    
 
 
     with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f, open("assets/network."+str(session)+".1.json", 'a') as j:
@@ -6282,12 +6326,14 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             size = row[1]
             country = dict_haplo[haplotype]
             list_countries = dict_haplo[haplotype].split(",")
+            haplo = "haplo" + str(i)
             concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * size)+","
             color_nb = 0
             concat = concat + "\"pieChart\" : ["
             subconcat = ""
             for country in dict_element_for_colorizing.keys():
                 nb_occurence = list_countries.count(country)
+                
                 percentage = (nb_occurence / size) * 100
                 if nb_occurence > 0:
                     subconcat = subconcat + "{ \"color\": \"" + colors[color_nb] + "\", \"percent\": " + str(percentage) + " },"
@@ -6332,7 +6378,31 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
 
     dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
 
-    return dynamic_network, graph_mlva
+
+
+    fig, ax, G, pos = plot_haplotype_network(
+        tmp_dir+"/"+str(session)+".haplotype_network.csv",
+        tmp_dir+"/"+str(session)+".haplotype_metadata.csv",
+        sample_col="Strain_name",
+        haplotype_col="Haplotype",
+        origin_col="Country",
+        scale=18,
+        distance_transform="sqrt",
+        min_visual_distance=2.5,
+        node_size_min=0.008,
+        node_size_max=0.04,
+        show_labels=True,
+        show_weights=False
+    )
+
+    svg = matplotlib_to_svg(fig) 
+
+    return graph_mlva, (
+        "data:image/svg+xml;base64,"
+        + base64.b64encode(
+            svg.encode()
+        ).decode()
+    )
 
 
 
@@ -7494,6 +7564,18 @@ def empty_figure():
             paper_bgcolor="white"
     )
     return fig
+
+
+def matplotlib_to_svg(fig):
+    buffer = io.BytesIO()
+    fig.savefig(
+        buffer,
+        format="svg",
+        bbox_inches="tight"
+    )
+    buffer.seek(0)
+    svg = buffer.getvalue().decode("utf-8")
+    return svg
 
 def get_lat(country):
     try:
