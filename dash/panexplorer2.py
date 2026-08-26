@@ -6232,6 +6232,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             vntr_name = vntr['ID']
             repeats.append(vntr_name) 
 
+    repeats.reverse()
     
     #print(repeats)
     mask = df_vntr['ID'].isin(repeats)
