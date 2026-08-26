@@ -2303,6 +2303,7 @@ def load_project_preview(proj_title):
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=tab_style, selected_style=tab_selected_style, children=[
                     html.Div(id='mlva_tab_content', children=[
                         html.Br(),
+                        
                         dbc.Row(
                                 [
                                     dbc.Col(dbc.Card(
@@ -2341,7 +2342,24 @@ def load_project_preview(proj_title):
                             style= {"padding":"15px"}
                             ),
 
-
+                            dbc.Row([
+                                dbc.Col(
+                                    dcc.Loading(
+                                            dag.AgGrid(
+                                                id="mlva_table",
+                                                #style={'width': '180vh','height': '50vh','padding': '15px'},
+                                                columnDefs=columnDefs2,
+                                                rowData=[],
+                                                selectedRows=[],
+                                                columnSize="sizeToFit",
+                                                selectAll=True,
+                                                defaultColDef={"filter": True},
+                                                dashGridOptions={"rowSelection": "multiple"},
+                                                #dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
+                                            ), 
+                                        ),
+                                ),
+                            ], style= {"padding":"15px"}),                    
                         dbc.Row(
                                 [
                                     dbc.Col(dbc.Card(
@@ -2362,27 +2380,8 @@ def load_project_preview(proj_title):
                                               
                         html.Button("Download matrix", id="btn-download", n_clicks=0),
                         dcc.Download(id="download-dataframe"),
+                        html.Br(),
 
-                        
-                        dbc.Row([
-                            dbc.Col(
-                                dcc.Loading(
-                                        dag.AgGrid(
-                                            id="mlva_table",
-                                            #style={'width': '180vh','height': '50vh','padding': '15px'},
-                                            columnDefs=columnDefs2,
-                                            rowData=[],
-                                            selectedRows=[],
-                                            columnSize="sizeToFit",
-                                            selectAll=True,
-                                            defaultColDef={"filter": True},
-                                            dashGridOptions={"rowSelection": "multiple"},
-                                            #dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                        ), 
-                                    ),
-                            ),
-                        ]),
-                        
                         
                         html.Br(),
                         html.Button('Update heatmap and generate haplotype network', 
@@ -2392,6 +2391,7 @@ def load_project_preview(proj_title):
                                     },
                                     id='submit-vntr', 
                                     n_clicks=0),
+                        html.Br(),
                         html.Br(),
                         #dcc.Loading(html.Div(id='dynamic_network')),
                         dcc.Loading(html.Img(
@@ -6238,7 +6238,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
     testdf = df_vntr[mask]
     newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
     graph_mlva = px.imshow(newdf.T, 
-                           #aspect="auto",
+                           aspect="auto",
                            labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
                            x=repeats,
                            #y=list_sp2,
@@ -6277,7 +6277,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         else:
             dict_haplo[row.haplotype] = str(country)
 
-    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
+    
     transposed_newdf = transposed_newdf.reset_index()
     transposed_newdf = transposed_newdf.rename(
         columns={
@@ -6297,12 +6297,15 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         transposed_newdf["haplotype"]
         .map(haplotype_ids)
     )
+    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
+    # make correspondence
+    haplo_dict = dict(
+        zip(transposed_newdf["haplotype"], transposed_newdf["Haplotype"])
+    )
 
     df_network_metadata = pd.merge(transposed_newdf, df_metadata_tmp, left_on='Strain_name', right_on='Strain name')
     df_network_metadata = df_network_metadata[["Strain_name","Haplotype","Country"]]
     df_network_metadata.to_csv(tmp_dir+"/"+str(session)+".haplotype_metadata.csv")
-    
-
 
     # put frequency of haplotypes into a dictionnary 
     dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
@@ -6326,8 +6329,8 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             size = row[1]
             country = dict_haplo[haplotype]
             list_countries = dict_haplo[haplotype].split(",")
-            haplo = "haplo" + str(i)
-            concat = concat + "{\"id\": \"haplo" + str(i)+"\",\"size\":"+str(10 * size)+","
+            haplotype_name = haplo_dict[haplotype]
+            concat = concat + "{\"id\": \"" + str(haplotype_name)+"\",\"size\":"+str(10 * size)+","
             color_nb = 0
             concat = concat + "\"pieChart\" : ["
             subconcat = ""
@@ -6342,7 +6345,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             subconcat = subconcat[:len(subconcat)-1]
 
             concat = concat + subconcat + "]},\n"
-            f.write("haplo"+str(i)+","+row[0].replace("_", ",")+"\n")
+            f.write(str(haplotype_name)+","+row[0].replace("_", ",")+"\n")
         
         concat = concat[:len(concat)-2]
         j.write(concat+"\n")
@@ -6389,8 +6392,8 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
         scale=18,
         distance_transform="sqrt",
         min_visual_distance=2.5,
-        node_size_min=0.008,
-        node_size_max=0.04,
+        node_size_min=0.01,
+        node_size_max=0.08,
         show_labels=True,
         show_weights=False
     )

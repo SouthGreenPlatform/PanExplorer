@@ -21,8 +21,8 @@ def plot_haplotype_network(
     min_visual_distance=2.5,
 
     # Nodes
-    node_size_min=0.035,
-    node_size_max=0.09,
+    node_size_min=0.025,
+    node_size_max=None,
 
     # Appearance
     show_labels=True,
@@ -76,10 +76,14 @@ def plot_haplotype_network(
         Minimum visual distance used between connected nodes.
 
     node_size_min : float
-        Minimum node radius relative to network size.
+        Radius of a haplotype represented by one sample, relative to
+        the network size. Node radius scales as sqrt(frequency), so
+        node area is approximately proportional to haplotype frequency.
 
-    node_size_max : float
-        Maximum node radius relative to network size.
+    node_size_max : float or None
+        Optional maximum node radius relative to network size. If None,
+        no upper limit is applied and node area remains proportional to
+        haplotype frequency. If set, it acts only as a visual cap.
 
     show_labels : bool
         Display haplotype names.
@@ -479,75 +483,44 @@ def plot_haplotype_network(
 
             frequency = 0
 
-        frequencies[
-            haplotype
-        ] = frequency
-
-    observed = [
-        frequency
-        for frequency
-        in frequencies.values()
-        if frequency > 0
-    ]
-
-    if observed:
-
-        min_frequency = min(
-            observed
-        )
-
-        max_frequency = max(
-            observed
-        )
-
-    else:
-
-        min_frequency = 1
-        max_frequency = 1
+        frequencies[haplotype] = frequency
 
     # ============================================================
     # 12. NODE RADII
     # ============================================================
+    #
+    # IMPORTANT:
+    # The radius is proportional to sqrt(frequency). Therefore the
+    # surface (pi*r^2) is proportional to frequency.
+    #
+    # This deliberately does NOT normalize frequencies between their
+    # observed minimum and maximum. Such a min/max normalization would
+    # make frequency 1 and frequency 2 potentially map to the minimum
+    # and maximum sizes, producing a visually exaggerated difference.
+    # ============================================================
 
     radii = {}
 
-    for haplotype, frequency in (
-        frequencies.items()
-    ):
+    for haplotype, frequency in frequencies.items():
 
         if frequency <= 0:
-
-            normalized = 0
-
-        elif min_frequency == max_frequency:
-
-            normalized = 0.5
+            radius = node_size_min
 
         else:
-
-            # Square-root scaling
-            normalized = (
-                np.sqrt(frequency)
-                - np.sqrt(min_frequency)
-            ) / (
-                np.sqrt(max_frequency)
-                - np.sqrt(min_frequency)
+            radius = (
+                node_size_min
+                * np.sqrt(frequency)
             )
 
-        radius = (
-            node_size_min
-            +
-            normalized
-            *
-            (
+        # Optional visual cap. It is disabled by default because a cap
+        # breaks the strict area/frequency relationship for large nodes.
+        if node_size_max is not None:
+            radius = min(
+                radius,
                 node_size_max
-                - node_size_min
             )
-        )
 
-        radii[
-            haplotype
-        ] = (
+        radii[haplotype] = (
             radius
             * network_size
         )
@@ -714,7 +687,7 @@ def plot_haplotype_network(
                         origin
                     ],
                     edgecolor="white",
-                    linewidth=1.0,
+                    linewidth=0.0,
                     zorder=20
                 )
 
@@ -745,7 +718,7 @@ def plot_haplotype_network(
     if show_labels:
 
         label_offset = (
-            network_size * 0.012
+            network_size * 0.002
         )
 
         for haplotype in G.nodes():
