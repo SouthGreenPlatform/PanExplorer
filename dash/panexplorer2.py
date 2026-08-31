@@ -2425,10 +2425,7 @@ def load_project_preview(proj_title):
                                 style= {"padding":"15px"}
                     ),                
                     ]),
-                dcc.Tab(label='Geographical map', id='tab_geo', style=tab_style, selected_style=tab_selected_style, children=[
-                    html.Br(),
-                        dcc.Loading(dcc.Graph(id='geo_map',style={'width': '150vh', 'height': '100vh','padding': '15px'})),
-                    ]),
+                
             ]),
 
         ]),
@@ -3347,7 +3344,7 @@ def set_reference_value(available_options):
     Output('VCF_graph', 'figure'),
     Output('sNMF', 'figure'),
     Output('sNMF_cross_entropy', 'figure'),
-    Output('geo_map', 'figure'),
+    
     #Output('graph_gfa', 'figure'),
     Output('graph_gfa2', 'figure'),
     Output('pav-node-names-store', 'data'),
@@ -3356,7 +3353,6 @@ def set_reference_value(available_options):
     Output('tab_repeats','style'),
     Output('tab_snps','style'),
     Output('tab_ani','style'),
-    Output('tab_geo','style'),
     Output('current_session','value'),
     Output('colorizing_pca','options'),
     Output('colorizing_tree','options'),
@@ -4934,27 +4930,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
         
     
-    ##############################################################################################
-    # geographical map of strains
-    ##############################################################################################
-    counts = df_metadata3.groupby(["Country", "Continent"]).size().reset_index(name="number_strains")
-
-    tab_style_geo = {'display': 'none'}
-    fig_geomap = go.Figure()
-
-    if not counts.empty:
-
-        tab_style_geo = tab_style
-
-        # Create the map
-        fig_geomap = px.choropleth(
-                counts,
-                locations="Country",            # Colonne avec les noms des pays
-                locationmode="country names", # On utilise les noms de pays
-                color="number_strains",      # Couleur selon le nombre de souches
-                color_continuous_scale="Viridis",
-                title="Number of strains by country"
-        )
+    
 
 
     print("ok5")
@@ -4998,7 +4974,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, fig_geomap, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani, tab_style_geo,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2
 
 ############################################
 # Disable button during loading
