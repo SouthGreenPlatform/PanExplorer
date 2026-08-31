@@ -6215,14 +6215,7 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
 
         df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
         df_vntr_filtered = df_vntr[list_selected]
-        print(df_vntr_filtered.columns)
         df_vntr = df_vntr_filtered
-
-
-    repeat_names = df_vntr["ID"].astype(str).tolist()
-    print("Filtered vntr")
-    print(list_selected)
-    
 
     repeats = []
     if mlva_table:
@@ -6232,16 +6225,16 @@ def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
             vntr_name = vntr['ID']
             repeats.append(vntr_name) 
 
-    repeats.reverse()
-    
-    #print(repeats)
     mask = df_vntr['ID'].isin(repeats)
     testdf = df_vntr[mask]
+
+    list_repeats = testdf['ID'].tolist()
+
     newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
     graph_mlva = px.imshow(newdf.T, 
                            aspect="auto",
                            labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
-                           x=repeats,
+                           x=list_repeats,
                            #y=list_sp2,
                            text_auto=True
                            )
