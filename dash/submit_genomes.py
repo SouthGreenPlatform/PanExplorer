@@ -566,20 +566,27 @@ def check_fasta(fichier_fasta: str) -> bool:
     if not chemin.is_file():
         return False
 
-    if chemin.suffix.lower() not in [".fa", ".fasta", ".fna"]:
+    if chemin.suffix.lower() not in [".fa", ".fasta", ".fna",".gz"]:
         return False
 
     caracteres_valides = set("ACGTNacgtn")
 
     try:
-        sequences = list(SeqIO.parse(fichier_fasta, "fasta"))
+
+        if str(fichier_fasta).endswith(".gz"):
+            handle = gzip.open(fichier_fasta, "rt")
+        else:
+            handle = open(fichier_fasta, "r")
+
+        with handle:
+            sequences = list(SeqIO.parse(handle, "fasta"))
 
         # Aucun contig/chromosome trouvé
         if len(sequences) == 0:
             return False
 
         for record in sequences:
-            seq = str(record.seq)
+            seq = str(record.seq).upper()
 
             if len(seq) == 0:
                 return False
@@ -588,6 +595,8 @@ def check_fasta(fichier_fasta: str) -> bool:
                 return False
 
         return True
+
+        
 
     except Exception:
         return False
@@ -644,9 +653,9 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
             valid = row[2]
             if valid == "✅":
                 shutil.copyfile(f"{upload_path}/{basename}.gff", f"{upload_path}/forzip/{basename}.gff")
-                shutil.copyfile(f"{upload_path}/{basename}.fasta", f"{upload_path}/forzip/{basename}.fasta")
+                shutil.copyfile(f"{upload_path}/{basename}.fasta.gz", f"{upload_path}/forzip/{basename}.fasta.gz")
 
-                subprocess.run(["gzip", f"{upload_path}/forzip/{basename}.fasta"], check=True)
+                #subprocess.run(["gzip", f"{upload_path}/forzip/{basename}.fasta"], check=True)
 
                 dict_strains[basename] = basename
                 # with gzip.open(f"{upload_path}/{basename}.fasta.gz", "rb") as f_in:
@@ -1352,9 +1361,9 @@ def register_callbacks(app):
                 
                 du.Upload(
                         id='upload-gff-fasta',
-                        text='Upload GFF files and fasta files',
+                        text='Upload GFF files and fasta.gz files',
                         max_files=40,
-                        filetypes=['gff', 'fasta'],
+                        filetypes=['gff', 'fasta.gz'],
                         upload_id=session
                     ),
 
@@ -1402,6 +1411,7 @@ def register_callbacks(app):
 
         upload_session_dir = f"{UPLOAD_DIR}/{session}"
         for file in os.listdir(upload_session_dir):
+            print(file)
             original_name = os.path.basename(file)
 
             if file.endswith(".gff"):
@@ -1418,7 +1428,7 @@ def register_callbacks(app):
                     dict_strains_gff[basename]=1
 
             
-            if file.endswith(".fasta"):
+            if file.endswith(".fasta.gz"):
                 basename1 = Path(original_name).stem
                 basename = Path(basename1).stem
                 dict_strains[basename]=1
@@ -1428,6 +1438,9 @@ def register_callbacks(app):
                 print(f"Processing uploaded file: {file} -> {newfile}")
                 filepath = os.path.join(upload_session_dir, newfile)
                 filepaths.append(filepath)
+
+                print("filepath: "+ filepath)
+                print("basename: " + basename + " " + basename1)
 
                 if check_fasta(filepath):
                     dict_strains_fasta[basename]=1
@@ -1508,7 +1521,53 @@ def register_callbacks(app):
             divs.append(dcc.Input(id="session_id", type="hidden", value=str(session)))
         return html.Div(divs)
 
-    
+
+    #######################################################################
+    # check fasta during upload
+    #######################################################################
+    @du.callback(
+        Output("output-area3", "children", allow_duplicate=True),
+        id='upload-gff-fasta'
+    )
+    def handle_upload(filenames):
+        
+        for file in filenames:
+
+            if file.endswith('.fasta.gz'):
+
+                if not control_fasta_gz(file):
+                    os.remove(file)
+                    return "Invalid fasta.gz file"
+
+            elif file.endswith('.gff'):
+                # control GFF
+                pass
+
+    def control_fasta_gz(fasta_file):
+        try:
+            number_of_sequences = 0
+
+            with gzip.open(fasta_file, "rt") as handle:
+                for record in SeqIO.parse(handle, "fasta"):
+
+                    number_of_sequences += 1
+                    seq = str(record.seq).upper()
+
+                    if len(seq) == 0:
+                        return False
+
+                    #if not set(seq).issubset(caracteres_valides):
+                    #    return False
+
+            return number_of_sequences > 0
+
+        except Exception:
+            return False
+
+
+    #######################################################################
+    # check fasta after upload
+    #######################################################################
     @app.callback(
         Output("output-area3", "children", allow_duplicate=True),
         Input("check-status-button","n_clicks"),
