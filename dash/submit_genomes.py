@@ -1525,44 +1525,44 @@ def register_callbacks(app):
     #######################################################################
     # check fasta during upload
     #######################################################################
-    @du.callback(
-        Output("output-area3", "children", allow_duplicate=True),
-        id='upload-gff-fasta'
-    )
-    def handle_upload(filenames):
+    # @du.callback(
+    #     Output("output-area3", "children", allow_duplicate=True),
+    #     id='upload-gff-fasta'
+    # )
+    # def handle_upload(filenames):
         
-        for file in filenames:
+    #     for file in filenames:
 
-            if file.endswith('.fasta.gz'):
+    #         if file.endswith('.fasta.gz'):
 
-                if not control_fasta_gz(file):
-                    os.remove(file)
-                    return "Invalid fasta.gz file"
+    #             if not control_fasta_gz(file):
+    #                 os.remove(file)
+    #                 return "Invalid fasta.gz file"
 
-            elif file.endswith('.gff'):
-                # control GFF
-                pass
+    #         elif file.endswith('.gff'):
+    #             # control GFF
+    #             pass
 
-    def control_fasta_gz(fasta_file):
-        try:
-            number_of_sequences = 0
+    # def control_fasta_gz(fasta_file):
+    #     try:
+    #         number_of_sequences = 0
 
-            with gzip.open(fasta_file, "rt") as handle:
-                for record in SeqIO.parse(handle, "fasta"):
+    #         with gzip.open(fasta_file, "rt") as handle:
+    #             for record in SeqIO.parse(handle, "fasta"):
 
-                    number_of_sequences += 1
-                    seq = str(record.seq).upper()
+    #                 number_of_sequences += 1
+    #                 seq = str(record.seq).upper()
 
-                    if len(seq) == 0:
-                        return False
+    #                 if len(seq) == 0:
+    #                     return False
 
-                    #if not set(seq).issubset(caracteres_valides):
-                    #    return False
+    #                 #if not set(seq).issubset(caracteres_valides):
+    #                 #    return False
 
-            return number_of_sequences > 0
+    #         return number_of_sequences > 0
 
-        except Exception:
-            return False
+    #     except Exception:
+    #         return False
 
 
     #######################################################################
