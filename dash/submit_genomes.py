@@ -653,9 +653,9 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
             valid = row[2]
             if valid == "✅":
                 shutil.copyfile(f"{upload_path}/{basename}.gff", f"{upload_path}/forzip/{basename}.gff")
-                shutil.copyfile(f"{upload_path}/{basename}.fasta.gz", f"{upload_path}/forzip/{basename}.fasta.gz")
+                shutil.copyfile(f"{upload_path}/{basename}.fasta", f"{upload_path}/forzip/{basename}.fasta")
 
-                #subprocess.run(["gzip", f"{upload_path}/forzip/{basename}.fasta"], check=True)
+                subprocess.run(["gzip", f"{upload_path}/forzip/{basename}.fasta"], check=True)
 
                 dict_strains[basename] = basename
                 # with gzip.open(f"{upload_path}/{basename}.fasta.gz", "rb") as f_in:
@@ -1363,7 +1363,7 @@ def register_callbacks(app):
                         id='upload-gff-fasta',
                         text='Upload GFF files and fasta.gz files',
                         max_files=40,
-                        filetypes=['gff', 'fasta.gz'],
+                        filetypes=['gff', 'fasta'],
                         upload_id=session
                     ),
 
@@ -1428,7 +1428,7 @@ def register_callbacks(app):
                     dict_strains_gff[basename]=1
 
             
-            if file.endswith(".fasta.gz"):
+            if file.endswith(".fasta"):
                 basename1 = Path(original_name).stem
                 basename = Path(basename1).stem
                 dict_strains[basename]=1
