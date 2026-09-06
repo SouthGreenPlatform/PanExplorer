@@ -3380,7 +3380,7 @@ def set_reference_value(available_options):
     State("chromosome",'value'),
     State("minimal_size_block",'value'),
 
-
+    background=True,
     prevent_initial_call=True
 )
 def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):

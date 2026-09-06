@@ -613,11 +613,14 @@ def check_gff(gff_file: str) -> bool:
             for ligne in f:
                 ligne = ligne.strip()
 
+                if ligne == "##FASTA":
+                    break
+
                 if not ligne or ligne.startswith("#"):
                     continue
 
                 colonnes = ligne.split("\t")
-
+                print(str(len(colonnes)))
                 if len(colonnes) != 9:
                     return False
 
@@ -1426,6 +1429,7 @@ def register_callbacks(app):
 
                 if check_gff(filepath):
                     dict_strains_gff[basename]=1
+                
 
             
             if file.endswith(".fasta"):
