@@ -742,10 +742,12 @@ def render_page(search):
 
     # parse session param
     session_code = None
+    project = None
     if search:
         import urllib.parse
         params = urllib.parse.parse_qs(search.lstrip("?"))
         session_code = params.get("session", [None])[0]
+        project = params.get("project", [None])[0]
 
     
     if session_code:
@@ -792,7 +794,14 @@ def render_page(search):
 
 
     # default selection
-    default_value = options[0]["value"] if options else None
+
+    default_value = None
+    if project:
+        default_value = project
+    elif options:
+        default_value = options[0]["value"] 
+    else:
+        default_value = None
     
     # simplified UI inspired from app-pav.py
     if os.path.exists(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") and os.path.getsize(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") == 0:
