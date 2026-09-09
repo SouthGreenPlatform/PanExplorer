@@ -65,6 +65,7 @@ import xml.etree.ElementTree as ET
 from countryinfo import CountryInfo
 
 from draw_haplotype_network import plot_haplotype_network
+from clustering_PAV import analyze_pav_matrix
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -298,6 +299,11 @@ columnDefs5 = [
     {"field": "COG term","width": 400},
     {"field": "type","width": 200},
     {"field": "sum","width": 100},
+]
+
+columnDefs6 = [
+    {"field": "strain","width": 200},
+    {"field": "HierarchicalClustering","width": 200},
 ]
 
 data = ""
@@ -1579,6 +1585,88 @@ def load_project_preview(proj_title):
                     ]),
                     
                     
+                    
+                    dcc.Tab(label='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
+                        html.Div(id='tree_tab_content', children=[
+                            html.Br(),
+                            dbc.Row([
+                                dbc.Col(
+                                    html.Label("Colored by: "),style={'width': '150px'},
+                                ),
+                                dbc.Col(
+                                    dcc.Dropdown(
+                                                    ['Country','HierarchicalClustering'],
+                                                    value='HierarchicalClustering',
+                                                    id='colorizing_tree1',
+                                                    style={'width': '300px'},
+                                                    multi=False
+                                                ),
+                                )
+                            ], style={'width': '450px'}),
+                            html.Br(),
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='pcoa',style={'width': '60vh', 'height': '800px','padding': '5px'}),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                       
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.Iframe(id='iframe-content',style={'width': '60vh', 'height': '800px', 'border': 'none'})
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.H5("Assignation to clusters", id='clustering_assignation', style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    dcc.Loading(
+                                                        html.Div(children=[
+                                                            dag.AgGrid(
+                                                                id="table_clustering_assignation",
+                                                                style={'margin-left': '1px',"paddingRight": "15px"},
+                                                                rowData=[],
+                                                                columnDefs=columnDefs6,
+                                                                defaultColDef={"filter": True},
+                                                                #defaultColDef={"filter": "agTextColumnFilter"},
+                                                                dashGridOptions={"pagination": True, "animateRows": False}
+                                                            ),
+                                                            html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
+                                                            dcc.Download(id="download-dataframe4"),
+                                                        ], style={"paddingLeft": "15px","paddingRight": "15px",'height': '800px'}),
+                                                    ),                                                    
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                                                                                                                                                         
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                            ), 
+
+                                                        
+                            
+                            html.Br(),
+                        ], style={"paddingLeft": "15px"}
+                        ),
+                        ]),
                     dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='cog_tab_content', children=[
                             html.Br(),
@@ -1649,49 +1737,7 @@ def load_project_preview(proj_title):
                             dcc.Loading(dcc.Graph(id='heatmap_of_pathway')),
                         ], style={"paddingLeft": "15px"}
                         ),
-                    ]),
-                    dcc.Tab(label='Accessory-based tree', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='tree_tab_content', children=[
-                            html.Br(),
-                            dbc.Row([
-                                dbc.Col(
-                                    html.Label("Colored by: "),style={'width': '150px'},
-                                ),
-                                dbc.Col(
-                                    dcc.Dropdown(
-                                                    ['Country','Population as defined by sNMF'],
-                                                    value='Country',
-                                                    id='colorizing_tree1',
-                                                    style={'width': '300px'},
-                                                    multi=False
-                                                ),
-                                )
-                            ], style={'width': '450px'}),
-                            html.Br(),
-                            dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    html.Iframe(id='iframe-content',style={'width': '1200px', 'height': '800px', 'border': 'none'})
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                      
-                                                
-                                ],
-                                style= {"padding":"15px"}
-                            ), 
-
-                                                        
-                            
-                            html.Br(),
-                        ], style={"paddingLeft": "15px"}
-                        ),
-                        ]),
+                    ]),                    
                     dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='macrosynteny_tab_content', children=[
                             html.Br(),
@@ -3372,6 +3418,8 @@ def set_reference_value(available_options):
     Output("nb_of_selected_clusters2",'children'),
     Output("circos_legend", 'children'),
     Output("circos_legend2", 'children'),
+    Output('pcoa','figure'),
+    Output('table_clustering_assignation', 'rowData'),
     State('reference', 'value'),
     State('ordering', 'value'),
     State('sample_ordering', 'value'),
@@ -3468,6 +3516,12 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     cluster_names=[]
     cluster_indexes=[]
     df2 = df[list_sp].copy()
+
+    # transpose and save
+    df2_bis = df2.set_index("ClutserID")
+    matrix01_transpose_df = df2_bis.transpose()
+    matrix01_transpose_df.to_csv(tmp_dir + "/" + str(session) + ".matrix01.tsv",sep="\t")
+
 
     # add sum column indicating the number of strains holding the gene
     df2['sum'] = df2.drop('ClutserID', axis=1).sum(axis=1)
@@ -3916,7 +3970,14 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     fig.update_layout(clickmode='event+select')
 
 
-    print("ok1")
+    #####################################################################
+    # strain clustering, distance matrix, PCoA and tree
+    #####################################################################   
+    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.3, clustering_method="average" )
+
+    df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
+    table_clustering_assignation = df_clustering_assignation.to_dict('records') 
+
 
 ###################
 # TODO: pour ajouter legende sur le circos
@@ -4124,12 +4185,11 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     
     newick = ""
 
-    if os.path.exists(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') and os.path.getsize(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') > 0:
+    if os.path.exists(tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk") and os.path.getsize(tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk") > 0:
     
         # get tree in newick format as a variable
-        with open(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick') as fp:
+        with open(tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk") as fp:
             newick = fp.read()
-            shutil.copy(directory+'/heatmap.svg.complete.pdf.distance_matrix.hclust.newick', tmp_dir+"/"+str(session)+".accessory_based_tree.nwk")
 
         df_metadata.to_csv(directory+'/metadata.csv',sep=',',index=False)
         #df_metadata["Country"] = df_metadata["Country"].str.split(":", n=1).str[0].str.strip()
@@ -4146,8 +4206,27 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         with open(directory+'/metadata.csv') as fp:
             metadata_csv = fp.read()
 
+        df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
+        df_metadata_selected2 = pd.merge(df_metadata, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
+
         #generate_tree_html(newick, df_metadata, "Country", tmp_dir + "/" + str(session) + ".tree.html")
-        generate_tree_html(newick, df_metadata, "Country", "assets/tree."+str(session)+".html")
+        generate_tree_html(newick, df_metadata_selected2, "HierarchicalClustering", "assets/tree."+str(session)+".html")
+
+        df_pcoa = pd.read_csv(tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv",sep="\t")
+        categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
+        df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
+        pcoa = px.scatter(df_pcoa, 
+                          x='PCoA1', 
+                          y='PCoA2', 
+                          color="Clusters",
+                          title="PCoA based on Jaccard distance", 
+                          category_orders={
+                                "Clusters": [str(x) for x in categories]
+                            },
+                        )
+        pcoa.update_traces(marker=dict(size=12))
+
+
 
 
 
@@ -4978,12 +5057,13 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     list_metadata_columns = df_metadata.columns.tolist()
     list_metadata_columns.remove("Strain name")
+    list_metadata_columns.append("HierarchicalClustering")
 
     nb_genomes = str(len(list_sp2))
     
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation
 
 ############################################
 # Disable button during loading
@@ -6062,14 +6142,18 @@ def tree(colorizing_tree,session):
 
 def tree1(colorizing_tree,session):
     
-    with open(tmp_dir+"/"+str(session)+".accessory_based_tree.nwk") as fp:
+    with open(tmp_dir+"/"+str(session)+".pav_jaccard_tree.nwk") as fp:
         newick = fp.read()
         list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
         df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
         print(list_selected)
         df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+        df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
+        df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
+
+        print(df_metadata_selected2)
         df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
-        generate_tree_html(newick, df_metadata_selected, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
+        generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
 
     return "assets/tree."+str(session)+"." + colorizing_tree+".html"
 
@@ -6770,6 +6854,7 @@ def generate_tree_html(newick, df_metadata, colorizing, html_file):
 
     concat_for_hash = ""
     list_metadata_color = df_metadata[colorizing].unique().tolist()
+    list_metadata_color.sort()
     dict_colors = {}
     i = 0
 
@@ -6787,16 +6872,23 @@ def generate_tree_html(newick, df_metadata, colorizing, html_file):
                 col =  colors[i]
             else:
                 col =  "black"
-            dict_colors[country] = col
+            string_country = str(country)
+            dict_colors[string_country] = col
             legend = legend + "<div><span style=\"background:" + str(col) + "\"></span>" + str(country) + "</div>"
             i += 1
     legend += "</div>"
 
+    print(dict_colors)
+
     for index, row in df_metadata.iterrows():
         color = "black"
+        print(str(row[colorizing]))
         if str(row[colorizing]) in dict_colors:
             color = dict_colors[str(row[colorizing])]
         concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
+
+    print(concat_for_hash)
+
 
     # remove last caracter
     newick = newick.rstrip(newick[-1])
