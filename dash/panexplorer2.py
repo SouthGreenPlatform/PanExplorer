@@ -1033,7 +1033,7 @@ def load_project_preview(proj_title):
 
     children+= [
         html.Br(),
-        html.Button("Update graphes", 
+        html.Button("Display graphes", 
                     id="btn-update", 
                     style={
                         "backgroundColor": "#1E90FF",   # bleu
@@ -1591,18 +1591,72 @@ def load_project_preview(proj_title):
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(
-                                    html.Label("Colored by: "),style={'width': '150px'},
+                                    [
+                                        dbc.Label(
+                                            "Hierarchical Clustering method",
+                                            html_for="clustering-method",
+                                            className="fw-bold"
+                                        ),
+                                        dcc.Dropdown(
+                                            id="clustering-method",
+                                            options=[
+                                                {"label": "Jaccard distance threshold", "value": "distance"},
+                                                {"label": "Number of clusters", "value": "maxclust"},
+                                            ],
+                                            value="distance",
+                                        ),
+                                    ],
+                                    width=4,
                                 ),
+
                                 dbc.Col(
-                                    dcc.Dropdown(
+                                    [
+                                        dbc.Label(
+                                            "Threshold",
+                                            id="clustering-parameter-label",
+                                            html_for="clustering-parameter",
+                                            className="fw-bold"
+                                        ),
+                                        dbc.Input(
+                                            id="clustering-parameter",
+                                            type="number",
+                                            value=0.20,
+                                            min=0,
+                                            max=1,
+                                            step=0.01,
+                                        ),
+                                        dbc.FormText(
+                                            "Distance threshold used to define clusters.",
+                                            id="clustering-parameter-help",
+                                        ),
+                                    ],
+                                    width=4,
+                                ),  
+
+                                                                                              
+                                dbc.Col(
+                                    [
+                                        dbc.Label(
+                                            "Tree colored by:",
+                                            className="fw-bold"
+                                        ),
+                                        dcc.Dropdown(
                                                     ['Country','HierarchicalClustering'],
                                                     value='HierarchicalClustering',
                                                     id='colorizing_tree1',
                                                     style={'width': '300px'},
                                                     multi=False
-                                                ),
-                                )
-                            ], style={'width': '450px'}),
+                                                ),                                        
+                                        
+                                    ],
+                                    width=4,                                        
+                                ),
+                                dbc.Col(
+                                    html.Button("Recalculate clustering", id="recalculate-clustering", className="thin-button", n_clicks=0),
+                                            
+                                        ),                                
+                                                             
+                            ], style={'width': '1250px'}),
                             html.Br(),
                             dbc.Row(
                                 [
@@ -1610,7 +1664,7 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Graph(id='pcoa',style={'width': '60vh', 'height': '800px','padding': '5px'}),
+                                                    dcc.Loading(dcc.Graph(id='pcoa',style={'width': '60vh', 'height': '800px','padding': '5px'})),
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -1621,7 +1675,7 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    html.Iframe(id='iframe-content',style={'width': '60vh', 'height': '800px', 'border': 'none'})
+                                                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -1654,9 +1708,7 @@ def load_project_preview(proj_title):
                                             ),
                                         ],
                                         style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
-                                                                                                                                                                         
-                                                
+                                    )),      
                                 ],
                                 style= {"padding":"15px"}
                             ), 
@@ -3973,7 +4025,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     #####################################################################
     # strain clustering, distance matrix, PCoA and tree
     #####################################################################   
-    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.3, clustering_method="average" )
+    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.3, clustering_method="average",criterion="distance" )
 
     df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records') 
@@ -6146,7 +6198,6 @@ def tree1(colorizing_tree,session):
         newick = fp.read()
         list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
         df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
-        print(list_selected)
         df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
         df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
         df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
@@ -7078,6 +7129,86 @@ def update_markers(value):
 
     return markers
 
+@app.callback(
+    Output('pcoa','figure'),
+    Output('table_clustering_assignation', 'rowData'),
+    Output('iframe-content', 'src'),
+    Input("recalculate-clustering","n_clicks"),
+    State("clustering-method", "value"),
+    State("clustering-parameter", "value"),
+    State('current_session', 'value'),
+    State('colorizing_tree1','value')
+)
+def update_clustering(recalculate,method,parameter,session,colorizing_tree):
+
+    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=parameter, clustering_method="average",criterion=method )
+    df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
+    table_clustering_assignation = df_clustering_assignation.to_dict('records') 
+
+    df_pcoa = pd.read_csv(tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv",sep="\t")
+    categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
+    df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
+    pcoa = px.scatter(df_pcoa, 
+                              x='PCoA1', 
+                              y='PCoA2', 
+                              color="Clusters",
+                              title="PCoA based on Jaccard distance", 
+                              category_orders={
+                                    "Clusters": [str(x) for x in categories]
+                                },
+                            )
+    pcoa.update_traces(marker=dict(size=12))
+
+
+    with open(tmp_dir+"/"+str(session)+".pav_jaccard_tree.nwk") as fp:
+        newick = fp.read()
+        list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
+        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+        df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
+        df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
+        df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
+
+        print(df_metadata_selected2)
+        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
+
+    return pcoa,table_clustering_assignation,"assets/tree."+str(session)+"." + colorizing_tree+".html"
+
+
+@app.callback(
+    Output("clustering-parameter-label", "children"),
+    Output("clustering-parameter", "type"),
+    Output("clustering-parameter", "value"),
+    Output("clustering-parameter", "min"),
+    Output("clustering-parameter", "max"),
+    Output("clustering-parameter", "step"),
+    Output("clustering-parameter-help", "children"),
+    Input("clustering-method", "value"),
+)
+def update_clustering_parameter(method):
+
+    if method == "distance":
+        return (
+            "Threshold",
+            "number",
+            0.20,
+            0,
+            1,
+            0.01,
+            "Distance threshold used to define clusters.",
+        )
+
+    else:
+        return (
+            "Number of clusters",
+            "number",
+            5,
+            2,
+            None,
+            1,
+            "Number of clusters to generate.",
+        )
+    
 @app.callback(
     Output("graph_COG_selected","figure"),
     Output("graph_COG_enrichment","figure"),

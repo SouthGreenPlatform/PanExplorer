@@ -57,7 +57,8 @@ def analyze_pav_matrix(
     pcoa_plot=None,
     dendrogram_plot=None,
     cluster_distance_threshold=0.3,
-    clustering_method="average"
+    clustering_method="average",
+    criterion="distance"
 ):
     """
     Analyze a binary presence/absence matrix.
@@ -110,6 +111,10 @@ def analyze_pav_matrix(
 
         Note that Ward linkage should not be used with
         Jaccard distances.
+
+    criterion : str, default="distance"
+
+        Other possible criterion include: maxclust
 
     Returns
     -------
@@ -245,7 +250,7 @@ def analyze_pav_matrix(
     clusters = fcluster(
         linkage_matrix,
         t=cluster_distance_threshold,
-        criterion="distance"
+        criterion=criterion
     )
 
     cluster_df = pd.DataFrame({
