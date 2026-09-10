@@ -257,7 +257,8 @@ def analyze_pav_matrix(
         "strain": df.index,
         "HierarchicalClustering": clusters
     })
-
+    cluster_df.index.name = "strain_index"
+    cluster_df = cluster_df.reset_index()
     cluster_df.to_csv(
         cluster_output,
         sep="\t",
@@ -351,11 +352,28 @@ def analyze_pav_matrix(
     # Add cluster assignments.
     pcoa_coordinates["HierarchicalClustering"] = clusters
 
+    # df_propre = pcoa_coordinates.drop(columns='HierarchicalClustering')
+    pcoa_coordinates.index.name = "strain_index"
+    pcoa_coordinates = pcoa_coordinates.reset_index()
+
+    cluster_df = cluster_df.drop(columns=['HierarchicalClustering'])
+    cluster_df['strain_index'] = cluster_df['strain_index'].astype(str)
+    pcoa_coordinates_merged = pd.merge(cluster_df, pcoa_coordinates, left_on='strain_index', right_on='strain_index')
+    
+
+    # pcoa_coordinates.index.name = "strain"
+    # pcoa_coordinates = pcoa_coordinates.reset_index()
+
     # Save PCoA coordinates.
-    pcoa_coordinates.to_csv(
+    pcoa_coordinates_merged.to_csv(
         pcoa_output,
-        sep="\t"
+        sep="\t",
+        index=False
     )
+    # pcoa_coordinates.to_csv(
+    #     pcoa_output,
+    #     sep="\t"
+    # )
 
     print(
         f"PCoA coordinates written to: "

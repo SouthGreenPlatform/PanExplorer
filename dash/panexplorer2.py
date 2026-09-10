@@ -302,7 +302,7 @@ columnDefs5 = [
 ]
 
 columnDefs6 = [
-    {"field": "strain","width": 200},
+    {"field": "strain","width": 300},
     {"field": "HierarchicalClustering","width": 200},
 ]
 
@@ -4024,11 +4024,24 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
     #####################################################################
     # strain clustering, distance matrix, PCoA and tree
-    #####################################################################   
+    ##################################################################### 
+    #pcoa,table_clustering_assignation = update_clustering(2,"distance",0.3,session,"HierarchicalClustering")
     results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.3, clustering_method="average",criterion="distance" )
 
     df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records') 
+
+    pcoa_df = results["pcoa"]
+
+    # pcoa_df = pcoa_df.merge(
+    #     df_metadata,
+    #     on="strain",
+    #     how="left"
+    # )
+    # print(pcoa_df)
+
+    
+    #print(df_merged)
 
 
 ###################
@@ -4270,6 +4283,8 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
         pcoa = px.scatter(df_pcoa, 
                           x='PCoA1', 
                           y='PCoA2', 
+                          hover_name="strain", 
+                          hover_data=["HierarchicalClustering"],
                           color="Clusters",
                           title="PCoA based on Jaccard distance", 
                           category_orders={
@@ -4298,9 +4313,6 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
     max_nb_strains_macrosynteny = 20
     if len(list_selected) < max_nb_strains_macrosynteny:
         max_nb_strains_macrosynteny = len(list_selected)
-
-
-    print("ok3")
 
     selection_dir = tmp_dir+"/selection."+str(session)
 
@@ -7149,11 +7161,13 @@ def update_clustering(recalculate,method,parameter,session,colorizing_tree):
     categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
     df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
     pcoa = px.scatter(df_pcoa, 
-                              x='PCoA1', 
-                              y='PCoA2', 
-                              color="Clusters",
-                              title="PCoA based on Jaccard distance", 
-                              category_orders={
+                            x='PCoA1', 
+                            y='PCoA2', 
+                            color="Clusters",
+                            hover_name="strain", 
+                            hover_data=["HierarchicalClustering"],
+                            title="PCoA based on Jaccard distance", 
+                            category_orders={
                                     "Clusters": [str(x) for x in categories]
                                 },
                             )
@@ -7172,7 +7186,7 @@ def update_clustering(recalculate,method,parameter,session,colorizing_tree):
         df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
         generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
 
-    return pcoa,table_clustering_assignation,"assets/tree."+str(session)+"." + colorizing_tree+".html"
+    return pcoa,table_clustering_assignation ,"assets/tree."+str(session)+"." + colorizing_tree+".html"
 
 
 @app.callback(
