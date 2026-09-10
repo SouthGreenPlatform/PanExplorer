@@ -188,7 +188,7 @@ try:
 except Exception:
     AGGRID_AVAILABLE = False
 
-colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#800000', '#008000', '#000080', '#808000', '#800080', '#008080', '#C0C0C0', '#808080']
+colors = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52', '#800080', '#008080', '#C0C0C0', '#808080']
 
 # Constants
 METADATA_PREVIEW_ROWS = 500
@@ -1699,8 +1699,8 @@ def load_project_preview(proj_title):
                                                                 #defaultColDef={"filter": "agTextColumnFilter"},
                                                                 dashGridOptions={"pagination": True, "animateRows": False}
                                                             ),
-                                                            html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
-                                                            dcc.Download(id="download-dataframe4"),
+                                                            html.Button("Download table", id="download_table_assignation", className="thin-button", n_clicks=0),
+                                                            dcc.Download(id="download-dataframe5"),
                                                         ], style={"paddingLeft": "15px","paddingRight": "15px",'height': '800px'}),
                                                     ),                                                    
                                                 ],
@@ -7056,6 +7056,22 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "original_matrix.xls",sep='\t')
 
 
+
+@app.callback(
+    Output("download-dataframe5", "data"),
+    Input("download_table_assignation", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+".clusters.tsv",sep='\t')
+    return dcc.send_data_frame(df.to_csv, "assignation.xls",sep='\t')
 
 @app.callback(
     Output("table_selected_clusters3","rowData"),
