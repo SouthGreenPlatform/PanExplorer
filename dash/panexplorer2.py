@@ -1137,7 +1137,7 @@ def load_project_preview(proj_title):
                                 html.Div([
                                     html.Label("Colors:"),
                                     dcc.Dropdown(
-                                            ['Presence/absence','Level of presence','Organism','Continent','Country'],
+                                            ['Presence/absence','Level of presence','Gene copy number','Organism','Continent','Country'],
                                             id='colorizing',
                                             value = 'Presence/absence',
                                             style={'width': '350px'},
@@ -1219,7 +1219,8 @@ def load_project_preview(proj_title):
                                             dbc.CardBody(
                                                 [
                                                     #dcc.Graph(id='PAV_graph',config={"displayModeBar": True,"modeBarButtonsToAdd": ["fullscreen"]}),
-                                                    fullscreen_graph("PAV_graph",height="600px"),
+                                                    dcc.Loading(fullscreen_graph("PAV_graph",height="600px")),
+                                                    #dcc.Loading(dcc.Graph(id='PAV_graph')),
                                                                                                       
                                                     #html.A("🔎 Ouvrir en grand",href="/graph1",target="_blank")
 
@@ -5831,10 +5832,24 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
         tickval.append(1)
     
     if colorizing == "Level of presence":
-        colorscale = [[0, 'whitesmoke'], [1, 'teal']]
+        colorscale = [[0.0, '#ffffff'], [0.5, '#3b82f6'], [1.0, '#ef4444']]
+        
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
+
+    elif colorizing == "Gene copy number":
+            colorscale = [[0.0, '#ffffff'], [0.5, '#3b82f6'], [1.0, '#ef4444']]
+
+            copy_number,zmax = orthogroups_to_copy_number(
+                    directory+"/1.Orthologs_Cluster.txt",
+                    directory+"/gene_copy_number.tsv"
+                )
+            df2 = pd.read_csv(directory + "/gene_copy_number.tsv", sep="\t")
+
+
+            
+
 
     elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country":
         colorscale = []
@@ -6057,6 +6072,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     #     list_sp2 = list_sp2_sorted
 
 
+    
     list_chromosomes = []
     merged_with_positions3 = []
     if ordering == "Hierarchical clustering":
@@ -6088,6 +6104,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
         y_labels.append(row[0])
         z.append(list(row[1:]))
 
+    print(z)
+
     # colorscale = [
     #     [0.00, "whitesmoke"], [0.25, "whitesmoke"],
     #     [0.25, "yellow"], [0.50, "yellow"],
@@ -6096,6 +6114,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     # ]
     print("color scale:")
     print(colorscale)
+    print(zmax)
 
     if list_clusters1 is not None and len(list_clusters1) > 0 and os.path.exists(scoary_output_file):
 
@@ -6563,7 +6582,6 @@ def init_dataframes(pathname):
 
     #df['ClutserID'].replace(to_replace ='\d', value ='CLUSTER',regex = True,inplace=True)
     df.to_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t',index=False)
-    
 
     
     df_ANI = pd.DataFrame()  
@@ -7769,6 +7787,68 @@ def fullscreen_graph(graph_id, height="600px"):
             "height": height,
         },
     )
+
+
+def orthogroups_to_copy_number(input_file, output_file=None):
+    """
+    Convert an OrthoFinder Orthogroups.tsv file into a gene copy-number matrix.
+
+    Empty cells, NaN values and '-' are interpreted as 0 copies.
+
+    Parameters
+    ----------
+    input_file : str
+        Path to the OrthoFinder Orthogroups.tsv file.
+
+    output_file : str, optional
+        Path to save the resulting copy-number matrix.
+
+    Returns
+    -------
+    copy_number_matrix : pandas.DataFrame
+        Matrix containing the number of gene representatives
+        for each orthogroup and strain.
+
+    max_copy_number : int
+        Maximum number of gene copies found in the matrix.
+    """
+
+    # Read OrthoFinder table
+    df = pd.read_csv(input_file, sep="\t")
+
+    # First column contains orthogroup IDs
+    orthogroup_column = df.columns[0]
+
+    # Process each genome/strain column
+    for column in df.columns[1:]:
+
+        df[column] = (
+            df[column]
+            .fillna("")
+            .astype(str)
+            .apply(
+                lambda x: (
+                    0
+                    if x.strip() in ["", "-"]
+                    else len([gene for gene in x.split(",") if gene.strip()])
+                )
+            )
+        )
+
+    # Use orthogroup as row index
+    copy_number_matrix = df.set_index(orthogroup_column)
+
+    # Calculate maximum copy number
+    max_copy_number = copy_number_matrix.max().max()
+
+    # Save matrix if requested
+    if output_file is not None:
+        copy_number_matrix.to_csv(output_file, sep="\t")
+
+    return copy_number_matrix, max_copy_number
+
+
+
 
 def get_clusters_respecting_combination(session,combination):
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
