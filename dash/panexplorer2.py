@@ -1140,41 +1140,41 @@ def load_project_preview(proj_title):
                                             ['Presence/absence','Level of presence','Organism','Continent','Country'],
                                             id='colorizing',
                                             value = 'Presence/absence',
-                                            style={'width': '200px'},
+                                            style={'width': '350px'},
                                             multi=False
                                         ),
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
                                 html.Div([
                                     html.Label("Highlight:"),
                                     dcc.Dropdown(
                                             ['None','Reference genome','Core-genes','Strain-specific genes'],
                                             id='highlight',
                                             value = 'None',
-                                            style={'width': '200px'},
+                                            style={'width': '350px'},
                                             multi=False
                                         ),
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
-                                html.Div([
-                                    html.Label("Sample ordering:"),
-                                    dcc.Dropdown(
-                                            ['Hierarchical clustering','Population as defined by sNMF'],
-                                            id='sample_ordering',
-                                            value = 'Hierarchical clustering',
-                                            style={'width': '200px'},
-                                            multi=False
-                                        ),
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'200px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+                                # html.Div([
+                                #     html.Label("Sample ordering:"),
+                                #     dcc.Dropdown(
+                                #             ['Hierarchical clustering'],
+                                #             id='sample_ordering',
+                                #             value = 'Hierarchical clustering',
+                                #             style={'width': '350px'},
+                                #             multi=False
+                                #         ),
+                                #     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
 
                                 html.Div([
                                     html.Label("Cluster ordering:"),
                                     dcc.Dropdown(
-                                            ['Hierarchical clustering','Position in genome used for projection'],
+                                            ['Hierarchical clustering','Physical position in ref genome'],
                                             value = 'Hierarchical clustering',
                                             id='ordering',
-                                            style={'width': '300px'},
+                                            style={'width': '350px'},
                                             multi=False
                                         ),  
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
                                 html.Div([
                                     html.Label("Highlight clusters by keyword or COG:"),
                                     dcc.Input(
@@ -1183,7 +1183,7 @@ def load_project_preview(proj_title):
                                             value = '',
                                         ),
                                     
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
                                 html.Div([
                                     html.Label("Highlight genomic intervals (bedfile):"),
                                     dcc.Textarea(
@@ -1192,12 +1192,12 @@ def load_project_preview(proj_title):
                                             value = '',
                                         ),
                                     
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
 
                                 html.Div([
                                     
                                     html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
-                                    ], style={'display': 'inline-block', 'margin-right': '20px','width':'300px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
                             ]),
                             
                             html.Br(),
@@ -2983,16 +2983,16 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     State("my-dashbio-default-circos", "tracks"),
     State("reference",'value'),
     State('projets', 'value'),
-    State('ordering', 'value'),
-    State('sample_ordering', 'value'),
-    State('colorizing', 'value'),
-    State('highlight', 'value'),
+    Input('ordering', 'value'),
+    #State('sample_ordering', 'value'),
+    Input('colorizing', 'value'),
+    Input('highlight', 'value'),
     State('cluster_search','value'),
     State('bedfile','value'),
     #prevent_initial_call=True
 )
 
-def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,sample_ordering,colorizing,highlight,cluster_search,bedfile):
+def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,highlight,cluster_search,bedfile):
          
     cluster = 1
     pathname = projets
@@ -3069,7 +3069,7 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     list_clusters1 = df_selected["ClutserID"].tolist()
     list_clusters2 = df_selected_opposite["ClutserID"].tolist()
 
-    fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
 
 
@@ -3474,7 +3474,7 @@ def set_reference_value(available_options):
     Output('table_clustering_assignation', 'rowData'),
     State('reference', 'value'),
     State('ordering', 'value'),
-    State('sample_ordering', 'value'),
+    #State('sample_ordering', 'value'),
     State('colorizing', 'value'),
     State('highlight', 'value'),
     State('projets', 'value'),
@@ -3492,7 +3492,7 @@ def set_reference_value(available_options):
     background=True,
     prevent_initial_call=True
 )
-def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
+def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -4015,7 +4015,7 @@ def trigger_heavy_update(reference,ordering,sample_ordering,colorizing,highlight
 
             
 
-    fig = heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
     
     #fig.update_traces(showscale=False)
@@ -5763,9 +5763,8 @@ def pca(dimension_pca,colorizing_pca,session):
     Output('PAV_graph', 'figure', allow_duplicate=True),
     State('projets', 'value'),
     State('current_session', 'value'),
-    State('specific_to', 'value'),
     Input('ordering', 'value'),
-    Input('sample_ordering', 'value'),
+    #Input('sample_ordering', 'value'),
     State('metadata_table','selectedRows'),
     State('reference','value'),
     Input('highlight', 'value'),
@@ -5775,7 +5774,7 @@ def pca(dimension_pca,colorizing_pca,session):
     Input('highlight_button', 'n_clicks'),
     prevent_initial_call=True    
 )
-def heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample_ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
+def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -5785,6 +5784,13 @@ def heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample
     else:
         path = row[0]
     directory = path
+
+
+    df_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+    df_selected_opposite = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+    list_clusters1 = df_selected["ClutserID"].tolist()
+    list_clusters2 = df_selected_opposite["ClutserID"].tolist()
+
 
     if is_stringlist_without_special_character(cluster_search) == False:
         cluster_search = ""
@@ -6039,16 +6045,16 @@ def heatmap_PAV(proj_title,session,list_clusters1,list_clusters2,ordering,sample
             df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
-    if sample_ordering == "Hierarchical clustering":
-        order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
-        order_samples.remove("ClutserID")
-        list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
-        list_sp2 = list_sp2_sorted
-    elif sample_ordering == "Population as defined by sNMF":
-        order_samples = pd.read_csv(tmp_dir+"/" + str(session) + ".metadata.txt", sep=",")
-        individual_order_by_Pop1 = order_samples.sort_values(by=['Assigned_to_pop'])['Strain name'].tolist()
-        list_sp2_sorted = [sample for sample in individual_order_by_Pop1 if sample in list_sp2]
-        list_sp2 = list_sp2_sorted
+    #if sample_ordering == "Hierarchical clustering":
+    order_samples = pd.read_csv(directory+"/1.Orthologs_Cluster.txt", nrows=0, sep="\t").columns.tolist()
+    order_samples.remove("ClutserID")
+    list_sp2_sorted = [sample for sample in order_samples if sample in list_sp2]
+    list_sp2 = list_sp2_sorted
+    # elif sample_ordering == "Population as defined by sNMF":
+    #     order_samples = pd.read_csv(tmp_dir+"/" + str(session) + ".metadata.txt", sep=",")
+    #     individual_order_by_Pop1 = order_samples.sort_values(by=['Assigned_to_pop'])['Strain name'].tolist()
+    #     list_sp2_sorted = [sample for sample in individual_order_by_Pop1 if sample in list_sp2]
+    #     list_sp2 = list_sp2_sorted
 
 
     list_chromosomes = []
