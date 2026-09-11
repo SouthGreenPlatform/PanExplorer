@@ -137,8 +137,8 @@
 
 .fullscreen-button {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    bottom: 8px;
+    right: 8px;
 
     z-index: 1000;
 
