@@ -79,6 +79,7 @@ die $usage
 
                                 $strains{$old_name_strain} = $strain;
 				system("mv $inputdir/$old_name_strain.gbff $inputdir/$strain.gbff");
+
 				system("gzip $inputdir/$strain.gbff");
                         }
                 }
@@ -140,6 +141,44 @@ die $usage
             #my $get_prot = `/www/panexplorer.southgreen.fr/tools/edirect/efetch -id $genbank -db nuccore -format fasta_cds_aa >$inputdir/$strain.faa`;
             #my $get_gene = `/www/panexplorer.southgreen.fr/tools/edirect/efetch -id $genbank -db nuccore -format gene_fasta >$inputdir/$strain.fna`;
             my $convert_ptt = `gb2ptt/bin/gb2ptt.pl --infile $inputdir/$strain.gb`;
-            rename("$inputdir/$strain.gb.ptt","$inputdir/$strain.ptt");
+
+            #rename("$inputdir/$strain.gb.ptt","$inputdir/$strain.ptt");
+
+			# get contig info
+			open(GENBANK,"$inputdir/$strain.gb");
+			open(CONTIG,">$inputdir/$strain.contigs.tsv");
+			my $contig = "";
+			my %contigs;
+			while(<GENBANK>){
+					if (/LOCUS       (\w+)/){
+						$contig = $1;
+					}
+					if (/locus_tag=\"(\w+)\"/){
+						my $locus_tag=$1;
+						$contigs{$locus_tag} = $contig;
+						print CONTIG "$locus_tag\t$contig\n";
+					}
+			}
+			close(GENBANK);
+			close(CONTIG);
+
+			open(PTT,"$inputdir/$strain.gb.ptt");
+			open(PTT_WITH_CONTIG,">$inputdir/$strain.ptt");
+			
+			while(<PTT>){
+				my $line = $_;
+				$line =~s/\n//g;$line =~s/\r//g;
+				my @infos = split(/\t/,$line);
+				if (/^Location\s+/){
+					print PTT_WITH_CONTIG "$line\tblock_id\n";
+				}
+				else{
+					my $locus_tag = $infos[3];
+					my $contig = $contigs{$locus_tag};
+					print PTT_WITH_CONTIG "$line\t$contig\n";
+				}
+			}
+			close(PTT);
+			close(PTT_WITH_CONTIG)
         }
 
