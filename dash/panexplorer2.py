@@ -196,21 +196,26 @@ DEFAULT_COLORS = colors
 MAX_LEGACY_SESSION_LENGTH = 12
 
 tabs_styles = {
-    'height': '44px'
+    'height': '46px',
+    'borderBottom': '1px solid #E5E7EB',
+    'marginBottom': '14px'
 }
 tab_style = {
-    'borderBottom': '1px solid #d6d6d6',
-    'padding': '6px',
-    'fontWeight': 'bold',
-    'paddingLeft': "25px"
+    'border': 'none',
+    'borderBottom': '3px solid transparent',
+    'padding': '10px 18px',
+    'fontWeight': '600',
+    'backgroundColor': 'transparent',
+    'color': '#6B7280'
 }
 
 tab_selected_style = {
-    'borderTop': '1px solid #d6d6d6',
-    'borderBottom': '1px solid #d6d6d6',
-    'backgroundColor': '#119DFF',
-    'color': 'white',
-    'padding': '6px'
+    'border': 'none',
+    'borderBottom': '3px solid #3B82F6',
+    'padding': '10px 18px',
+    'backgroundColor': 'transparent',
+    'color': '#111827',
+    'fontWeight': '700'
 }
 
 layout_config = {
@@ -622,10 +627,35 @@ def logout():
     return redirect("/")
 
 # ---------- Dash App ----------
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = [dbc.themes.FLATLY]
 app = dash.Dash(__name__, server=server, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True, background_callback_manager=long_callback_manager)
 app.server.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 app.title = "PanExplorer v2"
+
+# Police custom (Inter) chargee via Google Fonts + squelette HTML de base.
+# Le fichier assets/custom.css (charge automatiquement par Dash) gere le reste du theme.
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
 
 print("MAX_CONTENT_LENGTH =", app.server.config.get('MAX_CONTENT_LENGTH'))
 
@@ -635,29 +665,56 @@ def main_layout():
 
     return html.Div([
         dcc.Location(id="url", refresh=False),
-        #build_navbar(),
 
         dbc.Navbar(
-            
-            dbc.Nav([
-                html.Img(
-                                src="/assets/panexplorer_logo8.png",
-                                height="65px",
-                                className="me-2"
+            dbc.Container(
+                [
+                    html.A(
+                        html.Img(src="/assets/panexplorer_logo8.png", height="48px"),
+                        href="/",
+                        style={"textDecoration": "none"},
+                    ),
+                    dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+                    dbc.Collapse(
+                        html.Div(
+                            dbc.Nav(
+                                [
+                                    dbc.NavItem(dbc.NavLink("Home", href="/", className="nav-item-box")),
+                                    dbc.NavItem(dbc.NavLink("Browse projects", href="/browse", className="nav-item-box")),
+                                    dbc.NavItem(dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box")),
+                                ],
+                                navbar=True,
                             ),
-                dbc.NavLink("Home", href="/", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
-                html.A("Browse projects", href="/browse", className="nav-item-box", style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
-                dbc.NavLink("Import genomes", href="/submit_genomes", className="nav-item-box",style={"fontSize":"16px","fontWeight":"bold","marginTop":"10px","marginLeft":"40px"}),
-            ],
-
+                            className="nav-frame",
+                        ),
+                        id="navbar-collapse",
+                        navbar=True,
+                        className="ms-4",
+                    ),
+                ],
+                fluid=True,
             ),
-            color="light",
+            color="white",
+            dark=False,
+            sticky="top",
         ),
-        
+
         html.Div(id="page-content")
     ])
 
 app.layout = main_layout()
+
+
+# Rend la navbar utilisable sur mobile (bouton hamburger)
+@app.callback(
+    Output("navbar-collapse", "is_open"),
+    Input("navbar-toggler", "n_clicks"),
+    State("navbar-collapse", "is_open"),
+)
+def toggle_navbar_collapse(n_clicks, is_open):
+    if n_clicks:
+        return not is_open
+    return is_open
 
 
 
@@ -711,37 +768,100 @@ def make_project_options(visible_projects, session_code):
     ]
 
 
+def build_browse_ui(session_code=None, project=None):
+    """Construit l'UI de selection/exploration de projet.
+    Utilisee a la fois par la navigation directe (clic sur "Browse projects")
+    et par les liens contenant ?session=...&project=..., pour eviter que les
+    deux chemins de routage divergent (c'etait la cause du bug qui obligeait
+    a recharger la page)."""
+
+    if session_code:
+        if validate_session_id(session_code):
+            proj = get_project_by_session(session_code)
+            if not proj:
+                dir = conf["session_dir"] + "/" + session_code
+                if os.path.isdir(dir):
+                    print("exists")
+                else:
+                    return html.Br(), dbc.Alert(html.P("Session does not exist", className="alert-heading"), color="danger")
+        else:
+            return html.Br(), dbc.Alert(html.P("Session is not accepted (must be UUID or legacy numeric ID)", className="alert-heading"), color="danger")
+
+    if current_user.is_authenticated:
+        user_row = query_db("SELECT id, username FROM users WHERE id = ?", (int(current_user.get_id()),), one=True)
+
+        right_menu = dbc.Button(
+                f"Logout ({user_row[1]})",
+                href="/logout",
+                external_link=True,
+                color="secondary",
+            )
+
+        user_obj = {"id": user_row[0], "username": user_row[1]}
+    else:
+
+        right_menu = dbc.Button(
+                f"Login",
+                href="/login",
+                external_link=True,
+                color="primary"
+
+            )
+        user_obj = None
+
+    visible = list_visible_projects(user_obj)
+    options = make_project_options(visible, session_code)
+
+    default_value = None
+    if project:
+        default_value = project
+    elif options:
+        default_value = options[0]["value"]
+    else:
+        default_value = None
+
+    if os.path.exists(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") and os.path.getsize(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") == 0:
+        ui = html.Div([
+                html.Br(),
+                dbc.Alert("Error: The pipeline failed with this dataset.", color="danger")
+            ])
+    else:
+        ui = html.Div([
+            html.Div(right_menu, style={"textAlign": "right", "marginTop": "0px", "marginRight": "2px"}),
+            html.Div([
+                html.Label("Choose a project: "),
+                dcc.Dropdown(id="projets", options=options, value=default_value, style={"width": "450px"})
+            ], style={"marginBottom": "1rem"}),
+            html.Div(id="project-preview"),
+            html.Hr(),
+            html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
+        ], style={"padding": "10px"})
+
+    return ui
+
+
 @app.callback(
     Output("page-content", "children", allow_duplicate=True),
+    Output("page-content", "className", allow_duplicate=True),
     Input("url", "pathname"),
     prevent_initial_call=True
 )
 def display_page(pathname):
 
     if pathname == "/submit_genomes":
-        return submit_genomes.layout
+        return submit_genomes.layout, ""
     elif pathname == "/":
-        return homepage.layout
+        return homepage.layout, ""
     elif pathname == "/browse":
-        # simplified UI inspired from app-pav.py
-        ui = html.Div([
-            header,
-            
-            html.Div([
-                html.Label("Choose a project: "),
-                dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
-            ], style={"marginBottom":"1rem"}),
-            html.Div(id="project-preview"),
-            html.Hr(),
-            html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
-        ], style={"padding":"10px"})
-        
-        return ui
-    
+        return build_browse_ui(), "pe-content-wide"
+    else:
+        raise PreventUpdate
+
 
 # Render page: session-only OR normal app
 @app.callback(
     Output("page-content", "children"),
+    Output("page-content", "className"),
     Input("url", "search")
 )
 def render_page(search):
@@ -755,81 +875,8 @@ def render_page(search):
         session_code = params.get("session", [None])[0]
         project = params.get("project", [None])[0]
 
-    
-    if session_code:
-        if validate_session_id(session_code):
-            proj = get_project_by_session(session_code)
-            if not proj:
-                dir = conf["session_dir"] + "/" + session_code
+    return build_browse_ui(session_code, project), "pe-content-wide"
 
-
-                if os.path.isdir(dir):
-                    print("exists")
-                else:
-                    return html.Br(), dbc.Alert(html.P("Session does not exist", className="alert-heading"),color="danger")
-
-        else:
-            return html.Br(), dbc.Alert(html.P("Session is not accepted (must be UUID or legacy numeric ID)", className="alert-heading"),color="danger")     
-
-
-    # Normal mode: header + dropdown + area for the simplified PAV UI
-    if current_user.is_authenticated:
-        user_row = query_db("SELECT id, username FROM users WHERE id = ?", (int(current_user.get_id()),), one=True)
-        
-        right_menu = dbc.Button(
-                f"Logout ({user_row[1]})",
-                href="/logout",
-                external_link=True,
-                color="secondary",
-            )
-        
-        user_obj = {"id": user_row[0], "username": user_row[1]}
-    else:
-        
-        right_menu = dbc.Button(
-                f"Login",
-                href="/login",
-                external_link=True,
-                color="primary"
-                
-            )
-        user_obj = None
-
-    visible = list_visible_projects(user_obj)
-    options = make_project_options(visible, session_code)
-
-
-    # default selection
-
-    default_value = None
-    if project:
-        default_value = project
-    elif options:
-        default_value = options[0]["value"] 
-    else:
-        default_value = None
-    
-    # simplified UI inspired from app-pav.py
-    if os.path.exists(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") and os.path.getsize(conf["session_dir"]+"/"+str(session_code)+"/1.Orthologs_Cluster.txt") == 0:
-        ui = html.Div([
-                html.Br(),
-                dbc.Alert("Error: The pipeline failed with this dataset.", color="danger")
-            ])
-    else:
-
-        ui = html.Div([
-            
-            html.Div(right_menu,style={"textAlign":"right","marginTop":"0px","marginRight":"2px"}),
-            html.Div([
-                html.Label("Choose a project: "),
-                dcc.Dropdown(id="projets", options=options, value=default_value, style={"width":"450px"})
-            ], style={"marginBottom":"1rem"}),
-            html.Div(id="project-preview"),
-            html.Hr(),
-            html.Div(id="project-detail-area")  # where full PAV UI would go (graphs, tabs...)
-        ], style={"padding":"10px"})
-
-    return ui
 
 
 # Load project metadata and present a table (simplified replacement for big app-pav callbacks)
@@ -948,7 +995,7 @@ def load_project_preview(proj_title):
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
-                          dashGridOptions={"rowSelection": "multiple"},
+                          dashGridOptions={"rowSelection": "multiple", "rowMultiSelectWithClick": True},
                           #dashGridOptions={"rowSelection": {'mode': 'multiRow'}, "suppressRowClickSelection": True, "animateRows": False},
                           #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
                           
@@ -964,6 +1011,10 @@ def load_project_preview(proj_title):
                                                     [
                                                         dbc.CardBody(
                                                             [
+                                                                html.Div([
+                                                                    html.Button("Tout sélectionner", id="select-all-strains", className="thin-button", n_clicks=0),
+                                                                    html.Button("Tout désélectionner", id="deselect-all-strains", className="thin-button", n_clicks=0),
+                                                                ], style={"display": "flex", "gap": "8px", "marginBottom": "10px"}),
                                                                 grid
                                                             ],
                                                         ),
@@ -1033,12 +1084,9 @@ def load_project_preview(proj_title):
 
     children+= [
         html.Br(),
-        html.Button("Display graphes", 
-                    id="btn-update", 
-                    style={
-                        "backgroundColor": "#1E90FF",   # bleu
-                        "color": "white"
-                    },
+        html.Button("Display graphes",
+                    id="btn-update",
+                    className="pe-btn-cta",
                     n_clicks=0),
 
         dcc.Loading(id="mainload", children=html.Div(id='mainloading', style={'whiteSpace': 'pre-line'})),
@@ -2550,6 +2598,25 @@ def load_project_preview(proj_title):
 
 
     return html.Div(children)
+
+
+# Boutons "Tout sélectionner" / "Tout désélectionner" pour la table des souches/génomes.
+# rowMultiSelectWithClick=True (ci-dessus) permet deja de cocher/decocher une ligne
+# d'un simple clic (sans Ctrl) ; ces deux boutons couvrent le cas "tout d'un coup".
+@app.callback(
+    Output('metadata_table', 'selectedRows'),
+    Input('select-all-strains', 'n_clicks'),
+    Input('deselect-all-strains', 'n_clicks'),
+    State('metadata_table', 'rowData'),
+    prevent_initial_call=True
+)
+def select_or_deselect_all_strains(n_select, n_deselect, row_data):
+    triggered_id = ctx.triggered_id
+    if triggered_id == 'select-all-strains':
+        return row_data or []
+    elif triggered_id == 'deselect-all-strains':
+        return []
+    raise PreventUpdate
 
 #############################################################
 # Callback for alignment viewer
@@ -5839,14 +5906,15 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
             df2[sample] = np.where( (df2[sample] == 1),proportion,df2[sample])
 
     elif colorizing == "Gene copy number":
-            colorscale = [[0.0, '#ffffff'], [0.5, '#3b82f6'], [1.0, '#ef4444']]
+            
 
             copy_number,zmax = orthogroups_to_copy_number(
                     directory+"/1.Orthologs_Cluster.txt",
                     directory+"/gene_copy_number.tsv"
                 )
             df2 = pd.read_csv(directory + "/gene_copy_number.tsv", sep="\t")
-
+            presence_color = 1/zmax
+            colorscale = [[0.0, '#ffffff'], [presence_color, '#3b82f6'], [1.0, '#ef4444']]
 
             
 
