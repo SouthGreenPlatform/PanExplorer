@@ -1,0 +1,329 @@
+/* ==========================================================================
+   PanExplorer — thème visuel custom
+   Placer ce fichier dans un dossier "assets/" au même niveau que panexplorer2.py
+   Dash le charge automatiquement, aucune modification Python requise.
+   ========================================================================== */
+
+:root {
+  /* Palette reprise des couleurs déjà utilisées dans les cartes statistiques
+     de l'appli (bleu / vert / rouge / violet) pour rester cohérent partout. */
+  --pe-primary:      #3B82F6;
+  --pe-primary-dark: #2563EB;
+  --pe-success:      #10B981;
+  --pe-danger:       #EF4444;
+  --pe-accent:       #8B5CF6;
+  --pe-warning:      #F59E0B;
+
+  --pe-text:         #1F2937;
+  --pe-text-muted:   #6B7280;
+  --pe-bg:           #F3F5F9;
+  --pe-surface:      #FFFFFF;
+  --pe-border:       #E5E7EB;
+
+  --pe-radius:       14px;
+  --pe-radius-sm:    8px;
+  --pe-shadow:       0 6px 18px rgba(17, 24, 39, 0.08);
+  --pe-shadow-hover: 0 14px 30px rgba(17, 24, 39, 0.16);
+
+  --pe-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ---------- Base ---------- */
+html, body {
+  background: var(--pe-bg) !important;
+  font-family: var(--pe-font) !important;
+  color: var(--pe-text);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--pe-font) !important;
+  font-weight: 700 !important;
+  color: var(--pe-text);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--pe-primary);
+}
+a:hover {
+  color: var(--pe-primary-dark);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #C7CDD6;
+  border-radius: 20px;
+  border: 2px solid var(--pe-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: #A7AFBB; }
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--pe-surface) !important;
+  box-shadow: 0 2px 12px rgba(17, 24, 39, 0.06);
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--pe-border);
+}
+.navbar .container-fluid {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.brand-text {
+  font-weight: 800 !important;
+  font-size: 1.25rem;
+  color: var(--pe-text) !important;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav-item-box {
+  position: relative;
+  color: #374151 !important;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
+  padding: 0.7rem 1.5rem !important;
+  margin: 0 !important;
+  border-radius: 999px;
+  transition: color .15s ease, background-color .15s ease;
+}
+
+.nav-item-box:hover {
+  color: var(--pe-primary-dark) !important;
+  background-color: rgba(59, 130, 246, 0.08);
+  text-decoration: none;
+}
+
+.nav-item-box.active {
+  color: var(--pe-primary) !important;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Liseré/cadre autour du bloc de menu principal, place a gauche a cote du logo */
+.nav-frame {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--pe-border);
+  border-radius: 999px;
+  padding: 6px;
+  background-color: #FBFCFE;
+}
+
+/* petit filet de couleur en pied de navbar pour la signature visuelle */
+.navbar {
+  position: relative;
+}
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pe-primary), var(--pe-accent));
+  opacity: 0.85;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-family: var(--pe-font);
+  font-weight: 600;
+  border-radius: 10px !important;
+  padding: 0.5rem 1.1rem;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, 0.08);
+}
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.14);
+}
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+  background-color: var(--pe-primary) !important;
+  border-color: var(--pe-primary) !important;
+}
+.btn-primary:hover { background-color: var(--pe-primary-dark) !important; }
+
+.btn-secondary {
+  background-color: #64748B !important;
+  border-color: #64748B !important;
+}
+
+/* Boutons "html.Button" utilisés partout dans l'appli avec className="thin-button" */
+.thin-button {
+  font-family: var(--pe-font);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--pe-primary-dark);
+  background-color: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.thin-button:hover {
+  background-color: var(--pe-primary);
+  color: white;
+  border-color: var(--pe-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+.thin-button:active { transform: scale(0.98); }
+
+/* Bouton d'action principal (ex: "Display graphes") */
+.pe-btn-cta {
+  font-family: var(--pe-font);
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  background: linear-gradient(135deg, var(--pe-primary) 0%, var(--pe-primary-dark) 100%);
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.8rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.pe-btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(59, 130, 246, 0.45);
+}
+.pe-btn-cta:active { transform: translateY(0); }
+
+/* ---------- Cards ---------- */
+.card {
+  border: none !important;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--pe-shadow-hover) !important;
+}
+
+/* ---------- Tabs (dcc.Tabs / react-tabs) ---------- */
+/* Style "soulignement" sobre : un seul accent (bordure basse colorée)
+   plutot qu'un bloc plein colore, pour eviter l'effet "tout est bleu"
+   quand plusieurs barres d'onglets sont imbriquees. */
+.tabs {
+  border-bottom: 1px solid var(--pe-border) !important;
+  gap: 4px;
+}
+.tab {
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  background-color: transparent !important;
+  color: var(--pe-text-muted) !important;
+  font-weight: 600 !important;
+  border-radius: 0 !important;
+  margin-right: 6px;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.tab:hover {
+  color: var(--pe-primary-dark) !important;
+  background-color: #F8FAFC !important;
+  border-bottom-color: #BFDBFE !important;
+}
+.tab--selected {
+  background-color: transparent !important;
+  color: var(--pe-text) !important;
+  border: none !important;
+  border-bottom: 3px solid var(--pe-primary) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- Forms / dropdowns / inputs ---------- */
+.form-control, .form-select,
+input[type="text"], input[type="number"], input[type="password"],
+textarea {
+  border-radius: var(--pe-radius-sm) !important;
+  border: 1px solid var(--pe-border) !important;
+  font-family: var(--pe-font);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--pe-primary) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+.Select-control, .dash-dropdown .Select-control, div[class*="-control"] {
+  border-radius: var(--pe-radius-sm) !important;
+  border: 1px solid var(--pe-border) !important;
+  min-height: 38px !important;
+}
+div[class*="-control"]:hover { border-color: var(--pe-primary) !important; }
+
+/* ---------- Alerts ---------- */
+.alert {
+  border: none !important;
+  border-radius: var(--pe-radius-sm) !important;
+  font-weight: 500;
+  box-shadow: var(--pe-shadow);
+}
+
+/* ---------- AG Grid ---------- */
+.ag-root-wrapper {
+  border-radius: var(--pe-radius) !important;
+  overflow: hidden;
+  border: none !important;
+  box-shadow: var(--pe-shadow);
+}
+.ag-header {
+  background-color: #F8FAFC !important;
+  font-weight: 700 !important;
+}
+.ag-row-hover {
+  background-color: #EFF6FF !important;
+}
+
+/* ---------- Fallback HTML table ---------- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+table th {
+  background-color: #F8FAFC;
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--pe-border);
+}
+table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--pe-border);
+}
+table tr:hover td { background-color: #F8FAFC; }
+
+/* ---------- Loading spinner ---------- */
+._dash-loading, .dash-spinner {
+  color: var(--pe-primary) !important;
+}
+
+/* ---------- Layout helpers ---------- */
+#page-content {
+  padding: 1.25rem 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Mode "pleine largeur" pour certaines pages (ex: Browse), applique
+   directement sur le conteneur #page-content lui-meme (via className
+   pilote par les callbacks Python) plutot que par un hack CSS base sur
+   100vw - ce qui evitait les troncatures liees a la barre de defilement. */
+#page-content.pe-content-wide {
+  max-width: 100% !important;
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 768px) {
+  #page-content { padding: 0.75rem; }
+  .brand-text { font-size: 1.05rem; }
+  .nav-item-box { display: block; margin: 2px 0 !important; }
+}
