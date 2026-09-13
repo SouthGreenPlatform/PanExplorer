@@ -186,15 +186,21 @@ a:hover {
   border: none;
   border-radius: 999px;
   padding: 0.65rem 1.8rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
-.pe-btn-cta:hover {
+.pe-btn-cta:hover, .pe-btn-cta:focus {
+  color: #FFFFFF !important;
   transform: translateY(-2px);
   box-shadow: 0 12px 26px rgba(59, 130, 246, 0.45);
+  background: linear-gradient(135deg, var(--pe-primary-dark) 0%, var(--pe-primary) 100%);
 }
-.pe-btn-cta:active { transform: translateY(0); }
+.pe-btn-cta:active { transform: translateY(0); color: #FFFFFF !important; }
 
 /* ---------- Cards ---------- */
 .card {
@@ -297,6 +303,24 @@ table td {
   border-bottom: 1px solid var(--pe-border);
 }
 table tr:hover td { background-color: #F8FAFC; }
+
+/* Sélecteur "PAV matrix / Upset plot" */
+.pe-radio-group {
+  display: inline-flex;
+  gap: 14px;
+  align-items: center;
+}
+.pe-radio-group label {
+  font-weight: 600;
+  color: var(--pe-text);
+  cursor: pointer;
+  margin-right: 4px;
+}
+.pe-radio-group input[type="radio"] {
+  margin-right: 5px;
+  accent-color: var(--pe-primary);
+  cursor: pointer;
+}
 
 /* ---------- Loading spinner ---------- */
 ._dash-loading, .dash-spinner {
