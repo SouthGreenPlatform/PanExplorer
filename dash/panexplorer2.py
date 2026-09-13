@@ -310,7 +310,6 @@ columnDefs6 = [
     {"field": "strain","width": 300},
     {"field": "HierarchicalClustering","width": 200},
 ]
-
 data = ""
 
 
@@ -1012,8 +1011,8 @@ def load_project_preview(proj_title):
                                                         dbc.CardBody(
                                                             [
                                                                 html.Div([
-                                                                    html.Button("Tout sélectionner", id="select-all-strains", className="thin-button", n_clicks=0),
-                                                                    html.Button("Tout désélectionner", id="deselect-all-strains", className="thin-button", n_clicks=0),
+                                                                    html.Button("Select all", id="select-all-strains", className="thin-button", n_clicks=0),
+                                                                    html.Button("Deselect all", id="deselect-all-strains", className="thin-button", n_clicks=0),
                                                                 ], style={"display": "flex", "gap": "8px", "marginBottom": "10px"}),
                                                                 grid
                                                             ],
@@ -1176,12 +1175,21 @@ def load_project_preview(proj_title):
                         html.Div(id='pav_tab_content', children=[
 
                             html.Br(),
-                            # html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
-                            #     html.Label("Display as:"),
-                            #     dcc.RadioItems(['PAV matrix', 'UpSet plot'], 'PAV matrix', id='display_type', inline=True),
-                            # ]),
-
                             html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
+                                html.Label("Display as:"),
+                                dcc.RadioItems(
+                                    options=[
+                                        {'label': ' PAV matrix', 'value': 'PAV matrix'},
+                                        {'label': ' Upset plot', 'value': 'Upset plot'},
+                                    ],
+                                    value='PAV matrix',
+                                    id='display_type',
+                                    inline=True,
+                                    className="pe-radio-group"
+                                ),
+                            ]),
+
+                            html.Div(id='pav_controls_container', style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
                                 html.Div([
                                     html.Label("Colors:"),
                                     dcc.Dropdown(
@@ -1266,11 +1274,12 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    #dcc.Graph(id='PAV_graph',config={"displayModeBar": True,"modeBarButtonsToAdd": ["fullscreen"]}),
-                                                    dcc.Loading(fullscreen_graph("PAV_graph",height="600px")),
-                                                    #dcc.Loading(dcc.Graph(id='PAV_graph')),
-                                                                                                      
-                                                    #html.A("🔎 Ouvrir en grand",href="/graph1",target="_blank")
+                                                    html.Div(id='pav_graph_container', children=[
+                                                        dcc.Loading(fullscreen_graph("PAV_graph",height="600px")),
+                                                    ]),
+                                                    html.Div(id='upset_graph_container', style={"display": "none"}, children=[
+                                                        dcc.Loading(dcc.Graph(id='graph_upset')),
+                                                    ]),
 
                                                 ],
                                                 style={"textAlign": "center"}
@@ -1284,8 +1293,10 @@ def load_project_preview(proj_title):
                             ),  
                             html.Button("Download PAV matrix", id="download_table", className="thin-button", n_clicks=0),
                             html.Button("Download PAV matrix with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
+                            html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
                             dcc.Download(id="download-dataframe2"),
-                            dcc.Download(id="download-dataframe3"),                               
+                            dcc.Download(id="download-dataframe3"),
+                            dcc.Download(id="download-dataframe4"),
 
                                                         
                             dbc.Row(
@@ -1537,105 +1548,7 @@ def load_project_preview(proj_title):
                             ),
                     ]),
                     
-                    dcc.Tab(label='Upset plot', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='upset_tab_content', children=[
-                            html.Br(),
-                            #html.Div(className="row", id='upset', children=[
-                                
-
-                            dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_upset'),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                        
-                                    
-                                ],
-                            style= {"padding":"15px"}
-                            ), 
-
-                                html.H5("Selected group of clusters", id='nb_of_pangenes2', style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                dcc.Loading(
-                                    html.Div(children=[
-                                        dag.AgGrid(
-                                            id="table_selected_clusters3",
-                                            style={'margin-left': '1px',"paddingRight": "15px"},
-                                            rowData=[],
-                                            columnDefs=columnDefs5,
-                                            defaultColDef={"filter": True},
-                                            #defaultColDef={"filter": "agTextColumnFilter"},
-                                            dashGridOptions={"pagination": True, "animateRows": False}
-                                        ),
-                                        html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
-                                        dcc.Download(id="download-dataframe4"),
-                                    ], style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                ),
-
-                                #html.H5(id='combination', style={'width': '60vh','margin-left': '1px'}),
-                        #], style={"paddingLeft": "15px","paddingRight": "15px"}),
-                        ]),
-                    ]),
-
-                    dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            html.Div(className="row", id='stats2', children=[
-                            dcc.Loading(
-
-                                dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_pie2'),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),   
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_gene2'),
-                                                    
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),      
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='rarefaction2'),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                     
-                                    
-                                ],
-                            style= {"padding":"15px"}
-                            ),                                
-                            ),
-                        ]),
-                    ]),
-                    
-                    
-                    
-                    dcc.Tab(label='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
+                    dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='tree_tab_content', children=[
                             html.Br(),
                             dbc.Row([
@@ -1762,59 +1675,30 @@ def load_project_preview(proj_title):
                                 style= {"padding":"15px"}
                             ), 
 
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.H5("Geographic distribution of clusters", style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    dcc.Loading(html.Div(id='geo_pie_clusters')),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                                style= {"padding":"15px"}
+                            ),
+
                                                         
                             
                             html.Br(),
                         ], style={"paddingLeft": "15px"}
                         ),
                         ]),
-                    dcc.Tab(label='COG/GO', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='cog_tab_content', children=[
-                            html.Br(),
-
-                            dbc.Row(
-                                    [
-                                        dbc.Col(dbc.Card(
-                                            [
-                                                dbc.CardBody(
-                                                    [
-                                                        dcc.Graph(id='graph_COG2'),
-                                                    ],
-                                                    style={"textAlign": "center"}
-                                                ),
-                                            ],
-                                            style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                        )),                                                                                                      
-                                        
-                                    ],
-                                style= {"padding":"15px"}
-                            ),                                
-                                
-
-                            html.Br(),
-                            html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
-                                        id='submit-enrichment', 
-                                        style={
-                                            "backgroundColor": "#1E90FF",   # bleu
-                                            "color": "white",
-                                        },
-                                        n_clicks=0),
-                            html.Br(),
-                            html.Br(),
-                            dcc.Loading(
-                                #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
-                                dag.AgGrid(
-                                                id="enrichment_table",
-                                                style={'display': 'none'},
-                                                columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
-                                                rowData=[],
-                                            ),
-                                
-                                
-                                ),
-                        ], style={"paddingLeft": "15px"}
-                        ),
-                    ]),
                     dcc.Tab(label='KEGG pathways', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='kegg_tab_content', children=[
                             html.Br(),
@@ -1873,7 +1757,102 @@ def load_project_preview(proj_title):
                         dcc.Loading(dcc.Graph(id='graph_macrosynteny',style={'width': '150vh', 'height': '100vh','padding': '15px'})),
                         
                         ]),
+
+                    dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
+                            html.Br(),
+                            html.Div(className="row", id='stats2', children=[
+                            dcc.Loading(
+
+                                dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_pie2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_gene2'),
+                                                    
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),      
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='rarefaction2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                     
+                                    
+                                ],
+                            style= {"padding":"15px"}
+                            ),                                
+                            ),
+                        ]),
+
+                            html.Div(id='cog_tab_content', children=[
+                                html.Br(),
+
+                                dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            dcc.Graph(id='graph_COG2'),
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),                                                                                                      
+                                            
+                                        ],
+                                    style= {"padding":"15px"}
+                                ),                                
+                                    
+
+                                html.Br(),
+                                html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
+                                            id='submit-enrichment', 
+                                            style={
+                                                "backgroundColor": "#1E90FF",   # bleu
+                                                "color": "white",
+                                            },
+                                            n_clicks=0),
+                                html.Br(),
+                                html.Br(),
+                                dcc.Loading(
+                                    #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
+                                    dag.AgGrid(
+                                                    id="enrichment_table",
+                                                    style={'display': 'none'},
+                                                    columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
+                                                    rowData=[],
+                                                ),
+                                    
+                                    
+                                    ),
+                            ], style={"paddingLeft": "15px"}
+                            ),
                     ]),
+                ]),
                 ]),
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
                     html.Br(),
@@ -2600,6 +2579,19 @@ def load_project_preview(proj_title):
     return html.Div(children)
 
 
+# Bascule entre la heatmap PAV et l'Upset plot, sur la meme page (meme onglet).
+@app.callback(
+    Output('pav_graph_container', 'style'),
+    Output('upset_graph_container', 'style'),
+    Output('pav_controls_container', 'style'),
+    Input('display_type', 'value'),
+)
+def toggle_pav_upset_display(display_type):
+    if display_type == 'Upset plot':
+        return {'display': 'none'}, {'display': 'block'}, {'display': 'none'}
+    return {'display': 'block'}, {'display': 'none'}, {"display": "flex","alignItems": "center", "gap": "10px"}
+
+
 # Boutons "Tout sélectionner" / "Tout désélectionner" pour la table des souches/génomes.
 # rowMultiSelectWithClick=True (ci-dessus) permet deja de cocher/decocher une ligne
 # d'un simple clic (sans Ctrl) ; ces deux boutons couvrent le cas "tout d'un coup".
@@ -2617,6 +2609,28 @@ def select_or_deselect_all_strains(n_select, n_deselect, row_data):
     elif triggered_id == 'deselect-all-strains':
         return []
     raise PreventUpdate
+
+
+# Carte geographique : camemberts par pays montrant la proportion des
+# clusters (HierarchicalClustering) parmi les souches de ce pays.
+@app.callback(
+    Output('geo_pie_clusters', 'children'),
+    Input('table_clustering_assignation', 'rowData'),
+    Input('tab2', 'value'),
+    State('current_session', 'value'),
+)
+def update_geo_pie_clusters(rowData, tab_value, session):
+    # ne (re)construit la carte que lorsque l'onglet "Hierarchical clustering"
+    # est reellement affiche : Leaflet dessine sinon sa carte a une taille
+    # nulle si elle est montee pendant que son conteneur est cache. Comme ce
+    # callback se redeclenche a chaque activation de l'onglet, la carte est
+    # toujours (re)montee au moment ou elle est visible - ce qui correspond
+    # exactement au changement d'onglet "manuel" qui corrigeait le probleme.
+    if tab_value != 'Hierarchical clustering':
+        raise PreventUpdate
+    if not rowData:
+        return html.Div("Clustering not computed yet.", style={"padding": "20px"})
+    return build_geo_pie_clusters(session)
 
 #############################################################
 # Callback for alignment viewer
@@ -7166,36 +7180,73 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "assignation.xls",sep='\t')
 
 @app.callback(
-    Output("table_selected_clusters3","rowData"),
-    Output("nb_of_pangenes2",'children'),
+    Output("table_pangenes", 'rowData', allow_duplicate=True),
+    Output("nb_of_selected_clusters", 'children', allow_duplicate=True),
+    Output("table_accessory", 'rowData', allow_duplicate=True),
+    Output("nb_of_selected_clusters2", 'children', allow_duplicate=True),
+    Output("my-dashbio-default-circos", "layout", allow_duplicate=True),
+    Output("my-dashbio-default-circos", "tracks", allow_duplicate=True),
+    Output("circos_legend", 'children', allow_duplicate=True),
+    Output("circos_legend2", 'children', allow_duplicate=True),
     Input("graph_upset","clickData"),
     State("current_session", 'value'),
+    State("my-dashbio-default-circos", "layout"),
+    State("my-dashbio-default-circos", "tracks"),
+    prevent_initial_call=True
 )
-def show_cluster_with_combination(click,session):
+def show_cluster_with_combination(click,session,current_layout,current_tracks):
+
+    if click is None:
+        raise PreventUpdate
 
     upset_file = tmp_dir + "/" + str(session) + ".df_upset.csv"
-    if os.path.exists(upset_file):
-        df_upset = pd.read_csv(upset_file, index_col=0)
-        df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    if not os.path.exists(upset_file):
+        raise PreventUpdate
 
-        if click is None:
-            dictionary = df2.to_dict('records')
-            return dictionary
+    df_upset = pd.read_csv(upset_file, index_col=0)
+    df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
 
-        combination = click["points"][0]["customdata"]
+    combination = list(map(int, click["points"][0]["customdata"][0]))
+    combination_opposite = [1 - b for b in combination]
 
-        mask = pd.Series(
-            list(map(int, combination[0])),
-            index=df_upset.columns
-        )
+    # clusters matching the clicked pattern
+    mask = pd.Series(combination, index=df_upset.columns)
+    selected = (df_upset == mask).all(axis=1)
+    df_selected = df2[selected]
+    df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
+    dictionary_selected = df_selected.to_dict('records')
 
+    # clusters matching the opposite (inverse) pattern
+    mask_opposite = pd.Series(combination_opposite, index=df_upset.columns)
+    selected_opposite = (df_upset == mask_opposite).all(axis=1)
+    df_selected_opposite = df2[selected_opposite]
+    df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+    dictionary_selected_opposite = df_selected_opposite.to_dict('records')
 
-        selected = (df_upset == mask).all(axis=1)
-        df_selected = df_upset.loc[selected]
-        df_selected = df2[selected]
-        dictionary = df_selected.to_dict('records')
+    ##########################################
+    # update circos (meme principe que le clic sur la heatmap :
+    # rouge = pattern selectionne, violet = pattern oppose)
+    ##########################################
+    df_merged_with_positions = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv", index_col=0)
 
-        return dictionary,"Selected group of clusters: "+str(len(dictionary))+ " clusters"
+    merged_with_positions = pd.merge(df_selected, df_merged_with_positions, left_on='ClutserID', right_on='name')
+    merged_with_positions = merged_with_positions[['name', 'block_id', 'start', 'end', 'color', 'Strand']]
+    current_tracks[2].update(data=merged_with_positions.to_dict('records'), type="HIGHLIGHT", config=highlight_config3)
+
+    merged_with_positions = pd.merge(df_selected_opposite, df_merged_with_positions, left_on='ClutserID', right_on='name')
+    merged_with_positions = merged_with_positions[['name', 'block_id', 'start', 'end', 'color', 'Strand']]
+    current_tracks[3].update(data=merged_with_positions.to_dict('records'), type="HIGHLIGHT", config=highlight_config4)
+
+    return (
+        dictionary_selected,
+        "Clusters respecting PAV pattern: " + str(len(dictionary_selected)) + " clusters",
+        dictionary_selected_opposite,
+        "Clusters respecting opposite PAV pattern: " + str(len(dictionary_selected_opposite)) + " clusters",
+        current_layout,
+        current_tracks,
+        ["Clusters respecting opposite PAV pattern"],
+        ["Clusters respecting PAV pattern"],
+    )
 
 @app.callback(
     Output("country-markers", "children"),
@@ -7248,6 +7299,121 @@ def update_markers(value):
          )
 
     return markers
+
+def build_geo_pie_clusters(session):
+    """Carte Leaflet (comme celle du haut de page) avec, pour chaque pays,
+    un camembert (mini pie chart en CSS, sous forme d'icone HTML) montrant
+    la proportion des clusters (HierarchicalClustering) parmi les souches
+    de ce pays. Le diametre du camembert est proportionnel (en surface)
+    au nombre de souches presentes dans le pays."""
+
+    metadata_path = tmp_dir + "/" + str(session) + ".df_metadata3.csv"
+    clusters_path = tmp_dir + "/" + str(session) + ".clusters.tsv"
+
+    if not (os.path.exists(metadata_path) and os.path.exists(clusters_path)):
+        return html.Div("No data available yet.", style={"padding": "20px"})
+
+    df_metadata = pd.read_csv(metadata_path)
+    df_clusters = pd.read_csv(clusters_path, sep="\t")
+
+    if "Country" not in df_metadata.columns:
+        return html.Div("No 'Country' column found in metadata.", style={"padding": "20px"})
+
+    df_merged = pd.merge(df_metadata, df_clusters, how="inner", left_on="Strain name", right_on="strain")
+    df_merged = df_merged.dropna(subset=["Country", "HierarchicalClustering"])
+
+    if df_merged.empty:
+        return html.Div("No data available yet.", style={"padding": "20px"})
+
+    df_merged["HierarchicalClustering"] = df_merged["HierarchicalClustering"].astype(str)
+    all_clusters = sorted(df_merged["HierarchicalClustering"].unique())
+    palette = px.colors.qualitative.Plotly + px.colors.qualitative.Set3
+    cluster_colors = {c: palette[i % len(palette)] for i, c in enumerate(all_clusters)}
+
+    counts_per_country = df_merged.groupby(["Country", "HierarchicalClustering"]).size().reset_index(name="n")
+    totals_per_country = df_merged.groupby("Country").size().reset_index(name="total")
+    totals_per_country["lat"] = totals_per_country["Country"].apply(get_lat)
+    totals_per_country["lon"] = totals_per_country["Country"].apply(get_lon)
+    totals_per_country = totals_per_country[totals_per_country["lat"].notna()]
+
+    if totals_per_country.empty:
+        return html.Div("Could not locate any of the countries found in the metadata.", style={"padding": "20px"})
+
+    max_total = totals_per_country["total"].max()
+    size_min, size_max = 24, 70
+
+    markers = []
+    for _, row in totals_per_country.iterrows():
+        country = row["Country"]
+        total = row["total"]
+        sub = counts_per_country[counts_per_country["Country"] == country]
+
+        size = size_min + (size_max - size_min) * ((total / max_total) ** 0.5)
+
+        # degrade conique CSS (mini camembert) represantant la proportion des clusters
+        segments = []
+        cumulative = 0.0
+        for _, r in sub.iterrows():
+            frac = r["n"] / total
+            start_pct = cumulative * 100
+            cumulative += frac
+            end_pct = cumulative * 100
+            color = cluster_colors[r["HierarchicalClustering"]]
+            segments.append(f"{color} {start_pct:.2f}% {end_pct:.2f}%")
+        gradient = "conic-gradient(" + ", ".join(segments) + ")"
+
+        icon_html = (
+            f'<div style="width:{size}px;height:{size}px;border-radius:50%;'
+            f'background:{gradient};border:2px solid white;'
+            f'box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>'
+        )
+
+        tooltip_text = country + " — " + str(total) + " souche(s) : " + ", ".join(
+            "cluster " + r["HierarchicalClustering"] + " (" + str(r["n"]) + ")"
+            for _, r in sub.iterrows()
+        )
+
+        markers.append(
+            dl.DivMarker(
+                position=[row["lat"], row["lon"]],
+                iconOptions=dict(
+                    html=icon_html,
+                    iconSize=[size, size],
+                    className="",
+                ),
+                children=[dl.Tooltip(tooltip_text)],
+            )
+        )
+
+    geo_map = dl.Map(
+        id="geo_pie_clusters_map",
+        children=[
+            dl.TileLayer(),
+            dl.LayerGroup(markers, id="geo-pie-markers"),
+        ],
+        center=[20, 0],
+        zoom=2,
+        style={"width": "100%", "height": "600px"},
+    )
+
+    legend_items = [
+        html.Div([
+            html.Span(style={
+                "display": "inline-block", "width": "12px", "height": "12px",
+                "borderRadius": "50%", "backgroundColor": cluster_colors[c],
+                "marginRight": "6px",
+            }),
+            html.Span("Cluster " + c, style={"marginRight": "14px", "fontWeight": "600"}),
+        ], style={"display": "inline-flex", "alignItems": "center"})
+        for c in all_clusters
+    ]
+
+    return html.Div([
+        geo_map,
+        html.Div(legend_items, style={"marginTop": "10px", "display": "flex", "flexWrap": "wrap", "gap": "4px", "justifyContent": "center"}),
+    ])
+
+
 
 @app.callback(
     Output('pcoa','figure'),
