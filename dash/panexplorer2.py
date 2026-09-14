@@ -839,47 +839,8 @@ def build_browse_ui(session_code=None, project=None):
     return ui
 
 
-@app.callback(
-    Output("page-content", "children", allow_duplicate=True),
-    Output("page-content", "className", allow_duplicate=True),
-    Input("url", "pathname"),
-    prevent_initial_call=True
-)
-def display_page(pathname):
-
-    if pathname == "/submit_genomes":
-        return submit_genomes.layout, ""
-    elif pathname == "/":
-        return homepage.layout, ""
-    elif pathname == "/browse":
-        return build_browse_ui(), "pe-content-wide"
-    else:
-        raise PreventUpdate
-
-
-# Render page: session-only OR normal app
-# NB: ce callback ne doit reagir qu'aux pages "/" et "/browse" (deep-links du
-# type /browse?session=...&project=...). Sans le garde-fou sur pathname, un
-# changement de page (ex: clic sur "Import genomes") qui fait aussi passer
-# "search" de "?session=..." a "" declenchait ce callback EN PLUS de
-# display_page, et le resultat qui arrivait en dernier ecrasait l'autre -
-# d'ou l'URL qui changeait mais le contenu qui restait bloque sur "Browse".
-@app.callback(
-    Output("page-content", "children"),
-    Output("page-content", "className"),
-    Input("url", "search"),
-    State("url", "pathname"),
-)
-def render_page(search, pathname):
-
-    if pathname == "/browse":
-        pass  # navigation normale vers Browse (avec ou sans parametres)
-    elif pathname in (None, "", "/") and search:
-        pass  # lien partageable du type "/?session=...&project=..."
-    else:
-        raise PreventUpdate
-
-    # parse session param
+def parse_url_search_params(search):
+    """Extrait session/project depuis la query string de l'URL (ex: ?session=X&project=Y)."""
     session_code = None
     project = None
     if search:
@@ -887,8 +848,40 @@ def render_page(search, pathname):
         params = urllib.parse.parse_qs(search.lstrip("?"))
         session_code = params.get("session", [None])[0]
         project = params.get("project", [None])[0]
+    return session_code, project
 
-    return build_browse_ui(session_code, project), "pe-content-wide"
+
+# Un SEUL callback gere tout le routage (pathname + search ensemble).
+# Avoir deux callbacks separes (l'un sur pathname, l'autre sur search) cree
+# une course : changer de page modifie souvent les deux a la fois (ex:
+# quitter "/browse?session=X" pour "/submit_genomes" change le pathname ET
+# vide le search), et chaque callback ecrit dans le meme Output - celui qui
+# repond en second ecrasait l'autre. En les fusionnant, il n'y a plus qu'une
+# seule reponse possible par navigation, basee sur l'etat complet de l'URL.
+@app.callback(
+    Output("page-content", "children"),
+    Output("page-content", "className"),
+    Input("url", "pathname"),
+    Input("url", "search"),
+)
+def render_page(pathname, search):
+
+    if pathname == "/submit_genomes":
+        return submit_genomes.layout, ""
+
+    if pathname == "/browse":
+        session_code, project = parse_url_search_params(search)
+        return build_browse_ui(session_code, project), "pe-content-wide"
+
+    if pathname in (None, "", "/"):
+        if search:
+            # lien partageable du type "/?session=...&project=..."
+            session_code, project = parse_url_search_params(search)
+            return build_browse_ui(session_code, project), "pe-content-wide"
+        return homepage.layout, ""
+
+    raise PreventUpdate
+
 
 
 
