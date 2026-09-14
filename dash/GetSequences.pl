@@ -173,8 +173,12 @@ die $usage
 					print PTT_WITH_CONTIG "$line\tblock_id\n";
 				}
 				else{
+					my $protein_id = $infos[5];
 					my $locus_tag = $infos[3];
 					my $contig = $contigs{$locus_tag};
+					if (!$contig){
+						$contig = $contigs{$protein_id};
+					}
 					print PTT_WITH_CONTIG "$line\t$contig\n";
 				}
 			}
