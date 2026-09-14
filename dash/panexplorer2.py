@@ -858,12 +858,26 @@ def display_page(pathname):
 
 
 # Render page: session-only OR normal app
+# NB: ce callback ne doit reagir qu'aux pages "/" et "/browse" (deep-links du
+# type /browse?session=...&project=...). Sans le garde-fou sur pathname, un
+# changement de page (ex: clic sur "Import genomes") qui fait aussi passer
+# "search" de "?session=..." a "" declenchait ce callback EN PLUS de
+# display_page, et le resultat qui arrivait en dernier ecrasait l'autre -
+# d'ou l'URL qui changeait mais le contenu qui restait bloque sur "Browse".
 @app.callback(
     Output("page-content", "children"),
     Output("page-content", "className"),
-    Input("url", "search")
+    Input("url", "search"),
+    State("url", "pathname"),
 )
-def render_page(search):
+def render_page(search, pathname):
+
+    if pathname == "/browse":
+        pass  # navigation normale vers Browse (avec ou sans parametres)
+    elif pathname in (None, "", "/") and search:
+        pass  # lien partageable du type "/?session=...&project=..."
+    else:
+        raise PreventUpdate
 
     # parse session param
     session_code = None
@@ -7368,7 +7382,8 @@ def build_geo_pie_clusters(session):
             f'box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>'
         )
 
-        tooltip_text = country + " — " + str(total) + " souche(s) : " + ", ".join(
+        strain_word = "strain" if total == 1 else "strains"
+        tooltip_text = country + ": " + str(total) + " " + strain_word + " - " + ", ".join(
             "cluster " + r["HierarchicalClustering"] + " (" + str(r["n"]) + ")"
             for _, r in sub.iterrows()
         )
