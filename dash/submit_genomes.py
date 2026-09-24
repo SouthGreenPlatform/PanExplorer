@@ -14,6 +14,8 @@ import sys
 import shlex
 import secrets
 
+from email.message import EmailMessage
+
 import gzip
 import zipfile
 
@@ -64,7 +66,7 @@ except Exception:
 # --------------------------------------------------
 
 MAX_GENOMES = 80
-MIN_VALID_GENOMES = 3
+MIN_VALID_GENOMES = 2
 
 
 
@@ -983,19 +985,18 @@ def run_external_command(email_address, valid_list, min_percentage_identity, ses
 
 def send_email(to, session):
     """
-    Send email notification with validation.
+    Send email notification via the IRD SMTP server.
     """
     # Validate session and email
     if not validate_session_id(session):
         logger.error("Invalid session ID: %s", session)
         return
-    
+
     if not validate_email_strict(to):
         logger.error("Invalid recipient email: %s", to)
         return
 
-    if validate_session_id(session):
-        message = f"""
+    message = f"""\
 Hi,
 
 Your PanExplorer job {session} is done. You can click the link below to see your results:
@@ -1008,42 +1009,41 @@ See you soon on PanExplorer,
 The PanExplorer team
 """
 
-        msg_file = os.path.join(tmp_dir, f"{session}.message.txt")
-        with open(msg_file, "w") as f:
-            f.write(message)
-        
-        # Set restrictive permissions on message file
-        os.chmod(msg_file, 0o600)
+    subject = f"PanExplorer results session {session}"
 
-        # Use subprocess with list form (safer against injection) and pipe stdin
-        cat_result = subprocess.run(['cat', msg_file], capture_output=True, text=True)
-        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', to],
-                      input=cat_result.stdout, text=True, check=True)
-        try:
-            subprocess.run(['service', 'postfix', 'start'], check=True)
-        except subprocess.CalledProcessError:
-            logger.warning("Could not start postfix service")
+    try:
+        # Email to user
+        msg = EmailMessage()
+        msg["From"] = "alexis.dereeper@ird.fr"
+        msg["To"] = to
+        msg["Subject"] = subject
+        msg.set_content(message)
 
-        message_for_admin = f"""
+        with smtplib.SMTP("smtp.intranet.ird.fr", 25, timeout=30) as smtp:
+            smtp.send_message(msg)
+
+        logger.info("Email sent successfully to %s", to)
+
+        # Notification to administrator
+        message_for_admin = f"""\
 The PanExplorer job {session} is done. It has been sent to {to}:
 https://panexplorer2.ird.fr/browse?session={session}
 """
 
-        admin_msg_file = os.path.join(tmp_dir, f"{session}.message_for_admin.txt")
-        with open(admin_msg_file, "w") as f:
-            f.write(message_for_admin)
-        
-        # Set restrictive permissions on message file
-        os.chmod(admin_msg_file, 0o600)
+        admin_msg = EmailMessage()
+        admin_msg["From"] = "alexis.dereeper@ird.fr"
+        admin_msg["To"] = ADMIN_MAIL
+        admin_msg["Subject"] = subject
+        admin_msg.set_content(message_for_admin)
 
-        cat_result = subprocess.run(['cat', admin_msg_file], capture_output=True, text=True)
-        subprocess.run(['mail', '-s', f'Panexplorer results session {session}', ADMIN_MAIL],
-                      input=cat_result.stdout, text=True, check=True)
-        try:
-            subprocess.run(['service', 'postfix', 'start'], check=True)
-        except subprocess.CalledProcessError:
-            logger.warning("Could not start postfix service")
-    
+        with smtplib.SMTP("smtp.intranet.ird.fr", 25, timeout=30) as smtp:
+            smtp.send_message(admin_msg)
+
+        logger.info("Admin notification sent to %s", ADMIN_MAIL)
+
+    except Exception as e:
+        logger.exception("Error sending email: %s", e)
+
 
 
 # --------------------------------------------------
