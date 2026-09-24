@@ -1014,7 +1014,7 @@ The PanExplorer team
     try:
         # Email to user
         msg = EmailMessage()
-        msg["From"] = "alexis.dereeper@ird.fr"
+        msg["From"] = "panexplorer@ird.fr"
         msg["To"] = to
         msg["Subject"] = subject
         msg.set_content(message)
@@ -1031,7 +1031,7 @@ https://panexplorer2.ird.fr/browse?session={session}
 """
 
         admin_msg = EmailMessage()
-        admin_msg["From"] = "alexis.dereeper@ird.fr"
+        admin_msg["From"] = "panexplorer@ird.fr"
         admin_msg["To"] = ADMIN_MAIL
         admin_msg["Subject"] = subject
         admin_msg.set_content(message_for_admin)
