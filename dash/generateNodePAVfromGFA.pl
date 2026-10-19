@@ -49,10 +49,11 @@ while(<GFA>) {
             next;
         }
         if ($paths{$genome}){
-            my $nb_nodes2 = scalar split(/,/, $paths{$genome});
-            if ($nb_nodes2 < $nb_nodes){
-                $paths{$genome} = $path_nodes;
-            }
+            # my $nb_nodes2 = scalar split(/,/, $paths{$genome});
+            # if ($nb_nodes2 < $nb_nodes){
+            #     $paths{$genome} = $path_nodes;
+            # }
+            $paths{$genome} .= $path_nodes;
         }
         else{
             $paths{$genome} = $path_nodes;
@@ -76,6 +77,7 @@ my %node_series;
 my %strand_of_node;
 my %strand_of_node_for_reference;
 my %pav;
+my $count = 0; 
 open(NODE_POS, ">$output_basename.node_positions.tsv");
 print NODE_POS "Node\tStart\tEnd\n";
 foreach my $node(@nodes_in_path) {
@@ -93,10 +95,13 @@ foreach my $node(@nodes_in_path) {
 
         if ($length > 100) {
         #if ($length > 1) {
+            $count++;
+            my $node_name = $count."_".$node;
             push(@valid_nodes, $node);
+            $node_lengths{$node_name} = $length;
             my $start = $position + 1;  
             my $end = $position + $length;
-            print NODE_POS "$node\t$start\t$end\n";
+            print NODE_POS "$node_name\t$start\t$end\n";
             $node_positions{$node} = "$start,$end";
             $node_series{$reference} .= "$start,$end|";
             $pav{$node}{$reference} = $strand.$length;
@@ -171,6 +176,7 @@ print VALID "\n";
 print VALID2 "\n";
 my $count = 0;
 foreach my $node(@nodes_in_path) {
+    #print "$node\n";
     if (exists $pav{$node}) {
         $count++;
         print VALID $count."_".$node;
