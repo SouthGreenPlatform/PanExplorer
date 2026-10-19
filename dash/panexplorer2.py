@@ -231,7 +231,7 @@ layout_config = {
     "ticks": {
         "color": "#4d4d4d",
         "labelColor": "#4d4d4d",
-        "spacing": 1000000,
+        "spacing": 10000,
         "labelSuffix": "Mb",
         "labelDenominator": 1000000,
         "labelSize": 12,
@@ -298,10 +298,12 @@ columnDefs2 = [
 columnDefs4 = [
     {"field": "Species","width": 400},
     {"field": "Genes","width": 400},
+    {"field": "Product","width": 400},
 ]
 columnDefs5 = [
     {"field": "ClutserID","width": 200},
     {"field": "COG term","width": 400},
+    #{"field": "Product","width": 200},
     {"field": "type","width": 200},
     {"field": "sum","width": 100},
 ]
@@ -309,6 +311,17 @@ columnDefs5 = [
 columnDefs6 = [
     {"field": "strain","width": 300},
     {"field": "HierarchicalClustering","width": 200},
+]
+
+columnDefs7 = [
+    {"field": "Gene","width": 100},
+    {"field": "Odds_ratio","width": 200},
+    {"field": "Naive_p","width": 200},
+    {"field": "Bonferroni_p","width": 200},
+    {"field": "Number_pos_present_in","width": 200},
+    {"field": "Number_neg_present_in","width": 200},
+    {"field": "Number_pos_not_present_in","width": 200},
+    {"field": "Number_neg_not_present_in","width": 200}
 ]
 data = ""
 
@@ -997,7 +1010,7 @@ def load_project_preview(proj_title):
                           selectedRows=df.to_dict("records"),
                           
                           selectAll=True,
-                          #defaultColDef={"filter": True},
+                          defaultColDef={"filter": True},
 
                           rowData=df.to_dict("records"),
                           columnSize="sizeToFit",
@@ -1274,7 +1287,7 @@ def load_project_preview(proj_title):
                             html.Div(id='textarea-example-output', style={'whiteSpace': 'pre-line'}),
 
                             html.Br(),
-
+                            dcc.Store(id="selected-cell"),
                             dbc.Row(
                                 [
                                     dbc.Col(dbc.Card(
@@ -1298,77 +1311,102 @@ def load_project_preview(proj_title):
                                 ],
                             style= {"padding":"15px"}
                             ),  
-                            html.Button("Download PAV matrix", id="download_table", className="thin-button", n_clicks=0),
-                            html.Button("Download PAV matrix with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
-                            html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
-                            dcc.Download(id="download-dataframe2"),
-                            dcc.Download(id="download-dataframe3"),
-                            dcc.Download(id="download-dataframe4"),
 
-                                                        
-                            dbc.Row(
-                                [
-                                    dbc.Col(
-                                        dbc.Card(
-                                            [
-                                                dbc.CardBody(
-                                                    [
-                                                        
-                                                        html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
-                                                        dcc.Loading(dag.AgGrid(
-                                                                                                id="genes_cluster",
-                                                                                                rowData=[],
-                                                                                                columnDefs=columnDefs4,
-                                                                                                defaultColDef={"filter": True},
-                                                                                                style={'width': '80vh','margin-left': '1px'},
-                                                                                                dashGridOptions={"pagination": True, "animateRows": False}
-                                                                                            )),
-                                                        html.Button("Display alignment", id="display_alignment", className="thin-button", n_clicks=0),
-                                                        html.Button("Display local synteny", id="display_local_synteny", className="thin-button", n_clicks=0),
-                                                        
-                                                    ],
-                                                    
-                                                )
-                                            ],
-                                            style={
-                                                    "padding": "0",
-                                                    "backgroundColor": "transparent",
-                                                    "border": "none",
-                                            }
-                                        ),
-                                        width=6
+                            dbc.Modal([
+                                    dbc.ModalHeader(
+                                        dbc.ModalTitle(id="detail-title")
                                     ),
+                                    dbc.ModalBody([
+                                        html.Div(id="clicked-cell-info"),
+
+                                        dcc.Loading(
+                                            id="detail-loading",
+                                            type="circle",
+                                            children=html.Div(
+                                                id="detail-table-container"
+                                            )
+                                        ),
+                                        html.Hr(),
+
+                                        dbc.Button(
+                                            "Display alignment",
+                                            id="display_alignment",
+                                            color="primary",
+                                            className="me-2"
+                                        ),
+
+                                        dbc.Button(
+                                            "Close and highlight genes sharing the same PAV pattern",
+                                            id="activate_pattern",
+                                            color="primary",
+                                            className="me-2"
+                                        ),
+                                        dcc.Loading(children=html.Div(id='default-alignment-viewer-output')) ,
+                                    ])
+                                ], id="detail-modal", is_open=False, size="xl"),                        
+
+                            # dbc.Row(
+                            #     [
+                            #         dbc.Col(
+                            #             dbc.Card(
+                            #                 [
+                            #                     dbc.CardBody(
+                            #                         [
+                                                        
+                            #                             html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
+                            #                             dcc.Loading(dag.AgGrid(
+                            #                                                                     id="genes_cluster",
+                            #                                                                     rowData=[],
+                            #                                                                     columnDefs=columnDefs4,
+                            #                                                                     defaultColDef={"filter": True},
+                            #                                                                     style={'width': '80vh','margin-left': '1px'},
+                            #                                                                     dashGridOptions={"pagination": True, "animateRows": False}
+                            #                                                                 )),
+                                                        
+                                                        
+                            #                         ],
+                                                    
+                            #                     )
+                            #                 ],
+                            #                 style={
+                            #                         "padding": "0",
+                            #                         "backgroundColor": "transparent",
+                            #                         "border": "none",
+                            #                 }
+                            #             ),
+                            #             width=6
+                            #         ),
                                     
                                                                        
-                                    dbc.Col(
-                                        dbc.Card(
-                                            [
-                                                dbc.CardBody(
-                                                    [
-                                                        dcc.Loading(html.Div(id='default-alignment-viewer-output'))
+                            #         dbc.Col(
+                            #             dbc.Card(
+                            #                 [
+                            #                     dbc.CardBody(
+                            #                         [
+                            #                             dcc.Loading(html.Div(id='default-alignment-viewer-output'))
                                                         
-                                                    ],
-                                                    style={
-                                                        "padding": "2px"
-                                                    }
-                                                )
-                                            ],
-                                            style={
-                                                "border": "none",
-                                                "borderRadius": "16px",
-                                                "overflow": "hidden",
-                                                "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
-                                                "height": "100%"
-                                            }
-                                        ),
-                                        width=6
-                                    )
-                                ],
-                                className="g-4",
-                                style={
-                                    "margin": "0"
-                                }
-                            ),   
+                            #                         ],
+                            #                         style={
+                            #                             "padding": "2px"
+                            #                         }
+                            #                     )
+                            #                 ],
+                            #                 style={
+                            #                     "border": "none",
+                            #                     "borderRadius": "16px",
+                            #                     "overflow": "hidden",
+                            #                     "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
+                            #                     "height": "100%"
+                            #                 }
+                            #             ),
+                            #             width=6
+                            #         )
+                            #     ],
+                            #     className="g-4",
+                            #     style={
+                            #         "margin": "0"
+                            #     }
+                            # ),   
                        
                             
                             dbc.Row(
@@ -1380,29 +1418,58 @@ def load_project_preview(proj_title):
                                                      [
                                                         dcc.Loading(
                                                             html.Div(children=[
-                                                                html.H5("Core-genes", id="nb_of_selected_clusters", style={'color': 'red'}),
+
+                                                                html.H5("All pangenes", id="nb_of_clusters", style={'color': 'green'}),
                                                                 dag.AgGrid(
                                                                         id="table_pangenes",
                                                                         rowData=[],
                                                                         defaultColDef={"filter": "agTextColumnFilter"},
-                                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                                        style={'width': '80vh',"height": '250px','margin-left': '1px'},
+                                                                        #getRowId="params.data.State",
+                                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                                ),
+                                                                html.Button("Download PAV matrix", id="download_table", className="thin-button", n_clicks=0),
+                                                                html.Button("Download PAV matrix with GeneID", id="download_table_geneid", className="thin-button", n_clicks=0),
+                                                                html.Button("Download table", id="download_table_selected_clusters", className="thin-button", n_clicks=0),
+                                                                dcc.Download(id="download-dataframe2"),
+                                                                dcc.Download(id="download-dataframe3"),
+                                                                dcc.Download(id="download-dataframe4"),
+                                                                #html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
+                                                                #html.Button("Download table", id="download_table_selection", className="thin-button", n_clicks=0),
+                                                                #dcc.Download(id="download-dataframe7"),
+
+
+                                                                html.H5("Core-genes", id="nb_of_selected_clusters", style={'color': 'red'}),
+                                                                dag.AgGrid(
+                                                                        id="table_coregenes",
+                                                                        rowData=[],
+                                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                                        style={'width': '80vh',"height": '250px','margin-left': '1px'},
                                                                         #getRowId="params.data.State",
                                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                                 ),
                                                                 
                                                                 #html.Button("Display Circos", id="display_circos", className="thin-button", n_clicks=0),
+                                                                html.Button("Download table", id="download_table_selection", className="thin-button", n_clicks=0),
+                                                                dcc.Download(id="download-dataframe7"),
+
                                                                 html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0),
+
+                                                                html.Button("Pan-GWAS with Scoary", id="pangwas", className="thin-button", n_clicks=0),
 
                                                                 html.H5("Singletons / specific genes", id='nb_of_selected_clusters2', style={'color': 'purple'}),
                                                                 dag.AgGrid(
                                                                         id="table_accessory",
                                                                         rowData=[],
                                                                         defaultColDef={"filter": "agTextColumnFilter"},
-                                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                                        style={'width': '80vh',"height": '250px','margin-left': '1px'},
                                                                         dashGridOptions={"pagination": True, "animateRows": False}
                                                                 ),
-                                                                html.Button("Calculate COG enrichment", id="cog_enrichment2", className="thin-button", n_clicks=0),
                                                                 
+                                                                html.Button("Download table", id="download_table_selection_opposite", className="thin-button", n_clicks=0),
+                                                                dcc.Download(id="download-dataframe8"),
+
+                                                                html.Button("Calculate COG enrichment", id="cog_enrichment2", className="thin-button", n_clicks=0),
                                                                 
                                                             ]),
                                                         )                                                       
@@ -1553,6 +1620,49 @@ def load_project_preview(proj_title):
                                 ],
                             style= {"padding":"15px", "height": "800px"}
                             ),
+                        dbc.Row(
+                                [
+                                    html.H5("Pan-GWAS results", id="pangwas_results"),                                               
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(dag.AgGrid(
+                                                        id="table_pangwas",
+                                                        rowData=[],
+                                                        columnDefs=columnDefs7,
+                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                    )), 
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={
+                                                    "padding": "0",
+                                                    "backgroundColor": "transparent",
+                                                    "border": "none",
+                                            }
+
+                                        #style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),   
+
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(dcc.Graph("pangwas_figure")),
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),
+                                ],
+                            style= {"padding":"15px", "height": "800px"}
+                            ),
+
                     ]),
                     
                     dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
@@ -1864,6 +1974,8 @@ def load_project_preview(proj_title):
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=tab_style,  selected_style=tab_selected_style, children=[
                     html.Br(),
 
+                     
+
                     dbc.Row(
                                 [
                                     dbc.Col(dbc.Card(
@@ -1920,338 +2032,591 @@ def load_project_preview(proj_title):
                             style= {"padding":"15px"}
                             ),
 
-                    dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
+
+                    dcc.Tabs(id='tab2bis', style=tabs_styles, children=[
+                                        
+                                                                
+                        dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[  
+
+                            html.Br(),
+                            # ── Segment presence/absence : PAV matrix / Upset plot ──────────────
+                            html.Div(id='segments_pav_controls_container', style={"display": "flex","alignItems": "center", "gap": "10px", "paddingLeft": "15px"},children=[
+                                html.Label("Display as:"),
+                                dcc.RadioItems(
+                                    options=[
+                                        {'label': ' PAV matrix', 'value': 'PAV matrix'},
+                                        {'label': ' Upset plot', 'value': 'Upset plot'},
+                                    ],
+                                    value='PAV matrix',
+                                    id='display_type_segments',
+                                    inline=True,
+                                    className="pe-radio-group"
+                                ),
+                            ]), 
+                            
+
+
+
+                            
+                            dbc.Row(
                                         [
-                                            dbc.CardBody(
+                                            dbc.Col(dbc.Card(
                                                 [
-                                                    dcc.Graph(id='graph_gfa2')
+                                                    dbc.CardBody(
+                                                        [
+                                                            html.Div(id='pav_graph_segments_container', children=[
+                                                                dcc.Loading(dcc.Graph(id='graph_gfa2')),
+                                                            ]),
+                                                            html.Div(id='upset_graph_segments_container', style={"display": "none"}, children=[
+                                                                dcc.Loading(dcc.Graph(id='graph_upset_segments')),
+                                                            ]),
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
                                                 ],
-                                                style={"textAlign": "center"}
-                                            ),
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),
+                                            html.Br(),
                                         ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                      
-                                                
+                                        style= {"padding":"15px"}
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                            html.Div([
+                                                html.Button("Download PAV matrix", id="download_table_pav_segments", className="thin-button", n_clicks=0),
+                                                dcc.Download(id="download-dataframe6"),
+                                            ]
+                                        )
+                                    )
                                 ],
                                 style= {"padding":"15px"}
-                    ),                     
-                    
-                    html.Br(),
+                            ),
 
-                    # ── Search & Highlight panel ─────────────────────────────────────────
-                    html.Div(style={'padding':'16px','backgroundColor':'#f7faff','border':'1px solid #ccd6f6','borderRadius':'6px','margin':'0 15px'}, children=[
-                        html.H5("Search & Highlight in PAV Matrix", style={'marginBottom':'4px'}),
-                        html.Small(
-                            "Enter node IDs (e.g. 42,85,120) or a gene name/keyword. "
-                            "Auto-detected: all-numeric tokens → node search, text → gene search (matches gene ID and product).",
-                            style={'color':'#666'}
-                        ),
-                        html.Br(), html.Br(),
-                        dbc.Row([
-                            dbc.Col([
-                                dcc.Input(
-                                    id='segment-search-input', type='text',
-                                    placeholder='Node IDs (e.g. 42,85) or gene keyword…',
-                                    debounce=False, className='form-control'
-                                ),
-                            ], width=8),
-                            dbc.Col([
-                                html.Button('Search', id='btn-segment-search', n_clicks=0,
-                                            className='btn btn-primary', style={'width':'100%'}),
-                            ], width=2),
-                            dbc.Col([
-                                html.Button('Clear', id='btn-segment-clear', n_clicks=0,
-                                            className='btn btn-outline-secondary', style={'width':'100%'}),
-                            ], width=2),
-                        ]),
-                        html.Br(),
-                        dcc.Loading(html.Div(id='segment-search-results')),
-                        html.Br(),
-                        dag.AgGrid(
-                            id='segment-search-table',
-                            rowData=[],
-                            columnDefs=[
-                                {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
-                                {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
-                                {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
-                                {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
-                                {'field': 'Products', 'headerName': 'Products',   'flex': 2},
-                            ],
-                            defaultColDef={'filter': 'agTextColumnFilter', 'resizable': True, 'sortable': True},
-                            dashGridOptions={
-                                'pagination': True, 'paginationPageSize': 20,
-                                'animateRows': False,
-                                'rowSelection': 'multiple',
-                            },
-                            style={'height': '320px', 'display': 'none'}
-                        ),
-                        html.Br(),
-                        dbc.Row([
-                            dbc.Col([
-                                html.Button(
-                                    '⬇ Send to Subgraph Extraction',
-                                    id='btn-send-to-subgraph', n_clicks=0,
-                                    className='btn btn-outline-primary btn-sm',
-                                    style={'display': 'none'}
-                                ),
-                            ], width='auto'),
-                            dbc.Col([
-                                html.Button(
-                                    '⬆ Show on PAV',
-                                    id='btn-show-on-pav', n_clicks=0,
-                                    className='btn btn-warning btn-sm',
-                                    style={'display': 'none'}
-                                ),
-                            ], width='auto'),
-                            dbc.Col([
-                                html.Button(
-                                    '✕ Clear PAV highlights',
-                                    id='btn-clear-pav-highlight', n_clicks=0,
-                                    className='btn btn-outline-secondary btn-sm',
-                                    style={'display': 'none'}
-                                ),
-                            ], width='auto'),
-                        ], className='g-2', style={'marginTop': '6px'}),
-                        html.Div(id='send-to-subgraph-feedback', style={'color':'green','marginTop':'4px','fontSize':'0.85em'}),
-                        html.Div(id='show-on-pav-feedback', style={'color':'#b8860b','marginTop':'4px','fontSize':'0.85em'}),
-                    ]),
-                    dcc.Store(id='pav-node-names-store', data=[]),
-
-                    html.Br(),
-                    dcc.Loading(
-                                        html.Div(children=[
-                                            html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '20px'}),
-                                            
-                                        ]),
-                                    ),
-                    html.Hr(),
-
-                    # subgraph extraction panel
-                    html.Div(id="subgraph-control-panel", style={'display': 'block', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                        html.H4("Subgraph Extraction"),
-                        html.Small("Define the context size using either Steps OR Base Pairs (not both)."),
-                        html.Br(), html.Br(),
-
-                        dbc.Row([
-                            dbc.Col([
-                                html.Label("Node(s) to extract:"),
-                                dcc.Input(
-                                    id='subgraph-node-list', type='text',
-                                    placeholder='e.g. 42, 85, 120',
-                                    className='form-control'
-                                ),
-                                html.Small(
-                                    "Click a node on the graph above, send from search results, or type IDs manually (comma-separated).",
-                                    style={'color': 'grey'}
-                                )
-                            ], width=12)
-                        ]),
-                        html.Br(),
-
-                        dbc.Row([
-                            # input 1: node steps
-                            dbc.Col([
-                                html.Label("Context (Node Steps):"),
-                                dcc.Input(id="subgraph-steps", type="number", value=2, placeholder="e.g. 3", min=0, className="form-control"),
-                                html.Small("Ex: 3 nodes away", style={"color": "grey"})
-                            ], width=3),
                             
-                            # input 2: base pairs
-                            dbc.Col([
-                                html.Label("Context (Base Pairs):"),
-                                dcc.Input(id="subgraph-bp", type="number", value=200, placeholder="e.g. 1000", min=0, step=100, className="form-control"),
-                                html.Small("Ex: 1000 bp away", style={"color": "grey"})
-                            ], width=3),
-                            
-                            # input 3: visualizer
-                            dbc.Col([
-                                html.Label("Visualizer:"),
-                                dcc.Dropdown(
-                                    id="subgraph-viz-type",
-                                    options=[
-                                        {'label': 'ODGI (PNG Image)', 'value': '--odgi'},
-                                        {'label': 'Bandage (SVG Image)', 'value': '--bandage'},
-                                        {'label': 'VG (Dot Plot)', 'value': '--vg'}
-                                    ],
-                                    value='--odgi'
-                                )
-                            ], width=3),
-                            
-                            # button
-                            dbc.Col([
-                                html.Br(),
-                                html.Button("Extract & Visualize", id="btn-extract-subgraph", className="btn btn-primary", style={"backgroundColor": "#1E90FF", "color": "white"})
-                            ], width=3, style={'textAlign': 'center'})
-                        ]),
-                        
-                        html.Br(),
-                        dcc.Loading(html.Div(id="subgraph-result-area", children="Select parameters and click extract."))
-                    ]),
 
-                    dcc.Store(id='stored-node-id'),
-
-                    html.Hr(),
-
-                    html.Div(style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                                    html.H4("Align Sequence to Pangenome"),
-                                    html.Small("Paste a FASTA sequence to find and extract matching subgraphs."),
-                                    html.Br(), html.Br(),
-                                    
-                                    dbc.Row([
-                                        dbc.Col([
-                                            html.Label("Sequence (FASTA):"),
-                                            dcc.Textarea(
-                                                id="seq-input-fasta",
-                                                placeholder=">seq1\nATGC...",
-                                                style={'width': '100%', 'height': 150},
-                                            ),
-                                        ], width=6),
-                                        dbc.Col([
-                                            html.Label("Alignment Method:"),
-                                            dcc.RadioItems(
-                                                id="align-method",
-                                                options=[
-                                                    {'label': 'Vg Giraffe', 'value': 'giraffe'},
-                                                    {'label': 'Bandage (BLAST)', 'value': 'bandage'}
-                                                ],
-                                                value='giraffe',
-                                                inline=True,
-                                                labelStyle={'marginRight': '10px'}
-                                            ),
-                                            html.Br(),
-                                            
-                                            html.Div(id="giraffe-options", children=[
-                                                html.Label("Read Type:"),
-                                                dcc.Dropdown(
-                                                    id="seq-read-type",
-                                                    options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
-                                                    value='long'
-                                                ),
-                                            ]),
-                                            
-                                            html.Div(id="bandage-options", style={'display': 'none'}, children=[
-                                                dbc.Button("Blast Settings", id="btn-collapse-blast", size="sm", color="info", className="mb-2", outline=True),
-                                                dbc.Collapse(
-                                                    dbc.Card(dbc.CardBody([
-                                                        html.Small("Blast Params (--blastp value)"),
-                                                        dcc.Input(id="bandage-blastp", type="text", placeholder='e.g. "-word_size 11"', className="form-control mb-1", style={'fontSize': '0.8em'}),
-                                                        
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Ident %"), dcc.Input(id="bandage-ifilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Cov %"), dcc.Input(id="bandage-qcfilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("E-value"), dcc.Input(id="bandage-evfilter", type="text", value="1e1", placeholder="1e1", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Min Len"), dcc.Input(id="bandage-alfilter", type="number", value=0, placeholder="bp", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-                                                        
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("BitScore"), dcc.Input(id="bandage-bsfilter", type="number", value=0, placeholder="min score", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ]),
-
-                                                    ], style={'padding': '10px'})),
-                                                    id="collapse-blast",
-                                                    is_open=False,
-                                                ),
-                                                html.Br(),
-                                                dbc.Button("Query Path Settings", id="btn-collapse-qpaths", size="sm", color="info", className="mb-2", outline=True),
-                                                dbc.Collapse(
-                                                    dbc.Card(dbc.CardBody([
-                                                        html.Small("BLAST query paths"),
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Path nodes"), dcc.Input(id="bandage-pathnodes", type="number", value=6, min=1, max=50, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Min path cov"), dcc.Input(id="bandage-minpatcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Min hit cov"), dcc.Input(id="bandage-minhitcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Min mean id"), dcc.Input(id="bandage-minmeanid", type="number", value=0.5, min=0, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Max e-value product"), dcc.Input(id="bandage-maxevprod", type="text", value="1e-10", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Min path len"), dcc.Input(id="bandage-minpatlen", type="number", value=0.95, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Max path len"), dcc.Input(id="bandage-maxpatlen", type="number", value=1.05, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                            dbc.Col([html.Small("Min len discrepancy"), dcc.Input(id="bandage-minlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ], className="mb-1"),
-
-                                                        dbc.Row([
-                                                            dbc.Col([html.Small("Max len discrepancy"), dcc.Input(id="bandage-maxlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                        ]),
-                                                    ], style={'padding': '10px'})),
-                                                    id="collapse-qpaths",
-                                                    is_open=False,
-                                                ),
-                                                html.Br(),
-                                                html.Small("Top hits to extract"),
-                                                dcc.Input(
-                                                    id="bandage-topn",
-                                                    type="number",
-                                                    min=1,
-                                                    placeholder="e.g. 5",
-                                                    className="form-control",
-                                                    style={'fontSize': '0.8em', 'width': '140px'}
-                                                )
-                                            ]),
-                                    html.Hr(),
-                        html.Label("Context Settings (Choose one):"),
-                        dbc.Row([
-                            dbc.Col([
-                                html.Small("Steps (Nodes)"),
-                                dcc.Input(id="seq-context", type="number", value=1, min=0, className="form-control"),
-                            ], width=6),
-                            dbc.Col([
-                                html.Small("Distance (bp)"),
-                                dcc.Input(id="seq-context-bp", type="number", placeholder="e.g 1000", min=0, step=100, className="form-control"),
-                            ], width=6),
-                        ]),
-                        html.Br(),
-                        html.Button("Align & Extract Hits", id="btn-align-sequence", className="btn btn-success", style={"marginTop": "10px", "width": "100%"}),
-                    ], width=5)
-                ]),
-                                    
-                                    html.Hr(),
-                                    
-                                    dcc.Loading(
-                                        id="loading-alignment",
-                                        type="default",
-                                        children=[
-                                            html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
-                                                html.Div(id="alignment-error"),
-                                                html.H5("Alignment Hits"),
-                                                dbc.Row([
-                                                    dbc.Col([
-                                                        html.Label("Select Hit to Visualize:"),
-                                                        dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
-                                                    ], width=6),
-                                                    dbc.Col([
-                                                        html.Label("Visualizer:"),
-                                                        dcc.Dropdown(
-                                                            id="hit-viz-type",
-                                                            options=[
-                                                                {'label': 'ODGI (PNG)', 'value': 'odgi'},
-                                                                {'label': 'Bandage (SVG)', 'value': 'bandage'}
+                            dbc.Row(
+                                        [
+                                            dbc.Col(
+                                                dbc.Card(
+                                                    [
+                                                        dbc.CardBody(
+                                                            [
+                                                                
+                                                                html.H5(id='selected_segment', style={'width': '60vh','margin-left': '1px'}),
+                                                                
+                                                                html.Button("Display subgraph", id="display_subgraph", className="thin-button", n_clicks=0),
+                                                                
                                                             ],
-                                                            value='odgi'
+                                                            
                                                         )
-                                                    ], width=4)
+                                                    ],
+                                                    style={
+                                                            "padding": "0",
+                                                            "backgroundColor": "transparent",
+                                                            "border": "none",
+                                                    }
+                                                ),
+                                                width=6
+                                            ),
+                                            
+                                                                            
+                                            dbc.Col(
+                                                dbc.Card(
+                                                    [
+                                                        dbc.CardBody(
+                                                            [
+                                                                #dcc.Loading(html.Div(id='default-alignment-viewer-output'))
+                                                                
+                                                            ],
+                                                            style={
+                                                                "padding": "2px"
+                                                            }
+                                                        )
+                                                    ],
+                                                    style={
+                                                        "border": "none",
+                                                        "borderRadius": "16px",
+                                                        "overflow": "hidden",
+                                                        "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
+                                                        "height": "100%"
+                                                    }
+                                                ),
+                                                width=6
+                                            )
+                                        ],
+                                        className="g-4",
+                                        style={
+                                            "margin": "0"
+                                        }
+                            ), 
+
+                            # ── Search & Highlight panel ─────────────────────────────────────────
+                            html.Div(style={'padding':'16px','backgroundColor':'#f7faff','border':'1px solid #ccd6f6','borderRadius':'6px','margin':'0 15px'}, children=[
+                                html.H5("Search & Highlight in PAV Matrix", style={'marginBottom':'4px'}),
+                                html.Small(
+                                    "Enter node IDs (e.g. 42,85,120) or a gene name/keyword. "
+                                    "Auto-detected: all-numeric tokens → node search, text → gene search (matches gene ID and product).",
+                                    style={'color':'#666'}
+                                ),
+                                html.Br(), html.Br(),
+                                dbc.Row([
+                                    dbc.Col([
+                                        dcc.Input(
+                                            id='segment-search-input', type='text',
+                                            placeholder='Node IDs (e.g. 42,85) or gene keyword…',
+                                            debounce=False, className='form-control'
+                                        ),
+                                    ], width=8),
+                                    dbc.Col([
+                                        html.Button('Search', id='btn-segment-search', n_clicks=0,
+                                                    className='btn btn-primary', style={'width':'100%'}),
+                                    ], width=2),
+                                    dbc.Col([
+                                        html.Button('Clear', id='btn-segment-clear', n_clicks=0,
+                                                    className='btn btn-outline-secondary', style={'width':'100%'}),
+                                    ], width=2),
+                                ]),
+                                html.Br(),
+                                dcc.Loading(html.Div(id='segment-search-results')),
+                                html.Br(),
+                                dag.AgGrid(
+                                    id='segment-search-table',
+                                    rowData=[],
+                                    columnDefs=[
+                                        {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
+                                        {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
+                                        {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
+                                        {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
+                                        {'field': 'Products', 'headerName': 'Products',   'flex': 2},
+                                    ],
+                                    defaultColDef={'filter': 'agTextColumnFilter', 'resizable': True, 'sortable': True},
+                                    dashGridOptions={
+                                        'pagination': True, 'paginationPageSize': 20,
+                                        'animateRows': False,
+                                        'rowSelection': 'multiple',
+                                    },
+                                    style={'height': '320px', 'display': 'none'}
+                                ),
+                                html.Br(),
+                                dbc.Row([
+                                    dbc.Col([
+                                        html.Button(
+                                            '⬇ Send to Subgraph Extraction',
+                                            id='btn-send-to-subgraph', n_clicks=0,
+                                            className='btn btn-outline-primary btn-sm',
+                                            style={'display': 'none'}
+                                        ),
+                                    ], width='auto'),
+                                    dbc.Col([
+                                        html.Button(
+                                            '⬆ Show on PAV',
+                                            id='btn-show-on-pav', n_clicks=0,
+                                            className='btn btn-warning btn-sm',
+                                            style={'display': 'none'}
+                                        ),
+                                    ], width='auto'),
+                                    dbc.Col([
+                                        html.Button(
+                                            '✕ Clear PAV highlights',
+                                            id='btn-clear-pav-highlight', n_clicks=0,
+                                            className='btn btn-outline-secondary btn-sm',
+                                            style={'display': 'none'}
+                                        ),
+                                    ], width='auto'),
+                                ], className='g-2', style={'marginTop': '6px'}),
+                                html.Div(id='send-to-subgraph-feedback', style={'color':'green','marginTop':'4px','fontSize':'0.85em'}),
+                                html.Div(id='show-on-pav-feedback', style={'color':'#b8860b','marginTop':'4px','fontSize':'0.85em'}),
+                            ]),
+                            dcc.Store(id='pav-node-names-store', data=[]),
+
+                            html.Br(),
+                            dcc.Loading(
+                                                html.Div(children=[
+                                                    html.Div(id='selected_node', style={"fontFamily": "Courier",'width': '60vh','margin-left': '20px'}),
+                                                    
                                                 ]),
-                                                html.Br(),
-                                                html.Div(id="hit-metrics-area"),
-                                                html.Br(),
-                                                dcc.Loading(html.Div(id="hit-visualization-area"))
-                                            ]),
-                                        ]
-                                    ),
-                                    dcc.Store(id='store-alignment-hits'),
-                                    dcc.Store(id='store-alignment-path')
-                                ])
+                                            ),
+                            html.Hr(),
+
+                            # subgraph extraction panel
+                            html.Div(id="subgraph-control-panel", style={'display': 'block', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
+                                html.H4("Subgraph Extraction"),
+                                html.Small("Define the context size using either Steps OR Base Pairs (not both)."),
+                                html.Br(), html.Br(),
+
+                                dbc.Row([
+                                    dbc.Col([
+                                        html.Label("Node(s) to extract:"),
+                                        dcc.Input(
+                                            id='subgraph-node-list', type='text',
+                                            placeholder='e.g. 42, 85, 120',
+                                            className='form-control'
+                                        ),
+                                        html.Small(
+                                            "Click a node on the graph above, send from search results, or type IDs manually (comma-separated).",
+                                            style={'color': 'grey'}
+                                        )
+                                    ], width=12)
+                                ]),
+                                html.Br(),
+
+                                dbc.Row([
+                                    # input 1: node steps
+                                    dbc.Col([
+                                        html.Label("Context (Node Steps):"),
+                                        dcc.Input(id="subgraph-steps", type="number", value=2, placeholder="e.g. 3", min=0, className="form-control"),
+                                        html.Small("Ex: 3 nodes away", style={"color": "grey"})
+                                    ], width=3),
+                                    
+                                    # input 2: base pairs
+                                    dbc.Col([
+                                        html.Label("Context (Base Pairs):"),
+                                        dcc.Input(id="subgraph-bp", type="number", value=200, placeholder="e.g. 1000", min=0, step=100, className="form-control"),
+                                        html.Small("Ex: 1000 bp away", style={"color": "grey"})
+                                    ], width=3),
+                                    
+                                    # input 3: visualizer
+                                    dbc.Col([
+                                        html.Label("Visualizer:"),
+                                        dcc.Dropdown(
+                                            id="subgraph-viz-type",
+                                            options=[
+                                                {'label': 'ODGI (PNG Image)', 'value': '--odgi'},
+                                                {'label': 'Bandage (SVG Image)', 'value': '--bandage'},
+                                                {'label': 'VG (Dot Plot)', 'value': '--vg'}
+                                            ],
+                                            value='--odgi'
+                                        )
+                                    ], width=3),
+                                    
+                                    # button
+                                    dbc.Col([
+                                        html.Br(),
+                                        html.Button("Extract & Visualize", id="btn-extract-subgraph", className="btn btn-primary", style={"backgroundColor": "#1E90FF", "color": "white"})
+                                    ], width=3, style={'textAlign': 'center'})
+                                ]),
+                                
+                                html.Br(),
+                                dcc.Loading(html.Div(id="subgraph-result-area", children="Select parameters and click extract."))
+                            ]),
+
+                            dcc.Store(id='stored-node-id'),
+
+                            html.Hr(),
+
+                            html.Div(style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
+                                            html.H4("Align Sequence to Pangenome"),
+                                            html.Small("Paste a FASTA sequence to find and extract matching subgraphs."),
+                                            html.Br(), html.Br(),
+                                            
+                                            dbc.Row([
+                                                dbc.Col([
+                                                    html.Label("Sequence (FASTA):"),
+                                                    dcc.Textarea(
+                                                        id="seq-input-fasta",
+                                                        placeholder=">seq1\nATGC...",
+                                                        style={'width': '100%', 'height': 150},
+                                                    ),
+                                                ], width=6),
+                                                dbc.Col([
+                                                    html.Label("Alignment Method:"),
+                                                    dcc.RadioItems(
+                                                        id="align-method",
+                                                        options=[
+                                                            {'label': 'Vg Giraffe', 'value': 'giraffe'},
+                                                            {'label': 'Bandage (BLAST)', 'value': 'bandage'}
+                                                        ],
+                                                        value='giraffe',
+                                                        inline=True,
+                                                        labelStyle={'marginRight': '10px'}
+                                                    ),
+                                                    html.Br(),
+                                                    
+                                                    html.Div(id="giraffe-options", children=[
+                                                        html.Label("Read Type:"),
+                                                        dcc.Dropdown(
+                                                            id="seq-read-type",
+                                                            options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
+                                                            value='long'
+                                                        ),
+                                                    ]),
+                                                    
+                                                    html.Div(id="bandage-options", style={'display': 'none'}, children=[
+                                                        dbc.Button("Blast Settings", id="btn-collapse-blast", size="sm", color="info", className="mb-2", outline=True),
+                                                        dbc.Collapse(
+                                                            dbc.Card(dbc.CardBody([
+                                                                html.Small("Blast Params (--blastp value)"),
+                                                                dcc.Input(id="bandage-blastp", type="text", placeholder='e.g. "-word_size 11"', className="form-control mb-1", style={'fontSize': '0.8em'}),
+                                                                
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Ident %"), dcc.Input(id="bandage-ifilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Cov %"), dcc.Input(id="bandage-qcfilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("E-value"), dcc.Input(id="bandage-evfilter", type="text", value="1e1", placeholder="1e1", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Min Len"), dcc.Input(id="bandage-alfilter", type="number", value=0, placeholder="bp", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+                                                                
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("BitScore"), dcc.Input(id="bandage-bsfilter", type="number", value=0, placeholder="min score", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ]),
+
+                                                            ], style={'padding': '10px'})),
+                                                            id="collapse-blast",
+                                                            is_open=False,
+                                                        ),
+                                                        html.Br(),
+                                                        dbc.Button("Query Path Settings", id="btn-collapse-qpaths", size="sm", color="info", className="mb-2", outline=True),
+                                                        dbc.Collapse(
+                                                            dbc.Card(dbc.CardBody([
+                                                                html.Small("BLAST query paths"),
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Path nodes"), dcc.Input(id="bandage-pathnodes", type="number", value=6, min=1, max=50, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Min path cov"), dcc.Input(id="bandage-minpatcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Min hit cov"), dcc.Input(id="bandage-minhitcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Min mean id"), dcc.Input(id="bandage-minmeanid", type="number", value=0.5, min=0, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Max e-value product"), dcc.Input(id="bandage-maxevprod", type="text", value="1e-10", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Min path len"), dcc.Input(id="bandage-minpatlen", type="number", value=0.95, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Max path len"), dcc.Input(id="bandage-maxpatlen", type="number", value=1.05, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                    dbc.Col([html.Small("Min len discrepancy"), dcc.Input(id="bandage-minlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ], className="mb-1"),
+
+                                                                dbc.Row([
+                                                                    dbc.Col([html.Small("Max len discrepancy"), dcc.Input(id="bandage-maxlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                                                                ]),
+                                                            ], style={'padding': '10px'})),
+                                                            id="collapse-qpaths",
+                                                            is_open=False,
+                                                        ),
+                                                        html.Br(),
+                                                        html.Small("Top hits to extract"),
+                                                        dcc.Input(
+                                                            id="bandage-topn",
+                                                            type="number",
+                                                            min=1,
+                                                            placeholder="e.g. 5",
+                                                            className="form-control",
+                                                            style={'fontSize': '0.8em', 'width': '140px'}
+                                                        )
+                                                    ]),
+                                            html.Hr(),
+                                html.Label("Context Settings (Choose one):"),
+                                dbc.Row([
+                                    dbc.Col([
+                                        html.Small("Steps (Nodes)"),
+                                        dcc.Input(id="seq-context", type="number", value=1, min=0, className="form-control"),
+                                    ], width=6),
+                                    dbc.Col([
+                                        html.Small("Distance (bp)"),
+                                        dcc.Input(id="seq-context-bp", type="number", placeholder="e.g 1000", min=0, step=100, className="form-control"),
+                                    ], width=6),
+                                ]),
+                                html.Br(),
+                                html.Button("Align & Extract Hits", id="btn-align-sequence", className="btn btn-success", style={"marginTop": "10px", "width": "100%"}),
+                            ], width=5)
+                        ]),
+                                            
+                                            html.Hr(),
+                                            
+                                            dcc.Loading(
+                                                id="loading-alignment",
+                                                type="default",
+                                                children=[
+                                                    html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
+                                                        html.Div(id="alignment-error"),
+                                                        html.H5("Alignment Hits"),
+                                                        dbc.Row([
+                                                            dbc.Col([
+                                                                html.Label("Select Hit to Visualize:"),
+                                                                dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
+                                                            ], width=6),
+                                                            dbc.Col([
+                                                                html.Label("Visualizer:"),
+                                                                dcc.Dropdown(
+                                                                    id="hit-viz-type",
+                                                                    options=[
+                                                                        {'label': 'ODGI (PNG)', 'value': 'odgi'},
+                                                                        {'label': 'Bandage (SVG)', 'value': 'bandage'}
+                                                                    ],
+                                                                    value='odgi'
+                                                                )
+                                                            ], width=4)
+                                                        ]),
+                                                        html.Br(),
+                                                        html.Div(id="hit-metrics-area"),
+                                                        html.Br(),
+                                                        dcc.Loading(html.Div(id="hit-visualization-area"))
+                                                    ]),
+                                                ]
+                                            ),
+                                            dcc.Store(id='store-alignment-hits'),
+                                            dcc.Store(id='store-alignment-path')
+                                        ])
+                                ]), 
+                            
+                        # dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
+                        # html.Div(id='tree_tab_content', children=[
+                        #     html.Br(),
+                        #     dbc.Row([
+                        #         dbc.Col(
+                        #             [
+                        #                 dbc.Label(
+                        #                     "Hierarchical Clustering method",
+                        #                     html_for="clustering-method",
+                        #                     className="fw-bold"
+                        #                 ),
+                        #                 dcc.Dropdown(
+                        #                     id="clustering-method-segments",
+                        #                     options=[
+                        #                         {"label": "Jaccard distance threshold", "value": "distance"},
+                        #                         {"label": "Number of clusters", "value": "maxclust"},
+                        #                     ],
+                        #                     value="distance",
+                        #                 ),
+                        #             ],
+                        #             width=4,
+                        #         ),
+
+                        #         dbc.Col(
+                        #             [
+                        #                 dbc.Label(
+                        #                     "Threshold",
+                        #                     id="clustering-parameter-label-segments",
+                        #                     html_for="clustering-parameter",
+                        #                     className="fw-bold"
+                        #                 ),
+                        #                 dbc.Input(
+                        #                     id="clustering-parameter-segments",
+                        #                     type="number",
+                        #                     value=0.20,
+                        #                     min=0,
+                        #                     max=1,
+                        #                     step=0.01,
+                        #                 ),
+                        #                 dbc.FormText(
+                        #                     "Distance threshold used to define clusters.",
+                        #                     id="clustering-parameter-help",
+                        #                 ),
+                        #             ],
+                        #             width=4,
+                        #         ),  
+
+                                                                                              
+                        #         dbc.Col(
+                        #             [
+                        #                 dbc.Label(
+                        #                     "Tree colored by:",
+                        #                     className="fw-bold"
+                        #                 ),
+                        #                 dcc.Dropdown(
+                        #                             ['Country','HierarchicalClustering'],
+                        #                             value='HierarchicalClustering',
+                        #                             id='colorizing_tree1-segments',
+                        #                             style={'width': '300px'},
+                        #                             multi=False
+                        #                         ),                                        
+                                        
+                        #             ],
+                        #             width=4,                                        
+                        #         ),
+                        #         dbc.Col(
+                        #             html.Button("Recalculate clustering", id="recalculate-clustering-segments", className="thin-button", n_clicks=0),
+                                            
+                        #                 ),                                
+                                                             
+                        #     ], style={'width': '1250px'}),
+                        #     html.Br(),
+                        #     dbc.Row(
+                        #         [
+                        #             dbc.Col(dbc.Card(
+                        #                 [
+                        #                     dbc.CardBody(
+                        #                         [
+                        #                             dcc.Loading(dcc.Graph(id='pcoa-segments',style={'width': '60vh', 'height': '800px','padding': '5px'})),
+                        #                         ],
+                        #                         style={"textAlign": "center"}
+                        #                     ),
+                        #                 ],
+                        #                 style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                        #             )),                                       
+                        #             dbc.Col(dbc.Card(
+                        #                 [
+                        #                     dbc.CardBody(
+                        #                         [
+                        #                             dcc.Loading(html.Iframe(id='iframe-content-segments',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
+                        #                         ],
+                        #                         style={"textAlign": "center"}
+                        #                     ),
+                        #                 ],
+                        #                 style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                        #             )),   
+                        #             dbc.Col(dbc.Card(
+                        #                 [
+                        #                     dbc.CardBody(
+                        #                         [
+                        #                             html.H5("Assignation to clusters", id='clustering_assignation-segments', style={"paddingLeft": "15px","paddingRight": "15px"}),
+                        #                             #html.H5('Selected group of clusters',style={"paddingLeft": "15px","paddingRight": "15px"}),
+                        #                             dcc.Loading(
+                        #                                 html.Div(children=[
+                        #                                     dag.AgGrid(
+                        #                                         id="table_clustering_assignation-segments",
+                        #                                         style={'margin-left': '1px',"paddingRight": "15px"},
+                        #                                         rowData=[],
+                        #                                         columnDefs=columnDefs6,
+                        #                                         defaultColDef={"filter": True},
+                        #                                         #defaultColDef={"filter": "agTextColumnFilter"},
+                        #                                         dashGridOptions={"pagination": True, "animateRows": False}
+                        #                                     ),
+                        #                                     html.Button("Download table", id="download_table_assignation-segments", className="thin-button", n_clicks=0),
+                        #                                     dcc.Download(id="download-dataframe5-segments"),
+                        #                                 ], style={"paddingLeft": "15px","paddingRight": "15px",'height': '800px'}),
+                        #                             ),                                                    
+                        #                         ],
+                        #                         style={"textAlign": "center"}
+                        #                     ),
+                        #                 ],
+                        #                 style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                        #             )),      
+                        #         ],
+                        #         style= {"padding":"15px"}
+                        #     ), 
+
+                        #     dbc.Row(
+                        #         [
+                        #             dbc.Col(dbc.Card(
+                        #                 [
+                        #                     dbc.CardBody(
+                        #                         [
+                        #                             html.H5("Geographic distribution of clusters", style={"paddingLeft": "15px","paddingRight": "15px"}),
+                        #                             dcc.Loading(html.Div(id='geo_pie_clusters')),
+                        #                         ],
+                        #                         style={"textAlign": "center"}
+                        #                     ),
+                        #                 ],
+                        #                 style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                        #             )),
+                        #         ],
+                        #         style= {"padding":"15px"}
+                        #     ),
+
+                                                        
+                            
+                        #     html.Br(),
+                        # ], style={"paddingLeft": "15px"}
+                        #),
+                        #]),                        
+                        ]),
                         ]), 
                 dcc.Tab(label='Core-SNPs', id='tab_snps', style=tab_style, selected_style=tab_selected_style, children=[
 
@@ -2599,6 +2964,22 @@ def toggle_pav_upset_display(display_type):
     return {'display': 'block'}, {'display': 'none'}, {"display": "flex","alignItems": "center", "gap": "10px"}
 
 
+# Meme bascule PAV matrix / Upset plot, appliquee cette fois aux segments
+# (noeuds du graphe pangenomique) plutot qu'aux genes.
+@app.callback(
+    Output('pav_graph_segments_container', 'style'),
+    Output('upset_graph_segments_container', 'style'),
+    Input('display_type_segments', 'value'),
+)
+def toggle_pav_upset_display_segments(display_type):
+    if display_type == 'Upset plot':
+        return {'display': 'none'}, {'display': 'block'}
+    return {'display': 'block'}, {'display': 'none'}
+
+
+
+
+
 # Boutons "Tout sélectionner" / "Tout désélectionner" pour la table des souches/génomes.
 # rowMultiSelectWithClick=True (ci-dessus) permet deja de cocher/decocher une ligne
 # d'un simple clic (sans Ctrl) ; ces deux boutons couvrent le cas "tout d'un coup".
@@ -2627,6 +3008,9 @@ def select_or_deselect_all_strains(n_select, n_deselect, row_data):
     State('current_session', 'value'),
 )
 def update_geo_pie_clusters(rowData, tab_value, session):
+    print("recalculate map...")
+    print(tab_value)
+    print(rowData)
     # ne (re)construit la carte que lorsque l'onglet "Hierarchical clustering"
     # est reellement affiche : Leaflet dessine sinon sa carte a une taille
     # nulle si elle est montee pendant que son conteneur est cache. Comme ce
@@ -2639,65 +3023,7 @@ def update_geo_pie_clusters(rowData, tab_value, session):
         return html.Div("Clustering not computed yet.", style={"padding": "20px"})
     return build_geo_pie_clusters(session)
 
-#############################################################
-# Callback for alignment viewer
-#############################################################
-@app.callback(
-    Output('default-alignment-viewer-output', 'children'),
-    Input('display_alignment', 'n_clicks'),
-    State('current_cluster', 'value'),
-    State('metadata_table','selectedRows'),
-    State('projets', 'value'),
-    State('current_session', 'value')
-)
 
-def display_alignment(display_alignment,current_cluster,metadata_table,projets,session):
-    
-    list_of_strains = []
-    if metadata_table:
-        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
-        for strain in wjdata1:
-            strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)
-
-    nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
-
-    # create fasta file from selected genes
-    data = ""
-    for dict in dictionaries:
-        species = dict['Species']
-        gene = dict['Genes']
-        cmd = f"grep -A 1 '{gene}' {directory}/genomes/genomes/{species}.faa | tail -1"
-        protein_fasta = os.popen(cmd).read()
-        data = data + ">"+gene+"\n"+protein_fasta
-
-    # write data to a temporary fasta file
-    with open(f"{tmp_dir}/{session}.temp.fasta", "w") as text_file:
-        text_file.write(data)
-
-    if os.path.exists(f"{tmp_dir}/{session}.muscle.log"):
-        os.remove(tmp_dir+"/"+str(session)+".muscle.log")
-    
-    # run muscle to generate alignment
-    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and validate_session_id(session):
-
-        cmd_args = ["muscle", "-align", f"{tmp_dir}/{session}.temp.fasta", "-output", f"{tmp_dir}/{session}.temp.aln.fasta"]
-        with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
-            subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
-
-    # read alignment file
-    with open(f"{tmp_dir}/{session}.temp.aln.fasta", "r") as file:
-        data = file.read()
-    
-    # create alignment viewer 
-    fig = dash_bio.AlignmentChart(
-        id='alignment',
-        data=data,
-        height=400,
-        tilewidth=30,
-        #width=1800
-    ),
-    return fig
 
 ############################################################
 # Callback for clinker viewer
@@ -2745,7 +3071,7 @@ def display_local_synteny(display_local_synteny,current_cluster,metadata_table,p
 #############################################################
 @app.callback(
 # 1. The visible text area
-    Output('selected_node', 'children'),
+    Output('selected_segment', 'children'),
     # 2. The hidden memory store
     Output('stored-node-id', 'data'),
     # 3. The visibility of the subgraph panel
@@ -3042,15 +3368,12 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     return patched, feedback
 
 
-#############################################################
-# Callback for cluster selection from heatmap or from table
-#############################################################
 @app.callback(
-    Output('selected_cluster', 'children'),
-    Output('genes_cluster', 'rowData'),
+    Output("detail-modal", "is_open"),
+    Output("PAV_graph", "figure"),
     Output("current_cluster",'options'),
     Output("specific_to",'value'),
-    Output("table_pangenes",'rowData'),
+    Output("table_coregenes",'rowData'),
     Output("nb_of_selected_clusters",'children'),
     Output("table_accessory",'rowData'),
     Output("nb_of_selected_clusters2",'children'),
@@ -3062,8 +3385,10 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Output("ref_genome", 'children'),
     Output('PAV_graph', 'figure'),
     Output('graph_COG_selected','figure'),
-    Output('graph_COG_enrichment', 'figure'),
-    Input('PAV_graph', 'clickData'),
+    Output('graph_COG_enrichment', 'figure'),    
+    Input("activate_pattern", "n_clicks"),
+    State("selected-cell", "data"),
+    State("PAV_graph", "figure"),
     Input('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('url','hash'),
@@ -3077,13 +3402,14 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Input('colorizing', 'value'),
     Input('highlight', 'value'),
     State('cluster_search','value'),
-    State('bedfile','value'),
-    #prevent_initial_call=True
+    State('bedfile','value'),    
+    prevent_initial_call=True
 )
+def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,highlight,cluster_search,bedfile):
 
-def display_click_data(clickData,metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,highlight,cluster_search,bedfile):
-         
-    cluster = 1
+    if not n_clicks or not selected_cell:
+        raise PreventUpdate
+
     pathname = projets
     if url:
         pathname=url
@@ -3092,22 +3418,9 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
         for strain in wjdata1:
             strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)
-            
-    if clickData:
-        wjdata = json.loads(json.dumps(clickData, indent=2))
-        cluster = wjdata['points'][0]['x']
-    
-    inf = cluster.split(":")
-    cluster = inf[-1]
+            list_of_strains.append(strain_name)    
 
-    nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-    rowData = dictionary
-
-    cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
-    infos_cluster = os.popen(cmd).read().split("\t")
-    selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-
+    cluster = selected_cell.get('value')
 
     ##########################################
     # get clusters respecting combination
@@ -3117,13 +3430,16 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     print(combination_opposite)
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    
     mask = pd.Series(
         list(map(int, combination)),
         index=df_upset.columns
     )
     selected1 = (df_upset == mask).all(axis=1)
+    
     df_selected = df_upset.loc[selected1]
     df_selected = df2[selected1]
+
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     dictionary_selected = df_selected.to_dict('records')
 
@@ -3161,104 +3477,248 @@ def display_click_data(clickData,metadata_table,projets,url,session,current_layo
     fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
 
 
-
-    return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,empty_figure(), empty_figure()
-
+    return False, fig, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,empty_figure(), empty_figure()
 
 ##########################################
 # when clicking in the table of pangenes
 ##########################################
+
+
 @app.callback(
-    Output('selected_cluster', 'children', allow_duplicate=True),
-    Output('genes_cluster', 'rowData', allow_duplicate=True),
-    Output("current_cluster",'options', allow_duplicate=True),
-    Output('default-alignment-viewer-output', 'children', allow_duplicate=True),
+    Output("detail-table-container", "children"),
     Input('table_pangenes', 'cellClicked'),
+    State("table_pangenes", "rowData"),
+    Input('table_coregenes', 'cellClicked'),
+    State("table_coregenes", "rowData"),
     Input('table_accessory', 'cellClicked'),
-    Input('metadata_table','selectedRows'),
-    State('projets', 'value'),
-    State('url','hash'),
+    State("table_accessory", "rowData"),
+    Input('table_pangwas', 'cellClicked'),
+    State("table_pangwas", "rowData"),
+    Input("my-dashbio-default-circos", "eventDatum"),
+    Input('PAV_graph', 'clickData'),
+    State("projets", "value"),
+    State('metadata_table','selectedRows'),
     prevent_initial_call=True
 )
-def display_click_data(cell1,cell2, metadata_table,projets,url):
-         
-    pathname = projets
-    if url:
-        pathname=url
-    cluster = 1
-    list_of_strains = []
-
+def update_detail_table(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_data4,event_circos,event_pav,projets,metadata_table):
     triggered_table = ctx.triggered_id
 
+    # row = ""
+    cluster = ""
+    if triggered_table == "table_pangenes":
+        row_index = cell1["rowIndex"]
+        row = row_data1[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "table_coregenes":
+        row_index = cell2["rowIndex"]
+        row = row_data2[row_index]
+        cluster = row["ClutserID"]    
+    elif triggered_table == "table_accessory":
+        row_index = cell3["rowIndex"]
+        row = row_data3[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "table_pangwas":
+        row_index = cell4["rowIndex"]
+        row = row_data4[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "PAV_graph":
+        wjdata = json.loads(json.dumps(event_pav, indent=2))
+        cluster = wjdata['points'][0]['x']
+    elif triggered_table == "my-dashbio-default-circos":
+        cluster = event_circos['name']
+
+    
+    
+    list_of_strains = []
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
         for strain in wjdata1:
             strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)  
-
-    cluster = 0
-    if triggered_table == "table_pangenes":
-        wjdata = json.loads(json.dumps(cell1, indent=2))
-        cluster = wjdata['value']
-    elif triggered_table == "table_accessory":
-        wjdata = json.loads(json.dumps(cell2, indent=2))
-        cluster = wjdata['value']
+            list_of_strains.append(strain_name) 
 
     if cluster:
         nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
         cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
         infos_cluster = os.popen(cmd).read().split("\t")
-        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-        return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}],None        
+        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])   
 
-    else:
-        return "",[],[],None
+    return dag.AgGrid(
+        id="detail-grid",
+        columnDefs=[
+            {"field": "Species"},
+            {"field": "Genes"},
+            {"field": "Product"},
+        ],
+        rowData=dictionary,
+        defaultColDef={
+            "sortable": True,
+            "filter": True,
+            "resizable": True
+        },
+        style={"height": "400px"}
+    )
 
-
-##########################################
-# when clicking in the circos
-##########################################
 @app.callback(
-    Output('selected_cluster', 'children', allow_duplicate=True),
-    Output('genes_cluster', 'rowData', allow_duplicate=True),
-    Output("current_cluster",'options', allow_duplicate=True),
-    Input('metadata_table','selectedRows'),
-    Input("my-dashbio-default-circos", "eventDatum"),
+    Output("default-alignment-viewer-output","children"),
+    Input("display_alignment", "n_clicks"),
+    State("selected-cell", "data"),
+    State('metadata_table','selectedRows'),
     State('projets', 'value'),
-    State('url','hash'),
+    State('current_session', 'value'),
+
     prevent_initial_call=True
 )
-def display_click_data(metadata_table,event_circos,projets,url):
-         
-    pathname = projets
-    if url:
-        pathname=url
-    cluster = 1
-    list_of_strains = []
+def show_alignment(n_clicks, cell,metadata_table,projets,session):
+    if not n_clicks or not cell:
+        return ""
 
+    list_of_strains = []
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
         for strain in wjdata1:
             strain_name = strain['Strain name']
-            list_of_strains.append(strain_name)  
+            list_of_strains.append(strain_name)
 
-    if event_circos:
+    current_cluster = cell.get('value')
+
+    nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
+
+    # create fasta file from selected genes
+    data = ""
+    for dict in dictionaries:
+        species = dict['Species']
+        gene = dict['Genes']
+        cmd = f"grep -A 1 '{gene}' {directory}/genomes/genomes/{species}.faa | tail -1"
+        protein_fasta = os.popen(cmd).read()
+        data = data + ">"+gene+"\n"+protein_fasta
+
+    # write data to a temporary fasta file
+    with open(f"{tmp_dir}/{session}.temp.fasta", "w") as text_file:
+        text_file.write(data)
+
+    if os.path.exists(f"{tmp_dir}/{session}.muscle.log"):
+        os.remove(tmp_dir+"/"+str(session)+".muscle.log")
+    
+    # run muscle to generate alignment
+    if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and validate_session_id(session):
+
+        cmd_args = ["muscle", "-align", f"{tmp_dir}/{session}.temp.fasta", "-output", f"{tmp_dir}/{session}.temp.aln.fasta"]
+        with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
+            subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+
+    # read alignment file
+    with open(f"{tmp_dir}/{session}.temp.aln.fasta", "r") as file:
+        data = file.read()
+    
+    # create alignment viewer 
+    fig = dash_bio.AlignmentChart(
+        id='alignment',
+        data=data,
+        height=400,
+        tilewidth=30,
+        #width=1800
+    ),    
+    return fig
+
+# @app.callback(
+#     Output("default-alignment-viewer-output","children"),
+#     Input("display_synteny", "n_clicks"),
+#     State("selected-cell", "data"),
+#     State('metadata_table','selectedRows'),
+#     State('projets', 'value'),
+#     State('current_session', 'value'),
+
+#     prevent_initial_call=True
+# )
+# def show_local_synteny(n_clicks, cell,metadata_table,projets,session):
+
+#     list_of_strains = []
+#     if metadata_table:
+#         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+#         for strain in wjdata1:
+#             strain_name = strain['Strain name']
+#             list_of_strains.append(strain_name)
+
+#     current_cluster = cell.get('value')
+#     nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
+
+#     list_strains = ",".join(list_of_strains)
+    
+#     cmd_args = [
+#         "perl", "ClinkerPlotFromMatrix.pl",
+#         f"{directory}/1.Orthologs_Cluster.txt",
+#         str(current_cluster),
+#         f"{directory}/genomes/genomes/",
+#         list_strains,
+#         f"{tmp_dir}/{session}_clinker.html"
+#     ]
+#     subprocess.run(cmd_args, check=True)
+
+#     fig = html.Iframe(srcDoc=open(f"{tmp_dir}/{session}_clinker.html", 'r').read(), style={'width': '1800px', 'height': '600px', 'border': 'none'})
+#     return fig
+
+
+@app.callback(
+    Output("detail-modal", "is_open"),
+    Output("detail-title", "children"),
+    Output("clicked-cell-info", "children"),
+    Output("selected-cell", "data"),
+    Output("default-alignment-viewer-output", "children"),
+    Input('table_pangenes', 'cellClicked'),
+    State("table_pangenes", "rowData"),
+    Input('table_coregenes', 'cellClicked'),
+    State("table_coregenes", "rowData"),
+    Input('table_accessory', 'cellClicked'),
+    State("table_accessory", "rowData"),
+    Input('table_pangwas', 'cellClicked'),
+    State("table_pangwas", "rowData"),
+    Input("my-dashbio-default-circos", "eventDatum"),
+    Input('PAV_graph', 'clickData'),
+    prevent_initial_call=True
+)
+def open_detail_modal(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_data4,event_circos,event_pav):
+    triggered_table = ctx.triggered_id
+
+    # row = ""
+    cluster = ""
+    if triggered_table == "table_pangenes":
+        row_index = cell1["rowIndex"]
+        row = row_data1[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "table_coregenes":
+        row_index = cell2["rowIndex"]
+        row = row_data2[row_index]
+        cluster = row["ClutserID"]     
+    elif triggered_table == "table_accessory":
+        row_index = cell3["rowIndex"]
+        row = row_data3[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "table_pangwas":
+        row_index = cell4["rowIndex"]
+        row = row_data4[row_index]
+        cluster = row["ClutserID"]
+    elif triggered_table == "PAV_graph":
+        wjdata = json.loads(json.dumps(event_pav, indent=2))
+        cluster = wjdata['points'][0]['x']
+    elif triggered_table == "my-dashbio-default-circos":
         cluster = event_circos['name']
-        print(cluster)
-        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-        
-        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
-        infos_cluster = os.popen(cmd).read().split("\t")
-        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])
-                
-        return selected_cluster,dictionary, [{'label': str(cluster), 'value': str(cluster)}]
 
-    else:
-        return "",[],[]
+
+    return (
+        True,
+        f"Cluster details for cluster : {cluster}",
+        f"",
+        {
+            "value": cluster,
+        },
+        None
+    )
+
 
 
 @app.callback(
     Output('current_cluster', 'value'),
+    
     Input('current_cluster', 'options')
 )
 def set_current_cluster(available_options):
@@ -3287,7 +3747,7 @@ def get_node_details(node,pathname,reference,session):
 
     df_node_details = pd.read_csv(tmp_dir +"/"+str(session) + "." + reference+".segments.node_positions.tsv" ,sep='\t')
     
-    mini_df = df_node_details[df_node_details["Node"] == int(num_node)]
+    mini_df = df_node_details[df_node_details["Node"] == node]
     start_node = mini_df['Start'].tolist()[0]
     end_node = mini_df['End'].tolist()[0]
 
@@ -3424,18 +3884,23 @@ def get_cluster_details(cluster,pathname,list_of_strains):
             if keep:
                 list_genes = ','.join(map(str,genes)) 
 
-                # for gene in genes:
-                #     print(gene)
-                #     cmd = "grep '"+gene+"' "+directory+"/genomes/genomes/"+item+".gff | tail -1"
-                #     result = os.popen(cmd).read()
-                #     print(result)
 
-                list = [int(cluster),item,list_genes]
+                for gene in genes:
+                    cmd = "grep '"+gene+"' "+directory+"/genomes/genomes/"+item+".ptt | tail -1"
+                    result = os.popen(cmd).read()
+                    info_cols = result.split("\t")
+                    product = ""
+                    if len(info_cols) > 6:
+                        product=info_cols[8]
+                        
+
+                list = [int(cluster),item,list_genes,product]
                 list_of_list.append(list)
                 nb_presence+=1
                 combination = combination+str(item)
 
-    mydf = pd.DataFrame(list_of_list, columns = ['Cluster','Species','Genes']) 
+    mydf = pd.DataFrame(list_of_list, columns = ['Cluster','Species','Genes','Product']) 
+
     
     concat = ""
     for gene in list_of_list:
@@ -3470,6 +3935,16 @@ def update_pivot(metadata_table,projets,url):
     pathname = projets
     if url:
         pathname=url
+
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
         
     reference_list = []
     if metadata_table:
@@ -3478,6 +3953,8 @@ def update_pivot(metadata_table,projets,url):
         for strain in wjdata:
             strain_name = strain['Strain name']
             reference_list.append(strain_name)
+            #cmd = "grep -c LOCUS "+directory+"/genomes/genomes/"+strain_name+".gb"
+            #result = os.popen(cmd).read()
 
     return [{'label': i, 'value': i} for i in reference_list] , [{'label': i, 'value': i} for i in reference_list]
 
@@ -3513,6 +3990,8 @@ def set_reference_value(available_options):
     Output('graph_upset', 'figure'),
     Output('table_pangenes', 'rowData'),
     Output('table_pangenes','columnDefs'),
+    Output('table_coregenes', 'rowData'),
+    Output('table_coregenes','columnDefs'),
     Output('table_accessory', 'rowData'),
     Output('table_accessory','columnDefs'),
         #Output('datatable-paging','srcDoc'),
@@ -3555,12 +4034,14 @@ def set_reference_value(available_options):
     Output('colorizing_tree1','options'),
     Output('graph_COG_selected','figure'),
     Output('graph_COG_enrichment','figure'),
+    Output("nb_of_clusters",'children'),
     Output("nb_of_selected_clusters",'children'),
     Output("nb_of_selected_clusters2",'children'),
     Output("circos_legend", 'children'),
     Output("circos_legend2", 'children'),
     Output('pcoa','figure'),
     Output('table_clustering_assignation', 'rowData'),
+    Output('graph_upset_segments','figure'),
     State('reference', 'value'),
     State('ordering', 'value'),
     #State('sample_ordering', 'value'),
@@ -3725,39 +4206,12 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     #df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters_grouped_by_cluster.astype({"Cluster": int})
     merged_with_cog = pd.merge(df2, df_cog_of_clusters_grouped_by_cluster, how="left", left_on='ClutserID', right_on='Cluster')
-
-    df_cog_terms = pd.read_csv('COG_terms.txt',sep='\t')
-
-    merged_with_cog_term = pd.merge(df_cog_terms, merged_with_cog, how="right", left_on='COG', right_on='COG')
-
-    merged_with_cog = merged_with_cog_term
-    merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
-
-
-
-
-    core_df = merged_with_cog[merged_with_cog["sum"] == len(list_sp2)]
-    specific_df = merged_with_cog[merged_with_cog["sum"] == 1]
-    accessory_df = merged_with_cog[(merged_with_cog["sum"] != 1) & (merged_with_cog["sum"] < len(list_sp2))]
     
-    nb_pangenes = len(df2)
 
     
-    
-    nb_specific_genes = len(specific_df)
-    nb_coregenes = len(core_df)
-    nb_accessory = nb_pangenes - nb_specific_genes - nb_coregenes
 
 
-    #################################################
-    # pie chart
-    #################################################
-    dic = {}
-    dic['Type'] = ['Strain-specific','Core genes','Accessory genes']
-    dic['Nb'] = [nb_specific_genes,nb_coregenes,nb_accessory]
-    df_synthesis = pd.DataFrame.from_dict(dic)
     
-    fig_pie = px.pie(df_synthesis, values='Nb', names='Type', title='Distribution of core-genes and accessory genes')
 
     ####################################################################
     # Generate rarefaction curve. Takes randomly N columns from dataframe
@@ -3864,12 +4318,17 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         #df_gene_positons = pd.read_csv('data/Xo/'+reference+'.ptt',sep='\t')
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+reference+'.2.ptt',sep='\t')
         df_gene_positons["PID"] = df_gene_positons["PID"].str.replace(":", "", regex=False)
+        df_gene_positons = df_gene_positons.replace(to_replace='\|', value='_', regex=True)
 
         if 'block_id' not in df_gene_positons.columns:
             df_gene_positons.insert(0, 'block_id', 'chr1')
 
+
         # create a simplified matrix, with only the first gene if a list of genes for the reference
         simplified_df_matrix = df_matrix
+
+        print(simplified_df_matrix)
+        print(df_gene_positons)
 
         simplified_df_matrix[[reference]] = simplified_df_matrix[reference].str.extract('([^,]+),*', expand=True)
 
@@ -3902,15 +4361,49 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             merged_with_positions = simplified_df_matrix
             merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
 
+
+    df_cog_terms = pd.read_csv('COG_terms.txt',sep='\t')
+    merged_with_cog_term = pd.merge(df_cog_terms, merged_with_cog, how="right", left_on='COG', right_on='COG')
+
+
+    merged_with_cog = merged_with_cog_term
+    merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
+
+    core_df = merged_with_cog[merged_with_cog["sum"] == len(list_sp2)]
+    specific_df = merged_with_cog[merged_with_cog["sum"] == 1]
+
+    accessory_df = merged_with_cog[(merged_with_cog["sum"] != 1) & (merged_with_cog["sum"] < len(list_sp2))]
     
+    nb_pangenes = len(df2)
+
+    nb_specific_genes = len(specific_df)
+    nb_coregenes = len(core_df)
+    nb_accessory = nb_pangenes - nb_specific_genes - nb_coregenes
+
     
+
+    #################################################
+    # pie chart
+    #################################################
+    dic = {}
+    dic['Type'] = ['Strain-specific','Core genes','Accessory genes']
+    dic['Nb'] = [nb_specific_genes,nb_coregenes,nb_accessory]
+    df_synthesis = pd.DataFrame.from_dict(dic)
+    
+    fig_pie = px.pie(df_synthesis, values='Nb', names='Type', title='Distribution of core-genes and accessory genes')
+
+
+
     core_df['ClutserID'] = core_df['ClutserID'].astype(int)
     core_df_merged_with_positions = pd.merge(core_df, merged_with_positions, left_on='ClutserID', right_on='name')
+    
     core_df_merged_with_positions = core_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     core_df_merged_with_positions.to_csv(tmp_dir + "/" + str(session) + ".core.txt",index=False,sep='\t')
+    
     core_list_dict = core_df_merged_with_positions.to_dict('records')
 
     specific_df['ClutserID'] = specific_df['ClutserID'].astype(int)
+
     specific_df_merged_with_positions = pd.merge(specific_df, merged_with_positions, left_on='ClutserID', right_on='name')
     specific_df_merged_with_positions = specific_df_merged_with_positions[['name','block_id','start', 'end','color','Strand']]
     specific_list_dict = specific_df_merged_with_positions.to_dict('records')    
@@ -3922,97 +4415,10 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     # Upset plot
     ################
     df_upset = df2.drop(["ClutserID","sum","type"], axis='columns')
-    
 
-    upset_plot = None
+    upset_plot = build_upset_plot(df_upset, 'Upset plot of gene content across genomes (only top 30 intersections are displayed)','Genes')
 
-    upset_plot = plotly_upset.plotting.plot_upset(
-        dataframes=[df_upset],
-        exclude_zeros=True,
-        sorted_x=None,
-        sorted_y="a",
-        max_intersections=30,
-        legendgroups=["Strains"],
-        marker_size=11,
-    )
-
-    
-    upset_plot.update_layout(
-        title_text='Upset plot of gene content across genomes (only top 30 intersections are displayed)',
-        width=2000,
-        height=800
-    )
-    df_upset.to_csv(tmp_dir + "/" + str(session) + ".df_upset.csv")    
-
-    #################################################
-    # pan-GWAS
-    #################################################
-    scoary_table = []
-    scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
-    if specific_to is not None and len(specific_to) > 0:
-
-        print("TO BE MOVED")
-        # # write traits file for Scoary
-        # with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
-        #     f.write(",Trait1\n")
-        #     for strain in list_selected:
-        #         if strain != "ClutserID":
-        #             f.write(str(strain))
-        #             f.write(",")
-        #             if strain in specific_to:
-        #                 f.write("1\n")
-        #             else:
-        #                 f.write("0\n")
-
-        # # write input file for Scoary
-        # with open(tmp_dir + "/" + str(session) + ".scoary_input.csv", "a") as i:
-        #     df_for_scoary = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
-        #     col_position = df.columns.get_loc("ClutserID") + 1
-        #     df_for_scoary.insert(col_position, "Non-unique Gene name", None)
-        #     df_for_scoary.insert(col_position + 1, "Annotation", None)
-        #     df_for_scoary.insert(col_position + 2, "No. isolates", None)
-        #     df_for_scoary.insert(col_position + 3, "No. sequences", None)
-        #     df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
-        #     df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
-        #     df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
-        #     df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
-        #     df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
-        #     df_for_scoary.insert(col_position + 9, "QC", None)
-        #     df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
-        #     df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
-        #     df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
-        #     df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
-        #     df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
-
-        # #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
-        # if validate_session_id(session):
-        #     subprocess.run(
-        #         [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
-        #         check=True
-        #     )
-
-        #     src_pattern = f"{tmp_dir}/{session}_scoary_output/*results.csv"
-        #     src_files = glob.glob(src_pattern)
-        #     if src_files:
-        #         dst = f"{tmp_dir}/{session}.scoary_results.txt"
-        #         shutil.copy(src_files[0], dst)
-                
-        # #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
-        # #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
-
-        # merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start"])
-        # df_scoary_results = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio"])
-
-        # if os.path.exists(scoary_output_file):
-
-        #     df_scoary_results = pd.read_csv(scoary_output_file)
-
-        #     merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
-
-        #     #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
-        #     merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
-
-        # scoary_table = df_scoary_results.to_dict('records')
+    df_upset.to_csv(tmp_dir + "/" + str(session) + ".df_upset.csv")   
         
     df_matrix.to_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
     df2.to_csv(tmp_dir + "/" + str(session) + ".df2.csv")
@@ -4023,12 +4429,19 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     core_df = merged_with_cog[merged_with_cog['type'] == "Core-gene"]
     singletons_df = merged_with_cog[merged_with_cog['type'] == "Strain-specific"]
+
+
     
     list_clusters1 = []
     list_clusters2 = []
     nb_of_selected_clusters = ""
     nb_of_selected_clusters2 = ""
+    nb_of_clusters = ""
     table_cluster1 = core_df.to_dict('records')
+    table_pangenes = merged_with_cog.to_dict('records')
+
+    
+    
     table_cluster2 = specific_df.to_dict('records')
     circos_legend2 = ["Core-genes"]
     circos_legend = ["Strain-specific genes"]
@@ -4058,6 +4471,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
         dictionary_selected = df_selected.to_dict('records')
 
+
         ##########################################
         # get clusters respecting opposite combination
         ##########################################
@@ -4067,20 +4481,22 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         )
         selected = (df_upset == mask_opposite).all(axis=1)
         df_selected_opposite = df_upset.loc[selected]
-        print("df upset")
-        print(df_upset)
+        
         df_selected_opposite = df2[selected]
         df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
+
         dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
 
 
         list_clusters1 = df_selected["ClutserID"].tolist()
         list_clusters2 = df_selected_opposite["ClutserID"].tolist()        
 
+        nb_of_clusters = "All Pangenes: " +str(len(df2))+ " clusters"
         nb_of_selected_clusters = "Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters"
         nb_of_selected_clusters2 = "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters"
-
+        
         table_cluster1 = dictionary_selected
+
         table_cluster2 = dictionary_selected_opposite
 
         # for circos
@@ -4099,6 +4515,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         core_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
         singletons_df.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
 
+
+        nb_of_clusters = "All Pangenes: " +str(len(df2))+ " clusters"
         nb_of_selected_clusters = "Core-genes: " +str(len(core_df))+ " clusters"
         nb_of_selected_clusters2 = "Singletons / Specific genes: " +str(len(singletons_df))+ " clusters"
 
@@ -4115,7 +4533,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     # strain clustering, distance matrix, PCoA and tree
     ##################################################################### 
     #pcoa,table_clustering_assignation = update_clustering(2,"distance",0.3,session,"HierarchicalClustering")
-    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.3, clustering_method="average",criterion="distance" )
+    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.2, clustering_method="average",criterion="distance" )
 
     df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records') 
@@ -4960,6 +5378,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     gfa_file = directory+"/pangenome.gfa"
     graph_gfa = go.Figure()
     graph_gfa2 = go.Figure()
+    upset_plot_segments = None
     nb_segments = 0
     nb_links = 0
     if os.path.exists(gfa_file) and os.path.getsize(gfa_file) > 0:
@@ -4973,6 +5392,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             f"{tmp_dir}/{session}.{reference}.segments",
             ",".join(list_sp2)
         ]
+        print(cmd_args)
         subprocess.run(cmd_args, capture_output=True)
 
         with open(tmp_dir +"/"+str(session) + "." + str(reference)+".segments.stats.txt",'r') as file:
@@ -5166,6 +5586,11 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
             graph_gfa2.update_layout(
                 title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
             )
+
+
+        df_upset_segments = pd.read_csv(f"{tmp_dir}/{session}.{reference}.segments.node_pav.binary.csv",index_col=0)
+        upset_plot_segments = build_upset_plot(df_upset_segments, 'Upset plot of segments/nodes across genomes (only top 30 intersections are displayed)','Segments')
+        
 	    #graph_gfa2.update_layout(width=600,margin=dict(r=10))
             #graph_gfa2.update_yaxes(tickmode="linear")
 
@@ -5189,21 +5614,23 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     columnDefs3 = [
         {"field": "ClutserID", "width": 120},
+        #{"field": "Product", "width": 400},
         {"field": "COG term", "width": 500},
         {"field": "type", "width": 150}
     ]
-    if (len(scoary_table) > 1):
-        df_scoary = pd.DataFrame.from_dict(scoary_table)
-        merged_with_cog = pd.merge(df_scoary,merged_with_cog, left_on='Gene', right_on='ClutserID',how = 'outer')
-        table_pangenes = merged_with_cog.to_dict('records')
-        columnDefs3 = [
-            {"field": "ClutserID", "width": 120},
-            {"field": "COG term", "width": 500},
-            {"field": "type", "width": 150},
-            {"field": "Odds_ratio", "width": 150},
-            {"field": "Naive_p", "width": 150},
-            {"field": "Bonferroni_p", "width": 150}
-        ]
+    # scoary_table = []
+    # if (len(scoary_table) > 1):
+    #     df_scoary = pd.DataFrame.from_dict(scoary_table)
+    #     merged_with_cog = pd.merge(df_scoary,merged_with_cog, left_on='Gene', right_on='ClutserID',how = 'outer')
+    #     table_pangenes = merged_with_cog.to_dict('records')
+    #     columnDefs3 = [
+    #         {"field": "ClutserID", "width": 120},
+    #         {"field": "COG term", "width": 500},
+    #         {"field": "type", "width": 150},
+    #         {"field": "Odds_ratio", "width": 150},
+    #         {"field": "Naive_p", "width": 150},
+    #         {"field": "Bonferroni_p", "width": 150}
+    #     ]
         
     # export final merged table
     merged_with_cog.to_csv(tmp_dir+ "/"+str(session)+".merged_with_cog_final.csv",sep="\t",index=False)
@@ -5216,7 +5643,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     
 
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments
 
 ############################################
 # Disable button during loading
@@ -5875,6 +6302,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     directory = path
 
 
+
     df_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
     df_selected_opposite = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
     list_clusters1 = df_selected["ClutserID"].tolist()
@@ -5912,6 +6340,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     tickval = ['0']
     colorscale = []
     zmax = 1
+
+    print(cluster_search)
     if highlight != "None" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     else:
@@ -6006,7 +6436,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif list_clusters1 is not None and len(list_clusters1) > 0:
+    elif list_clusters1 is not None and len(list_clusters1) > 0 and cluster_search == "":
 
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'purple'], [0.8, 'purple'], [0.8, 'red'], [1, 'red']]
 
@@ -6093,16 +6523,13 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
         tickval.append(0.67)
 
         #COG1192
-        print(str(session))
         list_of_clusters = []
         list_of_COGs = cluster_search.split(",")
         for cog in list_of_COGs:
             cog = re.sub(r'[^a-zA-Z0-9]', '', cog)
             cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
             cmd = "grep -i -P '"+ cog + "' "+tmp_dir+"/"+str(session)+".merged_with_cog_final.csv | awk -F '\t' {'print $3'}"
-            print(cmd)
             returned_value = os.popen(cmd).read()
-            print("returned_value: " + returned_value)
             list_of_clusters1 = returned_value.split("\n")
             list_of_clusters.extend(list_of_clusters1)
 
@@ -6193,7 +6620,6 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
         y_labels.append(row[0])
         z.append(list(row[1:]))
 
-    print(z)
 
     # colorscale = [
     #     [0.00, "whitesmoke"], [0.25, "whitesmoke"],
@@ -6201,9 +6627,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     #     [0.50, "green"], [0.75, "green"],
     #     [0.75, "red"], [1.00, "red"],
     # ]
-    print("color scale:")
-    print(colorscale)
-    print(zmax)
+
 
     if list_clusters1 is not None and len(list_clusters1) > 0 and os.path.exists(scoary_output_file):
 
@@ -6240,7 +6664,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
                         y=0.75,
                         len=0.5
                     ),
-                showscale=True
+                # showscale=False
             ),
             row=1,
             col=1
@@ -6274,7 +6698,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
                                             tickvals=tickval,
                                             ticktext= ticktext
                                         ),
-                                    showscale=True
+                                    # showscale=False
                                 )
         )
                             
@@ -6286,6 +6710,10 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
         xaxis_title="Gene clusters",
         yaxis_title="Samples",
     )
+    if colorizing == "Level of presence" or colorizing == "Gene copy number":
+        fig.update_traces(showscale=True)
+    else:
+        fig.update_traces(showscale=False)
     return fig
 
 
@@ -6661,8 +7089,10 @@ def init_dataframes(pathname):
     
     print("yeahhhh: "+str(df_matrix.size))
 
-    df_matrix = df_matrix.replace(to_replace=':', value='_', regex=True)
+    df_matrix = df_matrix.replace(to_replace=':', value='', regex=True)
+    df_matrix = df_matrix.replace(to_replace='\|', value='_', regex=True)
 
+    
     df_matrix_init = df_matrix.copy()
 
     df_matrix_modified = df_matrix.replace(to_replace ='[\w\.,:]+', value = 1, regex = True)
@@ -6696,16 +7126,18 @@ def init_dataframes(pathname):
                             .str[0]
                             .str.strip()
                         )
-    
-    df_metadata.loc[len(df_metadata.index)] = ['ClutserID', 'none','none','none'] 
+    if len(df_metadata.columns) == 6:
+        df_metadata.loc[len(df_metadata.index)] = ['ClutserID', 'none','none','none','none','none'] 
+    elif len(df_metadata.columns) == 4:
+        df_metadata.loc[len(df_metadata.index)] = ['ClutserID', 'none','none','none'] 
     df_metadata3 = df_metadata[(df_metadata["Continent"] != "none")]
     list_continent = ["all"] + df_metadata3["Continent"].unique().tolist()
     list_organisms = ["all"] + df_metadata3["Organism"].unique().tolist()
 
 
     # Remove lines from ptt
-    df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
-    df_gene_positons2 = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG','Product'])
+    df_gene_positons = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG'])
+    df_gene_positons2 = pd.DataFrame(columns=['block_id','Location','Strand','PID','Gene','Synonym','Code','COG'])
     if os.path.exists(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"):
 
         cmd_args = ["grep", "-P", "Location|^\d+\.\.", directory+"/genomes/genomes/"+list_species_with_ptt[0]+".ptt"]
@@ -6718,6 +7150,9 @@ def init_dataframes(pathname):
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         df_gene_positons2 = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         print(df_gene_positons)
+        df_gene_positons = df_gene_positons.replace(to_replace='\|', value='_', regex=True)
+        df_gene_positons2 = df_gene_positons2.replace(to_replace='\|', value='_', regex=True)
+
 
         # WARNING, TO CHECK, must it be replaced by "_" or by ""
         # with "_" works for some situations
@@ -6729,12 +7164,14 @@ def init_dataframes(pathname):
         if 'block_id' not in df_gene_positons2.columns:
             df_gene_positons2.insert(0, 'block_id', 'chr1')
         
-    
+    print("df_init")
+    print(df_matrix_init)
     merged_with_positions = pd.merge(df_matrix_init, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
     if merged_with_positions.empty:
         merged_with_positions = pd.merge(df_matrix_init, df_gene_positons2, left_on=list_species_with_ptt[0], right_on='PID')
 
-    
+    print("df_gene_positions")
+    print(df_gene_positons)
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
@@ -7187,6 +7624,58 @@ def download_matrix(n,session,pathname):
     return dcc.send_data_frame(df.to_csv, "assignation.xls",sep='\t')
 
 @app.callback(
+    Output("download-dataframe6", "data"),
+    Input("download_table_pav_segments", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    State('reference', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname,reference):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+ "." + reference + ".segments.node_pav.binary.csv")
+    return dcc.send_data_frame(df.to_csv, "pav_segments.xls",sep='\t')
+
+@app.callback(
+    Output("download-dataframe7", "data"),
+    Input("download_table_selection", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    State('reference', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname,reference):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+ ".selected_clusters.csv")
+    return dcc.send_data_frame(df.to_csv, "selected_clusters.xls",sep='\t')
+
+@app.callback(
+    Output("download-dataframe8", "data"),
+    Input("download_table_selection_opposite", "n_clicks"),
+    State("current_session", 'value'),
+    State('projets', 'value'),
+    State('reference', 'value'),
+    prevent_initial_call=True
+)
+def download_matrix(n,session,pathname,reference):
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    
+    df = pd.read_csv(tmp_dir+ "/"+str(session)+ ".selected_clusters_opposite.csv")
+    return dcc.send_data_frame(df.to_csv, "selected_clusters_opposite.xls",sep='\t')
+
+
+@app.callback(
     Output("table_pangenes", 'rowData', allow_duplicate=True),
     Output("nb_of_selected_clusters", 'children', allow_duplicate=True),
     Output("table_accessory", 'rowData', allow_duplicate=True),
@@ -7307,6 +7796,27 @@ def update_markers(value):
 
     return markers
 
+def build_upset_plot(df_binary, title,feature):
+    """Construit un upset plot a partir d'une matrice binaire (0/1) dont les
+    colonnes sont les souches/genomes. Fonction commune, utilisee a la fois
+    pour l'upset plot des genes et celui des segments (pangenome graph)."""
+    upset_plot = plotly_upset.plotting.plot_upset(
+        dataframes=[df_binary],
+        exclude_zeros=True,
+        sorted_x=None,
+        sorted_y=None,
+        max_intersections=30,
+        legendgroups=[feature],
+        marker_size=11,
+    )
+    upset_plot.update_layout(
+        title_text=title,
+        width=2000,
+        height=800
+    )
+    return upset_plot
+
+
 def build_geo_pie_clusters(session):
     """Carte Leaflet (comme celle du haut de page) avec, pour chaque pays,
     un camembert (mini pie chart en CSS, sous forme d'icone HTML) montrant
@@ -7337,12 +7847,22 @@ def build_geo_pie_clusters(session):
     palette = px.colors.qualitative.Plotly + px.colors.qualitative.Set3
     cluster_colors = {c: palette[i % len(palette)] for i, c in enumerate(all_clusters)}
 
-    counts_per_country = df_merged.groupby(["Country", "HierarchicalClustering"]).size().reset_index(name="n")
-    totals_per_country = df_merged.groupby("Country").size().reset_index(name="total")
-    totals_per_country["lat"] = totals_per_country["Country"].apply(get_lat)
-    totals_per_country["lon"] = totals_per_country["Country"].apply(get_lon)
-    totals_per_country = totals_per_country[totals_per_country["lat"].notna()]
-
+    # Using GPS location
+    if "GPS_coordinates" in df_metadata.columns:
+        counts_per_country = df_merged.groupby(["GPS_coordinates", "HierarchicalClustering"]).size().reset_index(name="n")
+        totals_per_country = df_merged.groupby("GPS_coordinates").size().reset_index(name="total")
+        totals_per_country[['lat', 'lon']] = totals_per_country['GPS_coordinates'].str.split(',', expand=True)
+        totals_per_country = totals_per_country[totals_per_country["lat"].notna()]
+        counts_per_country = counts_per_country.rename(columns={'GPS_coordinates': 'Country'})
+        totals_per_country = totals_per_country.rename(columns={'GPS_coordinates': 'Country'})
+    # Using Country information
+    else:       
+        counts_per_country = df_merged.groupby(["Country", "HierarchicalClustering"]).size().reset_index(name="n")
+        totals_per_country = df_merged.groupby("Country").size().reset_index(name="total")
+        totals_per_country["lat"] = totals_per_country["Country"].apply(get_lat)
+        totals_per_country["lon"] = totals_per_country["Country"].apply(get_lon)
+        totals_per_country = totals_per_country[totals_per_country["lat"].notna()]
+        
     if totals_per_country.empty:
         return html.Div("Could not locate any of the countries found in the metadata.", style={"padding": "20px"})
 
@@ -7356,6 +7876,9 @@ def build_geo_pie_clusters(session):
         sub = counts_per_country[counts_per_country["Country"] == country]
 
         size = size_min + (size_max - size_min) * ((total / max_total) ** 0.5)
+
+        print("size")
+        print(str(size))
 
         # degrade conique CSS (mini camembert) represantant la proportion des clusters
         segments = []
@@ -7504,7 +8027,123 @@ def update_clustering_parameter(method):
             1,
             "Number of clusters to generate.",
         )
-    
+
+
+@app.callback(
+    Output("table_pangwas",'rowData'),
+    Output("pangwas_figure","figure"),
+    Input("pangwas","n_clicks"),
+    State("current_session", 'value'),
+    State('specific_to','value'),
+    State("projets",'value')
+)
+def pangwas(click,session,specific_to,pathname):
+
+    scoary_table = []
+    scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
+
+    directory = ""
+    if not pathname:
+        return "No project."
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    path = ""
+    if not row:
+        path = conf["session_dir"] + "/" + pathname
+    else:
+        path = row[0]
+    directory = path
+
+    df = pd.read_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t')
+
+    list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
+    print(list_selected)
+
+    if specific_to is not None and len(specific_to) > 0:
+
+        print("TO BE MOVED")
+        # write traits file for Scoary
+        with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
+            f.write(",Trait1\n")
+            for strain in list_selected:
+                if strain != "ClutserID":
+                    f.write(str(strain))
+                    f.write(",")
+                    if strain in specific_to:
+                        f.write("1\n")
+                    else:
+                        f.write("0\n")
+
+        # write input file for Scoary
+        with open(tmp_dir + "/" + str(session) + ".scoary_input.csv", "a") as i:
+            df_for_scoary = pd.read_csv(directory+'/1.Orthologs_Cluster.2.txt',sep='\t')
+            col_position = df.columns.get_loc("ClutserID") + 1
+            df_for_scoary.insert(col_position, "Non-unique Gene name", None)
+            df_for_scoary.insert(col_position + 1, "Annotation", None)
+            df_for_scoary.insert(col_position + 2, "No. isolates", None)
+            df_for_scoary.insert(col_position + 3, "No. sequences", None)
+            df_for_scoary.insert(col_position + 4, "Avg sequences per isolate", None)
+            df_for_scoary.insert(col_position + 5, "Genome Fragment", None)
+            df_for_scoary.insert(col_position + 6, "Order within Fragment", None)
+            df_for_scoary.insert(col_position + 7, "Accessory Fragment", None)
+            df_for_scoary.insert(col_position + 8, "Accessory Order with Fragment", None)
+            df_for_scoary.insert(col_position + 9, "QC", None)
+            df_for_scoary.insert(col_position + 10, "Min group size nuc", None)
+            df_for_scoary.insert(col_position + 11, "Max group size nuc", None)
+            df_for_scoary.insert(col_position + 12, "Avg group size nuc", None)
+            df_for_scoary.rename(columns={'ClutserID': 'Gene'}, inplace=True)
+            df_for_scoary.to_csv(tmp_dir + "/" + str(session) + ".scoary_input.csv",index=False)
+
+        #cmd = scoary_exe + " " + tmp_dir + "/" + str(session) + ".scoary_input.csv " + tmp_dir + "/" + str(session) + ".traits.csv " + tmp_dir + "/" + str(session) + "_scoary_output --trait-data-type binary --gene-data-type gene-list"
+        if validate_session_id(session):
+            subprocess.run(
+                [scoary_exe , "-g", tmp_dir + "/" + str(session) + ".scoary_input.csv", "-t", tmp_dir + "/" + str(session) + ".traits.csv", "-o", tmp_dir + "/" + str(session) + "_scoary_output"],
+                check=True
+            )
+
+            src_pattern = f"{tmp_dir}/{session}_scoary_output/*results.csv"
+            src_files = glob.glob(src_pattern)
+            if src_files:
+                dst = f"{tmp_dir}/{session}.scoary_results.txt"
+                shutil.copy(src_files[0], dst)
+                
+        #merged_with_positions_scoary = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio","log_pval","start"])
+        #df_scoary_results = pd.DataFrame(columns=["Gene","fisher_p","odds_ratio"])
+
+        merged_with_positions_scoary = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","log_pval","start","Number_pos_present_in","Number_pos_present_in","Number_pos_not_present_in","Number_neg_not_present_in"])
+        df_scoary_results = pd.DataFrame(columns=["Gene","Naive_p","Bonferroni_p","Odds_ratio","Number_pos_present_in","Number_pos_present_in","Number_pos_not_present_in","Number_neg_not_present_in"])
+
+        merged_with_positions = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
+
+        if os.path.exists(scoary_output_file):
+
+            df_scoary_results = pd.read_csv(scoary_output_file)
+
+            merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions, left_on='Gene', right_on='name')
+
+            #merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["fisher_p"])
+            merged_with_positions_scoary["log_pval"] = -np.log10(merged_with_positions_scoary["Naive_p"])
+
+        scoary_table = df_scoary_results.to_dict('records')
+
+
+    fig = px.scatter(merged_with_positions_scoary, 
+                          x='start', 
+                          y='log_pval', 
+                          hover_name="name", 
+                          hover_data=["Gene_x","Product","COG",'Odds_ratio', 'Naive_p', 'Bonferroni_p'],
+                          #color="Clusters",
+                          title="Manhattan plot showing association with trait (pvalues are plotted against reference genome if cluster is present)", 
+                          #category_orders={
+                          #      "Clusters": [str(x) for x in categories]
+                          #  },
+                        )
+    fig.update_traces(marker=dict(size=12))
+    print(scoary_table)
+    return scoary_table,fig
+
+
+
+ 
 @app.callback(
     Output("graph_COG_selected","figure"),
     Output("graph_COG_enrichment","figure"),
@@ -7513,6 +8152,9 @@ def update_clustering_parameter(method):
     State("current_session", 'value'),
 )
 def show_cog_enrichment(click,click2,session):
+
+    print(click)
+    print(click2)
 
     df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
     if ctx.triggered_id == "cog_enrichment":
