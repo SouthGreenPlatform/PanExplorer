@@ -1839,7 +1839,8 @@ def load_project_preview(proj_title):
                             dcc.Loading(dcc.Graph(id='heatmap_of_pathway')),
                         ], style={"paddingLeft": "15px"}
                         ),
-                    ]),                    
+                    ]),  
+                                                         
                     dcc.Tab(label='Macro-Synteny', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='macrosynteny_tab_content', children=[
                             html.Br(),
@@ -2932,7 +2933,26 @@ def load_project_preview(proj_title):
                                 style= {"padding":"15px"}
                     ),                
                     ]),
-                
+                dcc.Tab(label='Defense systems', id='tab_defense', style=tab_style, selected_style=tab_selected_style, children=[
+                    html.Br(),
+                    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_defense',style={"height": "800px"})
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                    ),                
+                    ]),                
             ]),
 
         ]),
@@ -4028,6 +4048,7 @@ def set_reference_value(available_options):
     Output('tab_repeats','style'),
     Output('tab_snps','style'),
     Output('tab_ani','style'),
+    Output('tab_defense','style'),
     Output('current_session','value'),
     Output('colorizing_pca','options'),
     Output('colorizing_tree','options'),
@@ -4042,6 +4063,7 @@ def set_reference_value(available_options):
     Output('pcoa','figure'),
     Output('table_clustering_assignation', 'rowData'),
     Output('graph_upset_segments','figure'),
+    Output('graph_defense','figure'),
     State('reference', 'value'),
     State('ordering', 'value'),
     #State('sample_ordering', 'value'),
@@ -4577,14 +4599,45 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #     )
     # )
 
+    #######################
+    # Defense systems
+    #######################
+    tab_style_defense = {'display': 'none'}
+    fig_defense = None
+    if os.path.exists(directory + "/defense.txt"):
+        tab_style_defense = tab_style 
 
+        df_defense = pd.read_csv("/mnt/c/Users/dereeper/Documents/formation_python_scientifique_2022/dash/defense_pav.tsv",sep="\t")
+        types = df_defense["Type"].astype(str).tolist()
+        print("type ====================================")
+        print(types)
+        
+        transposed_df = df_defense.transpose()
+
+        list_ind = df_defense.columns.to_list()
+        print(list_ind)    
+
+        z = []
+        for row in transposed_df.itertuples():
+            z.append(list(row[1:]))
+        colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
+        fig_defense = go.Figure(data=
+                                      go.Heatmap(
+                                            z=z,
+                                            x=types,
+                                            y=list_ind,
+                                            zmin=0,
+                                            zmax=1,
+                                            colorscale=colorscale,
+                                            # showscale=False
+                                        )
+                )
 
 
     #######################
     # ANI
     #######################
 
-    
     fig_ANI = None
     tab_style_ani = {'display': 'none'}
     if os.path.exists(directory + "/fastani.out.matrix.complete.xls") and os.path.getsize(directory + "/fastani.out.matrix.complete.xls") > 0:
@@ -5641,9 +5694,8 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
     nb_genomes = str(len(list_sp2))
     
-
     print("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
 
 ############################################
 # Disable button during loading
@@ -7867,7 +7919,8 @@ def build_geo_pie_clusters(session):
         return html.Div("Could not locate any of the countries found in the metadata.", style={"padding": "20px"})
 
     max_total = totals_per_country["total"].max()
-    size_min, size_max = 24, 70
+    #size_min, size_max = 24, 70
+    size_min, size_max = 15, 50
 
     markers = []
     for _, row in totals_per_country.iterrows():
@@ -7875,7 +7928,14 @@ def build_geo_pie_clusters(session):
         total = row["total"]
         sub = counts_per_country[counts_per_country["Country"] == country]
 
-        size = size_min + (size_max - size_min) * ((total / max_total) ** 0.5)
+        # formula to decide
+        # option 1
+        #size = size_min + (size_max - size_min) * ((total / max_total) ** 0.5)
+        #size = size_min + (size_max - size_min) * (total / max_total) ** 0.8
+
+        # option 2
+        ratio = total / max_total
+        size = size_min + (size_max - size_min) * ratio ** 1.2
 
         print("size")
         print(str(size))
