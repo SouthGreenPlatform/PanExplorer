@@ -5577,7 +5577,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
         # Transformation symlog
         z_symlog = np.sign(z_original) * np.log10(np.abs(z_original) + 1) 
 
-        if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file):
+        if specific_to is not None and len(specific_to) > 0 and os.path.exists(scoary_output_file2):
 
             df_scoary_results2 = pd.read_csv(scoary_output_file2)
             df_scoary_results2["log_pval"] = -np.log10(df_scoary_results2["Naive_p"])
@@ -7920,7 +7920,7 @@ def build_geo_pie_clusters(session):
 
     max_total = totals_per_country["total"].max()
     #size_min, size_max = 24, 70
-    size_min, size_max = 15, 50
+    size_min, size_max = 20, 60
 
     markers = []
     for _, row in totals_per_country.iterrows():
