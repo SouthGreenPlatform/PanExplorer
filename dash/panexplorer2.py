@@ -1682,7 +1682,7 @@ def load_project_preview(proj_title):
                                                 {"label": "Jaccard distance threshold", "value": "distance"},
                                                 {"label": "Number of clusters", "value": "maxclust"},
                                             ],
-                                            value="distance",
+                                            value="maxclust",
                                         ),
                                     ],
                                     width=4,
@@ -2066,7 +2066,7 @@ def load_project_preview(proj_title):
                                                     dbc.CardBody(
                                                         [
                                                             html.Div(id='pav_graph_segments_container', children=[
-                                                                dcc.Loading(dcc.Graph(id='graph_gfa2')),
+                                                                dcc.Loading(fullscreen_graph("graph_gfa2",height="600px")),
                                                             ]),
                                                             html.Div(id='upset_graph_segments_container', style={"display": "none"}, children=[
                                                                 dcc.Loading(dcc.Graph(id='graph_upset_segments')),
@@ -2672,7 +2672,7 @@ def load_project_preview(proj_title):
                                                 [
                                                     dbc.CardBody(
                                                         [
-                                                            dcc.Graph(id='VCF_graph')
+                                                            fullscreen_graph("VCF_graph",height="600px")
                                                         ],
                                                         style={"textAlign": "center"}
                                                     ),
@@ -2849,7 +2849,23 @@ def load_project_preview(proj_title):
                                 ],
                             style= {"padding":"15px"}
                             ),
-
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    fullscreen_graph("graph_mlva",height="600px")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),                                                                                                      
+                                                
+                                ],
+                                style= {"padding":"15px"}
+                            ),
                             dbc.Row([
                                 dbc.Col(
                                     dcc.Loading(
@@ -2868,23 +2884,7 @@ def load_project_preview(proj_title):
                                         ),
                                 ),
                             ], style= {"padding":"15px"}),                    
-                        dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_mlva')
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                      
-                                                
-                                ],
-                                style= {"padding":"15px"}
-                        ),                
+                                        
                                               
                         html.Button("Download matrix", id="btn-download", n_clicks=0),
                         dcc.Download(id="download-dataframe"),
@@ -3031,12 +3031,7 @@ def update_geo_pie_clusters(rowData, tab_value, session):
     print("recalculate map...")
     print(tab_value)
     print(rowData)
-    # ne (re)construit la carte que lorsque l'onglet "Hierarchical clustering"
-    # est reellement affiche : Leaflet dessine sinon sa carte a une taille
-    # nulle si elle est montee pendant que son conteneur est cache. Comme ce
-    # callback se redeclenche a chaque activation de l'onglet, la carte est
-    # toujours (re)montee au moment ou elle est visible - ce qui correspond
-    # exactement au changement d'onglet "manuel" qui corrigeait le probleme.
+
     if tab_value != 'Hierarchical clustering':
         raise PreventUpdate
     if not rowData:
@@ -3540,7 +3535,7 @@ def update_detail_table(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,ro
     elif triggered_table == "table_pangwas":
         row_index = cell4["rowIndex"]
         row = row_data4[row_index]
-        cluster = row["ClutserID"]
+        cluster = row["Gene"]
     elif triggered_table == "PAV_graph":
         wjdata = json.loads(json.dumps(event_pav, indent=2))
         cluster = wjdata['points'][0]['x']
@@ -3716,7 +3711,7 @@ def open_detail_modal(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_
     elif triggered_table == "table_pangwas":
         row_index = cell4["rowIndex"]
         row = row_data4[row_index]
-        cluster = row["ClutserID"]
+        cluster = row["Gene"]
     elif triggered_table == "PAV_graph":
         wjdata = json.loads(json.dumps(event_pav, indent=2))
         cluster = wjdata['points'][0]['x']
@@ -4555,7 +4550,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     # strain clustering, distance matrix, PCoA and tree
     ##################################################################### 
     #pcoa,table_clustering_assignation = update_clustering(2,"distance",0.3,session,"HierarchicalClustering")
-    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=0.2, clustering_method="average",criterion="distance" )
+    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=2, clustering_method="average",criterion="maxclust" )
 
     df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records') 
@@ -5635,7 +5630,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
                     customdata=z_original,
                     hovertemplate='x: %{x}<br>y: %{y}<br>valeur: %{z}<extra></extra>',
                     hoverongaps = False))
-            graph_gfa2.update_yaxes(autorange="reversed")
+            graph_gfa2.update_yaxes(autorange="reversed",tickmode="linear")
             graph_gfa2.update_layout(
                 title='Presence/absence matrix of segments in the pangenome graph. <br>Segments are ordered according to their position in the reference genome. The color scale is symlog transformed (base 10) of the segment size.',
             )
@@ -6324,6 +6319,8 @@ def pca(dimension_pca,colorizing_pca,session):
     else:
         fig_scatter = px.scatter(pd.DataFrame({'PC1':[], 'PC2':[], 'PC3':[]}), x='PC1', y='PC2')
         fig_scatter.update_layout(title="No PCA data found.")
+
+    fig_scatter.update_traces(marker=dict(size=12))
     return fig_scatter
 
 
@@ -8081,7 +8078,7 @@ def update_clustering_parameter(method):
         return (
             "Number of clusters",
             "number",
-            5,
+            2,
             2,
             None,
             1,
