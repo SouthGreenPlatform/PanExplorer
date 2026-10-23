@@ -159,7 +159,20 @@ def analyze_pav_matrix(
     print("Checking matrix...")
 
     # Check that all values are 0 or 1.
-    unique_values = set(df.values.flatten())
+    #unique_values = set(df.values.flatten())
+    values = df.values.flatten()
+
+    # Ignorer les valeurs manquantes, les chaînes vides,
+    # les espaces et les chaînes "na"
+    values = [
+        v for v in values
+        if not (
+            pd.isna(v)
+            or (isinstance(v, str) and v.strip().lower() in {"", "na", "nan"})
+        )
+    ]
+
+    unique_values = set(values)
 
     if not unique_values.issubset({0, 1}):
         raise ValueError(
