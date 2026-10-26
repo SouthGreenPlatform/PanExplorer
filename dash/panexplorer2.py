@@ -1210,26 +1210,49 @@ def load_project_preview(proj_title):
                             ]),
 
                             html.Div(id='pav_controls_container', style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
+
                                 html.Div([
-                                    html.Label("Colors:"),
+                                    html.Label("Order gene clusters by:"),
                                     dcc.Dropdown(
-                                            ['Presence/absence','Level of presence','Gene copy number','Organism','Continent','Country'],
+                                            ['Hierarchical clustering','Physical position in ref genome'],
+                                            value = 'Hierarchical clustering',
+                                            id='ordering',
+                                            style={'width': '350px'},
+                                            multi=False
+                                        ),  
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),                                
+                                html.Div([
+                                    html.Label("Colorize PAV heatmap by:"),
+                                    dcc.Dropdown(
+                                            ['Default presence/absence','Level of presence','Gene copy number','Organism','Continent','Country','Cluster assigned to sample', 'Reference genome','Core-genes','Strain-specific genes'],
                                             id='colorizing',
-                                            value = 'Presence/absence',
+                                            value = 'Default presence/absence',
                                             style={'width': '350px'},
                                             multi=False
                                         ),
                                     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+
                                 html.Div([
-                                    html.Label("Highlight:"),
+                                    html.Label("Colorize sample labels by:"),
                                     dcc.Dropdown(
-                                            ['None','Reference genome','Core-genes','Strain-specific genes'],
-                                            id='highlight',
-                                            value = 'None',
+                                            ['Organism','Continent','Country','Cluster assigned to sample'],
+                                            id='colorizing_labels',
+                                            value = 'Organism',
                                             style={'width': '350px'},
                                             multi=False
                                         ),
                                     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+
+                                # html.Div([
+                                #     html.Label("Highlight:"),
+                                #     dcc.Dropdown(
+                                #             ['None','Reference genome','Core-genes','Strain-specific genes'],
+                                #             id='highlight',
+                                #             value = 'None',
+                                #             style={'width': '350px'},
+                                #             multi=False
+                                #         ),
+                                #     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
                                 # html.Div([
                                 #     html.Label("Sample ordering:"),
                                 #     dcc.Dropdown(
@@ -1241,16 +1264,7 @@ def load_project_preview(proj_title):
                                 #         ),
                                 #     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
 
-                                html.Div([
-                                    html.Label("Cluster ordering:"),
-                                    dcc.Dropdown(
-                                            ['Hierarchical clustering','Physical position in ref genome'],
-                                            value = 'Hierarchical clustering',
-                                            id='ordering',
-                                            style={'width': '350px'},
-                                            multi=False
-                                        ),  
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+                                
                                 html.Div([
                                     html.Label("Highlight clusters by keyword or COG:"),
                                     dcc.Input(
@@ -1344,70 +1358,6 @@ def load_project_preview(proj_title):
                                         dcc.Loading(children=html.Div(id='default-alignment-viewer-output')) ,
                                     ])
                                 ], id="detail-modal", is_open=False, size="xl"),                        
-
-                            # dbc.Row(
-                            #     [
-                            #         dbc.Col(
-                            #             dbc.Card(
-                            #                 [
-                            #                     dbc.CardBody(
-                            #                         [
-                                                        
-                            #                             html.H5(id='selected_cluster', style={'width': '60vh','margin-left': '1px'}),
-                            #                             dcc.Loading(dag.AgGrid(
-                            #                                                                     id="genes_cluster",
-                            #                                                                     rowData=[],
-                            #                                                                     columnDefs=columnDefs4,
-                            #                                                                     defaultColDef={"filter": True},
-                            #                                                                     style={'width': '80vh','margin-left': '1px'},
-                            #                                                                     dashGridOptions={"pagination": True, "animateRows": False}
-                            #                                                                 )),
-                                                        
-                                                        
-                            #                         ],
-                                                    
-                            #                     )
-                            #                 ],
-                            #                 style={
-                            #                         "padding": "0",
-                            #                         "backgroundColor": "transparent",
-                            #                         "border": "none",
-                            #                 }
-                            #             ),
-                            #             width=6
-                            #         ),
-                                    
-                                                                       
-                            #         dbc.Col(
-                            #             dbc.Card(
-                            #                 [
-                            #                     dbc.CardBody(
-                            #                         [
-                            #                             dcc.Loading(html.Div(id='default-alignment-viewer-output'))
-                                                        
-                            #                         ],
-                            #                         style={
-                            #                             "padding": "2px"
-                            #                         }
-                            #                     )
-                            #                 ],
-                            #                 style={
-                            #                     "border": "none",
-                            #                     "borderRadius": "16px",
-                            #                     "overflow": "hidden",
-                            #                     "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
-                            #                     "height": "100%"
-                            #                 }
-                            #             ),
-                            #             width=6
-                            #         )
-                            #     ],
-                            #     className="g-4",
-                            #     style={
-                            #         "margin": "0"
-                            #     }
-                            # ),   
-                       
                             
                             dbc.Row(
                                 [
@@ -2056,9 +2006,7 @@ def load_project_preview(proj_title):
                             ]), 
                             
 
-
-
-                            
+                            dcc.Store(id="selected-cell-segment"),
                             dbc.Row(
                                         [
                                             dbc.Col(dbc.Card(
@@ -2094,141 +2042,279 @@ def load_project_preview(proj_title):
                                 style= {"padding":"15px"}
                             ),
 
+                            dbc.Modal([
+                                    dbc.ModalHeader(
+                                        dbc.ModalTitle(id="detail-title-segment")
+                                    ),
+                                    dbc.ModalBody([
+                                        html.Div(id="clicked-cell-info-segment"),
+
+                                        dcc.Loading(
+                                            id="detail-loading-segment",
+                                            type="circle",
+                                            children=html.Div(
+                                                id="detail-table-container-segment"
+                                            )
+                                        ),
+                                        html.Hr(),
+                                        dbc.Row([
+                                            # input 1: node steps
+                                            dbc.Col([
+                                                html.Label("Context (Node Steps):"),
+                                                dcc.Input(id="subgraph-steps", type="number", value=2, placeholder="e.g. 3", min=0),
+                                                html.Small("Ex: 3 nodes away", style={"color": "grey"})
+                                            ], width=3),
+                                            
+                                            # input 2: base pairs
+                                            dbc.Col([
+                                                html.Label("Context (Base Pairs):"),
+                                                dcc.Input(id="subgraph-bp", type="number", value=200, placeholder="e.g. 1000", min=0, step=100),
+                                                html.Small("Ex: 1000 bp away", style={"color": "grey"})
+                                            ], width=3),
+                                            
+                                            # input 3: visualizer
+                                            dbc.Col([
+                                                html.Label("Visualizer:"),
+                                                dcc.Dropdown(
+                                                    id="subgraph-viz-type",
+                                                    options=[
+                                                        {'label': 'ODGI (PNG Image)', 'value': '--odgi'},
+                                                        {'label': 'Bandage (SVG Image)', 'value': '--bandage'},
+                                                        {'label': 'VG (Dot Plot)', 'value': '--vg'}
+                                                    ],
+                                                    value='--odgi'
+                                                )
+                                            ], width=3),
+                                        ]),                                        
+
+                                        dbc.Button(
+                                            "Display subgraph around this segment",
+                                            id="display_subgraph_segment",
+                                            color="primary",
+                                            className="me-2"
+                                        ),
+
+                                        dcc.Loading(html.Div(id="subgraph-result-area"))
+                                        
+                                    ])
+                                ], id="detail-modal-segment", is_open=False, size="xl"),  
+
+                            # dbc.Row(
+                            #     [
+                            #         dbc.Col(
+                            #              dbc.Card(
+                            #                  [
+                            #                      dbc.CardBody(
+                            #                          [
+                            #                             dcc.Loading(
+                            #                                 html.Div(children=[
+
+                            #                                     html.H5("Segments", id="nb_of_nodes", style={'color': 'green'}),
+                            #                                     dag.AgGrid(
+                            #                                             id="table_segments",
+                            #                                             rowData=[],
+                            #                                             defaultColDef={"filter": "agTextColumnFilter"},
+                            #                                             style={'width': '80vh',"height": '250px','margin-left': '1px'},
+                            #                                             #getRowId="params.data.State",
+                            #                                             dashGridOptions={"pagination": True, "animateRows": False}
+                            #                                     ),
+                            #                                 ]),
+                            #                             )                                                       
+                            #                          ],
+                                                     
+                            #                      )
+                            #                  ],
+                            #                  style={
+                            #                          "padding": "0",
+                            #                          "backgroundColor": "transparent",
+                            #                          "border": "none",
+                            #                  }
+                            #              ),
+                            #              width=6
+                            #          ),                                   
+                            #         dbc.Col(dbc.Card(
+                            #             [
+                            #                 dbc.CardBody(
+                            #                     [
+                            #                         html.Div("Pangenome Segment Projection onto the Reference Genome"),
+                            #                         html.Div([
+                            #                                                             html.Div([
+                            #                                                                     html.Span(style={'display': 'inline-block',
+                            #                                                                         'width': '10px',
+                            #                                                                         'height': '10px',
+                            #                                                                         'backgroundColor': "#20A277",
+                            #                                                                         'borderRadius': '3px',
+                            #                                                                         'marginRight': '6px'}),
+                            #                                                                     html.Span("Forward genes", style={'marginRight': '20px'}),
+                            #                                                                     html.Span(style={'display': 'inline-block',
+                            #                                                                         'width': '10px',
+                            #                                                                         'height': '10px',
+                            #                                                                         'backgroundColor': "#4be950",
+                            #                                                                         'borderRadius': '3px',
+                            #                                                                         'marginRight': '6px'}),
+                            #                                                                     html.Span("Reverse genes", style={'marginRight': '20px'}),
+                            #                                                                     html.Span(style={'display': 'inline-block',
+                            #                                                                         'width': '10px',
+                            #                                                                         'height': '10px',
+                            #                                                                         'backgroundColor': "#e31a1a",
+                            #                                                                         'borderRadius': '3px',
+                            #                                                                         'marginRight': '6px'}),
+                            #                                                                     html.Span("Core-genes", id="circos_legend2", style={'marginRight': '20px'}),
+                            #                                                                     html.Span(style={'display': 'inline-block',
+                            #                                                                         'width': '10px',
+                            #                                                                         'height': '10px',
+                            #                                                                         'backgroundColor': '#7e099b',
+                            #                                                                         'borderRadius': '3px',
+                            #                                                                         'marginRight': '6px'}),
+                            #                                                                     html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
+                            #                                                             ]),
+                            #                                                             html.Div(
+                            #                                                                         [
+                            #                                                                             html.Span(
+                            #                                                                                 "Ref genome",
+                            #                                                                                 id="ref_genome",
+                            #                                                                                 style={
+                            #                                                                                     "fontSize": "14px",
+                            #                                                                                     "fontStyle": "italic",
+                            #                                                                                     "fontWeight": "bold"
+                            #                                                                                 }
+                            #                                                                             )
+                            #                                                                         ],
+                            #                                                                         style={
+                            #                                                                             "position": "absolute",
+                            #                                                                             "top": "50%",
+                            #                                                                             "left": "50%",
+                            #                                                                             "transform": "translate(-50%, -50%)",
+                            #                                                                             "textAlign": "center",
+                            #                                                                             "pointerEvents": "none",
+                            #                                                                             "zIndex": 10
+                            #                                                                         }
+                            #                                                                     ),                                                                                       
+                            #                                                             dcc.Loading(dash_bio.Circos(
+                            #                                                                 id="my-dashbio-default-circos-segments",
+                            #                                                                 layout=[],
+                            #                                                                 config=layout_config,
+                            #                                                                 selectEvent={ "0": "click", "1": "click", "2": "click", "3": "click"},
+                            #                                                                 style={
+                            #                                                                     "height": "800px"
+                            #                                                                 },
+                            #                                                                 tracks=[
+                            #                                                                         {
+                            #                                                                             "type": "HIGHLIGHT",
+                            #                                                                             "data": [],
+                            #                                                                             "config": highlight_config1
+                            #                                                                         },
+                            #                                                                         {
+                            #                                                                             "type": "HIGHLIGHT",
+                            #                                                                             "data": [],
+                            #                                                                             "config": highlight_config2
+                            #                                                                         },
+                            #                                                                         {
+                            #                                                                             "type": "HIGHLIGHT",
+                            #                                                                             "data": [],
+                            #                                                                             "config": highlight_config3
+                            #                                                                         },
+                            #                                                                     {
+                            #                                                                             "type": "HIGHLIGHT",
+                            #                                                                             "data": [],
+                            #                                                                             "config": highlight_config4
+                            #                                                                         }
+                            #                                                                     ],
+                            #                                                             )), 
+                            #                                                         ]),
+                            #                     ],
+                            #                     style={"textAlign": "center"}
+                            #                 ),
+                            #             ],
+                            #             style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                            #         )),                                                                                                        
+                                    
+                            #     ],
+                            # style= {"padding":"15px"}
+                            # ),                            
+                 
+                                    
+                                                                               
+
                             
 
-                            dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                dbc.Card(
-                                                    [
-                                                        dbc.CardBody(
-                                                            [
-                                                                
-                                                                html.H5(id='selected_segment', style={'width': '60vh','margin-left': '1px'}),
-                                                                
-                                                                html.Button("Display subgraph", id="display_subgraph", className="thin-button", n_clicks=0),
-                                                                
-                                                            ],
-                                                            
-                                                        )
-                                                    ],
-                                                    style={
-                                                            "padding": "0",
-                                                            "backgroundColor": "transparent",
-                                                            "border": "none",
-                                                    }
-                                                ),
-                                                width=6
-                                            ),
-                                            
-                                                                            
-                                            dbc.Col(
-                                                dbc.Card(
-                                                    [
-                                                        dbc.CardBody(
-                                                            [
-                                                                #dcc.Loading(html.Div(id='default-alignment-viewer-output'))
-                                                                
-                                                            ],
-                                                            style={
-                                                                "padding": "2px"
-                                                            }
-                                                        )
-                                                    ],
-                                                    style={
-                                                        "border": "none",
-                                                        "borderRadius": "16px",
-                                                        "overflow": "hidden",
-                                                        "boxShadow": "0 4px 20px rgba(0,0,0,0.12)",
-                                                        "height": "100%"
-                                                    }
-                                                ),
-                                                width=6
-                                            )
-                                        ],
-                                        className="g-4",
-                                        style={
-                                            "margin": "0"
-                                        }
-                            ), 
-
                             # ── Search & Highlight panel ─────────────────────────────────────────
-                            html.Div(style={'padding':'16px','backgroundColor':'#f7faff','border':'1px solid #ccd6f6','borderRadius':'6px','margin':'0 15px'}, children=[
-                                html.H5("Search & Highlight in PAV Matrix", style={'marginBottom':'4px'}),
-                                html.Small(
-                                    "Enter node IDs (e.g. 42,85,120) or a gene name/keyword. "
-                                    "Auto-detected: all-numeric tokens → node search, text → gene search (matches gene ID and product).",
-                                    style={'color':'#666'}
-                                ),
-                                html.Br(), html.Br(),
-                                dbc.Row([
-                                    dbc.Col([
-                                        dcc.Input(
-                                            id='segment-search-input', type='text',
-                                            placeholder='Node IDs (e.g. 42,85) or gene keyword…',
-                                            debounce=False, className='form-control'
-                                        ),
-                                    ], width=8),
-                                    dbc.Col([
-                                        html.Button('Search', id='btn-segment-search', n_clicks=0,
-                                                    className='btn btn-primary', style={'width':'100%'}),
-                                    ], width=2),
-                                    dbc.Col([
-                                        html.Button('Clear', id='btn-segment-clear', n_clicks=0,
-                                                    className='btn btn-outline-secondary', style={'width':'100%'}),
-                                    ], width=2),
-                                ]),
-                                html.Br(),
-                                dcc.Loading(html.Div(id='segment-search-results')),
-                                html.Br(),
-                                dag.AgGrid(
-                                    id='segment-search-table',
-                                    rowData=[],
-                                    columnDefs=[
-                                        {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
-                                        {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
-                                        {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
-                                        {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
-                                        {'field': 'Products', 'headerName': 'Products',   'flex': 2},
-                                    ],
-                                    defaultColDef={'filter': 'agTextColumnFilter', 'resizable': True, 'sortable': True},
-                                    dashGridOptions={
-                                        'pagination': True, 'paginationPageSize': 20,
-                                        'animateRows': False,
-                                        'rowSelection': 'multiple',
-                                    },
-                                    style={'height': '320px', 'display': 'none'}
-                                ),
-                                html.Br(),
-                                dbc.Row([
-                                    dbc.Col([
-                                        html.Button(
-                                            '⬇ Send to Subgraph Extraction',
-                                            id='btn-send-to-subgraph', n_clicks=0,
-                                            className='btn btn-outline-primary btn-sm',
-                                            style={'display': 'none'}
-                                        ),
-                                    ], width='auto'),
-                                    dbc.Col([
-                                        html.Button(
-                                            '⬆ Show on PAV',
-                                            id='btn-show-on-pav', n_clicks=0,
-                                            className='btn btn-warning btn-sm',
-                                            style={'display': 'none'}
-                                        ),
-                                    ], width='auto'),
-                                    dbc.Col([
-                                        html.Button(
-                                            '✕ Clear PAV highlights',
-                                            id='btn-clear-pav-highlight', n_clicks=0,
-                                            className='btn btn-outline-secondary btn-sm',
-                                            style={'display': 'none'}
-                                        ),
-                                    ], width='auto'),
-                                ], className='g-2', style={'marginTop': '6px'}),
-                                html.Div(id='send-to-subgraph-feedback', style={'color':'green','marginTop':'4px','fontSize':'0.85em'}),
-                                html.Div(id='show-on-pav-feedback', style={'color':'#b8860b','marginTop':'4px','fontSize':'0.85em'}),
-                            ]),
+                            # html.Div(style={'padding':'16px','backgroundColor':'#f7faff','border':'1px solid #ccd6f6','borderRadius':'6px','margin':'0 15px'}, children=[
+                            #     html.H5("Search & Highlight in PAV Matrix", style={'marginBottom':'4px'}),
+                            #     html.Small(
+                            #         "Enter node IDs (e.g. 42,85,120) or a gene name/keyword. "
+                            #         "Auto-detected: all-numeric tokens → node search, text → gene search (matches gene ID and product).",
+                            #         style={'color':'#666'}
+                            #     ),
+                            #     html.Br(), html.Br(),
+                            #     dbc.Row([
+                            #         dbc.Col([
+                            #             dcc.Input(
+                            #                 id='segment-search-input', type='text',
+                            #                 placeholder='Node IDs (e.g. 42,85) or gene keyword…',
+                            #                 debounce=False, className='form-control'
+                            #             ),
+                            #         ], width=8),
+                            #         dbc.Col([
+                            #             html.Button('Search', id='btn-segment-search', n_clicks=0,
+                            #                         className='btn btn-primary', style={'width':'100%'}),
+                            #         ], width=2),
+                            #         dbc.Col([
+                            #             html.Button('Clear', id='btn-segment-clear', n_clicks=0,
+                            #                         className='btn btn-outline-secondary', style={'width':'100%'}),
+                            #         ], width=2),
+                            #     ]),
+                            #     html.Br(),
+                            #     dcc.Loading(html.Div(id='segment-search-results')),
+                            #     html.Br(),
+                            #     dag.AgGrid(
+                            #         id='segment-search-table',
+                            #         rowData=[],
+                            #         columnDefs=[
+                            #             {'field': 'Node',     'headerName': 'Node',       'width': 100, 'checkboxSelection': True, 'headerCheckboxSelection': True},
+                            #             {'field': 'Start',    'headerName': 'Start (bp)', 'width': 130},
+                            #             {'field': 'End',      'headerName': 'End (bp)',   'width': 130},
+                            #             {'field': 'Genes',    'headerName': 'Genes',      'flex': 1},
+                            #             {'field': 'Products', 'headerName': 'Products',   'flex': 2},
+                            #         ],
+                            #         defaultColDef={'filter': 'agTextColumnFilter', 'resizable': True, 'sortable': True},
+                            #         dashGridOptions={
+                            #             'pagination': True, 'paginationPageSize': 20,
+                            #             'animateRows': False,
+                            #             'rowSelection': 'multiple',
+                            #         },
+                            #         style={'height': '320px', 'display': 'none'}
+                            #     ),
+                            #     html.Br(),
+                            #     dbc.Row([
+                            #         dbc.Col([
+                            #             html.Button(
+                            #                 '⬇ Send to Subgraph Extraction',
+                            #                 id='btn-send-to-subgraph', n_clicks=0,
+                            #                 className='btn btn-outline-primary btn-sm',
+                            #                 style={'display': 'none'}
+                            #             ),
+                            #         ], width='auto'),
+                            #         dbc.Col([
+                            #             html.Button(
+                            #                 '⬆ Show on PAV',
+                            #                 id='btn-show-on-pav', n_clicks=0,
+                            #                 className='btn btn-warning btn-sm',
+                            #                 style={'display': 'none'}
+                            #             ),
+                            #         ], width='auto'),
+                            #         dbc.Col([
+                            #             html.Button(
+                            #                 '✕ Clear PAV highlights',
+                            #                 id='btn-clear-pav-highlight', n_clicks=0,
+                            #                 className='btn btn-outline-secondary btn-sm',
+                            #                 style={'display': 'none'}
+                            #             ),
+                            #         ], width='auto'),
+                            #     ], className='g-2', style={'marginTop': '6px'}),
+                            #     html.Div(id='send-to-subgraph-feedback', style={'color':'green','marginTop':'4px','fontSize':'0.85em'}),
+                            #     html.Div(id='show-on-pav-feedback', style={'color':'#b8860b','marginTop':'4px','fontSize':'0.85em'}),
+                            # ]),
                             dcc.Store(id='pav-node-names-store', data=[]),
 
                             html.Br(),
@@ -2240,231 +2326,169 @@ def load_project_preview(proj_title):
                                             ),
                             html.Hr(),
 
-                            # subgraph extraction panel
-                            html.Div(id="subgraph-control-panel", style={'display': 'block', 'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                                html.H4("Subgraph Extraction"),
-                                html.Small("Define the context size using either Steps OR Base Pairs (not both)."),
-                                html.Br(), html.Br(),
-
-                                dbc.Row([
-                                    dbc.Col([
-                                        html.Label("Node(s) to extract:"),
-                                        dcc.Input(
-                                            id='subgraph-node-list', type='text',
-                                            placeholder='e.g. 42, 85, 120',
-                                            className='form-control'
-                                        ),
-                                        html.Small(
-                                            "Click a node on the graph above, send from search results, or type IDs manually (comma-separated).",
-                                            style={'color': 'grey'}
-                                        )
-                                    ], width=12)
-                                ]),
-                                html.Br(),
-
-                                dbc.Row([
-                                    # input 1: node steps
-                                    dbc.Col([
-                                        html.Label("Context (Node Steps):"),
-                                        dcc.Input(id="subgraph-steps", type="number", value=2, placeholder="e.g. 3", min=0, className="form-control"),
-                                        html.Small("Ex: 3 nodes away", style={"color": "grey"})
-                                    ], width=3),
-                                    
-                                    # input 2: base pairs
-                                    dbc.Col([
-                                        html.Label("Context (Base Pairs):"),
-                                        dcc.Input(id="subgraph-bp", type="number", value=200, placeholder="e.g. 1000", min=0, step=100, className="form-control"),
-                                        html.Small("Ex: 1000 bp away", style={"color": "grey"})
-                                    ], width=3),
-                                    
-                                    # input 3: visualizer
-                                    dbc.Col([
-                                        html.Label("Visualizer:"),
-                                        dcc.Dropdown(
-                                            id="subgraph-viz-type",
-                                            options=[
-                                                {'label': 'ODGI (PNG Image)', 'value': '--odgi'},
-                                                {'label': 'Bandage (SVG Image)', 'value': '--bandage'},
-                                                {'label': 'VG (Dot Plot)', 'value': '--vg'}
-                                            ],
-                                            value='--odgi'
-                                        )
-                                    ], width=3),
-                                    
-                                    # button
-                                    dbc.Col([
-                                        html.Br(),
-                                        html.Button("Extract & Visualize", id="btn-extract-subgraph", className="btn btn-primary", style={"backgroundColor": "#1E90FF", "color": "white"})
-                                    ], width=3, style={'textAlign': 'center'})
-                                ]),
-                                
-                                html.Br(),
-                                dcc.Loading(html.Div(id="subgraph-result-area", children="Select parameters and click extract."))
-                            ]),
-
                             dcc.Store(id='stored-node-id'),
 
                             html.Hr(),
 
-                            html.Div(style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
-                                            html.H4("Align Sequence to Pangenome"),
-                                            html.Small("Paste a FASTA sequence to find and extract matching subgraphs."),
-                                            html.Br(), html.Br(),
+                        #     html.Div(style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd'}, children=[
+                        #                     html.H4("Align Sequence to Pangenome"),
+                        #                     html.Small("Paste a FASTA sequence to find and extract matching subgraphs."),
+                        #                     html.Br(), html.Br(),
                                             
-                                            dbc.Row([
-                                                dbc.Col([
-                                                    html.Label("Sequence (FASTA):"),
-                                                    dcc.Textarea(
-                                                        id="seq-input-fasta",
-                                                        placeholder=">seq1\nATGC...",
-                                                        style={'width': '100%', 'height': 150},
-                                                    ),
-                                                ], width=6),
-                                                dbc.Col([
-                                                    html.Label("Alignment Method:"),
-                                                    dcc.RadioItems(
-                                                        id="align-method",
-                                                        options=[
-                                                            {'label': 'Vg Giraffe', 'value': 'giraffe'},
-                                                            {'label': 'Bandage (BLAST)', 'value': 'bandage'}
-                                                        ],
-                                                        value='giraffe',
-                                                        inline=True,
-                                                        labelStyle={'marginRight': '10px'}
-                                                    ),
-                                                    html.Br(),
+                        #                     dbc.Row([
+                        #                         dbc.Col([
+                        #                             html.Label("Sequence (FASTA):"),
+                        #                             dcc.Textarea(
+                        #                                 id="seq-input-fasta",
+                        #                                 placeholder=">seq1\nATGC...",
+                        #                                 style={'width': '100%', 'height': 150},
+                        #                             ),
+                        #                         ], width=6),
+                        #                         dbc.Col([
+                        #                             html.Label("Alignment Method:"),
+                        #                             dcc.RadioItems(
+                        #                                 id="align-method",
+                        #                                 options=[
+                        #                                     {'label': 'Vg Giraffe', 'value': 'giraffe'},
+                        #                                     {'label': 'Bandage (BLAST)', 'value': 'bandage'}
+                        #                                 ],
+                        #                                 value='giraffe',
+                        #                                 inline=True,
+                        #                                 labelStyle={'marginRight': '10px'}
+                        #                             ),
+                        #                             html.Br(),
                                                     
-                                                    html.Div(id="giraffe-options", children=[
-                                                        html.Label("Read Type:"),
-                                                        dcc.Dropdown(
-                                                            id="seq-read-type",
-                                                            options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
-                                                            value='long'
-                                                        ),
-                                                    ]),
+                        #                             html.Div(id="giraffe-options", children=[
+                        #                                 html.Label("Read Type:"),
+                        #                                 dcc.Dropdown(
+                        #                                     id="seq-read-type",
+                        #                                     options=[{'label': 'Long Reads', 'value': 'long'}, {'label': 'Short Reads', 'value': 'short'}],
+                        #                                     value='long'
+                        #                                 ),
+                        #                             ]),
                                                     
-                                                    html.Div(id="bandage-options", style={'display': 'none'}, children=[
-                                                        dbc.Button("Blast Settings", id="btn-collapse-blast", size="sm", color="info", className="mb-2", outline=True),
-                                                        dbc.Collapse(
-                                                            dbc.Card(dbc.CardBody([
-                                                                html.Small("Blast Params (--blastp value)"),
-                                                                dcc.Input(id="bandage-blastp", type="text", placeholder='e.g. "-word_size 11"', className="form-control mb-1", style={'fontSize': '0.8em'}),
+                        #                             html.Div(id="bandage-options", style={'display': 'none'}, children=[
+                        #                                 dbc.Button("Blast Settings", id="btn-collapse-blast", size="sm", color="info", className="mb-2", outline=True),
+                        #                                 dbc.Collapse(
+                        #                                     dbc.Card(dbc.CardBody([
+                        #                                         html.Small("Blast Params (--blastp value)"),
+                        #                                         dcc.Input(id="bandage-blastp", type="text", placeholder='e.g. "-word_size 11"', className="form-control mb-1", style={'fontSize': '0.8em'}),
                                                                 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Ident %"), dcc.Input(id="bandage-ifilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Cov %"), dcc.Input(id="bandage-qcfilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Ident %"), dcc.Input(id="bandage-ifilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Cov %"), dcc.Input(id="bandage-qcfilter", type="number", value=0, min=0, max=100, placeholder="0-100", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("E-value"), dcc.Input(id="bandage-evfilter", type="text", value="1e1", placeholder="1e1", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Min Len"), dcc.Input(id="bandage-alfilter", type="number", value=0, placeholder="bp", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("E-value"), dcc.Input(id="bandage-evfilter", type="text", value="1e1", placeholder="1e1", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Min Len"), dcc.Input(id="bandage-alfilter", type="number", value=0, placeholder="bp", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
                                                                 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("BitScore"), dcc.Input(id="bandage-bsfilter", type="number", value=0, placeholder="min score", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ]),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("BitScore"), dcc.Input(id="bandage-bsfilter", type="number", value=0, placeholder="min score", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ]),
 
-                                                            ], style={'padding': '10px'})),
-                                                            id="collapse-blast",
-                                                            is_open=False,
-                                                        ),
-                                                        html.Br(),
-                                                        dbc.Button("Query Path Settings", id="btn-collapse-qpaths", size="sm", color="info", className="mb-2", outline=True),
-                                                        dbc.Collapse(
-                                                            dbc.Card(dbc.CardBody([
-                                                                html.Small("BLAST query paths"),
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Path nodes"), dcc.Input(id="bandage-pathnodes", type="number", value=6, min=1, max=50, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Min path cov"), dcc.Input(id="bandage-minpatcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                     ], style={'padding': '10px'})),
+                        #                                     id="collapse-blast",
+                        #                                     is_open=False,
+                        #                                 ),
+                        #                                 html.Br(),
+                        #                                 dbc.Button("Query Path Settings", id="btn-collapse-qpaths", size="sm", color="info", className="mb-2", outline=True),
+                        #                                 dbc.Collapse(
+                        #                                     dbc.Card(dbc.CardBody([
+                        #                                         html.Small("BLAST query paths"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Path nodes"), dcc.Input(id="bandage-pathnodes", type="number", value=6, min=1, max=50, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Min path cov"), dcc.Input(id="bandage-minpatcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Min hit cov"), dcc.Input(id="bandage-minhitcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Min mean id"), dcc.Input(id="bandage-minmeanid", type="number", value=0.5, min=0, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Min hit cov"), dcc.Input(id="bandage-minhitcov", type="number", value=0.9, min=0.3, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Min mean id"), dcc.Input(id="bandage-minmeanid", type="number", value=0.5, min=0, max=1, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Max e-value product"), dcc.Input(id="bandage-maxevprod", type="text", value="1e-10", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Min path len"), dcc.Input(id="bandage-minpatlen", type="number", value=0.95, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Max e-value product"), dcc.Input(id="bandage-maxevprod", type="text", value="1e-10", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Min path len"), dcc.Input(id="bandage-minpatlen", type="number", value=0.95, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Max path len"), dcc.Input(id="bandage-maxpatlen", type="number", value=1.05, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                    dbc.Col([html.Small("Min len discrepancy"), dcc.Input(id="bandage-minlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ], className="mb-1"),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Max path len"), dcc.Input(id="bandage-maxpatlen", type="number", value=1.05, min=0, step=0.01, className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                             dbc.Col([html.Small("Min len discrepancy"), dcc.Input(id="bandage-minlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ], className="mb-1"),
 
-                                                                dbc.Row([
-                                                                    dbc.Col([html.Small("Max len discrepancy"), dcc.Input(id="bandage-maxlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
-                                                                ]),
-                                                            ], style={'padding': '10px'})),
-                                                            id="collapse-qpaths",
-                                                            is_open=False,
-                                                        ),
-                                                        html.Br(),
-                                                        html.Small("Top hits to extract"),
-                                                        dcc.Input(
-                                                            id="bandage-topn",
-                                                            type="number",
-                                                            min=1,
-                                                            placeholder="e.g. 5",
-                                                            className="form-control",
-                                                            style={'fontSize': '0.8em', 'width': '140px'}
-                                                        )
-                                                    ]),
-                                            html.Hr(),
-                                html.Label("Context Settings (Choose one):"),
-                                dbc.Row([
-                                    dbc.Col([
-                                        html.Small("Steps (Nodes)"),
-                                        dcc.Input(id="seq-context", type="number", value=1, min=0, className="form-control"),
-                                    ], width=6),
-                                    dbc.Col([
-                                        html.Small("Distance (bp)"),
-                                        dcc.Input(id="seq-context-bp", type="number", placeholder="e.g 1000", min=0, step=100, className="form-control"),
-                                    ], width=6),
-                                ]),
-                                html.Br(),
-                                html.Button("Align & Extract Hits", id="btn-align-sequence", className="btn btn-success", style={"marginTop": "10px", "width": "100%"}),
-                            ], width=5)
-                        ]),
+                        #                                         dbc.Row([
+                        #                                             dbc.Col([html.Small("Max len discrepancy"), dcc.Input(id="bandage-maxlendis", type="number", placeholder="off", className="form-control", style={'fontSize': '0.8em'})], width=6),
+                        #                                         ]),
+                        #                                     ], style={'padding': '10px'})),
+                        #                                     id="collapse-qpaths",
+                        #                                     is_open=False,
+                        #                                 ),
+                        #                                 html.Br(),
+                        #                                 html.Small("Top hits to extract"),
+                        #                                 dcc.Input(
+                        #                                     id="bandage-topn",
+                        #                                     type="number",
+                        #                                     min=1,
+                        #                                     placeholder="e.g. 5",
+                        #                                     className="form-control",
+                        #                                     style={'fontSize': '0.8em', 'width': '140px'}
+                        #                                 )
+                        #                             ]),
+                        #                     html.Hr(),
+                        #         html.Label("Context Settings (Choose one):"),
+                        #         dbc.Row([
+                        #             dbc.Col([
+                        #                 html.Small("Steps (Nodes)"),
+                        #                 dcc.Input(id="seq-context", type="number", value=1, min=0, className="form-control"),
+                        #             ], width=6),
+                        #             dbc.Col([
+                        #                 html.Small("Distance (bp)"),
+                        #                 dcc.Input(id="seq-context-bp", type="number", placeholder="e.g 1000", min=0, step=100, className="form-control"),
+                        #             ], width=6),
+                        #         ]),
+                        #         html.Br(),
+                        #         html.Button("Align & Extract Hits", id="btn-align-sequence", className="btn btn-success", style={"marginTop": "10px", "width": "100%"}),
+                        #     ], width=5)
+                        # ]),
                                             
-                                            html.Hr(),
+                        #                     html.Hr(),
                                             
-                                            dcc.Loading(
-                                                id="loading-alignment",
-                                                type="default",
-                                                children=[
-                                                    html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
-                                                        html.Div(id="alignment-error"),
-                                                        html.H5("Alignment Hits"),
-                                                        dbc.Row([
-                                                            dbc.Col([
-                                                                html.Label("Select Hit to Visualize:"),
-                                                                dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
-                                                            ], width=6),
-                                                            dbc.Col([
-                                                                html.Label("Visualizer:"),
-                                                                dcc.Dropdown(
-                                                                    id="hit-viz-type",
-                                                                    options=[
-                                                                        {'label': 'ODGI (PNG)', 'value': 'odgi'},
-                                                                        {'label': 'Bandage (SVG)', 'value': 'bandage'}
-                                                                    ],
-                                                                    value='odgi'
-                                                                )
-                                                            ], width=4)
-                                                        ]),
-                                                        html.Br(),
-                                                        html.Div(id="hit-metrics-area"),
-                                                        html.Br(),
-                                                        dcc.Loading(html.Div(id="hit-visualization-area"))
-                                                    ]),
-                                                ]
-                                            ),
-                                            dcc.Store(id='store-alignment-hits'),
-                                            dcc.Store(id='store-alignment-path')
-                                        ])
-                                ]), 
+                        #                     dcc.Loading(
+                        #                         id="loading-alignment",
+                        #                         type="default",
+                        #                         children=[
+                        #                             html.Div(id="alignment-results-container", style={'display': 'none'}, children=[
+                        #                                 html.Div(id="alignment-error"),
+                        #                                 html.H5("Alignment Hits"),
+                        #                                 dbc.Row([
+                        #                                     dbc.Col([
+                        #                                         html.Label("Select Hit to Visualize:"),
+                        #                                         dcc.Dropdown(id="hit-selector", options=[], placeholder="Select a hit...")
+                        #                                     ], width=6),
+                        #                                     dbc.Col([
+                        #                                         html.Label("Visualizer:"),
+                        #                                         dcc.Dropdown(
+                        #                                             id="hit-viz-type",
+                        #                                             options=[
+                        #                                                 {'label': 'ODGI (PNG)', 'value': 'odgi'},
+                        #                                                 {'label': 'Bandage (SVG)', 'value': 'bandage'}
+                        #                                             ],
+                        #                                             value='odgi'
+                        #                                         )
+                        #                                     ], width=4)
+                        #                                 ]),
+                        #                                 html.Br(),
+                        #                                 html.Div(id="hit-metrics-area"),
+                        #                                 html.Br(),
+                        #                                 dcc.Loading(html.Div(id="hit-visualization-area"))
+                        #                             ]),
+                        #                         ]
+                        #                     ),
+                        #                     dcc.Store(id='store-alignment-hits'),
+                        #                     dcc.Store(id='store-alignment-path')
+                        #                 ])
+                                 ]), 
                             
                         # dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
                         # html.Div(id='tree_tab_content', children=[
@@ -3415,12 +3439,12 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Input('ordering', 'value'),
     #State('sample_ordering', 'value'),
     Input('colorizing', 'value'),
-    Input('highlight', 'value'),
+    Input('colorizing_labels', 'value'),
     State('cluster_search','value'),
     State('bedfile','value'),    
     prevent_initial_call=True
 )
-def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,highlight,cluster_search,bedfile):
+def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,colorizing_labels,cluster_search,bedfile):
 
     if not n_clicks or not selected_cell:
         raise PreventUpdate
@@ -3489,7 +3513,7 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     list_clusters1 = df_selected["ClutserID"].tolist()
     list_clusters2 = df_selected_opposite["ClutserID"].tolist()
 
-    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1)
 
 
     return False, fig, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,empty_figure(), empty_figure()
@@ -3497,7 +3521,6 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
 ##########################################
 # when clicking in the table of pangenes
 ##########################################
-
 
 @app.callback(
     Output("detail-table-container", "children"),
@@ -3572,6 +3595,39 @@ def update_detail_table(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,ro
         },
         style={"height": "400px"}
     )
+
+
+@app.callback(
+    Output("detail-table-container-segment", "children"),
+    Input('graph_gfa2', 'clickData'),
+    State("projets", "value"),
+    State('metadata_table','selectedRows'),
+    State('reference','value'),
+    State('current_session','value'),
+    prevent_initial_call=True
+)
+def update_detail_segment(event_pav,projets,metadata_table,reference,session):
+    triggered_table = ctx.triggered_id
+
+    # row = ""
+    segment = ""
+    if triggered_table == "graph_gfa2":
+        wjdata = json.loads(json.dumps(event_pav, indent=2))
+        segment = wjdata['points'][0]['x']
+    
+    
+    list_of_strains = []
+    if metadata_table:
+        wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
+        for strain in wjdata1:
+            strain_name = strain['Strain name']
+            list_of_strains.append(strain_name) 
+
+    if segment:
+        infos = get_node_details(segment, projets, reference, session)
+        node_data = get_node_genes_metadata(segment, projets, reference, session)
+
+    return infos
 
 @app.callback(
     Output("default-alignment-viewer-output","children"),
@@ -3729,6 +3785,31 @@ def open_detail_modal(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_
         None
     )
 
+@app.callback(
+    Output("detail-modal-segment", "is_open"),
+    Output("detail-title-segment", "children"),
+    Output("clicked-cell-info-segment", "children"),
+    Output("selected-cell-segment", "data"),
+    Input('graph_gfa2', 'clickData'),
+    prevent_initial_call=True
+)
+def open_detail_modal_segment(event_pav):
+    triggered_table = ctx.triggered_id
+
+    # row = ""
+    segment = ""
+    if triggered_table == "graph_gfa2":
+        wjdata = json.loads(json.dumps(event_pav, indent=2))
+        segment = wjdata['points'][0]['x']
+
+    return (
+        True,
+        f"Details for segment : {segment}",
+        f"",
+        {
+            "value": segment,
+        }
+    )
 
 
 @app.callback(
@@ -3783,9 +3864,9 @@ def get_node_details(node,pathname,reference,session):
     product = filtered_df_gene_positions['Product'].tolist()
 
     return html.Div([
-        html.Div("Node: " + str(num_node)),
+        html.Div("Segment: " + str(num_node)),
         html.Div("Positions in reference genome: " + str(start_node) + "-" + str(end_node)),
-        html.Div("Genes in this node: "),
+        html.Div("Genes in this segment: "),
         html.Ul([html.Li(genes[i] + ": " + product[i]) for i in range(len(genes))]),
 
         html.Div("Sequence:"),
@@ -4063,7 +4144,7 @@ def set_reference_value(available_options):
     State('ordering', 'value'),
     #State('sample_ordering', 'value'),
     State('colorizing', 'value'),
-    State('highlight', 'value'),
+    State('colorizing_labels', 'value'),
     State('projets', 'value'),
     State('url','hash'),
     Input("btn-update", "n_clicks"),
@@ -4079,7 +4160,7 @@ def set_reference_value(available_options):
     background=True,
     prevent_initial_call=True
 )
-def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
+def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -4159,6 +4240,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     # transpose and save
     df2_bis = df2.set_index("ClutserID")
     matrix01_transpose_df = df2_bis.transpose()
+    df2_bis.to_csv(tmp_dir + "/" + str(session) + ".matrix01.before_transposition.tsv",sep="\t")
     matrix01_transpose_df.to_csv(tmp_dir + "/" + str(session) + ".matrix01.tsv",sep="\t")
 
 
@@ -4539,7 +4621,7 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
 
             
 
-    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1)
 
     
     #fig.update_traces(showscale=False)
@@ -5717,9 +5799,9 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     #############################################################################################  
 
 @app.callback(
-    Output("subgraph-result-area", "children", allow_duplicate=True),
-    Input("btn-extract-subgraph", "n_clicks"),
-    State("subgraph-node-list", "value"),
+    Output("subgraph-result-area", "children"),
+    Input("display_subgraph_segment", "n_clicks"),
+    State("selected-cell-segment", "data"),
     State("stored-node-id", "data"),
     State("subgraph-steps", "value"),
     State("subgraph-bp", "value"),
@@ -5729,23 +5811,31 @@ def trigger_heavy_update(reference,ordering,colorizing,highlight,proj_title,url,
     State('metadata_table', 'selectedRows'),
     prevent_initial_call=True
 )
-def run_subgraph_extraction(n_clicks, node_list_input, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
+def run_subgraph_extraction(n_clicks,node_list_input, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
     # Prefer the node-list text input; fall back to the stored single node
+    print(node_list_input)
+    print("y")
+    print(str(viz_type))
+    print(str(session))
+    print(project_name)
+
     node_ids_raw = ""
-    if node_list_input and node_list_input.strip():
-        node_ids_raw = node_list_input.strip()
-    elif node_data and "node_id" in node_data:
-        node_ids_raw = str(node_data['node_id'])
+    if node_list_input:
+        node_ids_raw = node_list_input.get('value')
     else:
         return dbc.Alert("No node specified! Enter node IDs in the field above or click a node on the graph.", color="warning")
 
-    # Parse and clean the list
-    node_ids_list = [n.strip() for n in node_ids_raw.split(',') if n.strip().isdigit()]
-    if not node_ids_list:
-        return dbc.Alert("No valid numeric node IDs found. Please enter comma-separated integers.", color="warning")
+    # # Parse and clean the list
+    # node_ids_list = [n.strip() for n in node_ids_raw.split(',') if n.strip().isdigit()]
+    # if not node_ids_list:
+    #     return dbc.Alert("No valid numeric node IDs found. Please enter comma-separated integers.", color="warning")
 
+    node_ids_list = []
+    node_ids_list.append(node_ids_raw)
+    
     node_id = node_ids_list[0]    # primary ID (kept for BED logic / single-node paths)
     node_ids_csv = ','.join(node_ids_list)  # for -l flag
+
     
     # --- 1. Setup Paths ---
     row = query_db("SELECT path FROM projects WHERE title = ?", (project_name,), one=True)
@@ -6332,14 +6422,14 @@ def pca(dimension_pca,colorizing_pca,session):
     #Input('sample_ordering', 'value'),
     State('metadata_table','selectedRows'),
     State('reference','value'),
-    Input('highlight', 'value'),
+    Input('colorizing_labels', 'value'),
     State('cluster_search', 'value'),
     State('bedfile', 'value'),
     Input('colorizing', 'value'),
     Input('highlight_button', 'n_clicks'),
     prevent_initial_call=True    
 )
-def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,cluster_search,bedfile,colorizing,highlight_button):
+def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,highlight_button):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -6376,6 +6466,10 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
     df_matrix = pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
     df_metadata3 = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+
+    df_clustering = None
+    if os.path.exists(tmp_dir+ "/"+str(session)+".clusters.tsv"):
+        df_clustering = pd.read_csv(tmp_dir+ "/"+str(session)+".clusters.tsv",sep='\t')
     merged_with_cog = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
     df = pd.read_csv(tmp_dir + "/" + str(session) + ".df.csv")
     merged_with_positions2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
@@ -6391,7 +6485,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
     zmax = 1
 
     print(cluster_search)
-    if highlight != "None" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
+    if colorizing == "Reference genome" or colorizing == "Core-genes" or colorizing == "Strain-specific genes" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     else:
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
@@ -6419,10 +6513,20 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
             
 
 
-    elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country":
+    elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country" or colorizing == "Cluster assigned to sample":
         colorscale = []
-        df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
-        list_organisms = df_metadata4[colorizing].unique().tolist()
+        if colorizing == "Cluster assigned to sample":
+            df_metadata4 = df_clustering[df_clustering['strain'].isin(list_sp2)]
+            list_organisms = df_metadata4["HierarchicalClustering"].unique().tolist()
+            list_organisms = sorted(list_organisms, key=int)
+            ordered_list_organisms = df_metadata4["HierarchicalClustering"].tolist()
+            ordered_list_strains = df_metadata4["strain"].tolist()
+        else:
+            df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
+            list_organisms = df_metadata4[colorizing].unique().tolist()
+            ordered_list_organisms = df_metadata4[colorizing].tolist()
+            ordered_list_strains = df_metadata4["Strain name"].tolist()
+            
         nb_organisms = len(list_organisms)
         step = 1 / (nb_organisms+1)
         colorscale.append([0.0, "whitesmoke"])
@@ -6443,8 +6547,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
             association[organism] = count
         zmax = count
 
-        ordered_list_organisms = df_metadata4[colorizing].tolist()
-        ordered_list_strains = df_metadata4["Strain name"].tolist()
+        
         
         count = 0
         for sample in ordered_list_strains:
@@ -6455,7 +6558,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
             
             
             
-    elif highlight == "Reference genome":
+    elif colorizing == "Reference genome":
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
         ticktext.append("Presence")
         tickval.append(0.67)
@@ -6467,14 +6570,14 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
                 df2[sample] = np.where( (df2[sample] == 1),1,df2[sample])
             else:
                 df2[sample] = np.where( (df2[sample] == 1),0.67,df2[sample])
-    elif highlight == "Core-genes":
+    elif colorizing == "Core-genes":
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
         ticktext.append("Presence")
         tickval.append(0.67)
         for sample in list_sp2:
             proportion = df2["sum"] / len(list_sp2)
             df2[sample] = np.where( (df2[sample] == 1) & (proportion != 1),0.67,df2[sample])
-    elif highlight == "Strain-specific genes":
+    elif colorizing == "Strain-specific genes":
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
         ticktext.append("Presence")
         tickval.append(0.67)
@@ -6753,6 +6856,72 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,highlight,c
                             
         fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes across selected genomes',xaxis_title="Gene clusters",yaxis_title="Samples")
         fig.update_yaxes(autorange="reversed",tickmode="linear")
+
+        
+        # for index, row in df_metadata3.iterrows():
+        #     print(f"Index: {index} | Nom: {row['Strain name']} | Score: {row['Organism']}")
+        #     fig.add_annotation(
+        #                     x=-0.02,
+        #                     y=index,
+        #                     xref="paper",
+        #                     yref="y",
+        #                     text=str(row['Strain name']),
+        #                     showarrow=False,
+        #                     xanchor="right",
+        #                     font=dict(color="red", size=11)
+        #                 )
+
+        #########################################
+        # colorization of sample labels
+        #########################################
+        if colorizing_labels == "Organism" or colorizing_labels == "Continent" or colorizing_labels == "Country" or colorizing_labels == "Cluster assigned to sample":
+
+            if colorizing_labels == "Cluster assigned to sample":
+                df_metadata4 = df_clustering[df_clustering['strain'].isin(list_sp2)]
+                list_organisms = df_metadata4["HierarchicalClustering"].unique().tolist()
+                list_organisms = sorted(list_organisms, key=int)
+                ordered_list_organisms = df_metadata4["HierarchicalClustering"].tolist()
+                ordered_list_strains = df_metadata4["strain"].tolist()
+            else:
+                df_metadata4 = df_metadata3[df_metadata3['Strain name'].isin(list_sp2)]
+                list_organisms = df_metadata4[colorizing_labels].unique().tolist()
+                ordered_list_organisms = df_metadata4[colorizing_labels].tolist()
+                ordered_list_strains = df_metadata4["Strain name"].tolist()
+                
+            nb_organisms = len(list_organisms)
+            count = 0
+            color_level = 0
+            association = {}
+            for organism in list_organisms:
+                color = colors[color_level]
+                color_level += 1
+                association[organism] = color
+
+
+            if len(list_organisms) > 1:
+                fig.update_yaxes(tickfont=dict(color="rgba(0,0,0,0)"))
+                for i, label in enumerate(list_sp2):
+
+                    color = "black"
+                    if colorizing_labels == "Cluster assigned to sample":
+                        cluster = df_clustering.loc[df_clustering['strain'] == label, 'HierarchicalClustering'].values[0]
+                        color = colors[cluster-1]
+                    else:
+                        organism = df_metadata3.loc[df_metadata3['Strain name'] == label, colorizing_labels].values[0]
+                        if organism in association:
+                            color = association[organism]
+
+                    fig.add_annotation(
+                        x=0,
+                        y=label,
+                        xref="paper",
+                        yref="y",
+                        text=str(label),
+                        showarrow=False,
+                        xanchor="right",
+                        font=dict(color=color, size=11)
+                    )
+                fig.update_layout(margin=dict(l=150))
 
 
     fig.update_layout(
