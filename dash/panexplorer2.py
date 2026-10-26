@@ -2099,39 +2099,41 @@ def load_project_preview(proj_title):
                                     ])
                                 ], id="detail-modal-segment", is_open=False, size="xl"),  
 
-                            dbc.Row(
-                                [
-                                    dbc.Col(
-                                         dbc.Card(
-                                             [
-                                                 dbc.CardBody(
-                                                     [
-                                                        dcc.Loading(
-                                                            html.Div(children=[
+                            # dbc.Row(
+                            #     [
+                            #         dbc.Col(
+                            #              dbc.Card(
+                            #                  [
+                            #                      dbc.CardBody(
+                            #                          [
+                            #                             dcc.Loading(
+                            #                                 html.Div(children=[
 
-                                                                html.H5("Segments", id="nb_of_nodes", style={'color': 'green'}),
-                                                                dag.AgGrid(
-                                                                        id="table_segments",
-                                                                        rowData=[],
-                                                                        defaultColDef={"filter": "agTextColumnFilter"},
-                                                                        style={'width': '80vh',"height": '250px','margin-left': '1px'},
-                                                                        #getRowId="params.data.State",
-                                                                        dashGridOptions={"pagination": True, "animateRows": False}
-                                                                ),
-                                                            ]),
-                                                        )                                                       
-                                                     ],
+                            #                                     html.H5("Segments", id="nb_of_nodes", style={'color': 'green'}),
+                            #                                     dag.AgGrid(
+                            #                                             id="table_segments",
+                            #                                             rowData=[],
+                            #                                             defaultColDef={"filter": "agTextColumnFilter"},
+                            #                                             style={'width': '80vh',"height": '250px','margin-left': '1px'},
+                            #                                             #getRowId="params.data.State",
+                            #                                             dashGridOptions={"pagination": True, "animateRows": False}
+                            #                                     ),
+                            #                                 ]),
+                            #                             )                                                       
+                            #                          ],
                                                      
-                                                 )
-                                             ],
-                                             style={
-                                                     "padding": "0",
-                                                     "backgroundColor": "transparent",
-                                                     "border": "none",
-                                             }
-                                         ),
-                                         width=6
-                                     ),                                   
+                            #                      )
+                            #                  ],
+                            #                  style={
+                            #                          "padding": "0",
+                            #                          "backgroundColor": "transparent",
+                            #                          "border": "none",
+                            #                  }
+                            #              ),
+                            #              width=6
+                            #          ),  
+
+
                                     # dbc.Col(dbc.Card(
                                     #     [
                                     #         dbc.CardBody(
@@ -2228,11 +2230,13 @@ def load_project_preview(proj_title):
                                     #     ],
                                     #     style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
                                     # )
-                                    ),                                                                                                        
-                                    
-                                ],
-                            style= {"padding":"15px"}
-                            ),                            
+                                    #),                                                                                                        
+
+
+
+                            #     ],
+                            # style= {"padding":"15px"}
+                            # ),                            
                  
                                     
                                                                                
