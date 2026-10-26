@@ -2099,139 +2099,140 @@ def load_project_preview(proj_title):
                                     ])
                                 ], id="detail-modal-segment", is_open=False, size="xl"),  
 
-                            # dbc.Row(
-                            #     [
-                            #         dbc.Col(
-                            #              dbc.Card(
-                            #                  [
-                            #                      dbc.CardBody(
-                            #                          [
-                            #                             dcc.Loading(
-                            #                                 html.Div(children=[
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                         dbc.Card(
+                                             [
+                                                 dbc.CardBody(
+                                                     [
+                                                        dcc.Loading(
+                                                            html.Div(children=[
 
-                            #                                     html.H5("Segments", id="nb_of_nodes", style={'color': 'green'}),
-                            #                                     dag.AgGrid(
-                            #                                             id="table_segments",
-                            #                                             rowData=[],
-                            #                                             defaultColDef={"filter": "agTextColumnFilter"},
-                            #                                             style={'width': '80vh',"height": '250px','margin-left': '1px'},
-                            #                                             #getRowId="params.data.State",
-                            #                                             dashGridOptions={"pagination": True, "animateRows": False}
-                            #                                     ),
-                            #                                 ]),
-                            #                             )                                                       
-                            #                          ],
+                                                                html.H5("Segments", id="nb_of_nodes", style={'color': 'green'}),
+                                                                dag.AgGrid(
+                                                                        id="table_segments",
+                                                                        rowData=[],
+                                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                                        style={'width': '80vh',"height": '250px','margin-left': '1px'},
+                                                                        #getRowId="params.data.State",
+                                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                                ),
+                                                            ]),
+                                                        )                                                       
+                                                     ],
                                                      
-                            #                      )
-                            #                  ],
-                            #                  style={
-                            #                          "padding": "0",
-                            #                          "backgroundColor": "transparent",
-                            #                          "border": "none",
-                            #                  }
-                            #              ),
-                            #              width=6
-                            #          ),                                   
-                            #         dbc.Col(dbc.Card(
-                            #             [
-                            #                 dbc.CardBody(
-                            #                     [
-                            #                         html.Div("Pangenome Segment Projection onto the Reference Genome"),
-                            #                         html.Div([
-                            #                                                             html.Div([
-                            #                                                                     html.Span(style={'display': 'inline-block',
-                            #                                                                         'width': '10px',
-                            #                                                                         'height': '10px',
-                            #                                                                         'backgroundColor': "#20A277",
-                            #                                                                         'borderRadius': '3px',
-                            #                                                                         'marginRight': '6px'}),
-                            #                                                                     html.Span("Forward genes", style={'marginRight': '20px'}),
-                            #                                                                     html.Span(style={'display': 'inline-block',
-                            #                                                                         'width': '10px',
-                            #                                                                         'height': '10px',
-                            #                                                                         'backgroundColor': "#4be950",
-                            #                                                                         'borderRadius': '3px',
-                            #                                                                         'marginRight': '6px'}),
-                            #                                                                     html.Span("Reverse genes", style={'marginRight': '20px'}),
-                            #                                                                     html.Span(style={'display': 'inline-block',
-                            #                                                                         'width': '10px',
-                            #                                                                         'height': '10px',
-                            #                                                                         'backgroundColor': "#e31a1a",
-                            #                                                                         'borderRadius': '3px',
-                            #                                                                         'marginRight': '6px'}),
-                            #                                                                     html.Span("Core-genes", id="circos_legend2", style={'marginRight': '20px'}),
-                            #                                                                     html.Span(style={'display': 'inline-block',
-                            #                                                                         'width': '10px',
-                            #                                                                         'height': '10px',
-                            #                                                                         'backgroundColor': '#7e099b',
-                            #                                                                         'borderRadius': '3px',
-                            #                                                                         'marginRight': '6px'}),
-                            #                                                                     html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
-                            #                                                             ]),
-                            #                                                             html.Div(
-                            #                                                                         [
-                            #                                                                             html.Span(
-                            #                                                                                 "Ref genome",
-                            #                                                                                 id="ref_genome",
-                            #                                                                                 style={
-                            #                                                                                     "fontSize": "14px",
-                            #                                                                                     "fontStyle": "italic",
-                            #                                                                                     "fontWeight": "bold"
-                            #                                                                                 }
-                            #                                                                             )
-                            #                                                                         ],
-                            #                                                                         style={
-                            #                                                                             "position": "absolute",
-                            #                                                                             "top": "50%",
-                            #                                                                             "left": "50%",
-                            #                                                                             "transform": "translate(-50%, -50%)",
-                            #                                                                             "textAlign": "center",
-                            #                                                                             "pointerEvents": "none",
-                            #                                                                             "zIndex": 10
-                            #                                                                         }
-                            #                                                                     ),                                                                                       
-                            #                                                             dcc.Loading(dash_bio.Circos(
-                            #                                                                 id="my-dashbio-default-circos-segments",
-                            #                                                                 layout=[],
-                            #                                                                 config=layout_config,
-                            #                                                                 selectEvent={ "0": "click", "1": "click", "2": "click", "3": "click"},
-                            #                                                                 style={
-                            #                                                                     "height": "800px"
-                            #                                                                 },
-                            #                                                                 tracks=[
-                            #                                                                         {
-                            #                                                                             "type": "HIGHLIGHT",
-                            #                                                                             "data": [],
-                            #                                                                             "config": highlight_config1
-                            #                                                                         },
-                            #                                                                         {
-                            #                                                                             "type": "HIGHLIGHT",
-                            #                                                                             "data": [],
-                            #                                                                             "config": highlight_config2
-                            #                                                                         },
-                            #                                                                         {
-                            #                                                                             "type": "HIGHLIGHT",
-                            #                                                                             "data": [],
-                            #                                                                             "config": highlight_config3
-                            #                                                                         },
-                            #                                                                     {
-                            #                                                                             "type": "HIGHLIGHT",
-                            #                                                                             "data": [],
-                            #                                                                             "config": highlight_config4
-                            #                                                                         }
-                            #                                                                     ],
-                            #                                                             )), 
-                            #                                                         ]),
-                            #                     ],
-                            #                     style={"textAlign": "center"}
-                            #                 ),
-                            #             ],
-                            #             style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                            #         )),                                                                                                        
+                                                 )
+                                             ],
+                                             style={
+                                                     "padding": "0",
+                                                     "backgroundColor": "transparent",
+                                                     "border": "none",
+                                             }
+                                         ),
+                                         width=6
+                                     ),                                   
+                                    # dbc.Col(dbc.Card(
+                                    #     [
+                                    #         dbc.CardBody(
+                                    #             [
+                                    #                 html.Div("Pangenome Segment Projection onto the Reference Genome"),
+                                    #                 html.Div([
+                                    #                                                     html.Div([
+                                    #                                                             html.Span(style={'display': 'inline-block',
+                                    #                                                                 'width': '10px',
+                                    #                                                                 'height': '10px',
+                                    #                                                                 'backgroundColor': "#20A277",
+                                    #                                                                 'borderRadius': '3px',
+                                    #                                                                 'marginRight': '6px'}),
+                                    #                                                             html.Span("Forward genes", style={'marginRight': '20px'}),
+                                    #                                                             html.Span(style={'display': 'inline-block',
+                                    #                                                                 'width': '10px',
+                                    #                                                                 'height': '10px',
+                                    #                                                                 'backgroundColor': "#4be950",
+                                    #                                                                 'borderRadius': '3px',
+                                    #                                                                 'marginRight': '6px'}),
+                                    #                                                             html.Span("Reverse genes", style={'marginRight': '20px'}),
+                                    #                                                             html.Span(style={'display': 'inline-block',
+                                    #                                                                 'width': '10px',
+                                    #                                                                 'height': '10px',
+                                    #                                                                 'backgroundColor': "#e31a1a",
+                                    #                                                                 'borderRadius': '3px',
+                                    #                                                                 'marginRight': '6px'}),
+                                    #                                                             html.Span("Core-genes", id="circos_legend2", style={'marginRight': '20px'}),
+                                    #                                                             html.Span(style={'display': 'inline-block',
+                                    #                                                                 'width': '10px',
+                                    #                                                                 'height': '10px',
+                                    #                                                                 'backgroundColor': '#7e099b',
+                                    #                                                                 'borderRadius': '3px',
+                                    #                                                                 'marginRight': '6px'}),
+                                    #                                                             html.Span("Strain-specific genes", id="circos_legend", style={'marginRight': '20px'}),
+                                    #                                                     ]),
+                                    #                                                     html.Div(
+                                    #                                                                 [
+                                    #                                                                     html.Span(
+                                    #                                                                         "Ref genome",
+                                    #                                                                         id="ref_genome",
+                                    #                                                                         style={
+                                    #                                                                             "fontSize": "14px",
+                                    #                                                                             "fontStyle": "italic",
+                                    #                                                                             "fontWeight": "bold"
+                                    #                                                                         }
+                                    #                                                                     )
+                                    #                                                                 ],
+                                    #                                                                 style={
+                                    #                                                                     "position": "absolute",
+                                    #                                                                     "top": "50%",
+                                    #                                                                     "left": "50%",
+                                    #                                                                     "transform": "translate(-50%, -50%)",
+                                    #                                                                     "textAlign": "center",
+                                    #                                                                     "pointerEvents": "none",
+                                    #                                                                     "zIndex": 10
+                                    #                                                                 }
+                                    #                                                             ),                                                                                       
+                                    #                                                     dcc.Loading(dash_bio.Circos(
+                                    #                                                         id="my-dashbio-default-circos-segments",
+                                    #                                                         layout=[],
+                                    #                                                         config=layout_config,
+                                    #                                                         selectEvent={ "0": "click", "1": "click", "2": "click", "3": "click"},
+                                    #                                                         style={
+                                    #                                                             "height": "800px"
+                                    #                                                         },
+                                    #                                                         tracks=[
+                                    #                                                                 {
+                                    #                                                                     "type": "HIGHLIGHT",
+                                    #                                                                     "data": [],
+                                    #                                                                     "config": highlight_config1
+                                    #                                                                 },
+                                    #                                                                 {
+                                    #                                                                     "type": "HIGHLIGHT",
+                                    #                                                                     "data": [],
+                                    #                                                                     "config": highlight_config2
+                                    #                                                                 },
+                                    #                                                                 {
+                                    #                                                                     "type": "HIGHLIGHT",
+                                    #                                                                     "data": [],
+                                    #                                                                     "config": highlight_config3
+                                    #                                                                 },
+                                    #                                                             {
+                                    #                                                                     "type": "HIGHLIGHT",
+                                    #                                                                     "data": [],
+                                    #                                                                     "config": highlight_config4
+                                    #                                                                 }
+                                    #                                                             ],
+                                    #                                                     )), 
+                                    #                                                 ]),
+                                    #             ],
+                                    #             style={"textAlign": "center"}
+                                    #         ),
+                                    #     ],
+                                    #     style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    # )
+                                    ),                                                                                                        
                                     
-                            #     ],
-                            # style= {"padding":"15px"}
-                            # ),                            
+                                ],
+                            style= {"padding":"15px"}
+                            ),                            
                  
                                     
                                                                                
@@ -3790,6 +3791,7 @@ def open_detail_modal(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_
     Output("detail-title-segment", "children"),
     Output("clicked-cell-info-segment", "children"),
     Output("selected-cell-segment", "data"),
+    Output("subgraph-result-area", "children"),
     Input('graph_gfa2', 'clickData'),
     prevent_initial_call=True
 )
@@ -3808,7 +3810,8 @@ def open_detail_modal_segment(event_pav):
         f"",
         {
             "value": segment,
-        }
+        },
+        None
     )
 
 
@@ -5813,11 +5816,6 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 )
 def run_subgraph_extraction(n_clicks,node_list_input, node_data, steps, bp_dist, viz_type, session, project_name, selected_rows):
     # Prefer the node-list text input; fall back to the stored single node
-    print(node_list_input)
-    print("y")
-    print(str(viz_type))
-    print(str(session))
-    print(project_name)
 
     node_ids_raw = ""
     if node_list_input:
@@ -5956,7 +5954,7 @@ def run_subgraph_extraction(n_clicks,node_list_input, node_data, steps, bp_dist,
         
         # Configure Layout for Interaction
         fig.update_layout(
-            width=1200, # or '100%' via style
+            width=1000, # or '100%' via style
             height=800,
             margin={"l": 0, "r": 0, "t": 0, "b": 0},
             dragmode="pan", # Enable Panning by default
