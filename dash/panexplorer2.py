@@ -5189,7 +5189,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         from skbio import DistanceMatrix
         from skbio.tree import nj
 
-        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id") and os.path.exists(vcf_file):
+        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id") and os.path.exists(vcf_file) and len(list_sp2) > 2:
             
 
             # Charger les identifiants
