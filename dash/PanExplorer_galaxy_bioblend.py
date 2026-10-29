@@ -94,7 +94,7 @@ run_pgap = gi.tools.run_tool(history['id'], "pangenome_explorer" , inputsTool)
 pgap_output = run_pgap['outputs'][0]['id']
 pgap_outtree = run_pgap['outputs'][1]['id']
 pgap_outcog = run_pgap['outputs'][3]['id']
-pgap_outgenes = run_pgap['outputs'][2]['id']
+pgap_outfunctions = run_pgap['outputs'][2]['id']
 pgap_outgc = run_pgap['outputs'][4]['id']
 pgap_outpdf = run_pgap['outputs'][5]['id']
 pgap_outheatmap = run_pgap['outputs'][6]['id']
@@ -121,7 +121,7 @@ print("Downloading results...")
 out_pgap = gi.datasets.download_dataset(pgap_output, file_path = args.o+"/1.Orthologs_Cluster.txt",maxwait=820000,require_ok_state=False,use_default_filename=False)
 outtree_pgap = gi.datasets.download_dataset(pgap_outtree, file_path = args.o+"/heatmap.svg.complete.pdf.distance_matrix.hclust.newick",maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outcog_pgap = gi.datasets.download_dataset(pgap_outcog, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
-# outgenes_pgap = gi.datasets.download_dataset(pgap_outgenes, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
+outfunctions_pgap = gi.datasets.download_dataset(pgap_outfunctions, file_path = args.o+"/functions_of_clusters.tsv",maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outgc_pgap = gi.datasets.download_dataset(pgap_outgc, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outupset_pgap = gi.datasets.download_dataset(pgap_outpdf, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
 # outheatmap_pgap = gi.datasets.download_dataset(pgap_outheatmap, file_path = args.o,maxwait=820000,require_ok_state=False,use_default_filename=False)
