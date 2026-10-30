@@ -303,7 +303,7 @@ columnDefs4 = [
 columnDefs5 = [
     {"field": "ClutserID","width": 200},
     {"field": "COG term","width": 400},
-    #{"field": "Product","width": 200},
+    {"field": "Product","width": 200},
     {"field": "type","width": 200},
     {"field": "sum","width": 100},
 ]
@@ -4312,7 +4312,12 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     #df_cog_of_clusters_grouped_by_cluster = df_cog_of_clusters_grouped_by_cluster.astype({"Cluster": int})
     merged_with_cog = pd.merge(df2, df_cog_of_clusters_grouped_by_cluster, how="left", left_on='ClutserID', right_on='Cluster')
-    
+
+    # Get functions of clusters
+    df_functions = pd.read_csv(directory+"/functions_of_clusters.tsv",sep="\t")
+    df_functions.columns = ['Cluster', 'Product']
+    merged_with_functions = pd.merge(merged_with_cog, df_functions, how="left", left_on='ClutserID', right_on='Cluster')
+    merged_with_cog = merged_with_functions
 
     
 
@@ -5751,7 +5756,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     columnDefs3 = [
         {"field": "ClutserID", "width": 120},
-        #{"field": "Product", "width": 400},
+        {"field": "Product", "width": 400},
         {"field": "COG term", "width": 500},
         {"field": "type", "width": 150}
     ]
