@@ -520,6 +520,12 @@ def sync_projects_from_yaml():
 
 # ---------- Flask + Login ----------
 server = Flask(__name__)
+# gzip compression of the JSON responses (tables, figures): large gain over the network
+try:
+    from flask_compress import Compress
+    Compress(server)
+except ImportError:
+    print("flask-compress not installed: responses are not compressed (pip install flask-compress)")
 server.secret_key = SECRET_KEY
 server.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500 MB
 server.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
@@ -3724,7 +3730,7 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     df_selected = df2[selected1]
 
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
-    dictionary_selected = df_selected.to_dict('records')
+    dictionary_selected = gene_table_records(df_selected)
 
     ##########################################
     # get clusters respecting opposite combination
@@ -3738,7 +3744,7 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     dprint(df_upset)
     df_selected_opposite = df2[selected2]
     df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
-    dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
+    dictionary_selected_opposite = gene_table_records(df_selected_opposite)
 
     ##########################################
     # update circos
@@ -3950,7 +3956,31 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
 #     return fig
 
 
-@app.callback(
+# Popup of a gene cluster: opened in the browser (clientside) so that it is displayed immediately,
+# with its title; the table of details is filled afterwards by update_detail_table (spinner).
+app.clientside_callback(
+    """
+    function(c1, c2, c3, c4, circ, pav) {
+        const dc = window.dash_clientside;
+        const trig = ((dc.callback_context.triggered || [])[0] || {}).prop_id || "";
+        const id = trig.split(".")[0];
+        const cells = {table_pangenes: c1, table_coregenes: c2, table_accessory: c3, table_pangwas: c4};
+        let cluster = "";
+        if (id in cells) {
+            const c = cells[id];
+            if (c) {
+                if (c.rowId !== undefined && c.rowId !== null) { cluster = String(c.rowId); }
+                else if (c.colId === "ClutserID" || c.colId === "Gene") { cluster = String(c.value || ""); }
+            }
+        } else if (id === "PAV_graph" && pav && pav.points && pav.points.length) {
+            cluster = String(pav.points[0].x);
+        } else if (id === "my-dashbio-default-circos" && circ) {
+            cluster = String(circ.name || "");
+        }
+        if (!cluster) { throw dc.PreventUpdate; }
+        return [true, "Cluster details for cluster : " + cluster, "", {value: cluster}, null];
+    }
+    """,
     Output("detail-modal", "is_open"),
     Output("detail-title", "children"),
     Output("clicked-cell-info", "children"),
@@ -3964,22 +3994,31 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
     Input('PAV_graph', 'clickData'),
     prevent_initial_call=True
 )
-def open_detail_modal(cell1,cell2,cell3,cell4,event_circos,event_pav):
-    cluster = get_cluster_from_trigger(ctx.triggered_id, cell1, cell2, cell3, cell4, event_circos, event_pav)
-    if not cluster:
-        raise PreventUpdate
 
-    return (
-        True,
-        f"Cluster details for cluster : {cluster}",
-        f"",
-        {
-            "value": cluster,
-        },
-        None
-    )
-
-@app.callback(
+# Popup of a segment: opened in the browser (clientside), details filled by update_detail_segment.
+app.clientside_callback(
+    """
+    function(pav, c1, c2, c3, circ) {
+        const dc = window.dash_clientside;
+        const trig = ((dc.callback_context.triggered || [])[0] || {}).prop_id || "";
+        const id = trig.split(".")[0];
+        const cells = {table_segments_list: c1, table_segments_core: c2, table_segments_specific: c3};
+        let segment = "";
+        if (id === "graph_gfa2" && pav && pav.points && pav.points.length) {
+            segment = String(pav.points[0].x);
+        } else if (id in cells) {
+            const c = cells[id];
+            if (c) {
+                if (c.rowId !== undefined && c.rowId !== null && c.rowId !== "") { segment = String(c.rowId); }
+                else if (c.colId === "Node") { segment = String(c.value || ""); }
+            }
+        } else if (id === "circos-segments" && circ) {
+            segment = String(circ.name || "");
+        }
+        if (!segment) { throw dc.PreventUpdate; }
+        return [true, "Details for segment : " + segment, "", {value: segment}, null];
+    }
+    """,
     Output("detail-modal-segment", "is_open"),
     Output("detail-title-segment", "children"),
     Output("clicked-cell-info-segment", "children"),
@@ -3992,29 +4031,6 @@ def open_detail_modal(cell1,cell2,cell3,cell4,event_circos,event_pav):
     Input('circos-segments', 'eventDatum'),
     prevent_initial_call=True
 )
-def open_detail_modal_segment(event_pav, cell_segment=None, cell_core=None, cell_specific=None, event_circos=None):
-    triggered_table = ctx.triggered_id
-
-    # row = ""
-    segment = ""
-    if triggered_table == "graph_gfa2":
-        wjdata = json.loads(json.dumps(event_pav, indent=2))
-        segment = wjdata['points'][0]['x']
-    elif triggered_table in ("table_segments_list", "table_segments_core", "table_segments_specific", "circos-segments"):
-        segment = get_segment_from_trigger(triggered_table, cell_segment, cell_core, cell_specific, event_circos)
-        if not segment:
-            raise PreventUpdate
-
-    return (
-        True,
-        f"Details for segment : {segment}",
-        f"",
-        {
-            "value": segment,
-        },
-        None
-    )
-
 
 @app.callback(
     Output('current_cluster', 'value'),
@@ -4757,12 +4773,11 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     nb_of_selected_clusters = ""
     nb_of_selected_clusters2 = ""
     nb_of_clusters = ""
-    table_cluster1 = core_df.to_dict('records')
-    table_pangenes = merged_with_cog.to_dict('records')
+    table_cluster1 = gene_table_records(core_df)
 
     
     
-    table_cluster2 = specific_df.to_dict('records')
+    table_cluster2 = gene_table_records(specific_df)
     circos_legend2 = ["Core-genes"]
     circos_legend = ["Strain-specific genes"]
     if specific_to:
@@ -4789,7 +4804,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         df_selected = df_upset.loc[selected]
         df_selected = df2[selected]
         df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
-        dictionary_selected = df_selected.to_dict('records')
+        dictionary_selected = gene_table_records(df_selected)
 
 
         ##########################################
@@ -4805,7 +4820,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         df_selected_opposite = df2[selected]
         df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
 
-        dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
+        dictionary_selected_opposite = gene_table_records(df_selected_opposite)
 
 
         list_clusters1 = df_selected["ClutserID"].tolist()
@@ -4974,7 +4989,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     
     
-    table_pangenes = merged_with_cog.to_dict('records')
+    table_pangenes = gene_table_records(merged_with_cog)
     merged_with_cog.to_csv(tmp_dir + "/" + str(session) + ".export_merged_with_cog.csv")
     
     current_layout = karyotype_dict_list
@@ -8258,14 +8273,14 @@ def show_cluster_with_combination(click,session,current_layout,current_tracks):
     selected = (df_upset == mask).all(axis=1)
     df_selected = df2[selected]
     df_selected.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv")
-    dictionary_selected = df_selected.to_dict('records')
+    dictionary_selected = gene_table_records(df_selected)
 
     # clusters matching the opposite (inverse) pattern
     mask_opposite = pd.Series(combination_opposite, index=df_upset.columns)
     selected_opposite = (df_upset == mask_opposite).all(axis=1)
     df_selected_opposite = df2[selected_opposite]
     df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
-    dictionary_selected_opposite = df_selected_opposite.to_dict('records')
+    dictionary_selected_opposite = gene_table_records(df_selected_opposite)
 
     ##########################################
     # update circos (meme principe que le clic sur la heatmap :
@@ -9301,7 +9316,6 @@ def get_clusters_respecting_combination(session,combination):
     selected = (df_upset == mask).all(axis=1)
     df_selected = df_upset.loc[selected]
     df_selected = df2[selected]
-    dictionary_selected = df_selected.to_dict('records')
 
     return df_selected
 
@@ -9836,6 +9850,15 @@ def download_segments_list(n, session, reference):
 # Gene tables: same rendering as the segment tables
 #############################################################################################
 
+GENE_TABLE_COLUMNS = ["ClutserID", "type", "Product", "COG term"]
+
+def gene_table_records(df):
+    """rowData of the gene tables: only the displayed columns (columnDefs3). Sending the whole
+    dataframe (one PAV column per genome) made the JSON 10-100x bigger and very slow on the server."""
+    cols = [c for c in GENE_TABLE_COLUMNS if c in df.columns]
+    return df[cols].to_dict('records')
+
+
 def get_cluster_from_trigger(triggered, cell1, cell2, cell3, cell4, event_circos, event_pav):
     """Cluster id of the clicked element. Gene tables use getRowId (ClutserID / Gene), so the
     cellClicked event is enough: the whole rowData of the tables is no longer sent to the server."""
@@ -9877,13 +9900,19 @@ def get_row_from_cell(cell, row_data):
 
 @app.callback(
     Output("genes_list_summary", "children"),
-    Input("table_pangenes", "rowData"),
+    Input("current_session", "value"),
     prevent_initial_call=True
 )
-def update_genes_list_summary(row_data):
-    if not row_data:
+def update_genes_list_summary(session):
+    # computed from the file written by the main update (instead of Input rowData, which made the
+    # browser send the whole table back to the server)
+    f = tmp_dir + "/" + str(session) + ".merged_with_cog_final.csv"
+    if not session or not validate_session_id(session) or not os.path.exists(f):
         return ""
-    types = pd.Series([r.get("type", "") for r in row_data])
+    try:
+        types = pd.read_csv(f, sep="\t", usecols=["type"])["type"]
+    except (ValueError, KeyError):
+        return ""
 
     def badge(label, n, color):
         return html.Span(
@@ -10194,11 +10223,41 @@ def get_snp_from_trigger(triggered, click_vcf, cell1, cell2, cell3):
     return get_segment_from_cell(cell)
 
 
-@app.callback(
+# Popup of a SNP: opened in the browser (clientside), details filled by update_detail_snp.
+app.clientside_callback(
+    """
+    function(click, c1, c2, c3) {
+        const dc = window.dash_clientside;
+        const trig = ((dc.callback_context.triggered || [])[0] || {}).prop_id || "";
+        const id = trig.split(".")[0];
+        const cells = {table_snps_list: c1, table_snps_pattern: c2, table_snps_opposite: c3};
+        let snp = "";
+        if (id === "VCF_graph" && click && click.points && click.points.length) {
+            snp = String(click.points[0].x === undefined ? "" : click.points[0].x);
+        } else if (id in cells) {
+            const c = cells[id];
+            if (c) {
+                if (c.rowId !== undefined && c.rowId !== null && c.rowId !== "") { snp = String(c.rowId); }
+                else if (c.colId === "SNP" || c.colId === "Node") { snp = String(c.value || ""); }
+            }
+        }
+        if (!snp) { throw dc.PreventUpdate; }
+        return [true, "Details for SNP : " + snp, {value: snp}];
+    }
+    """,
     Output("detail-modal-snp", "is_open"),
     Output("detail-title-snp", "children"),
-    Output("detail-table-container-snp", "children"),
     Output("selected-cell-snp", "data"),
+    Input("VCF_graph", "clickData"),
+    Input("table_snps_list", "cellClicked"),
+    Input("table_snps_pattern", "cellClicked"),
+    Input("table_snps_opposite", "cellClicked"),
+    prevent_initial_call=True
+)
+
+
+@app.callback(
+    Output("detail-table-container-snp", "children"),
     Input("VCF_graph", "clickData"),
     Input("table_snps_list", "cellClicked"),
     Input("table_snps_pattern", "cellClicked"),
@@ -10206,13 +10265,13 @@ def get_snp_from_trigger(triggered, click_vcf, cell1, cell2, cell3):
     State("current_session", "value"),
     prevent_initial_call=True
 )
-def open_detail_modal_snp(click_vcf, cell1, cell2, cell3, session):
+def update_detail_snp(click_vcf, cell1, cell2, cell3, session):
     snp = get_snp_from_trigger(ctx.triggered_id, click_vcf, cell1, cell2, cell3)
     if not snp:
         raise PreventUpdate
     df_list, df_alt = build_snps_tables(session)
     if df_list is None or snp not in df_alt.index:
-        raise PreventUpdate
+        return html.Div("No details found for this SNP.")
     info = df_list[df_list["SNP"] == snp].iloc[0]
 
     # genotype of each genome, with metadata when available
@@ -10249,7 +10308,7 @@ def open_detail_modal_snp(click_vcf, cell1, cell2, cell3, session):
             style={"height": "400px"},
         ),
     ])
-    return True, f"Details for SNP : {snp}", details, {"value": snp}
+    return details
 
 
 @app.callback(
@@ -10409,4 +10468,6 @@ def update_circos_ticks_segments(circos_layout):
 if __name__ == "__main__":
     init_db()
     sync_projects_from_yaml()
-    server.run(host= '0.0.0.0',debug=True, port=8050)
+    # debug mode only on demand (PANEXPLORER_DEBUG=1): in debug mode Dash validates every
+    # property (huge tables) in the browser and Flask runs the reloader, which is very slow.
+    server.run(host='0.0.0.0', debug=PANEXPLORER_DEBUG, port=8050, threaded=True)
