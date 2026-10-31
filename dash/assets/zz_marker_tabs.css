@@ -1,0 +1,57 @@
+/* Upper tabs (types of markers: genes, segments, SNPs, ...) in panexplorer2.py.
+   custom.css and tweak.css style every ".tab" with !important (underlined style), which
+   overrides the inline styles of dcc.Tab: these rules use two classes (.tab.marker-tab)
+   so that they win over ".tab" whatever the loading order. */
+
+.marker-tabs {
+  border-bottom: 3px solid #9CA3AF !important;
+  gap: 4px;
+}
+
+.tab.marker-tab {
+  border: 1px solid #D1D5DB !important;
+  border-bottom: none !important;
+  border-radius: 10px 10px 0 0 !important;
+  background-color: #F3F4F6 !important;
+  color: #4B5563 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  margin-right: 4px;
+}
+
+.tab.marker-tab:hover {
+  background-color: #E5E7EB !important;
+  color: #111827 !important;
+  border-color: #9CA3AF !important;
+}
+
+.tab.marker-tab.marker-tab--selected,
+.tab.marker-tab--selected {
+  background-color: #D1D5DB !important;
+  color: #111827 !important;
+  border: 1px solid #9CA3AF !important;
+  border-top: 3px solid #4B5563 !important;
+  border-bottom: none !important;
+  font-weight: 700 !important;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, .12) !important;
+}
+
+.tab.marker-tab--selected span {
+  color: #111827 !important;
+}
+
+
+/* ---------- Dropdowns: no uppercase ----------
+   s1.css (skeleton) applies "text-transform: uppercase", small font and letter-spacing to every
+   <button>. Recent dcc.Dropdown versions render their control and options with <button> elements,
+   so the dropdowns appeared in uppercase. Restore normal text inside dropdowns. */
+.dash-dropdown button,
+.dash-dropdown-wrapper button,
+[class*="dash-dropdown"] button,
+button[class*="dash-dropdown"],
+[class*="dash-dropdown"] [role="option"],
+.Select, .Select-control, .Select-value-label, .Select-option, .Select-placeholder {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
