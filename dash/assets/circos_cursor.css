@@ -1,0 +1,30 @@
+/* Circos of genes (my-dashbio-default-circos) and of segments (circos-segments):
+   hand cursor + visual feedback on the clickable elements (genes / segments of the tracks).
+   The ideograms / ticks / labels of the layout (group .cs-layout) are not clickable. */
+
+#my-dashbio-default-circos svg path,
+#circos-segments svg path {
+    cursor: pointer;
+    transition: opacity 0.1s ease-in-out;
+}
+
+#my-dashbio-default-circos svg path:hover,
+#circos-segments svg path:hover {
+    opacity: 1 !important;
+    stroke: #111;
+    stroke-width: 1.5px;
+    filter: brightness(0.8);
+}
+
+/* layout (chromosomes, ticks, labels): normal cursor, no hover effect */
+#my-dashbio-default-circos svg .cs-layout,
+#my-dashbio-default-circos svg .cs-layout *,
+#circos-segments svg .cs-layout,
+#circos-segments svg .cs-layout * {
+    cursor: default;
+}
+#my-dashbio-default-circos svg .cs-layout path:hover,
+#circos-segments svg .cs-layout path:hover {
+    stroke: none;
+    filter: none;
+}
