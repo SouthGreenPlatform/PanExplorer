@@ -7,9 +7,15 @@ import secrets
 import logging
 import uuid
 from datetime import datetime, time, timedelta
-from functools import wraps
+from functools import wraps, lru_cache
 from typing import Tuple, Optional, List, Dict, Any
 import time as time_module
+
+PANEXPLORER_DEBUG = os.environ.get("PANEXPLORER_DEBUG", "0") == "1"
+def dprint(*args, **kwargs):
+    """Debug print, silent in production (export PANEXPLORER_DEBUG=1 to enable)."""
+    if PANEXPLORER_DEBUG:
+        print(*args, **kwargs)
 
 from werkzeug.utils import secure_filename
 
@@ -854,7 +860,7 @@ def build_browse_ui(session_code=None, project=None):
             if not proj:
                 dir = conf["session_dir"] + "/" + session_code
                 if os.path.isdir(dir):
-                    print("exists")
+                    dprint("exists")
                 else:
                     return html.Br(), dbc.Alert(html.P("Session does not exist", className="alert-heading"), color="danger")
         else:
@@ -1436,6 +1442,7 @@ def load_project_preview(proj_title):
                                                                 dag.AgGrid(
                                                                         id="table_pangenes",
                                                                         rowData=[],
+                                                                        getRowId="params.data.ClutserID",
                                                                         defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                         style={"height": "250px", "width": "100%"},
                                                                         dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"}
@@ -1455,6 +1462,7 @@ def load_project_preview(proj_title):
                                                                 dag.AgGrid(
                                                                         id="table_coregenes",
                                                                         rowData=[],
+                                                                        getRowId="params.data.ClutserID",
                                                                         defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                         style={"height": "250px", "width": "100%"},
                                                                         dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"}
@@ -1472,6 +1480,7 @@ def load_project_preview(proj_title):
                                                                 dag.AgGrid(
                                                                         id="table_accessory",
                                                                         rowData=[],
+                                                                        getRowId="params.data.ClutserID",
                                                                         defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                         style={"height": "250px", "width": "100%"},
                                                                         dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"}
@@ -1637,6 +1646,7 @@ def load_project_preview(proj_title):
                                                     dcc.Loading(dag.AgGrid(
                                                         id="table_pangwas",
                                                         rowData=[],
+                                                        getRowId="params.data.Gene",
                                                         columnDefs=columnDefs7,
                                                         defaultColDef={"filter": "agTextColumnFilter"},
                                                         style={'width': '80vh',"height": '350px','margin-left': '1px'},
@@ -3286,9 +3296,9 @@ def select_or_deselect_all_strains(n_select, n_deselect, row_data):
     State('current_session', 'value'),
 )
 def update_geo_pie_clusters(rowData, tab_value, session):
-    print("recalculate map...")
-    print(tab_value)
-    print(rowData)
+    dprint("recalculate map...")
+    dprint(tab_value)
+    dprint(rowData)
 
     if tab_value != 'Hierarchical clustering':
         raise PreventUpdate
@@ -3699,8 +3709,8 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     # get clusters respecting combination
     ##########################################
     list_strains,combination,combination_opposite = get_combination(cluster,pathname,list_of_strains)
-    print(combination)
-    print(combination_opposite)
+    dprint(combination)
+    dprint(combination_opposite)
     df_upset = pd.read_csv(tmp_dir + "/" + str(session) + ".df_upset.csv", index_col=0)
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
     
@@ -3725,7 +3735,7 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     )
     selected2 = (df_upset == mask_opposite).all(axis=1)
     df_selected_opposite = df_upset.loc[selected2]
-    print(df_upset)
+    dprint(df_upset)
     df_selected_opposite = df2[selected2]
     df_selected_opposite.to_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv")
     dictionary_selected_opposite = df_selected_opposite.to_dict('records')   
@@ -3759,48 +3769,20 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
 @app.callback(
     Output("detail-table-container", "children"),
     Input('table_pangenes', 'cellClicked'),
-    State("table_pangenes", "rowData"),
     Input('table_coregenes', 'cellClicked'),
-    State("table_coregenes", "rowData"),
     Input('table_accessory', 'cellClicked'),
-    State("table_accessory", "rowData"),
     Input('table_pangwas', 'cellClicked'),
-    State("table_pangwas", "rowData"),
     Input("my-dashbio-default-circos", "eventDatum"),
     Input('PAV_graph', 'clickData'),
     State("projets", "value"),
     State('metadata_table','selectedRows'),
     prevent_initial_call=True
 )
-def update_detail_table(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_data4,event_circos,event_pav,projets,metadata_table):
-    triggered_table = ctx.triggered_id
+def update_detail_table(cell1,cell2,cell3,cell4,event_circos,event_pav,projets,metadata_table):
+    cluster = get_cluster_from_trigger(ctx.triggered_id, cell1, cell2, cell3, cell4, event_circos, event_pav)
+    if not cluster:
+        raise PreventUpdate
 
-    # row = ""
-    cluster = ""
-    if triggered_table == "table_pangenes":
-        row_index = cell1["rowIndex"]
-        row = get_row_from_cell(cell1, row_data1)
-        cluster = row["ClutserID"]
-    elif triggered_table == "table_coregenes":
-        row_index = cell2["rowIndex"]
-        row = get_row_from_cell(cell2, row_data2)
-        cluster = row["ClutserID"]    
-    elif triggered_table == "table_accessory":
-        row_index = cell3["rowIndex"]
-        row = get_row_from_cell(cell3, row_data3)
-        cluster = row["ClutserID"]
-    elif triggered_table == "table_pangwas":
-        row_index = cell4["rowIndex"]
-        row = row_data4[row_index]
-        cluster = row["Gene"]
-    elif triggered_table == "PAV_graph":
-        wjdata = json.loads(json.dumps(event_pav, indent=2))
-        cluster = wjdata['points'][0]['x']
-    elif triggered_table == "my-dashbio-default-circos":
-        cluster = event_circos['name']
-
-    
-    
     list_of_strains = []
     if metadata_table:
         wjdata1 = json.loads(json.dumps(metadata_table, indent=2))
@@ -3808,11 +3790,7 @@ def update_detail_table(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,ro
             strain_name = strain['Strain name']
             list_of_strains.append(strain_name) 
 
-    if cluster:
-        nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
-        cmd = "grep '\t"+str(cluster)+"\t' "+directory+"/merged_with_cog.txt"
-        infos_cluster = os.popen(cmd).read().split("\t")
-        selected_cluster = "Selected cluster: " + str(cluster) + ", " + str(infos_cluster[2])   
+    nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
 
     return dag.AgGrid(
         id="detail-grid",
@@ -3979,44 +3957,17 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
     Output("selected-cell", "data"),
     Output("default-alignment-viewer-output", "children"),
     Input('table_pangenes', 'cellClicked'),
-    State("table_pangenes", "rowData"),
     Input('table_coregenes', 'cellClicked'),
-    State("table_coregenes", "rowData"),
     Input('table_accessory', 'cellClicked'),
-    State("table_accessory", "rowData"),
     Input('table_pangwas', 'cellClicked'),
-    State("table_pangwas", "rowData"),
     Input("my-dashbio-default-circos", "eventDatum"),
     Input('PAV_graph', 'clickData'),
     prevent_initial_call=True
 )
-def open_detail_modal(cell1,row_data1,cell2,row_data2,cell3,row_data3,cell4,row_data4,event_circos,event_pav):
-    triggered_table = ctx.triggered_id
-
-    # row = ""
-    cluster = ""
-    if triggered_table == "table_pangenes":
-        row_index = cell1["rowIndex"]
-        row = get_row_from_cell(cell1, row_data1)
-        cluster = row["ClutserID"]
-    elif triggered_table == "table_coregenes":
-        row_index = cell2["rowIndex"]
-        row = get_row_from_cell(cell2, row_data2)
-        cluster = row["ClutserID"]     
-    elif triggered_table == "table_accessory":
-        row_index = cell3["rowIndex"]
-        row = get_row_from_cell(cell3, row_data3)
-        cluster = row["ClutserID"]
-    elif triggered_table == "table_pangwas":
-        row_index = cell4["rowIndex"]
-        row = row_data4[row_index]
-        cluster = row["Gene"]
-    elif triggered_table == "PAV_graph":
-        wjdata = json.loads(json.dumps(event_pav, indent=2))
-        cluster = wjdata['points'][0]['x']
-    elif triggered_table == "my-dashbio-default-circos":
-        cluster = event_circos['name']
-
+def open_detail_modal(cell1,cell2,cell3,cell4,event_circos,event_pav):
+    cluster = get_cluster_from_trigger(ctx.triggered_id, cell1, cell2, cell3, cell4, event_circos, event_pav)
+    if not cluster:
+        raise PreventUpdate
 
     return (
         True,
@@ -4200,12 +4151,49 @@ def get_node_genes_metadata(node, pathname, reference, session):
         print(f"Error in get_node_genes_metadata: {e}")
         return {"node_id": num_node, "genes": [], "error": str(e)}
         
+@lru_cache(maxsize=4)
+def _load_ortholog_rows(matrix_file, mtime):
+    """{cluster_id: list of cells} + header of 1.Orthologs_Cluster.txt, read once per file version."""
+    rows = {}
+    with open(matrix_file, encoding="utf-8", errors="replace") as fh:
+        header = fh.readline().rstrip("\n").split("\t")
+        for line in fh:
+            tab = line.find("\t")
+            if tab > 0:
+                rows[line[:tab]] = line
+    return header, rows
+
+
+@lru_cache(maxsize=1024)
+def _load_ptt_products(ptt_file, mtime):
+    """{gene identifier: product} for a .ptt file (PID, Gene and Synonym columns)."""
+    products = {}
+    try:
+        with open(ptt_file, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                cols = line.rstrip("\n").split("\t")
+                if len(cols) > 8:
+                    for idx in (5, 4, 3):  # PID has priority
+                        if cols[idx] and cols[idx] != "-":
+                            products[cols[idx]] = cols[8]
+    except OSError:
+        pass
+    return products
+
+
+def _mtime(path):
+    try:
+        return os.path.getmtime(path)
+    except OSError:
+        return 0
+
+
 def get_cluster_details(cluster,pathname,list_of_strains):
-    
+
     global directory
 
     if not pathname:
-        return "No project."
+        return 0, [], ""
     row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
     path = ""
     if not row:
@@ -4214,59 +4202,34 @@ def get_cluster_details(cluster,pathname,list_of_strains):
         path = row[0]
     directory = path
 
-    
-    df_matrix = pd.read_csv(directory+'/1.Orthologs_Cluster.txt',sep='\t')
-    mini_df = df_matrix[df_matrix["ClutserID"] == int(cluster)]
-    
-    # generate a new dataframe from a list of list
+    matrix_file = directory + '/1.Orthologs_Cluster.txt'
+    header, rows = _load_ortholog_rows(matrix_file, _mtime(matrix_file))
+    line = rows.get(str(cluster).strip())
+    if line is None:
+        try:
+            line = rows.get(str(int(float(cluster))))
+        except (TypeError, ValueError):
+            line = None
+    if line is None:
+        return 0, [], ""
+    cells = line.rstrip("\n").split("\t")
+
+    selected = set(list_of_strains)
     list_of_list = []
     nb_presence = 0
-    combination = ""
-    for item in mini_df.columns:
-        if item != 'ClutserID' and item in list_of_strains:
-            genes = mini_df[item]
-            keep = True
-            
-            for gene in genes:
-                if gene == "-":
-                    keep = False
-            if keep:
-                list_genes = ','.join(map(str,genes)) 
+    for item, genes in zip(header, cells):
+        if item == 'ClutserID' or item not in selected or genes == "-":
+            continue
+        ptt_file = directory + "/genomes/genomes/" + item + ".ptt"
+        products = _load_ptt_products(ptt_file, _mtime(ptt_file))
+        product = ""
+        for gene in genes.split(","):
+            product = products.get(gene.strip(), product)
+        list_of_list.append({'Cluster': int(cells[0]) if cells[0].isdigit() else cells[0],
+                             'Species': item, 'Genes': genes, 'Product': product})
+        nb_presence += 1
 
-
-                for gene in genes:
-                    cmd = "grep '"+gene+"' "+directory+"/genomes/genomes/"+item+".ptt | tail -1"
-                    result = os.popen(cmd).read()
-                    info_cols = result.split("\t")
-                    product = ""
-                    if len(info_cols) > 6:
-                        product=info_cols[8]
-                        
-
-                list = [int(cluster),item,list_genes,product]
-                list_of_list.append(list)
-                nb_presence+=1
-                combination = combination+str(item)
-
-    mydf = pd.DataFrame(list_of_list, columns = ['Cluster','Species','Genes','Product']) 
-
-    
-    concat = ""
-    for gene in list_of_list:
-        speciesname = gene[1]
-        genename = gene[2]
-        cmd = "grep -A 1 '"+genename+"' "+directory+"/genomes/genomes/"+speciesname+".faa | tail -1"
-        result = os.popen(cmd).read()
-
-        concat = concat + ">"+genename + "_" + speciesname + "\n" + result
-        
-    data = concat
-    #print(data)
-    #data = ">test\nP\t>test2\nP"
-    mydf.to_csv('export_cluster_details.txt')
-    dictionary = mydf.to_dict('records')
-
-    return nb_presence,dictionary,data
+    return nb_presence, list_of_list, ""
 
 
 
@@ -4432,7 +4395,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     session = str(uuid.uuid4())
 
-    print("Initialisation of dataframes")
+    dprint("Initialisation of dataframes")
 
     df,df_metadata,df_ANI,merged_with_positions,list_species,list_continent,list_organisms,karyotype_dict_list,dict_list_gene_plus,dict_list_gene_minus,df_matrix = init_dataframes(path)
     list_of_lists = []
@@ -4493,7 +4456,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     # transpose and save
     df2_bis = df2.set_index("ClutserID")
     matrix01_transpose_df = df2_bis.transpose()
-    df2_bis.to_csv(tmp_dir + "/" + str(session) + ".matrix01.before_transposition.tsv",sep="\t")
+    pass  # debug export removed (perf): df2_bis.to_csv(tmp_dir + "/" + str(session) + ".matrix01.before_transposition.tsv",sep="\t")
     matrix01_transpose_df.to_csv(tmp_dir + "/" + str(session) + ".matrix01.tsv",sep="\t")
 
 
@@ -4527,7 +4490,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     ##############################################
     # Generate Core-gene and accessory files
     ##############################################
-    print("Generate Core-gene and accessory files")
+    dprint("Generate Core-gene and accessory files")
     with open(directory+"/cog_of_clusters.2.txt", "w") as out:
         subprocess.run(
             ["awk" , "{print $1\"\t\"$2\"\t\"$3}", directory+"/cog_of_clusters.txt"],
@@ -4574,7 +4537,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     # Generate rarefaction curve. Takes randomly N columns from dataframe
     # and counts number of pan- and core-genes
     ####################################################################
-    print("Generate rarefaction curve")
+    dprint("Generate rarefaction curve")
     strain_index = 0
     df01_only = df[list_sp2]
     
@@ -4604,8 +4567,8 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     data = {'Number strains': list1,'Number genes': list2,"Type": list3}
     df_rarefaction = pd.DataFrame(data)
-    df_rarefaction.to_csv(tmp_dir + "/" +"rarefactiontest2.txt",index=False)
-    df_rarefaction2 = pd.read_csv(tmp_dir + "/" +'rarefactiontest2.txt',sep=',')
+    # in-memory round trip (was a file shared by all sessions in tmp_dir)
+    df_rarefaction2 = pd.read_csv(io.StringIO(df_rarefaction.to_csv(index=False)),sep=',')
     fig_rarefaction = px.box(df_rarefaction2, title="Rarefaction curve",x="Number strains", y="Number genes",color="Type")
 
     # ##########################################################
@@ -4651,7 +4614,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     #     #    df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
 
 
-    print("ok0")
+    dprint("ok0")
     #################################################
     # manage Circos
     #################################################
@@ -4684,8 +4647,8 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         # create a simplified matrix, with only the first gene if a list of genes for the reference
         simplified_df_matrix = df_matrix
 
-        print(simplified_df_matrix)
-        print(df_gene_positons)
+        dprint(simplified_df_matrix)
+        dprint(df_gene_positons)
 
         simplified_df_matrix[[reference]] = simplified_df_matrix[reference].str.extract('([^,]+),*', expand=True)
 
@@ -4724,7 +4687,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
 
     merged_with_cog = merged_with_cog_term
-    merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
+    pass  # debug export removed (perf): merged_with_cog.to_csv(directory+"/merged_with_cog.txt",sep="\t")
 
     core_df = merged_with_cog[merged_with_cog["sum"] == len(list_sp2)]
     specific_df = merged_with_cog[merged_with_cog["sum"] == 1]
@@ -4944,13 +4907,13 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
         df_defense = pd.read_csv("/mnt/c/Users/dereeper/Documents/formation_python_scientifique_2022/dash/defense_pav.tsv",sep="\t")
         types = df_defense["Type"].astype(str).tolist()
-        print("type ====================================")
-        print(types)
+        dprint("type ====================================")
+        dprint(types)
         
         transposed_df = df_defense.transpose()
 
         list_ind = df_defense.columns.to_list()
-        print(list_ind)    
+        dprint(list_ind)    
 
         z = []
         for row in transposed_df.itertuples():
@@ -5039,7 +5002,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
 
         df_count = merged_with_cog.groupby(['COGcat']).size().reset_index(name='counts')
-        df_count.to_csv("COG.count.txt")
+        pass  # debug export removed (perf): df_count.to_csv("COG.count.txt")
 
         occur = df_cog_of_clusters.groupby(['COG']).size()
         top30 = df_cog_of_clusters['COG'].value_counts().head(30).reset_index()
@@ -5065,7 +5028,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         fig_COG2 = px.bar(top30_with_cog_term, x='counts', y='COG term', orientation='h', title="Top 30 most frequent COGs in the pangenome")
 
 
-    print("ok2")
+    dprint("ok2")
 
     ##############################
     # KEGG graphes
@@ -5224,9 +5187,9 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     try:
         os.makedirs(selection_dir)
-        print(f"Nested directories '{selection_dir}' created successfully.")
+        dprint(f"Nested directories '{selection_dir}' created successfully.")
     except FileExistsError:
-        print(f"One or more directories in '{selection_dir}' already exist.")
+        dprint(f"One or more directories in '{selection_dir}' already exist.")
     except PermissionError:
         print(f"Permission denied: Unable to create '{selection_dir}'.")
     except Exception as e:
@@ -5347,7 +5310,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     with open(tmp_dir + "/" + str(session) + ".selected_genomes.txt", "w") as f:
         f.write("\n".join(list_selected) + "\n")
 
-    print("ok4")
+    dprint("ok4")
 
     ##############################################################################################
     # SNP
@@ -5483,7 +5446,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
             with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
                 snp_based_newick = fp.read()
                 df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
-                df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+                pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
                 generate_tree_html(snp_based_newick, df_metadata_selected, "Country", "assets/snp_based_tree."+str(session)+".html")
 
 
@@ -5572,7 +5535,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
                     #print(pop_name + " : " + individuals)
                     # keep the same name of population if it exists in previous dict
                     if individuals in previous_dict_groups:
-                        print("do nothing here")
+                        dprint("do nothing here")
                     # else it means that the pop has been splitted into two populations
                     else:
                         if len(previous_dict_groups) > 0:
@@ -5593,7 +5556,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
                                     
 
-                            print("splitted")
+                            dprint("splitted")
                             
                             
 
@@ -5622,7 +5585,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
                             #print(dict_of_pop_in_previous.keys())
                             #print(list(dict_of_pop_in_previous)[0])
                         else:
-                            print("do nothing")
+                            dprint("do nothing")
 
                 #print("Dict renaming before adjustment")
                 #print(dict_renaming)
@@ -5642,7 +5605,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
                     if len(list_values) > 1:
                         has_been_adjusted = 0
                         for val in list_values:
-                            print("val: " + val)
+                            dprint("val: " + val)
                             if val not in dict_done:
                                 has_been_adjusted = 1
                                 dict_renaming[key] = val
@@ -5694,7 +5657,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
             dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
 
         dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
-        print(dict_cross_entropy)
+        dprint(dict_cross_entropy)
         df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
 
         #################################################################
@@ -5791,7 +5754,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
             f"{tmp_dir}/{session}.{reference}.segments",
             ",".join(list_sp2)
         ]
-        print(cmd_args)
+        dprint(cmd_args)
         subprocess.run(cmd_args, capture_output=True)
 
         with open(tmp_dir +"/"+str(session) + "." + str(reference)+".segments.stats.txt",'r') as file:
@@ -5861,7 +5824,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         scoary_output_file2 = tmp_dir + "/" + str(session) + ".scoary_results2.txt"
         if specific_to is not None and len(specific_to) > 0:
 
-            print("TO BE MOVED")
+            dprint("TO BE MOVED")
             # with open(tmp_dir + "/" + str(session) + ".scoary_input2.csv", "a") as i:
             #     df_for_scoary = pd.read_csv(tmp_dir + "/" + str(session) + "." + str(reference) + ".segments.node_pav.tsv",sep='\t')
             #     col_position = df_for_scoary.columns.get_loc("Node") + 1
@@ -5998,7 +5961,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     
 
 
-    print("ok5")
+    dprint("ok5")
     
     ##############################################################################################
     # merge main cluster table and cluster search in order to report the same columns
@@ -6040,7 +6003,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
     nb_genomes = str(len(list_sp2))
     
-    print("ok6")
+    dprint("ok6")
     return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
 
 ############################################
@@ -6160,7 +6123,7 @@ def run_subgraph_extraction(n_clicks,node_list_input, node_data, steps, bp_dist,
 
     # --- 4. Run Script ---
     full_cmd = " ".join(cmd_parts)
-    print(f"Running: {full_cmd}")
+    dprint(f"Running: {full_cmd}")
     
     try:
         subprocess.run(cmd_parts, check=True, capture_output=True, text=True)
@@ -6378,7 +6341,7 @@ def run_sequence_alignment(n_clicks, fasta_content, read_type, context_steps, co
     elif context_steps is not None:
         cmd.extend(["-n", str(context_steps)])
     
-    print(f"Running Alignment: {' '.join(cmd)}")
+    dprint(f"Running Alignment: {' '.join(cmd)}")
     
     # 4. Run Script
     try:
@@ -6725,17 +6688,14 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
             strain_name = strain['Strain name']
             list_sp2.append(strain_name)
 
-    print("Heatmap PAV function")
+    dprint("Heatmap PAV function")
     cluster_names=[]
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
-    df_matrix = pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv")
     df_metadata3 = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
 
     df_clustering = None
     if os.path.exists(tmp_dir+ "/"+str(session)+".clusters.tsv"):
         df_clustering = pd.read_csv(tmp_dir+ "/"+str(session)+".clusters.tsv",sep='\t')
-    merged_with_cog = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv")
-    df = pd.read_csv(tmp_dir + "/" + str(session) + ".df.csv")
     merged_with_positions2 = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
     transposed_df = pd.DataFrame()
     df2 = pd.read_csv(tmp_dir + "/" + str(session) + ".df2.csv")
@@ -6748,7 +6708,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
     colorscale = []
     zmax = 1
 
-    print(cluster_search)
+    dprint(cluster_search)
     if colorizing == "Reference genome" or colorizing == "Core-genes" or colorizing == "Strain-specific genes" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     else:
@@ -6968,7 +6928,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
     if bedfile is not None and bedfile != "":
 
-        print("analysis of bedfile")
+        dprint("analysis of bedfile")
         lines_of_bedfile = bedfile.split("\n")
 
         df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
@@ -7021,7 +6981,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
         df2['ClutserID'] = df2['ClutserID'].astype(int)
         merged_with_positions3 = pd.merge(df2, merged_with_positions2, left_on='ClutserID', right_on='name')
         merged_with_positions3 = merged_with_positions3.sort_values(by=['block_id','start'],ascending=True)
-        merged_with_positions3.to_csv("export.tsv")
+        pass  # debug export removed (perf): merged_with_positions3.to_csv("export.tsv")
         merged_with_positions3["col_concat"] = merged_with_positions3["block_id"].astype(str) + ":" + merged_with_positions3["start"].astype(str) + ":" + merged_with_positions3["ClutserID"].astype(str)
         cluster_names = merged_with_positions3["col_concat"].astype(str).tolist()
         list_chromosomes = merged_with_positions3["block_id"].tolist()
@@ -7049,7 +7009,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
         df_scoary_results = pd.read_csv(scoary_output_file)
         df_scoary_results["log_pval"] = -np.log10(df_scoary_results["Naive_p"])
-        merged_with_positions_scoary = pd.merge(df_scoary_results, df_matrix, left_on='Gene', right_on='ClutserID', how='right')
+        merged_with_positions_scoary = pd.merge(df_scoary_results, pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv"), left_on='Gene', right_on='ClutserID', how='right')
         if ordering != "Hierarchical clustering":
             merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions3, left_on='Gene', right_on='ClutserID', how='right')
         
@@ -7216,9 +7176,9 @@ def tree(colorizing_tree,session):
         
         list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
         df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".metadata.txt")
-        print(list_selected)
+        dprint(list_selected)
         df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
-        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
         generate_tree_html(snp_based_newick, df_metadata_selected, colorizing_tree, "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html")
 
     return "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html"
@@ -7241,8 +7201,8 @@ def tree1(colorizing_tree,session):
         df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
         df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
 
-        print(df_metadata_selected2)
-        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        dprint(df_metadata_selected2)
+        pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
         generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
 
     return "assets/tree."+str(session)+"." + colorizing_tree+".html"
@@ -7572,7 +7532,7 @@ def init_dataframes(pathname):
     
     df_matrix = pd.read_csv(myfile, sep='\t')
     
-    print("yeahhhh: "+str(df_matrix.size))
+    dprint("yeahhhh: "+str(df_matrix.size))
 
     df_matrix = df_matrix.replace(to_replace=':', value='', regex=True)
     df_matrix = df_matrix.replace(to_replace='\|', value='_', regex=True)
@@ -7629,12 +7589,12 @@ def init_dataframes(pathname):
         with open(directory+"/genomes/genomes/"+list_species_with_ptt[0]+".2.ptt", "w") as file:
             subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
         
-        print("Species:"+list_species_with_ptt[0])
+        dprint("Species:"+list_species_with_ptt[0])
         
 
         df_gene_positons = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
         df_gene_positons2 = pd.read_csv(directory+'/genomes/genomes/'+list_species_with_ptt[0]+'.2.ptt',sep='\t')
-        print(df_gene_positons)
+        dprint(df_gene_positons)
         df_gene_positons = df_gene_positons.replace(to_replace='\|', value='_', regex=True)
         df_gene_positons2 = df_gene_positons2.replace(to_replace='\|', value='_', regex=True)
 
@@ -7649,14 +7609,14 @@ def init_dataframes(pathname):
         if 'block_id' not in df_gene_positons2.columns:
             df_gene_positons2.insert(0, 'block_id', 'chr1')
         
-    print("df_init")
-    print(df_matrix_init)
+    dprint("df_init")
+    dprint(df_matrix_init)
     merged_with_positions = pd.merge(df_matrix_init, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
     if merged_with_positions.empty:
         merged_with_positions = pd.merge(df_matrix_init, df_gene_positons2, left_on=list_species_with_ptt[0], right_on='PID')
 
-    print("df_gene_positions")
-    print(df_gene_positons)
+    dprint("df_gene_positions")
+    dprint(df_gene_positons)
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
     merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
@@ -8079,16 +8039,16 @@ def generate_tree_html(newick, df_metadata, colorizing, html_file):
             i += 1
     legend += "</div>"
 
-    print(dict_colors)
+    dprint(dict_colors)
 
     for index, row in df_metadata.iterrows():
         color = "black"
-        print(str(row[colorizing]))
+        dprint(str(row[colorizing]))
         if str(row[colorizing]) in dict_colors:
             color = dict_colors[str(row[colorizing])]
         concat_for_hash = concat_for_hash + "hash_colors['" + str(row['Strain name']) + "'] = '" + color + "';\n"
 
-    print(concat_for_hash)
+    dprint(concat_for_hash)
 
 
     # remove last caracter
@@ -8474,8 +8434,8 @@ def build_geo_pie_clusters(session, clusters_path=None, map_id="geo_pie_clusters
         ratio = total / max_total
         size = size_min + (size_max - size_min) * ratio ** 1.2
 
-        print("size")
-        print(str(size))
+        dprint("size")
+        dprint(str(size))
 
         # degrade conique CSS (mini camembert) represantant la proportion des clusters
         segments = []
@@ -8584,8 +8544,8 @@ def update_clustering(recalculate,method,parameter,session,colorizing_tree):
         df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
         df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
 
-        print(df_metadata_selected2)
-        df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
+        dprint(df_metadata_selected2)
+        pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
         generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
 
     return pcoa,table_clustering_assignation ,"assets/tree."+str(session)+"." + colorizing_tree+".html"
@@ -8653,11 +8613,11 @@ def pangwas(click,session,specific_to,pathname):
     df = pd.read_csv(directory+"/1.Orthologs_Cluster.2.txt",sep='\t')
 
     list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
-    print(list_selected)
+    dprint(list_selected)
 
     if specific_to is not None and len(specific_to) > 0:
 
-        print("TO BE MOVED")
+        dprint("TO BE MOVED")
         # write traits file for Scoary
         with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
             f.write(",Trait1\n")
@@ -8735,7 +8695,7 @@ def pangwas(click,session,specific_to,pathname):
                           #  },
                         )
     fig.update_traces(marker=dict(size=12))
-    print(scoary_table)
+    dprint(scoary_table)
     return scoary_table,fig
 
 
@@ -8750,8 +8710,8 @@ def pangwas(click,session,specific_to,pathname):
 )
 def show_cog_enrichment(click,click2,session):
 
-    print(click)
-    print(click2)
+    dprint(click)
+    dprint(click2)
 
     df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
     if ctx.triggered_id == "cog_enrichment":
@@ -9875,6 +9835,29 @@ def download_segments_list(n, session, reference):
 #############################################################################################
 # Gene tables: same rendering as the segment tables
 #############################################################################################
+
+def get_cluster_from_trigger(triggered, cell1, cell2, cell3, cell4, event_circos, event_pav):
+    """Cluster id of the clicked element. Gene tables use getRowId (ClutserID / Gene), so the
+    cellClicked event is enough: the whole rowData of the tables is no longer sent to the server."""
+    try:
+        if triggered in ("table_pangenes", "table_coregenes", "table_accessory", "table_pangwas"):
+            cell = {"table_pangenes": cell1, "table_coregenes": cell2,
+                    "table_accessory": cell3, "table_pangwas": cell4}[triggered]
+            if not cell:
+                return ""
+            if cell.get("rowId") is not None:
+                return str(cell["rowId"])
+            if cell.get("colId") in ("ClutserID", "Gene"):
+                return str(cell.get("value") or "")
+            return ""
+        if triggered == "PAV_graph" and event_pav:
+            return str(event_pav['points'][0]['x'])
+        if triggered == "my-dashbio-default-circos" and event_circos:
+            return str(event_circos['name'])
+    except (KeyError, IndexError, TypeError):
+        pass
+    return ""
+
 
 def get_row_from_cell(cell, row_data):
     """Return the clicked row, robust to sorting / filtering / pagination (rowId = original index);
