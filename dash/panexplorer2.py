@@ -24,7 +24,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import dash
-from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx
+from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx, no_update
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 
@@ -73,6 +73,7 @@ from countryinfo import CountryInfo
 from draw_haplotype_network import plot_haplotype_network
 from clustering_PAV import analyze_pav_matrix
 
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -105,7 +106,8 @@ cog_labels = {
     "S": "Function unknown",
     "Y": "Nuclear structure",
     "Z": "Cytoskeleton",
-    "W": "Extracellular structures"
+    "W": "Extracellular structures",
+    "X": "Mobilome: prophages, transposons"
 }
 
 def get_image_dimensions(path: str) -> Tuple[float, float]:
@@ -341,13 +343,30 @@ highlight_config4 = {
 columnDefs = [
     {
         "field": "Strain name",
+        "headerName": "Strain name",
         "checkboxSelection": True,
         "headerCheckboxSelection": True,
-        "width": 500
+        "headerCheckboxSelectionFilteredOnly": True,
+        "filter": "agTextColumnFilter",
+        "pinned": "left",
+        "flex": 2,
+        "minWidth": 250
     },
-    {"field": "Country","width": 300},
-    {"field": "Continent","width": 300},
-    {"field": "Organism","width": 800}
+    # secondary selection: genomes of the group to compare to the other selected genomes
+    # (search for group-specific clusters / pan-GWAS). Editable only if the genome is selected.
+    {
+        "field": "Group",
+        "headerName": "Compared group",
+        # custom renderer (assets/group_checkbox.js): the click does not toggle the row selection
+        "cellRenderer": "GroupCheckbox",
+        "pinned": "left",
+        "width": 150,
+        "filter": False,
+        "headerTooltip": "Tick the genomes to compare to the rest of the selected genomes (only possible for selected genomes)",
+    },
+    {"field": "Country", "headerName": "Country", "filter": "agTextColumnFilter", "flex": 1, "minWidth": 120},
+    {"field": "Continent", "headerName": "Continent", "filter": "agTextColumnFilter", "flex": 1, "minWidth": 120},
+    {"field": "Organism", "headerName": "Organism", "filter": "agTextColumnFilter", "flex": 2, "minWidth": 200}
 ]
 
 columnDefs2 = [
@@ -1009,7 +1028,7 @@ def load_project_preview(proj_title):
     except Exception as e:
         return html.Div([html.H4(proj["title"]), html.P(f"Error reading metadata: {meta_path}")])
     # Show some info and table (ag-grid if available)
-    children = [ html.H4(f" {len(df)} genomes")]
+    children = []
 
     ##########################################################################
     # geographical map
@@ -1059,6 +1078,8 @@ def load_project_preview(proj_title):
                     ],
                     center=[20, 0],
                     zoom=3,
+                    bounds=compute_map_bounds(df_country["lat"].tolist(), df_country["lon"].tolist()),
+                    boundsOptions={"padding": [30, 30]},
                     style={"width": "100%", "height": "400px"},
                 )
         panel_map = dbc.Col(dbc.Card(
@@ -1076,18 +1097,24 @@ def load_project_preview(proj_title):
     if AGGRID_AVAILABLE:
         
         
+        records = df.to_dict("records")
+        for i, r in enumerate(records):
+            r["Group"] = False
+            r["_row_id"] = str(i)
         grid = dag.AgGrid(id="metadata_table",
+                          getRowId="params.data._row_id",
                           #columnDefs=[{"field": c} for c in df.columns],
                           #style={'width': '100vh','padding': '15px'},
                           columnDefs=columnDefs,
-                          selectedRows=df.to_dict("records"),
+                          selectedRows=records,
                           
                           selectAll=True,
-                          defaultColDef={"filter": True},
+                          defaultColDef={"sortable": True, "resizable": True, "filter": True},
 
-                          rowData=df.to_dict("records"),
-                          columnSize="sizeToFit",
-                          dashGridOptions={"rowSelection": "multiple", "rowMultiSelectWithClick": True},
+                          rowData=records,
+                          style={"height": "400px", "width": "100%"},
+                          dashGridOptions={"rowSelection": "multiple", "rowMultiSelectWithClick": True,
+                                           "animateRows": False},
                           #dashGridOptions={"rowSelection": {'mode': 'multiRow'}, "suppressRowClickSelection": True, "animateRows": False},
                           #dashGridOptions={"rowSelection":"multiple","pagination": True, "animateRows": False}
                           
@@ -1103,15 +1130,18 @@ def load_project_preview(proj_title):
                                                     [
                                                         dbc.CardBody(
                                                             [
+                                                                html.Small("Click on rows (or use the checkboxes) to select the genomes to analyze.", style={"color": "grey"}),
+                                                                html.H5(f"Genomes: {len(df)} / {len(df)} selected", id="nb_genomes_metadata", style={"color": "green"}),
                                                                 html.Div([
                                                                     html.Button("Select all", id="select-all-strains", className="thin-button", n_clicks=0),
                                                                     html.Button("Deselect all", id="deselect-all-strains", className="thin-button", n_clicks=0),
                                                                 ], style={"display": "flex", "gap": "8px", "marginBottom": "10px"}),
                                                                 grid
                                                             ],
+                                                            style={"textAlign": "left"}
                                                         ),
                                                     ],
-                                                    
+                                                    style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
                                                 )),
                                                   
                                                 panel_map                                                                                                   
@@ -1148,10 +1178,19 @@ def load_project_preview(proj_title):
 
     children.append(
         html.Div([
-            "Search for clusters specific to these genomes",dcc.Dropdown(
-                id='specific_to',
-                multi=True
-            )
+            html.Small("Genomes compared to the rest of the selected genomes: tick them in the 'Compared group' "
+                       "column of the table above (only selected genomes), they are listed below. The list can also be "
+                       "edited / pasted by hand (one genome per line, or separated by commas / semicolons), then 'Apply list'.",
+                       style={"color": "grey"}),
+            dcc.Textarea(id="group_manual_list",
+                         style={"width": "100%", "height": "70px", "marginTop": "6px"}),
+            html.Div([
+                html.Button("Apply list", id="group_apply_list", className="thin-button", n_clicks=0),
+                html.Button("Clear group", id="group_clear", className="thin-button", n_clicks=0),
+            ], style={"display": "flex", "gap": "8px", "marginTop": "4px"}),
+            html.Div(id="group_summary", style={"marginTop": "6px"}),
+            # value used by the analyses (also set by the heatmap / upset plot patterns); kept hidden
+            html.Div(dcc.Dropdown(id='specific_to', multi=True), style={'display': 'none'}),
         ], style={'width': '100%', 'display': 'inline-block'}),
 
     )
@@ -1190,22 +1229,7 @@ def load_project_preview(proj_title):
                     
                     dbc.Row(
                                 [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            html.Div(style={
-                                                "height": "8px",
-                                                "backgroundColor": "#3B82F6"
-                                            }),
-                                            dbc.CardBody(
-                                                [
-                                                    html.H2("158", id='nb_of_genomes', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
-                                                    html.Div("Genomes analysed")
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
+                                    html.Div(id='nb_of_genomes', style={"display": "none"}),
                                     dbc.Col(dbc.Card(
                                         [
                                             html.Div(style={
@@ -1274,6 +1298,7 @@ def load_project_preview(proj_title):
                                     options=[
                                         {'label': ' PAV matrix', 'value': 'PAV matrix'},
                                         {'label': ' Upset plot', 'value': 'Upset plot'},
+                                        {'label': ' Statistics', 'value': 'Statistics'},
                                     ],
                                     value='PAV matrix',
                                     id='display_type',
@@ -1375,7 +1400,114 @@ def load_project_preview(proj_title):
 
                             html.Br(),
                             dcc.Store(id="selected-cell"),
-                            dbc.Row(
+                            # Statistics (former "Statistics" tab), displayed with the "Display as" radio button
+                            html.Div(id='stats_container', style={'display': 'none'}, children=[
+                            html.Br(),
+                            html.Div(className="row", id='stats2', children=[
+                            dcc.Loading(
+
+                                dbc.Row(
+                                [
+                                    dbc.Col(lg=3, md=6, xs=12, children=dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_pie2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),   
+                                    dbc.Col(lg=3, md=6, xs=12, children=dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_gene2'),
+                                                    
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),      
+                                    dbc.Col(lg=3, md=6, xs=12, children=dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='rarefaction2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(lg=3, md=6, xs=12, children=dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Graph(id='graph_COG2'),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                            style= {"padding":"15px"}
+                            ),                                
+                            ),
+                        ]),
+
+                            html.Div(id='cog_tab_content', children=[
+                                html.Br(),
+
+                                dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card(
+                                                [
+                                                    dbc.CardBody(
+                                                        [
+                                                            # number of singletons (strain-specific clusters) per genome;
+                                                            # click on a bar = select the singletons of this genome
+                                                            dcc.Loading(dcc.Graph(id='graph_singletons')),
+                                                        ],
+                                                        style={"textAlign": "center"}
+                                                    ),
+                                                ],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                            )),                                                                                                      
+                                            
+                                        ],
+                                    style= {"padding":"15px"}
+                                ),                                
+                                    
+
+                                html.Br(),
+                                html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
+                                            id='submit-enrichment', 
+                                            style={
+                                                "backgroundColor": "#1E90FF",   # bleu
+                                                "color": "white",
+                                            },
+                                            n_clicks=0),
+                                html.Br(),
+                                html.Br(),
+                                dcc.Loading(
+                                    #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
+                                    dag.AgGrid(
+                                                    id="enrichment_table",
+                                                    style={'display': 'none'},
+                                                    columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
+                                                    rowData=[],
+                                                ),
+                                    
+                                    
+                                    ),
+                            ], style={"paddingLeft": "15px"}
+                            ),
+                            ]),
+                            dbc.Row(id='pav_upset_card_row', children=
                                 [
                                     dbc.Col(dbc.Card(
                                         [
@@ -1478,9 +1610,9 @@ def load_project_preview(proj_title):
                                                                 html.Button("Download table", id="download_table_selection", className="thin-button", n_clicks=0),
                                                                 dcc.Download(id="download-dataframe7"),
 
-                                                                html.Button("Calculate COG enrichment", id="cog_enrichment", className="thin-button", n_clicks=0),
+                                                                
 
-                                                                html.Button("Pan-GWAS with Scoary", id="pangwas", className="thin-button", n_clicks=0),
+                                                                
 
                                                                 html.H5("Singletons / specific genes", id='nb_of_selected_clusters2', style={'color': 'purple', "marginTop": "15px"}),
                                                                 dag.AgGrid(
@@ -1495,7 +1627,7 @@ def load_project_preview(proj_title):
                                                                 html.Button("Download table", id="download_table_selection_opposite", className="thin-button", n_clicks=0),
                                                                 dcc.Download(id="download-dataframe8"),
 
-                                                                html.Button("Calculate COG enrichment", id="cog_enrichment2", className="thin-button", n_clicks=0),
+                                                                
                                                                 
                                                             ]),
                                                         )                                                       
@@ -1612,84 +1744,10 @@ def load_project_preview(proj_title):
                         ], style={"paddingLeft": "15px"}
                         ),
 
-                        dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(fullscreen_graph("graph_COG_selected")),
-                                                ],
-                                                style={"textAlign": "center", "height": "100%"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
-                                    ), style={"height": "100%"}),   
-                                    
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(fullscreen_graph("graph_COG_enrichment")),
-                                                ],
-                                                style={"textAlign": "center", "height": "100%"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
-                                    ), style={"height": "100%"}),                                           
-                                                                                                                                            
-                                
-                                ],
-                            style= {"padding":"15px", "height": "800px"}
-                            ),
-                        dbc.Row(
-                                [
-                                    html.H5("Pan-GWAS results", id="pangwas_results"),                                               
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(dag.AgGrid(
-                                                        id="table_pangwas",
-                                                        rowData=[],
-                                                        getRowId="params.data.Gene",
-                                                        columnDefs=columnDefs7,
-                                                        defaultColDef={"filter": "agTextColumnFilter"},
-                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
-                                                        dashGridOptions={"pagination": True, "animateRows": False}
-                                                    )), 
-                                                ],
-                                                style={"textAlign": "center", "height": "100%"}
-                                            ),
-                                        ],
-                                        style={
-                                                    "padding": "0",
-                                                    "backgroundColor": "transparent",
-                                                    "border": "none",
-                                            }
-
-                                        #style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
-                                    ), style={"height": "100%"}),   
-
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(dcc.Graph("pangwas_figure")),
-                                                ],
-                                                style={"textAlign": "center", "height": "100%"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
-                                    ), style={"height": "100%"}),
-                                ],
-                            style= {"padding":"15px", "height": "800px"}
-                            ),
-
-                    ]),
-                    
-                    dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='tree_tab_content', children=[
+                        html.Div(analysis_bar_genes(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
+    html.H5(id='genes-clustering-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
+    html.Div(id='tree_tab_content', children=[
                             html.Br(),
                             dbc.Row([
                                 dbc.Col(
@@ -1754,7 +1812,7 @@ def load_project_preview(proj_title):
                                     width=4,                                        
                                 ),
                                 dbc.Col(
-                                    html.Button("Recalculate clustering", id="recalculate-clustering", className="thin-button", n_clicks=0),
+                                    html.Button("Recalculate with these parameters", id="recalculate-clustering", className="thin-button", n_clicks=0),
                                             
                                         ),                                
                                                              
@@ -1821,6 +1879,32 @@ def load_project_preview(proj_title):
                                         [
                                             dbc.CardBody(
                                                 [
+                                                    html.H5("Haplotype network", style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    html.Small("Genomes sharing exactly the same presence/absence profile form a haplotype. "
+                                                               "Distance between haplotypes = number of genes with a different presence/absence; "
+                                                               "network = minimum spanning tree.", style={"color": "grey"}),
+                                                    html.Div([
+                                                        html.Span("Pie charts colored by:", className="fw-bold"),
+                                                        dcc.Dropdown(id='haplo-color-genes', options=['HierarchicalClustering', 'Country'],
+                                                                     value='HierarchicalClustering', clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+                                                    ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
+                                                    html.Div(id='haplo-network-genes-info', style={"color": "grey"}),
+                                                    dcc.Loading(html.Img(id='haplo-network-genes', style={"width": "90%", "height": "auto"})),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                                style= {"padding":"15px"}
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
                                                     html.H5("Geographic distribution of clusters", style={"paddingLeft": "15px","paddingRight": "15px"}),
                                                     dcc.Loading(html.Div(id='geo_pie_clusters')),
                                                 ],
@@ -1838,7 +1922,89 @@ def load_project_preview(proj_title):
                             html.Br(),
                         ], style={"paddingLeft": "15px"}
                         ),
-                        ]),
+]),
+html.Div(id='genes-cog-results', style={'display': 'none'}, children=[
+    html.H5(id='genes-cog-header', style={'color': '#1f4e79', 'paddingLeft': '15px', 'paddingTop': '10px'}),
+    dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(fullscreen_graph("graph_COG_selected")),
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),   
+                                    
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(fullscreen_graph("graph_COG_enrichment")),
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),                                           
+                                                                                                                                            
+                                
+                                ],
+                            style= {"padding":"15px", "height": "800px"}
+                            ),
+]),
+                        html.Div(id='genes-pangwas-results', style={'display': 'none'}, children=[
+    html.H5(id='genes-pangwas-header', style={'color': '#1f4e79', 'paddingLeft': '15px', 'paddingTop': '10px'}),
+    dbc.Row(
+                                [
+                                                                                   
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(dag.AgGrid(
+                                                        id="table_pangwas",
+                                                        rowData=[],
+                                                        getRowId="params.data.Gene",
+                                                        columnDefs=columnDefs7,
+                                                        defaultColDef={"filter": "agTextColumnFilter"},
+                                                        style={'width': '80vh',"height": '350px','margin-left': '1px'},
+                                                        dashGridOptions={"pagination": True, "animateRows": False}
+                                                    )), 
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={
+                                                    "padding": "0",
+                                                    "backgroundColor": "transparent",
+                                                    "border": "none",
+                                            }
+
+                                        #style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),   
+
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(dcc.Graph("pangwas_figure")),
+                                                ],
+                                                style={"textAlign": "center", "height": "100%"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
+                                    ), style={"height": "100%"}),
+                                ],
+                            style= {"padding":"15px", "height": "800px"}
+                            ),
+]),
+
+                    ]),
+                    
                     dcc.Tab(label='KEGG pathways', style=tab_style, selected_style=tab_selected_style, children=[
                         html.Div(id='kegg_tab_content', children=[
                             html.Br(),
@@ -1899,100 +2065,6 @@ def load_project_preview(proj_title):
                         
                         ]),
 
-                    dcc.Tab(label='Statistics', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Br(),
-                            html.Div(className="row", id='stats2', children=[
-                            dcc.Loading(
-
-                                dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_pie2'),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),   
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='graph_gene2'),
-                                                    
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),      
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Graph(id='rarefaction2'),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),                                                                                                     
-                                    
-                                ],
-                            style= {"padding":"15px"}
-                            ),                                
-                            ),
-                        ]),
-
-                            html.Div(id='cog_tab_content', children=[
-                                html.Br(),
-
-                                dbc.Row(
-                                        [
-                                            dbc.Col(dbc.Card(
-                                                [
-                                                    dbc.CardBody(
-                                                        [
-                                                            dcc.Graph(id='graph_COG2'),
-                                                        ],
-                                                        style={"textAlign": "center"}
-                                                    ),
-                                                ],
-                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                            )),                                                                                                      
-                                            
-                                        ],
-                                    style= {"padding":"15px"}
-                                ),                                
-                                    
-
-                                html.Br(),
-                                html.Button('Perform enrichment analysis (core-genes versus accessory genes)', 
-                                            id='submit-enrichment', 
-                                            style={
-                                                "backgroundColor": "#1E90FF",   # bleu
-                                                "color": "white",
-                                            },
-                                            n_clicks=0),
-                                html.Br(),
-                                html.Br(),
-                                dcc.Loading(
-                                    #dcc.Graph(id='graph_enrichment',style={'display': 'none'})
-                                    dag.AgGrid(
-                                                    id="enrichment_table",
-                                                    style={'display': 'none'},
-                                                    columnDefs=[{"field": i} for i in ["COG term","odds_ratio","p_value","FDR"]],
-                                                    rowData=[],
-                                                ),
-                                    
-                                    
-                                    ),
-                            ], style={"paddingLeft": "15px"}
-                            ),
-                    ]),
                 ]),
                 ]),
                 dcc.Tab(label='Segments (Pangenome graph)', id='tab_segments', style=marker_tab_style,  selected_style=marker_tab_selected_style, className='marker-tab', selected_className='marker-tab--selected', children=[
@@ -2002,22 +2074,7 @@ def load_project_preview(proj_title):
 
                     dbc.Row(
                                 [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            html.Div(style={
-                                                "height": "8px",
-                                                "backgroundColor": "#3B82F6"
-                                            }),
-                                            dbc.CardBody(
-                                                [
-                                                    html.H2("158", id='nb_of_genomes2', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
-                                                    html.Div("Paths (Genomes analysed)")
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
+                                    html.Div(id='nb_of_genomes2', style={"display": "none"}),
                                     dbc.Col(dbc.Card(
                                         [
                                             html.Div(style={
@@ -2070,6 +2127,7 @@ def load_project_preview(proj_title):
                                     options=[
                                         {'label': ' PAV matrix', 'value': 'PAV matrix'},
                                         {'label': ' Upset plot', 'value': 'Upset plot'},
+                                        {'label': ' Statistics', 'value': 'Statistics'},
                                     ],
                                     value='PAV matrix',
                                     id='display_type_segments',
@@ -2080,7 +2138,23 @@ def load_project_preview(proj_title):
                             
 
                             dcc.Store(id="selected-cell-segment"),
-                            dbc.Row(
+                            # Statistics of segments (computed only when "Statistics" is selected, then cached)
+                            html.Div(id='stats_segments_container', style={'display': 'none'}, children=[
+                                dcc.Loading(
+                                    dbc.Row(
+                                        [
+                                            dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='graph_pie_segments')], style={"textAlign": "center"})],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                                            dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='graph_freq_segments')], style={"textAlign": "center"})],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                                            dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='rarefaction_segments')], style={"textAlign": "center"})],
+                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                                        ],
+                                        style={"padding": "15px"}
+                                    )
+                                ),
+                            ]),
+                            dbc.Row(id='pav_upset_segments_card_row', children=
                                         [
                                             dbc.Col(dbc.Card(
                                                 [
@@ -2216,6 +2290,172 @@ def load_project_preview(proj_title):
                                 ],
                                 style= {"padding":"15px"}
                             ),
+html.Div(analysis_bar_segments(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
+    html.H5(id='segments-clustering-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
+    html.Div(id='tree_tab_content_segments', children=[
+                            html.Br(),
+                            dbc.Row([
+                                dbc.Col(
+                                    [
+                                        dbc.Label(
+                                            "Hierarchical Clustering method",
+                                            html_for="clustering-method-segments",
+                                            className="fw-bold"
+                                        ),
+                                        dcc.Dropdown(
+                                            id="clustering-method-segments",
+                                            options=[
+                                                {"label": "Jaccard distance threshold", "value": "distance"},
+                                                {"label": "Number of clusters", "value": "maxclust"},
+                                            ],
+                                            value="maxclust",
+                                        ),
+                                    ],
+                                    width=4,
+                                ),
+                                dbc.Col(
+                                    [
+                                        dbc.Label(
+                                            "Number of clusters",
+                                            id="clustering-parameter-label-segments",
+                                            html_for="clustering-parameter-segments",
+                                            className="fw-bold"
+                                        ),
+                                        dbc.Input(
+                                            id="clustering-parameter-segments",
+                                            type="number",
+                                            value=2,
+                                            min=2,
+                                            step=1,
+                                        ),
+                                        dbc.FormText(
+                                            "Number of clusters to generate.",
+                                            id="clustering-parameter-help-segments",
+                                        ),
+                                    ],
+                                    width=4,
+                                ),
+                                dbc.Col(
+                                    [
+                                        dbc.Label(
+                                            "Tree colored by:",
+                                            className="fw-bold"
+                                        ),
+                                        dcc.Dropdown(
+                                                    ['Country','HierarchicalClustering'],
+                                                    value='HierarchicalClustering',
+                                                    id='colorizing_tree1-segments',
+                                                    style={'width': '300px'},
+                                                    multi=False
+                                                ),
+                                    ],
+                                    width=4,
+                                ),
+                                dbc.Col(
+                                    html.Button("Recalculate with these parameters", id="recalculate-clustering-segments", className="thin-button", n_clicks=0),
+                                ),
+                            ], style={'width': '1250px'}),
+                            html.Br(),
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(dcc.Graph(id='pcoa-segments',style={'width': '60vh', 'height': '800px','padding': '5px'})),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Loading(html.Iframe(id='iframe-content-segments',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.H5("Assignation to clusters", id='clustering_assignation-segments', style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    dcc.Loading(
+                                                        html.Div(children=[
+                                                            dag.AgGrid(
+                                                                id="table_clustering_assignation-segments",
+                                                                style={'margin-left': '1px',"paddingRight": "15px"},
+                                                                rowData=[],
+                                                                columnDefs=columnDefs6,
+                                                                defaultColDef={"filter": True},
+                                                                dashGridOptions={"pagination": True, "animateRows": False}
+                                                            ),
+                                                            html.Button("Download table", id="download_table_assignation-segments", className="thin-button", n_clicks=0),
+                                                            dcc.Download(id="download-dataframe5-segments"),
+                                                        ], style={"paddingLeft": "15px","paddingRight": "15px",'height': '800px'}),
+                                                    ),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                                style= {"padding":"15px"}
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.H5("Haplotype network", style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    html.Small("Genomes sharing exactly the same presence/absence profile form a haplotype. "
+                                                               "Distance between haplotypes = number of segments with a different presence/absence; "
+                                                               "network = minimum spanning tree.", style={"color": "grey"}),
+                                                    html.Div([
+                                                        html.Span("Pie charts colored by:", className="fw-bold"),
+                                                        dcc.Dropdown(id='haplo-color-segments', options=['HierarchicalClustering', 'Country'],
+                                                                     value='HierarchicalClustering', clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+                                                    ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
+                                                    html.Div(id='haplo-network-segments-info', style={"color": "grey"}),
+                                                    dcc.Loading(html.Img(id='haplo-network-segments', style={"width": "90%", "height": "auto"})),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                                style= {"padding":"15px"}
+                            ),
+                            dbc.Row(
+                                [
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            dbc.CardBody(
+                                                [
+                                                    html.H5("Geographic distribution of clusters", style={"paddingLeft": "15px","paddingRight": "15px"}),
+                                                    dcc.Loading(html.Div(id='geo_pie_clusters-segments')),
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                ],
+                                style= {"padding":"15px"}
+                            ),
+                            html.Br(),
+                        ], style={"paddingLeft": "15px"}
+                        ),
+]),
 
                             dbc.Modal([
                                     dbc.ModalHeader(
@@ -2679,144 +2919,7 @@ def load_project_preview(proj_title):
                             
                         # ── Hierarchical clustering of genomes based on the segment PAV ──────────
                         # Same procedure as for the gene PAV (Jaccard distance, UPGMA, PCoA, tree)
-                        dcc.Tab(label='Hierarchical clustering', value='Hierarchical clustering segments', style=tab_style, selected_style=tab_selected_style, children=[
-                        html.Div(id='tree_tab_content_segments', children=[
-                            html.Br(),
-                            dbc.Row([
-                                dbc.Col(
-                                    [
-                                        dbc.Label(
-                                            "Hierarchical Clustering method",
-                                            html_for="clustering-method-segments",
-                                            className="fw-bold"
-                                        ),
-                                        dcc.Dropdown(
-                                            id="clustering-method-segments",
-                                            options=[
-                                                {"label": "Jaccard distance threshold", "value": "distance"},
-                                                {"label": "Number of clusters", "value": "maxclust"},
-                                            ],
-                                            value="maxclust",
-                                        ),
-                                    ],
-                                    width=4,
-                                ),
-                                dbc.Col(
-                                    [
-                                        dbc.Label(
-                                            "Number of clusters",
-                                            id="clustering-parameter-label-segments",
-                                            html_for="clustering-parameter-segments",
-                                            className="fw-bold"
-                                        ),
-                                        dbc.Input(
-                                            id="clustering-parameter-segments",
-                                            type="number",
-                                            value=2,
-                                            min=2,
-                                            step=1,
-                                        ),
-                                        dbc.FormText(
-                                            "Number of clusters to generate.",
-                                            id="clustering-parameter-help-segments",
-                                        ),
-                                    ],
-                                    width=4,
-                                ),
-                                dbc.Col(
-                                    [
-                                        dbc.Label(
-                                            "Tree colored by:",
-                                            className="fw-bold"
-                                        ),
-                                        dcc.Dropdown(
-                                                    ['Country','HierarchicalClustering'],
-                                                    value='HierarchicalClustering',
-                                                    id='colorizing_tree1-segments',
-                                                    style={'width': '300px'},
-                                                    multi=False
-                                                ),
-                                    ],
-                                    width=4,
-                                ),
-                                dbc.Col(
-                                    html.Button("Recalculate clustering", id="recalculate-clustering-segments", className="thin-button", n_clicks=0),
-                                ),
-                            ], style={'width': '1250px'}),
-                            html.Br(),
-                            dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(dcc.Graph(id='pcoa-segments',style={'width': '60vh', 'height': '800px','padding': '5px'})),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    dcc.Loading(html.Iframe(id='iframe-content-segments',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    html.H5("Assignation to clusters", id='clustering_assignation-segments', style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                                    dcc.Loading(
-                                                        html.Div(children=[
-                                                            dag.AgGrid(
-                                                                id="table_clustering_assignation-segments",
-                                                                style={'margin-left': '1px',"paddingRight": "15px"},
-                                                                rowData=[],
-                                                                columnDefs=columnDefs6,
-                                                                defaultColDef={"filter": True},
-                                                                dashGridOptions={"pagination": True, "animateRows": False}
-                                                            ),
-                                                            html.Button("Download table", id="download_table_assignation-segments", className="thin-button", n_clicks=0),
-                                                            dcc.Download(id="download-dataframe5-segments"),
-                                                        ], style={"paddingLeft": "15px","paddingRight": "15px",'height': '800px'}),
-                                                    ),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
-                                ],
-                                style= {"padding":"15px"}
-                            ),
-                            dbc.Row(
-                                [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            dbc.CardBody(
-                                                [
-                                                    html.H5("Geographic distribution of clusters", style={"paddingLeft": "15px","paddingRight": "15px"}),
-                                                    dcc.Loading(html.Div(id='geo_pie_clusters-segments')),
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
-                                ],
-                                style= {"padding":"15px"}
-                            ),
-                            html.Br(),
-                        ], style={"paddingLeft": "15px"}
-                        ),
-                        ]),
+                        
                         ]),
                         ]), 
                 dcc.Tab(label='Core-SNPs', id='tab_snps', style=marker_tab_style, selected_style=marker_tab_selected_style, className='marker-tab', selected_className='marker-tab--selected', children=[
@@ -2824,22 +2927,7 @@ def load_project_preview(proj_title):
 
                     dbc.Row(
                                 [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            html.Div(style={
-                                                "height": "8px",
-                                                "backgroundColor": "#3B82F6"
-                                            }),
-                                            dbc.CardBody(
-                                                [
-                                                    html.H2("158", id='nb_of_genomes3', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
-                                                    html.Div("Genomes analysed")
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
+                                    html.Div(id='nb_of_genomes3', style={"display": "none"}),
                                     dbc.Col(dbc.Card(
                                         [
                                             html.Div(style={
@@ -2943,62 +3031,18 @@ def load_project_preview(proj_title):
                                     ],
                                     style= {"padding":"15px"}
                                 ),
-
-                                dbc.Modal([
-                                    dbc.ModalHeader(dbc.ModalTitle(id="detail-title-snp")),
-                                    dbc.ModalBody([
-                                        dcc.Loading(html.Div(id="detail-table-container-snp")),
-                                        html.Hr(),
-                                        dbc.Button(
-                                            "Close and highlight SNPs sharing the same genotype pattern",
-                                            id="activate_pattern_snp",
-                                            color="primary",
-                                            className="me-2"
-                                        ),
-                                    ])
-                                ], id="detail-modal-snp", is_open=False, size="xl"),
-
-                            ], style={"paddingLeft": "15px"}
-                            ),
-                            
-                        ]),
-                        dcc.Tab(label='Population structure', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Div(id='structure_tab_content', children=[
-                                html.Br(),
-
-                                dbc.Row(
-                                        [
-                                            dbc.Col(dbc.Card(
-                                                [
-                                                    dbc.CardBody(
-                                                        [
-                                                            dcc.Graph(id='sNMF')
-                                                        ],
-                                                        style={"textAlign": "center"}
-                                                    ),
-                                                ],
-                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                            )),     
-                                            dbc.Col(dbc.Card(
-                                                [
-                                                    dbc.CardBody(
-                                                        [
-                                                            dcc.Graph(id='sNMF_cross_entropy')
-                                                        ],
-                                                        style={"textAlign": "center"}
-                                                    ),
-                                                ],
-                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                            )),                                                                                                                                               
-                                                        
-                                        ],
-                                        style= {"padding":"15px"}
-                                ),
-                            ], style={"paddingLeft": "15px"}
-                            ),
-                        ]),
-                        dcc.Tab(label='PCA', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Div(id='pca_tab_content', children=[
+html.Div(analysis_bar_snps(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
+    html.H5(id='snps-snmf-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
+    html.H5("Population structure (sNMF)", style={'paddingTop': '10px'}),
+    dbc.Row([
+        dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF')], style={"textAlign": "center"})],
+                         style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+        dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF_cross_entropy')], style={"textAlign": "center"})],
+                         style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+    ], style={"padding": "15px"}),
+    html.H5("PCA"),
+    html.Div(id='pca_tab_content', children=[
                                 html.Br(),
                                 dbc.Row([
                                         dbc.Col(
@@ -3049,9 +3093,8 @@ def load_project_preview(proj_title):
 
                             ], style={"paddingLeft": "15px"}
                             ),
-                        ]),
-                        dcc.Tab(label='SNP-based distance tree', style=tab_style, selected_style=tab_selected_style, children=[
-                            html.Div(id='snptree_tab_content', children=[
+    html.H5("SNP-based distance tree"),
+    html.Div(id='snptree_tab_content', children=[
                                 html.Br(),
                                 dbc.Row([
                                         dbc.Col(
@@ -3078,7 +3121,41 @@ def load_project_preview(proj_title):
                                 html.Br(),
                             ], style={"paddingLeft": "15px"}
                             ),
+    dbc.Row([dbc.Col(dbc.Card([dbc.CardBody([
+        html.H5("Haplotype network"),
+        html.Small("Genomes sharing exactly the same alleles at the analysed SNPs form a haplotype. "
+                   "Distance between haplotypes = number of allelic differences (SNPs with missing data are ignored); "
+                   "network = minimum spanning tree.", style={"color": "grey"}),
+        html.Div([
+            html.Span("Pie charts colored by:", className="fw-bold"),
+            dcc.Dropdown(id='haplo-color-snps', options=['Population (sNMF)', 'Country'], value='Population (sNMF)',
+                         clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+        ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
+        html.Div(id='haplo-network-snps-info', style={"color": "grey"}),
+        dcc.Loading(html.Img(id='haplo-network-snps', style={"width": "90%", "height": "auto"})),
+    ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}))],
+        style={"padding": "15px"}),
+]),
+
+                                dbc.Modal([
+                                    dbc.ModalHeader(dbc.ModalTitle(id="detail-title-snp")),
+                                    dbc.ModalBody([
+                                        dcc.Loading(html.Div(id="detail-table-container-snp")),
+                                        html.Hr(),
+                                        dbc.Button(
+                                            "Close and highlight SNPs sharing the same genotype pattern",
+                                            id="activate_pattern_snp",
+                                            color="primary",
+                                            className="me-2"
+                                        ),
+                                    ])
+                                ], id="detail-modal-snp", is_open=False, size="xl"),
+
+                            ], style={"paddingLeft": "15px"}
+                            ),
+                            
                         ]),
+                        
                     ]),
                     
                 ]),
@@ -3088,22 +3165,7 @@ def load_project_preview(proj_title):
                         
                         dbc.Row(
                                 [
-                                    dbc.Col(dbc.Card(
-                                        [
-                                            html.Div(style={
-                                                "height": "8px",
-                                                "backgroundColor": "#3B82F6"
-                                            }),
-                                            dbc.CardBody(
-                                                [
-                                                    html.H2("158", id='nb_of_genomes4', style={"fontSize": "42px","fontWeight": "bold","color": "#3B82F6"}),
-                                                    html.Div("Genomes analysed")
-                                                ],
-                                                style={"textAlign": "center"}
-                                            ),
-                                        ],
-                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                    )),
+                                    html.Div(id='nb_of_genomes4', style={"display": "none"}),
                                     dbc.Col(dbc.Card(
                                         [
                                             html.Div(style={
@@ -3250,12 +3312,18 @@ def load_project_preview(proj_title):
     Output('pav_graph_container', 'style'),
     Output('upset_graph_container', 'style'),
     Output('pav_controls_container', 'style'),
+    Output('stats_container', 'style'),
+    Output('pav_upset_card_row', 'style'),
     Input('display_type', 'value'),
 )
 def toggle_pav_upset_display(display_type):
+    hidden = {'display': 'none'}
+    card_row = {"padding": "15px"}
     if display_type == 'Upset plot':
-        return {'display': 'none'}, {'display': 'block'}, {'display': 'none'}
-    return {'display': 'block'}, {'display': 'none'}, {"display": "flex","alignItems": "center", "gap": "10px"}
+        return hidden, {'display': 'block'}, hidden, hidden, card_row
+    if display_type == 'Statistics':
+        return hidden, hidden, hidden, {'display': 'block'}, hidden
+    return {'display': 'block'}, hidden, {"display": "flex","alignItems": "center", "gap": "10px"}, hidden, card_row
 
 
 # Meme bascule PAV matrix / Upset plot, appliquee cette fois aux segments
@@ -3263,12 +3331,18 @@ def toggle_pav_upset_display(display_type):
 @app.callback(
     Output('pav_graph_segments_container', 'style'),
     Output('upset_graph_segments_container', 'style'),
+    Output('stats_segments_container', 'style'),
+    Output('pav_upset_segments_card_row', 'style'),
     Input('display_type_segments', 'value'),
 )
 def toggle_pav_upset_display_segments(display_type):
+    hidden = {'display': 'none'}
+    card_row = {"padding": "15px"}
     if display_type == 'Upset plot':
-        return {'display': 'none'}, {'display': 'block'}
-    return {'display': 'block'}, {'display': 'none'}
+        return hidden, {'display': 'block'}, hidden, card_row
+    if display_type == 'Statistics':
+        return hidden, hidden, {'display': 'block'}, hidden
+    return {'display': 'block'}, hidden, hidden, card_row
 
 
 
@@ -3277,20 +3351,127 @@ def toggle_pav_upset_display_segments(display_type):
 # Boutons "Tout sélectionner" / "Tout désélectionner" pour la table des souches/génomes.
 # rowMultiSelectWithClick=True (ci-dessus) permet deja de cocher/decocher une ligne
 # d'un simple clic (sans Ctrl) ; ces deux boutons couvrent le cas "tout d'un coup".
-@app.callback(
+app.clientside_callback(
+    """
+    function(n_select, n_deselect, rows) {
+        const dc = window.dash_clientside;
+        const trig = (((dc.callback_context.triggered || [])[0] || {}).prop_id || "").split(".")[0];
+        const select = (trig === "select-all-strains");
+        if (trig !== "select-all-strains" && trig !== "deselect-all-strains") { throw dc.PreventUpdate; }
+        // selectedRows set explicitly so that the dependent callbacks (map, analyses) are triggered
+        return select ? (rows || []) : [];
+    }
+    """,
     Output('metadata_table', 'selectedRows'),
     Input('select-all-strains', 'n_clicks'),
     Input('deselect-all-strains', 'n_clicks'),
     State('metadata_table', 'rowData'),
     prevent_initial_call=True
 )
-def select_or_deselect_all_strains(n_select, n_deselect, row_data):
-    triggered_id = ctx.triggered_id
-    if triggered_id == 'select-all-strains':
-        return row_data or []
-    elif triggered_id == 'deselect-all-strains':
-        return []
-    raise PreventUpdate
+
+
+# Compared group (secondary selection) <-> specific_to (value used by the analyses).
+# Sources: "Compared group" checkboxes, manual list, "Clear group", or specific_to set by other
+# callbacks (heatmap / upset patterns), which updates the checkboxes. Only selected genomes can
+# be in the group: deselecting a genome removes it from the group.
+@app.callback(
+    Output("specific_to", "value", allow_duplicate=True),
+    Output("metadata_table", "rowTransaction"),
+    Output("group_summary", "children"),
+    Output("group_manual_list", "value"),
+    Input("metadata_table", "cellValueChanged"),
+    Input("metadata_table", "selectedRows"),
+    Input("group_apply_list", "n_clicks"),
+    Input("group_clear", "n_clicks"),
+    Input("specific_to", "value"),
+    State("metadata_table", "rowData"),
+    State("group_manual_list", "value"),
+    prevent_initial_call=True
+)
+def sync_compared_group(cell_changed, selected_rows, n_apply, n_clear, specific_to, row_data, manual_list):
+    trig = ctx.triggered_id
+    row_data = row_data or []
+    selected = {str(r.get("Strain name")) for r in (selected_rows or [])}
+    names_in_order = [str(r.get("Strain name")) for r in row_data]
+    current = {str(r.get("Strain name")) for r in row_data if r.get("Group")}
+    messages = []
+
+    if trig == "group_clear":
+        group = set()
+    elif trig == "group_apply_list":
+        items = [x.strip() for x in re.split(r"[\n,;\t]+", manual_list or "") if x.strip()]
+        lower = {n.lower(): n for n in names_in_order}
+        group, unknown, not_selected = set(), [], []
+        for item in items:
+            name = item if item in names_in_order else lower.get(item.lower())
+            if name is None:
+                unknown.append(item)
+            elif name not in selected:
+                not_selected.append(name)
+            else:
+                group.add(name)
+        if unknown:
+            messages.append(html.Div("Unknown genomes (ignored): " + ", ".join(unknown), style={"color": "red"}))
+        if not_selected:
+            messages.append(html.Div("Genomes not selected in the table (ignored): " + ", ".join(not_selected), style={"color": "#b8860b"}))
+    elif trig == "specific_to":
+        group = {str(x) for x in (specific_to or [])}
+    else:
+        # checkbox edited, or selection changed
+        group = set(current)
+        if trig == "metadata_table" and ctx.triggered and "cellValueChanged" in ctx.triggered[0]["prop_id"]:
+            # the event carries the edited row (list of events in recent dash-ag-grid, dict before)
+            events = cell_changed if isinstance(cell_changed, list) else [cell_changed or {}]
+            for ev in events:
+                if ev.get("colId") != "Group":
+                    continue
+                name = str((ev.get("data") or {}).get("Strain name"))
+                if ev.get("value"):
+                    group.add(name)
+                else:
+                    group.discard(name)
+    group &= selected
+
+    # checkboxes to update
+    updates = []
+    for r in row_data:
+        flag = str(r.get("Strain name")) in group
+        if bool(r.get("Group")) != flag:
+            updates.append(dict(r, Group=flag))
+    transaction = {"update": updates} if updates else no_update
+
+    ordered = [n for n in names_in_order if n in group]
+    if trig == "specific_to" or sorted(ordered) == sorted(str(x) for x in (specific_to or [])):
+        new_specific_to = no_update
+    else:
+        new_specific_to = ordered
+
+    if ordered:
+        summary = [html.Div(f"Compared group: {len(ordered)} genome(s) vs {len(selected) - len(ordered)} other selected genome(s)",
+                            style={"color": "red", "fontWeight": "600"})]
+    else:
+        summary = [html.Div("No compared group: core-genes and strain-specific genes are computed.", style={"color": "grey"})]
+
+    # the text area always shows the current group (one genome per line), so it can be edited
+    # by hand and re-applied with "Apply list"
+    text = "\n".join(ordered)
+    new_text = no_update if text == (manual_list or "").strip() else text
+    return new_specific_to, transaction, summary + messages, new_text
+
+
+# Header of the metadata panel: number of selected genomes / total
+app.clientside_callback(
+    """
+    function(selected, rows) {
+        const n = (selected || []).length;
+        const total = (rows || []).length;
+        return "Genomes: " + n + " / " + total + " selected";
+    }
+    """,
+    Output('nb_genomes_metadata', 'children'),
+    Input('metadata_table', 'selectedRows'),
+    State('metadata_table', 'rowData'),
+)
 
 
 # Carte geographique : camemberts par pays montrant la proportion des
@@ -3306,8 +3487,6 @@ def update_geo_pie_clusters(rowData, tab_value, session):
     dprint(tab_value)
     dprint(rowData)
 
-    if tab_value != 'Hierarchical clustering':
-        raise PreventUpdate
     if not rowData:
         return html.Div("Clustering not computed yet.", style={"padding": "20px"})
     return build_geo_pie_clusters(session)
@@ -4868,12 +5047,14 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     # strain clustering, distance matrix, PCoA and tree
     ##################################################################### 
     #pcoa,table_clustering_assignation = update_clustering(2,"distance",0.3,session,"HierarchicalClustering")
-    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=2, clustering_method="average",criterion="maxclust" )
-
-    df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
-    table_clustering_assignation = df_clustering_assignation.to_dict('records') 
-
-    pcoa_df = results["pcoa"]
+    # Hierarchical clustering is now computed on demand (button under the gene tables).
+    # Remove results of a previous run so that they are not displayed for this new selection.
+    for _ext in (".clusters.tsv", ".pav_jaccard_tree.nwk", ".pcoa_coordinates.tsv", ".jaccard_distance.tsv"):
+        _f = tmp_dir + "/" + str(session) + _ext
+        if os.path.exists(_f):
+            os.remove(_f)
+    table_clustering_assignation = []
+    pcoa = empty_figure()
 
     # pcoa_df = pcoa_df.merge(
     #     df_metadata,
@@ -5368,33 +5549,13 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
         nb_of_snps = str(sum(1 for line in open(vcf_file)) - 1)
 
-        # make bed
-        cmd_args = [
-            plink2_exe, "--vcf", vcf_file,
-            "--max-alleles", "2",
-            "--min-alleles", "2",
-            "--make-bed",
-            "--out", f"{tmp_dir}/{session}.dataset"
-        ]
-        subprocess.run(cmd_args, capture_output=True)
-
-        # distance calculation
-        cmd_args = [
-            plink_exe,
-            "--bfile", f"{tmp_dir}/{session}.dataset",
-            "--distance", "square",
-            "--allow-extra-chr",
-            "--out", f"{tmp_dir}/{session}.dataset"
-        ]
-        subprocess.run(cmd_args, capture_output=True)
-
-        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id"):
-            with open(f"{tmp_dir}/{session}.dataset.dist.id", "r") as infile, \
-                open(f"{tmp_dir}/{session}.dataset.dist.id.2", "w") as outfile:
-                for line in infile:
-                    if not line.startswith("#FID"):
-                        outfile.write(line)
-
+        # SNP-based tree, PCA and sNMF are now computed on demand (button under the SNP tables).
+        # Remove results of a previous run so that they are not displayed for this new selection.
+        for _ext in (".dataset.tree", ".metadata.txt", ".plink.eigenvec", ".plink.eigenvec.tsv", ".pca_metadata_base.csv"):
+            _f = tmp_dir + "/" + str(session) + _ext
+            if os.path.exists(_f):
+                os.remove(_f)
+        df_metadata[df_metadata['Strain name'].isin(list_selected)].to_csv(tmp_dir + "/" + str(session) + ".snp_metadata.csv", index=False)
 
         #################################################################
         # --- Heatmap of genotypes from VCF ---
@@ -5422,289 +5583,6 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         
         
 
-        #################################################################
-        # Phylogenetic tree from SNPs
-        #################################################################
-
-        from skbio import DistanceMatrix
-        from skbio.tree import nj
-
-        if os.path.exists(f"{tmp_dir}/{session}.dataset.dist.id") and os.path.exists(vcf_file) and len(list_sp2) > 2:
-            
-
-            # Charger les identifiants
-            #ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", delim_whitespace=True, header=None)
-            ids = pd.read_csv(tmp_dir + "/" + str(session) + ".dataset.dist.id.2", sep=r"\s+", header=None)
-
-            ids = ids[1].tolist()
-
-            # Charger la matrice de distances
-            D = np.loadtxt(tmp_dir + "/" + str(session) + ".dataset.dist")
-
-            # Construire la matrice de distances scikit-bio
-            dm = DistanceMatrix(D, ids)
-
-            # Construire un arbre neighbor-joining
-            tree = nj(dm)
-
-            rooted_tree = tree.root_at_midpoint()
-
-            # Sauvegarder au format Newick
-            with open(tmp_dir + "/" + str(session) + ".dataset.tree", "w") as f:
-                f.write(str(rooted_tree))
-
-            # Extraire l'ordre des taxons dans l'arbre
-            individual_order_by_Pop1 = [tip.name for tip in rooted_tree.tips()]
-
-            snp_based_newick = ""
-            # get tree in newick format as a variable
-            with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
-                snp_based_newick = fp.read()
-                df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
-                pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
-                generate_tree_html(snp_based_newick, df_metadata_selected, "Country", "assets/snp_based_tree."+str(session)+".html")
-
-
-
-        #################################################################
-        # Population structure with sNMF
-        #################################################################
-        max_K = 5
-        if len(list_selected) < max_K:
-            max_K = len(list_selected)
-
-        cmd_args = [vcf2geno_exe, vcf_file, f"{tmp_dir}/{session}.variants.geno"]
-        subprocess.run(cmd_args, capture_output=True)
-
-        result = subprocess.run(
-            ["grep", "#CHROM", vcf_file],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        list_sp3 = result.stdout.strip().split("\t")[9:]
-
-        with open(directory + "/1.Orthologs_Cluster.txt") as f:
-            ordered_ids = f.readline().strip().split("\t")
-
-        ordered_ids.remove("ClutserID")
-
-
-        results = []
-        list_entropy = []
-        
-        snmf_failure = 0
-        # Launch sNMF for K from 2 to max_K
-        for K in range(2, max_K+1):
-            cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
-            returned_value = os.popen(cmd).read()
-            match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
-            if match:
-                valeur = float(match.group(1))
-                list_entropy.append(valeur)
-            else:
-                list_entropy.append(None)
-                snmf_failure = 1
-
-        previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
-        if snmf_failure == 0:
-            # get the assignation of individuals to populations
-            previous_dict_groups = {}
-            
-            for K in range(2, max_K+1):
-                ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
-                qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
-                qmat['Individual'] = list_sp3
-                qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-                qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
-
-                #print("\n\n")
-
-                groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
-                #print(groups)
-                #print(str(K))
-                dict_groups = {}
-                dict_renaming = {}
-                dict_renaming2 = {}
-                dict_done = {}
-                dict_splitted = {}
-
-                
-                # first assignment for population with exact same individuals
-                for row in groups.itertuples():
-                    pop_name = row[1]
-                    individuals = row[2]
-                    dict_groups[individuals] = pop_name
-                    #print(pop_name + " : " + individuals)
-                    # keep the same name of population if it exists in previous dict
-                    if individuals in previous_dict_groups:
-                        previous_pop_name = previous_dict_groups[individuals]
-                        dict_renaming[pop_name] = previous_pop_name
-                        dict_done[previous_pop_name] = 1
-                        #print("same as previous" + previous_pop_name)
-
-                for row in groups.itertuples():
-                    pop_name = row[1]
-                    individuals = row[2]
-                    dict_groups[individuals] = pop_name
-                    #print(pop_name + " : " + individuals)
-                    # keep the same name of population if it exists in previous dict
-                    if individuals in previous_dict_groups:
-                        dprint("do nothing here")
-                    # else it means that the pop has been splitted into two populations
-                    else:
-                        if len(previous_dict_groups) > 0:
-                            individuals_list = individuals.split(", ")
-                            dict_of_pop_in_previous = {}
-                            for ind in individuals_list:
-                                # get the pop in previous qmat
-                                pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
-                                
-                                if pop not in dict_of_pop_in_previous:
-                                    dict_of_pop_in_previous[pop] = 1
-                                else:
-                                    dict_of_pop_in_previous[pop] += 1
-                                if pop not in dict_splitted:
-                                    dict_splitted[pop] = pop_name
-                                else:
-                                    dict_splitted[pop] += ","+pop_name
-
-                                    
-
-                            dprint("splitted")
-                            
-                            
-
-                            # renaming for all except the last one
-                            if len(dict_of_pop_in_previous) > 1:
-                                #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
-                                if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
-                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                                elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
-                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
-                                    dict_done[list(dict_of_pop_in_previous)[1]] = 1
-                                
-                            else:
-                                if list(dict_of_pop_in_previous)[0] not in dict_done:
-                                    dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
-                                    dict_done[list(dict_of_pop_in_previous)[0]] = 1
-                                else:
-                                    new_pop_name = "Pop_" + str(K)
-                                    if len(dict_of_pop_in_previous) > 1:
-                                        dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
-                                    else:
-                                        dict_renaming[pop_name] = new_pop_name
-                                        dict_done[new_pop_name] = 1
-
-                            #print(dict_of_pop_in_previous.keys())
-                            #print(list(dict_of_pop_in_previous)[0])
-                        else:
-                            dprint("do nothing")
-
-                #print("Dict renaming before adjustment")
-                #print(dict_renaming)
-                #print("Dict renaming after adjustment")
-                #print(dict_renaming2)
-                #print("Dict splitted")
-                for key, value in dict_splitted.items():
-                    listvalue = value.split(",")
-                    dict_splitted[key] = list(dict.fromkeys(listvalue))
-                
-                #print(dict_splitted)
-                list_keys_to_removed = []
-                for key in dict_renaming.keys():
-                    value = dict_renaming[key]
-                    list_values = value.split(",")
-                    
-                    if len(list_values) > 1:
-                        has_been_adjusted = 0
-                        for val in list_values:
-                            dprint("val: " + val)
-                            if val not in dict_done:
-                                has_been_adjusted = 1
-                                dict_renaming[key] = val
-                        if has_been_adjusted == 0:
-                            new_pop_name = "Pop_" + str(K)
-                            dict_renaming[key] = new_pop_name
-                
-
-                #print(dict_renaming)
-                # rename pop for keeping the same as previously
-                #qmat = qmat.rename(columns=dict_renaming)
-                #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
-                #qmat = qmat
-                #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
-                #print(qmat)
-                #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
-
-                previous_dict_groups = dict_groups
-                previous_qmat = qmat
-                #print(dict_groups)
-                #print(previous_dict_groups)
-
-                qmat_sorted = qmat.sort_values(
-                    by=['Assigned_to_pop', 'max_prop'],
-                    ascending=[True, False]
-                )
-
-                individual_order = qmat_sorted['Individual'].tolist()
-
-                qmat['Individual'] = pd.Categorical(
-                    qmat['Individual'],
-                    categories=individual_order,
-                    ordered=True
-                )
-
-                qmat_long = qmat.melt(id_vars=['Individual'],
-                            value_vars=ancestry_cols,
-                            var_name='Cluster', value_name='Ancestry')
-
-                qmat_long['K'] = K
-                results.append(qmat_long)
-        else:
-            results = []
-            
-
-        if results:
-            dfsnmf = pd.concat(results)
-        else:
-            dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
-
-        dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
-        dprint(dict_cross_entropy)
-        df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
-
-        #################################################################
-        # PCA with plink
-        #################################################################
-        output_basename = tmp_dir+"/"+str(session)+".plink"
-        pca_output = output_basename + ".eigenvec"
-
-        cmd_args = [
-            plink_exe,
-            "--vcf", vcf_file,
-            "--pca",
-            "--double-id",
-            "--allow-extra-chr",
-            "--out", output_basename
-        ]
-        subprocess.run(cmd_args, capture_output=True)
-
-        if os.path.exists(pca_output):
-            
-
-            cmd_args = ["awk", "{print $1\"\\t\"$3\"\\t\"$4\"\\t\"$5}", pca_output]
-            with open(f"{pca_output}.tsv", "w") as outfile:
-                result = subprocess.run(cmd_args, stdout=outfile, capture_output=False)
-
-        if os.path.exists(pca_output + ".tsv"):
-            df_pca = pd.read_csv(pca_output + ".tsv",sep='\t',header=None, names=['#IID', 'PC1', 'PC2','PC3'])
-
-
-        df_pca_metadata=pd.merge(df_pca,df_metadata, left_on='#IID', right_on='Strain name' )
-        df_pca_pop_metadata=pd.merge(df_pca_metadata,previous_qmat, left_on='Strain name', right_on='Individual' )
-        df_pca_pop_metadata.to_csv(tmp_dir+"/"+str(session) + "." +"metadata.txt")
         
     fig_VCF = px.imshow(
             df_vcf_transposed.values,
@@ -5728,23 +5606,10 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     
     
     
-    fig_scatter = pca("3D","Country",session)
+    fig_scatter = empty_figure()
 
-    # Création des barcharts avec facettes
-    fig_snmf = px.bar(
-        dfsnmf, 
-        x="Individual", y="Ancestry", color="Cluster", category_orders={"Individual": individual_order_by_Pop1}, 
-        facet_row="K",  # un graphique par valeur de K
-        height=800
-    )
-
-    fig_snmf.update_layout(
-        title="Population structure (by sNMF) for different K",
-        barmode='stack',
-        showlegend=True
-    )
-
-    fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy", title='Values of the cross-entropy criterion for 4 sNMF runs (K=2 to K=5)')
+    fig_snmf = empty_figure()
+    fig_cross_entropy = empty_figure()
 
 
     #############################################################################################
@@ -6019,7 +5884,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     nb_genomes = str(len(list_sp2))
     
     dprint("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "assets/tree."+str(session)+".html", "assets/snp_based_tree."+str(session)+".html", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "", "", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
 
 ############################################
 # Disable button during loading
@@ -6755,6 +6620,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
     elif colorizing == "Organism" or colorizing == "Continent" or colorizing == "Country" or colorizing == "Cluster assigned to sample":
         colorscale = []
         if colorizing == "Cluster assigned to sample":
+            if df_clustering is None:
+                df_clustering = pd.DataFrame({'strain': list_sp2, 'HierarchicalClustering': [1] * len(list_sp2)})
             df_metadata4 = df_clustering[df_clustering['strain'].isin(list_sp2)]
             list_organisms = df_metadata4["HierarchicalClustering"].unique().tolist()
             list_organisms = sorted(list_organisms, key=int)
@@ -7116,6 +6983,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
         if colorizing_labels == "Organism" or colorizing_labels == "Continent" or colorizing_labels == "Country" or colorizing_labels == "Cluster assigned to sample":
 
             if colorizing_labels == "Cluster assigned to sample":
+                if df_clustering is None:
+                    df_clustering = pd.DataFrame({'strain': list_sp2, 'HierarchicalClustering': [1] * len(list_sp2)})
                 df_metadata4 = df_clustering[df_clustering['strain'].isin(list_sp2)]
                 list_organisms = df_metadata4["HierarchicalClustering"].unique().tolist()
                 list_organisms = sorted(list_organisms, key=int)
@@ -7185,6 +7054,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 )
 
 def tree(colorizing_tree,session):
+    if not os.path.exists(tmp_dir + "/" + str(session) + ".dataset.tree") or not os.path.exists(tmp_dir + "/" + str(session) + ".metadata.txt"):
+        raise PreventUpdate
     
     with open(tmp_dir + "/" + str(session) + ".dataset.tree") as fp:
         snp_based_newick = fp.read()
@@ -7207,6 +7078,8 @@ def tree(colorizing_tree,session):
 )
 
 def tree1(colorizing_tree,session):
+    if not os.path.exists(tmp_dir+"/"+str(session)+".pav_jaccard_tree.nwk") or not os.path.exists(tmp_dir + "/" + str(session) + ".clusters.tsv"):
+        raise PreventUpdate
     
     with open(tmp_dir+"/"+str(session)+".pav_jaccard_tree.nwk") as fp:
         newick = fp.read()
@@ -8248,13 +8121,17 @@ def download_matrix(n,session,pathname,reference):
     Output("circos_legend", 'children', allow_duplicate=True),
     Output("circos_legend2", 'children', allow_duplicate=True),
     Input("graph_upset","clickData"),
+    Input("graph_singletons","clickData"),
     State("current_session", 'value'),
     State("my-dashbio-default-circos", "layout"),
     State("my-dashbio-default-circos", "tracks"),
     prevent_initial_call=True
 )
-def show_cluster_with_combination(click,session,current_layout,current_tracks):
+def show_cluster_with_combination(click_upset,click_singletons,session,current_layout,current_tracks):
 
+    # click on the upset plot or on the barplot of singletons per genome (Statistics view):
+    # both carry the PAV combination (string of 0/1 in the column order of df_upset.csv)
+    click = click_singletons if ctx.triggered_id == "graph_singletons" else click_upset
     if click is None:
         raise PreventUpdate
 
@@ -8308,14 +8185,79 @@ def show_cluster_with_combination(click,session,current_layout,current_tracks):
     )
 
 @app.callback(
+    Output('graph_singletons', 'figure'),
+    Input('display_type', 'value'),
+    Input('current_session', 'value'),
+    prevent_initial_call=True
+)
+def update_singletons_barplot(display_type, session):
+    """Barplot of the number of singletons (clusters present in only one genome) per genome.
+    Computed only when the Statistics view is displayed, from df_upset.csv (written by the main
+    update), so it does not slow down the main update."""
+    if display_type != 'Statistics' or not session or not validate_session_id(session):
+        raise PreventUpdate
+    upset_file = tmp_dir + "/" + str(session) + ".df_upset.csv"
+    if not os.path.exists(upset_file):
+        raise PreventUpdate
+    df_upset = pd.read_csv(upset_file, index_col=0)
+    genomes = list(df_upset.columns)
+    presence = df_upset.values > 0
+    singletons = presence[presence.sum(axis=1) == 1]
+    counts = singletons.sum(axis=0)
+
+    df_bar = pd.DataFrame({"Genome": genomes, "Singletons": counts})
+    # PAV combination "present only in this genome" (same format as the upset plot customdata)
+    df_bar["combination"] = ["".join("1" if j == i else "0" for j in range(len(genomes))) for i in range(len(genomes))]
+    df_bar = df_bar.sort_values("Singletons", ascending=False)
+
+    fig = go.Figure(go.Bar(
+        x=df_bar["Genome"], y=df_bar["Singletons"],
+        customdata=df_bar[["combination"]].values,
+        marker_color="#8B5CF6",
+        hovertemplate="%{x}: %{y} singletons<br>(click to select them)<extra></extra>",
+    ))
+    fig.update_layout(
+        title="Number of singletons (strain-specific clusters) per genome - click on a bar to select them",
+        xaxis_title="Genome", yaxis_title="Number of singleton clusters",
+        xaxis_tickangle=-45, clickmode="event",
+    )
+    return fig
+
+
+def compute_map_bounds(lats, lons, min_span=10):
+    """Bounds [[south, west], [north, east]] enclosing all points, used by the map to adjust its
+    view on the countries: a box of at least min_span degrees (country scale) when the points are
+    in a single country / region, up to a world view when they are spread over the globe."""
+    lats = [float(x) for x in lats if x is not None and not pd.isna(x)]
+    lons = [float(x) for x in lons if x is not None and not pd.isna(x)]
+    if not lats or not lons:
+        return [[-60, -170], [75, 170]]
+    south, north = min(lats), max(lats)
+    west, east = min(lons), max(lons)
+    if north - south < min_span:
+        mid = (north + south) / 2
+        south, north = mid - min_span / 2, mid + min_span / 2
+    if east - west < min_span:
+        mid = (east + west) / 2
+        west, east = mid - min_span / 2, mid + min_span / 2
+    return [[max(south, -85), max(west, -180)], [min(north, 85), min(east, 180)]]
+
+
+@app.callback(
     Output("country-markers", "children"),
+    Output("map_of_samples", "bounds"),
     Input('metadata_table','selectedRows')
 )
 def update_markers(value):
 
     markers = []
 
+    # no genome selected (e.g. "Deselect all"): empty map
+    if not value:
+        return [], no_update
     df = pd.DataFrame(value)
+    if "Country" not in df.columns:
+        return [], no_update
 
     df_country = (
             df.groupby("Country")
@@ -8357,7 +8299,10 @@ def update_markers(value):
              )
          )
 
-    return markers
+    if df_country.empty:
+        return markers, no_update
+    # adjust the view on the points (country scale if they are close, world view if spread)
+    return markers, compute_map_bounds(df_country["lat"].tolist(), df_country["lon"].tolist())
 
 def build_upset_plot(df_binary, title,feature):
     """Construit un upset plot a partir d'une matrice binaire (0/1) dont les
@@ -8519,51 +8464,95 @@ def build_geo_pie_clusters(session, clusters_path=None, map_id="geo_pie_clusters
 
 
 @app.callback(
-    Output('pcoa','figure'),
-    Output('table_clustering_assignation', 'rowData'),
-    Output('iframe-content', 'src'),
-    Input("recalculate-clustering","n_clicks"),
+    Output('pcoa', 'figure', allow_duplicate=True),
+    Output('table_clustering_assignation', 'rowData', allow_duplicate=True),
+    Output('iframe-content', 'src', allow_duplicate=True),
+    Output('genes-clustering-results', 'style', allow_duplicate=True),
+    Output('genes-clustering-header', 'children'),
+    Output('run-clustering-genes-status', 'children'),
+    Output('genes-cog-results', 'style', allow_duplicate=True),
+    Output('genes-pangwas-results', 'style', allow_duplicate=True),
+    Input("run-clustering-genes", "n_clicks"),
+    Input("recalculate-clustering", "n_clicks"),
+    State("table_pangenes", "virtualRowData"),
+    State("table_pangenes", "rowData"),
     State("clustering-method", "value"),
     State("clustering-parameter", "value"),
     State('current_session', 'value'),
-    State('colorizing_tree1','value')
+    State('colorizing_tree1', 'value'),
+    prevent_initial_call=True
 )
-def update_clustering(recalculate,method,parameter,session,colorizing_tree):
+def update_clustering(*args):
+    return (*_update_clustering_impl(*args), {'display': 'none'}, {'display': 'none'})
 
-    results = analyze_pav_matrix( input_file=tmp_dir + "/" + str(session) + ".matrix01.tsv", distance_output=tmp_dir + "/" + str(session) + ".jaccard_distance.tsv", cluster_output=tmp_dir + "/" + str(session) + ".clusters.tsv", pcoa_output=tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv", newick_output=tmp_dir + "/" + str(session) + ".pav_jaccard_tree.nwk", pcoa_plot=tmp_dir + "/" + str(session) + ".pcoa.pdf", dendrogram_plot=tmp_dir + "/" + str(session) + ".dendrogram.pdf", cluster_distance_threshold=parameter, clustering_method="average",criterion=method )
-    df_clustering_assignation = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
-    table_clustering_assignation = df_clustering_assignation.to_dict('records') 
 
-    df_pcoa = pd.read_csv(tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv",sep="\t")
+def _update_clustering_impl(n_run, n_recalc, v1, r1, method, parameter, session, colorizing_tree):
+    """Hierarchical clustering of the genomes, on demand, based on the genes (rows) currently
+    displayed in the selected table, i.e. after the filters applied in the table."""
+    if not session or not (n_run or n_recalc):
+        raise PreventUpdate
+    shown = {'display': 'block', 'paddingLeft': '15px'}
+    rows = table_rows(v1, r1)
+    label = "filtered pangenes" if r1 and len(rows) < len(r1) else "all pangenes"
+    ids = list(dict.fromkeys(str(r.get("ClutserID")) for r in rows if r.get("ClutserID") is not None))
+
+    matrix_file = tmp_dir + "/" + str(session) + ".matrix01.tsv"
+    if not ids or not os.path.exists(matrix_file):
+        return message_figure("No gene to analyse"), [], "", shown, "No gene in the selected table (check the filters).", ""
+
+    matrix = pd.read_csv(matrix_file, sep="\t", index_col=0)
+    matrix.columns = matrix.columns.astype(str)
+    cols = [c for c in ids if c in matrix.columns]
+    sub = matrix[cols]
+    sub = sub.loc[:, (sub.fillna(0) != 0).sum(axis=0) > 0]
+    if sub.shape[0] < 3 or sub.shape[1] < 1:
+        return message_figure("At least 3 genomes and 1 gene are required"), [], "", shown, \
+            f"Clustering not possible: {sub.shape[1]} informative genes x {sub.shape[0]} genomes.", ""
+    filtered_file = tmp_dir + "/" + str(session) + ".matrix01.filtered.tsv"
+    sub.to_csv(filtered_file, sep="\t")
+
+    method = method or "maxclust"
+    if parameter is None:
+        parameter = 2 if method == "maxclust" else 0.20
+    if method == "maxclust":
+        parameter = max(2, min(int(parameter), sub.shape[0]))
+
+    prefix = tmp_dir + "/" + str(session)
+    try:
+        analyze_pav_matrix(input_file=filtered_file, distance_output=prefix + ".jaccard_distance.tsv",
+                           cluster_output=prefix + ".clusters.tsv", pcoa_output=prefix + ".pcoa_coordinates.tsv",
+                           newick_output=prefix + ".pav_jaccard_tree.nwk", pcoa_plot=prefix + ".pcoa.pdf",
+                           dendrogram_plot=prefix + ".dendrogram.pdf", cluster_distance_threshold=parameter,
+                           clustering_method="average", criterion=method)
+    except Exception as e:
+        return message_figure("Clustering failed"), [], "", shown, f"Clustering failed: {e}", ""
+
+    df_clustering_assignation = pd.read_csv(prefix + ".clusters.tsv", sep="\t")
+    table_clustering_assignation = df_clustering_assignation.to_dict('records')
+
+    df_pcoa = pd.read_csv(prefix + ".pcoa_coordinates.tsv", sep="\t")
     categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
     df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
-    pcoa = px.scatter(df_pcoa, 
-                            x='PCoA1', 
-                            y='PCoA2', 
-                            color="Clusters",
-                            hover_name="strain", 
-                            hover_data=["HierarchicalClustering"],
-                            title="PCoA based on Jaccard distance", 
-                            category_orders={
-                                    "Clusters": [str(x) for x in categories]
-                                },
-                            )
+    pcoa = px.scatter(df_pcoa, x='PCoA1', y='PCoA2', color="Clusters", hover_name="strain",
+                      hover_data=["HierarchicalClustering"], title="PCoA based on Jaccard distance",
+                      category_orders={"Clusters": [str(x) for x in categories]})
     pcoa.update_traces(marker=dict(size=12))
 
-
-    with open(tmp_dir+"/"+str(session)+".pav_jaccard_tree.nwk") as fp:
+    colorizing_tree = colorizing_tree or "HierarchicalClustering"
+    with open(prefix + ".pav_jaccard_tree.nwk") as fp:
         newick = fp.read()
-        list_selected = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_genomes.txt", header=None)[0].tolist()
-        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
-        df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)] 
-        df_strains_clusters = pd.read_csv(tmp_dir + "/" + str(session) + ".clusters.tsv",sep="\t")
-        df_metadata_selected2 = pd.merge(df_metadata_selected, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
+    list_selected = pd.read_csv(prefix + ".selected_genomes.txt", header=None)[0].tolist()
+    df_metadata = pd.read_csv(prefix + ".df_metadata3.csv")
+    df_metadata_selected = df_metadata[df_metadata['Strain name'].isin(list_selected)]
+    df_metadata_selected2 = pd.merge(df_metadata_selected, df_clustering_assignation, how="right", left_on='Strain name', right_on='strain')
+    html_file = "assets/tree." + str(session) + "." + colorizing_tree + ".html"
+    generate_tree_html(newick, df_metadata_selected2, colorizing_tree, html_file)
 
-        dprint(df_metadata_selected2)
-        pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
-        generate_tree_html(newick, df_metadata_selected2, colorizing_tree, "assets/tree."+str(session)+"." + colorizing_tree+".html")
+    header = (f"Hierarchical clustering computed on {sub.shape[1]} genes ({label}) "
+              f"x {sub.shape[0]} genomes")
+    return pcoa, table_clustering_assignation, html_file + "?t=" + str(int(time_module.time() * 1000)), shown, header, ""
 
-    return pcoa,table_clustering_assignation ,"assets/tree."+str(session)+"." + colorizing_tree+".html"
+
 
 
 @app.callback(
@@ -8604,19 +8593,34 @@ def update_clustering_parameter(method):
 @app.callback(
     Output("table_pangwas",'rowData'),
     Output("pangwas_figure","figure"),
+    Output("genes-pangwas-results", "style", allow_duplicate=True),
+    Output("genes-pangwas-header", "children"),
+    Output("pangwas-status", "children"),
+    Output('genes-clustering-results', 'style', allow_duplicate=True),
+    Output('genes-cog-results', 'style', allow_duplicate=True),
     Input("pangwas","n_clicks"),
     State("current_session", 'value'),
     State('specific_to','value'),
-    State("projets",'value')
+    State("projets",'value'),
+    prevent_initial_call=True
 )
-def pangwas(click,session,specific_to,pathname):
+def pangwas(*args):
+    return (*_pangwas_impl(*args), {'display': 'none'}, {'display': 'none'})
+
+
+def _pangwas_impl(click,session,specific_to,pathname):
+    if not click or not session:
+        raise PreventUpdate
+    shown = {'display': 'block'}
+    if not specific_to:
+        return [], message_figure("No group of genomes selected"), shown, "Select a group of genomes first (PAV pattern).", ""
 
     scoary_table = []
     scoary_output_file = tmp_dir + "/" + str(session) + ".scoary_results.txt"
 
     directory = ""
     if not pathname:
-        return "No project."
+        return [], message_figure("No project"), shown, "No project.", ""
     row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
     path = ""
     if not row:
@@ -8634,7 +8638,7 @@ def pangwas(click,session,specific_to,pathname):
 
         dprint("TO BE MOVED")
         # write traits file for Scoary
-        with open(tmp_dir + "/" + str(session) + ".traits.csv", "a") as f:
+        with open(tmp_dir + "/" + str(session) + ".traits.csv", "w") as f:
             f.write(",Trait1\n")
             for strain in list_selected:
                 if strain != "ClutserID":
@@ -8711,32 +8715,56 @@ def pangwas(click,session,specific_to,pathname):
                         )
     fig.update_traces(marker=dict(size=12))
     dprint(scoary_table)
-    return scoary_table,fig
+    header = (f"Pan-GWAS (Scoary): association between genes and the {len(specific_to)} selected genomes "
+              f"(trait = 1) vs the other genomes (trait = 0) - {len(scoary_table)} associated genes")
+    return scoary_table, fig, shown, header, ""
 
 
 
  
 @app.callback(
-    Output("graph_COG_selected","figure"),
-    Output("graph_COG_enrichment","figure"),
-    Input("cog_enrichment","n_clicks"),
-    Input("cog_enrichment2","n_clicks"),
+    Output("graph_COG_selected", "figure", allow_duplicate=True),
+    Output("graph_COG_enrichment", "figure", allow_duplicate=True),
+    Output("genes-cog-results", "style", allow_duplicate=True),
+    Output("genes-cog-header", "children"),
+    Output("run-cog-genes-status", "children"),
+    Output('genes-clustering-results', 'style', allow_duplicate=True),
+    Output('genes-pangwas-results', 'style', allow_duplicate=True),
+    Input("run-cog-genes", "n_clicks"),
+    State("cog-comparison", "value"),
+    State("table_pangenes", "virtualRowData"),
+    State("table_pangenes", "rowData"),
+    State("table_coregenes", "virtualRowData"),
+    State("table_coregenes", "rowData"),
+    State("table_accessory", "virtualRowData"),
+    State("table_accessory", "rowData"),
     State("current_session", 'value'),
+    prevent_initial_call=True
 )
-def show_cog_enrichment(click,click2,session):
+def show_cog_enrichment(*args):
+    return (*_show_cog_enrichment_impl(*args), {'display': 'none'}, {'display': 'none'})
 
-    dprint(click)
-    dprint(click2)
 
-    df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
-    if ctx.triggered_id == "cog_enrichment":
-        df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters.csv", index_col=0)
-    elif ctx.triggered_id == "cog_enrichment2":
-        df = pd.read_csv(tmp_dir + "/" + str(session) + ".selected_clusters_opposite.csv", index_col=0)
+def _show_cog_enrichment_impl(n_run, comparison, v1, r1, v2, r2, v3, r3, session):
+    """COG composition of a set of genes and COG enrichment compared to another set of genes
+    (core vs accessory, core vs strain-specific, or the sub-selection vs the rest / opposite pattern)."""
+    if not session or not n_run:
+        raise PreventUpdate
+    shown = {'display': 'block'}
+    subset, background, sub_label, bg_label = cog_gene_sets(comparison, session, v1, r1, v2, r2, v3, r3)
+    background = background - subset
+    if not subset or not background:
+        msg = (f"COG enrichment not possible: {len(subset)} {sub_label} vs {len(background)} {bg_label}.")
+        return message_figure("Nothing to compare"), message_figure("Nothing to compare"), shown, msg, ""
+    universe = subset | background
+    df_all = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    df = df_all[df_all["ClutserID"].astype(str).isin(subset)]
+    cog_header = (f"COG enrichment of {len(subset)} {sub_label} compared to {len(background)} {bg_label}")
+
 
     cog_order = [
         "J", "A", "K", "L", "B",
-        "D", "Y", "V", "T", "M", "N", "U", "O",
+        "D", "Y", "V", "T", "M", "N", "Z", "W", "U", "O", "X",
         "C", "E", "F", "G", "H", "I", "P", "Q", "R", "S"
     ]
     cog_groups = {
@@ -8745,7 +8773,7 @@ def show_cog_enrichment(click,click2,session):
         ],
 
         "Cellular processes and signaling": [
-            "D", "Y", "V", "T", "M", "N", "U", "O"
+            "D", "Y", "V", "T", "M", "N", "Z", "W", "U", "O", "X"
         ],
 
         "Metabolism": [
@@ -8805,7 +8833,7 @@ def show_cog_enrichment(click,click2,session):
         orientation="h",
         color="COGgroup",
         text="count",
-        title='COG composition for selected clusters',
+        title='COG composition of the ' + sub_label,
         color_discrete_map=group_colors,
         category_orders={
             "COGterm": category_order
@@ -8829,11 +8857,14 @@ def show_cog_enrichment(click,click2,session):
     ####################################################
     df_selected_clusters = df["ClutserID"]
     selected_clusters_file = tmp_dir + "/" + str(session) + ".selected_clusters.txt"
-    df_selected_clusters.to_csv(selected_clusters_file,sep='\t',index=False)
+    df_selected_clusters.astype(str).drop_duplicates().to_csv(selected_clusters_file,sep='\t',index=False,header=False)
 
     # get COGcat of pangenes
     annotation_file = tmp_dir + "/" + str(session) + ".annotations.txt"
     df_pangenes = pd.read_csv(tmp_dir + "/" + str(session) + ".merged_with_cog.csv", index_col=0)
+    # the enrichment test compares the subset with the other genes of the annotation file:
+    # restrict it to subset + background
+    df_pangenes = df_pangenes[df_pangenes["ClutserID"].astype(str).isin(universe)]
     
     df_pangenes["COGcat"] = (
             df_pangenes["COG term"]
@@ -8844,19 +8875,30 @@ def show_cog_enrichment(click,click2,session):
     
     df_pangenes = df_pangenes.explode("COGcat")
     df_pangenes_reduced = df_pangenes[['ClutserID', 'COGcat']]
-    df_pangenes_reduced.to_csv(annotation_file,sep='\t',index=False)
+    df_pangenes_reduced.dropna().to_csv(annotation_file,sep='\t',index=False,header=False)
     
-    cmd_args = ["python", "enrichment.py", "--subsetA",selected_clusters_file, "--annotations", annotation_file, "--out", tmp_dir + "/" + str(session) + ".enrichment.txt"]
+    enrichment_file = tmp_dir + "/" + str(session) + ".enrichment.txt"
+    if os.path.exists(enrichment_file):
+        os.remove(enrichment_file)
+    cmd_args = ["python", "enrichment.py", "--subsetA",selected_clusters_file, "--annotations", annotation_file, "--out", enrichment_file]
     with open(f"{tmp_dir}/{session}.enrichment.log", "a") as log_file:
-        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT)
 
-    df_enrichment = pd.read_csv(tmp_dir + "/" + str(session) + ".enrichment.txt", sep="\t")
-    df_enrichment = df_enrichment.drop(df_enrichment.index[df_enrichment['term'] == 'COGcat'])
-    fig_enrichment = plot_cog_enrichment(df_enrichment, cog_labels, cog_order[::-1])
+    try:
+        df_enrichment = pd.read_csv(enrichment_file, sep="\t", dtype={"term": str})
+        df_enrichment = df_enrichment.drop(df_enrichment.index[df_enrichment['term'] == 'COGcat'])
+        if df_enrichment.empty:
+            fig_enrichment = message_figure("No COG category could be tested (no COG annotation in one of the groups)")
+        else:
+            fig_enrichment = plot_cog_enrichment(df_enrichment, cog_labels, cog_order[::-1],
+                                                 title=f"COG enrichment: {sub_label} vs {bg_label}")
+    except Exception as e:
+        print("COG enrichment failed:", e)
+        fig_enrichment = message_figure(f"COG enrichment failed: {e}")
     
-    return fig, fig_enrichment
+    return fig, fig_enrichment, {'display': 'block'}, cog_header, ""
 
-def plot_cog_enrichment(df, cog_labels, category_order):
+def plot_cog_enrichment(df, cog_labels, category_order, title="COG enrichment relative to the pangenome"):
 
     df = df.copy()
 
@@ -8865,6 +8907,8 @@ def plot_cog_enrichment(df, cog_labels, category_order):
     # =========================================================
 
     df["term"] = df["term"].astype(str)
+    # categories found in the results but absent from the expected order (e.g. X, W, Z): put them first
+    category_order = [t for t in sorted(df["term"].unique()) if t not in category_order] + list(category_order)
 
     df["label"] = df["term"].map(
         lambda x: f"{x} — {cog_labels.get(x, x)}"
@@ -8976,7 +9020,7 @@ def plot_cog_enrichment(df, cog_labels, category_order):
         fig.add_trace(
             go.Scatter(
                 x=finite_points["log2_OR"],
-                y=finite_points["label"],
+                y=finite_points["label"].astype(str).tolist(),
                 mode="markers",
 
                 marker=dict(
@@ -9037,7 +9081,7 @@ def plot_cog_enrichment(df, cog_labels, category_order):
         fig.add_trace(
             go.Scatter(
                 x=[right_inf] * len(inf_points),
-                y=inf_points["label"],
+                y=inf_points["label"].astype(str).tolist(),
                 mode="markers+text",
 
                 marker=dict(
@@ -9090,7 +9134,7 @@ def plot_cog_enrichment(df, cog_labels, category_order):
         fig.add_trace(
             go.Scatter(
                 x=[left_inf] * len(zero_points),
-                y=zero_points["label"],
+                y=zero_points["label"].astype(str).tolist(),
                 mode="markers+text",
 
                 marker=dict(
@@ -9186,7 +9230,7 @@ def plot_cog_enrichment(df, cog_labels, category_order):
         template="plotly_white",
 
         title=dict(
-            text="COG enrichment relative to the pangenome",
+            text=title,
             x=0.5
         ),
         
@@ -9426,8 +9470,13 @@ def build_segments_pcoa_figure(session, reference):
     Output('table_clustering_assignation-segments', 'rowData'),
     Output('iframe-content-segments', 'src'),
     Output('colorizing_tree1-segments', 'options'),
-    Input('nb_of_segments', 'children'),
+    Output('segments-clustering-results', 'style', allow_duplicate=True),
+    Output('segments-clustering-header', 'children'),
+    Output('run-clustering-segments-status', 'children'),
+    Input('run-clustering-segments', 'n_clicks'),
     Input('recalculate-clustering-segments', 'n_clicks'),
+    State('table_segments_list', 'virtualRowData'),
+    State('table_segments_list', 'rowData'),
     State('clustering-method-segments', 'value'),
     State('clustering-parameter-segments', 'value'),
     State('current_session', 'value'),
@@ -9435,25 +9484,32 @@ def build_segments_pcoa_figure(session, reference):
     State('colorizing_tree1-segments', 'value'),
     prevent_initial_call=True
 )
-def update_clustering_segments(nb_segments, recalculate, method, parameter, session, reference, colorizing_tree):
-
-    if not session or not reference:
+def update_clustering_segments(n_run, n_recalc, v1, r1, method, parameter, session, reference, colorizing_tree):
+    """Hierarchical clustering of the genomes, on demand, based on the segments currently
+    displayed in the selected table (after the filters applied in the table)."""
+    if not session or not reference or not (n_run or n_recalc):
         raise PreventUpdate
+    shown = {'display': 'block', 'paddingLeft': '15px'}
     prefix = segments_clustering_prefix(session, reference)
     binary_file = prefix + ".node_pav.binary.csv"
     if not os.path.exists(binary_file) or os.path.getsize(binary_file) == 0:
-        raise PreventUpdate
+        return message_figure("No segment PAV matrix"), [], "", dash.no_update, shown, "No segment PAV matrix available.", ""
 
-    # On (re)loading a project: default parameters, same as for the gene PAV
-    if ctx.triggered_id == 'nb_of_segments' or method is None or parameter is None:
-        method = method or "maxclust"
+    rows = table_rows(v1, r1)
+    label = "filtered segments" if r1 and len(rows) < len(r1) else "all segments"
+    ids = list(dict.fromkeys(str(r.get("Node")) for r in rows if r.get("Node") is not None))
+    if not ids:
+        return message_figure("No segment to analyse"), [], "", dash.no_update, shown, "No segment in the selected table (check the filters).", ""
+
+    method = method or "maxclust"
+    if parameter is None:
         parameter = 2 if method == "maxclust" else 0.20
-    if method == "maxclust":
-        parameter = int(parameter)
 
-    # Segment PAV: rows = segments, columns = genomes  ->  transpose to rows = genomes
+    # Segment PAV: rows = segments, columns = genomes  ->  keep the selected segments, transpose to rows = genomes
     df_segments = pd.read_csv(binary_file, index_col=0)
+    df_segments.index = df_segments.index.astype(str)
     df_segments = df_segments.loc[:, ~df_segments.columns.duplicated()]
+    df_segments = df_segments[df_segments.index.isin(set(ids))]
     matrix01_segments = df_segments.transpose()
     matrix01_segments.index.name = "strain"
     # remove segments absent from all genomes (no information)
@@ -9461,23 +9517,27 @@ def update_clustering_segments(nb_segments, recalculate, method, parameter, sess
     matrix01_file = prefix + ".matrix01.tsv"
     matrix01_segments.to_csv(matrix01_file, sep="\t")
 
-    if matrix01_segments.shape[0] < 3:
-        empty = go.Figure()
-        empty.update_layout(title="At least 3 genomes are required for the clustering")
-        return empty, [], "", dash.no_update
+    if matrix01_segments.shape[0] < 3 or matrix01_segments.shape[1] < 1:
+        return message_figure("At least 3 genomes and 1 segment are required"), [], "", dash.no_update, shown, \
+            f"Clustering not possible: {matrix01_segments.shape[1]} informative segments x {matrix01_segments.shape[0]} genomes.", ""
+    if method == "maxclust":
+        parameter = max(2, min(int(parameter), matrix01_segments.shape[0]))
 
-    analyze_pav_matrix(
-        input_file=matrix01_file,
-        distance_output=prefix + ".jaccard_distance.tsv",
-        cluster_output=prefix + ".clusters.tsv",
-        pcoa_output=prefix + ".pcoa_coordinates.tsv",
-        newick_output=prefix + ".pav_jaccard_tree.nwk",
-        pcoa_plot=prefix + ".pcoa.pdf",
-        dendrogram_plot=prefix + ".dendrogram.pdf",
-        cluster_distance_threshold=parameter,
-        clustering_method="average",
-        criterion=method
-    )
+    try:
+        analyze_pav_matrix(
+            input_file=matrix01_file,
+            distance_output=prefix + ".jaccard_distance.tsv",
+            cluster_output=prefix + ".clusters.tsv",
+            pcoa_output=prefix + ".pcoa_coordinates.tsv",
+            newick_output=prefix + ".pav_jaccard_tree.nwk",
+            pcoa_plot=prefix + ".pcoa.pdf",
+            dendrogram_plot=prefix + ".dendrogram.pdf",
+            cluster_distance_threshold=parameter,
+            clustering_method="average",
+            criterion=method
+        )
+    except Exception as e:
+        return message_figure("Clustering failed"), [], "", dash.no_update, shown, f"Clustering failed: {e}", ""
 
     df_clustering_assignation = pd.read_csv(prefix + ".clusters.tsv", sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records')
@@ -9494,8 +9554,11 @@ def update_clustering_segments(nb_segments, recalculate, method, parameter, sess
         print("Could not read metadata for segments tree:", e)
 
     tree_src = build_segments_tree_html(session, reference, colorizing_tree or "HierarchicalClustering")
+    header = (f"Hierarchical clustering computed on {matrix01_segments.shape[1]} segments ({label}) "
+              f"x {matrix01_segments.shape[0]} genomes")
+    return pcoa_fig, table_clustering_assignation, tree_src, options, shown, header, ""
 
-    return pcoa_fig, table_clustering_assignation, tree_src, options
+
 
 
 # Recolor the segment-based tree according to the selected metadata
@@ -9538,8 +9601,6 @@ def update_clustering_parameter_segments(method):
     State('reference', 'value'),
 )
 def update_geo_pie_clusters_segments(rowData, tab_value, session, reference):
-    if tab_value != 'Hierarchical clustering segments':
-        raise PreventUpdate
     if not rowData:
         return html.Div("Clustering not computed yet.", style={"padding": "20px"})
     return build_geo_pie_clusters(
@@ -9659,6 +9720,105 @@ def segments_to_circos(df):
     ]
 
 
+def compute_segments_stats(session, reference):
+    """Statistics of segments (same as the Statistics of genes): counts per type, frequency
+    distribution (nb of genomes carrying each segment) and rarefaction curve (pan / core segments).
+    Fast: numpy only, rarefaction computed incrementally on 3 random genome orders
+    (O(3 x segments x genomes)). The result is cached in a small json file, recomputed only
+    when node_pav.tsv changes."""
+    prefix = tmp_dir + "/" + str(session) + "." + str(reference) + ".segments"
+    pav_file = prefix + ".node_pav.tsv"
+    cache_file = prefix + ".stats.json"
+    mtime = os.path.getmtime(pav_file)
+    if os.path.exists(cache_file):
+        try:
+            with open(cache_file) as fh:
+                cached = json.load(fh)
+            if cached.get("mtime") == mtime:
+                return cached
+        except (OSError, ValueError):
+            pass
+
+    df_pav_node = pd.read_csv(pav_file, sep="\t", dtype={"Node": str})
+    list_strains = [c for c in df_pav_node.columns if c != "Node"]
+    values = df_pav_node[list_strains].apply(pd.to_numeric, errors="coerce").fillna(0).abs().values
+    presence = values > 0
+    presence = presence[presence.any(axis=1)]
+    sizes = values.max(axis=1)[values.max(axis=1) > 0]
+    n = presence.shape[1]
+    nb_genomes = presence.sum(axis=1)
+
+    is_core = nb_genomes == n
+    is_specific = nb_genomes == 1
+    is_disp = ~is_core & ~is_specific
+    types = {
+        "Strain-specific": [int(is_specific.sum()), int(sizes[is_specific].sum())],
+        "Core segments": [int(is_core.sum()), int(sizes[is_core].sum())],
+        "Dispensable segments": [int(is_disp.sum()), int(sizes[is_disp].sum())],
+    }
+    freq = np.bincount(nb_genomes, minlength=n + 1)[1:]
+
+    rng = np.random.default_rng(0)
+    rare = {"k": [], "value": [], "type": []}
+    for _ in range(3):
+        order = rng.permutation(n)
+        pan = np.zeros(presence.shape[0], dtype=bool)
+        core = np.ones(presence.shape[0], dtype=bool)
+        for k, col in enumerate(order, start=1):
+            pan |= presence[:, col]
+            core &= presence[:, col]
+            rare["k"] += [k, k]
+            rare["value"] += [int(pan.sum()), int(core.sum())]
+            rare["type"] += ["Pan-segments", "Core-segments"]
+
+    result = {"mtime": mtime, "types": types, "freq": freq.tolist(), "rarefaction": rare}
+    try:
+        with open(cache_file, "w") as fh:
+            json.dump(result, fh)
+    except OSError:
+        pass
+    return result
+
+
+@app.callback(
+    Output('graph_pie_segments', 'figure'),
+    Output('graph_freq_segments', 'figure'),
+    Output('rarefaction_segments', 'figure'),
+    Input('display_type_segments', 'value'),
+    Input("nb_of_segments", "children"),
+    State("current_session", "value"),
+    State("reference", "value"),
+    prevent_initial_call=True
+)
+def update_segments_stats(display_type, nb_segments, session, reference):
+    # computed only when the "Statistics" view is displayed (no cost for the main update)
+    if display_type != 'Statistics' or not session or not reference:
+        raise PreventUpdate
+    pav_file = tmp_dir + "/" + str(session) + "." + str(reference) + ".segments.node_pav.tsv"
+    if not os.path.exists(pav_file) or os.path.getsize(pav_file) == 0:
+        raise PreventUpdate
+    stats = compute_segments_stats(session, reference)
+
+    names = list(stats["types"].keys())
+    fig_pie = go.Figure(go.Pie(
+        labels=names,
+        values=[stats["types"][t][0] for t in names],
+        customdata=[stats["types"][t][1] for t in names],
+        hovertemplate="%{label}: %{value} segments (%{customdata:,} bp)<extra></extra>",
+    ))
+    fig_pie.update_layout(title='Distribution of core and dispensable segments')
+
+    freq = stats["freq"]
+    fig_freq = px.bar(x=list(range(1, len(freq) + 1)), y=freq,
+                      labels={"x": "Number of genomes", "y": "Number of segments"},
+                      title='Segments frequency distribution')
+
+    rare = stats["rarefaction"]
+    fig_rare = px.box(pd.DataFrame({"Number strains": rare["k"], "Number segments": rare["value"], "Type": rare["type"]}),
+                      title="Rarefaction curve", x="Number strains", y="Number segments", color="Type")
+    return fig_pie, fig_freq, fig_rare
+
+
 @app.callback(
     Output("table_segments_list", "rowData"),
     Output("segments_list_summary", "children"),
@@ -9751,10 +9911,16 @@ def compute_segments_view(session, reference, specific_to):
                    "padding": "3px 10px", "marginRight": "8px", "fontSize": "0.9em"}
         )
 
+    # default: same colors as the tables below (core = red, strain-specific = purple);
+    # with a genome selection, the red/purple tables show the PAV patterns, so other colors are used
+    if specific_to:
+        core_color, specific_color = "#F59E0B", "#6B7280"
+    else:
+        core_color, specific_color = "#EF4444", "#8B5CF6"
     summary = html.Div([
-        badge("Core-segments", df_list[df_list["Type"] == "Core-segment"], "#10B981"),
+        badge("Core-segments", df_list[df_list["Type"] == "Core-segment"], core_color),
         badge("Dispensable", df_list[df_list["Type"] == "Dispensable-segment"], "#3B82F6"),
-        badge("Strain-specific", df_list[df_list["Type"] == "Strain-specific"], "#EF4444"),
+        badge("Strain-specific", df_list[df_list["Type"] == "Strain-specific"], specific_color),
         html.Span(f"({nb_genomes} genomes)", style={"color": "grey"}),
     ])
 
@@ -9901,9 +10067,10 @@ def get_row_from_cell(cell, row_data):
 @app.callback(
     Output("genes_list_summary", "children"),
     Input("current_session", "value"),
+    State("specific_to", "value"),
     prevent_initial_call=True
 )
-def update_genes_list_summary(session):
+def update_genes_list_summary(session, specific_to=None):
     # computed from the file written by the main update (instead of Input rowData, which made the
     # browser send the whole table back to the server)
     f = tmp_dir + "/" + str(session) + ".merged_with_cog_final.csv"
@@ -9921,10 +10088,17 @@ def update_genes_list_summary(session):
                    "padding": "3px 10px", "marginRight": "8px", "fontSize": "0.9em"}
         )
 
+    # default: same colors as the tables below (core = red, singletons = purple);
+    # with a genome selection, the red/purple tables show the PAV patterns, so other colors are used
+    if specific_to:
+        core_color, specific_color = "#F59E0B", "#6B7280"
+    else:
+        core_color, specific_color = "#EF4444", "#8B5CF6"
+
     return html.Div([
-        badge("Core-genes", int((types == "Core-gene").sum()), "#10B981"),
+        badge("Core-genes", int((types == "Core-gene").sum()), core_color),
         badge("Dispensable", int((types == "Dispensable-gene").sum()), "#3B82F6"),
-        badge("Strain-specific", int((types == "Strain-specific").sum()), "#EF4444"),
+        badge("Strain-specific", int((types == "Strain-specific").sum()), specific_color),
     ])
 
 
@@ -10402,6 +10576,743 @@ def download_snps_opposite(n, session):
 #############################################################################################
 # Circos: tick spacing adapted to the genome size (bacteria ~ Mb, rice chromosomes ~ 400 Mb)
 #############################################################################################
+
+def compute_snmf(session, vcf_file, list_selected, max_K=5):
+    """Run sNMF for K = 2..max_K on vcf_file (code moved from trigger_heavy_update).
+    Returns (dfsnmf, df_crossentropy, previous_qmat)."""
+    individual_order = []
+    #################################################################
+    # Population structure with sNMF
+    #################################################################
+    if len(list_selected) < max_K:
+        max_K = len(list_selected)
+
+    cmd_args = [vcf2geno_exe, vcf_file, f"{tmp_dir}/{session}.variants.geno"]
+    subprocess.run(cmd_args, capture_output=True)
+
+    result = subprocess.run(
+        ["grep", "#CHROM", vcf_file],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    list_sp3 = result.stdout.strip().split("\t")[9:]
+
+
+
+    results = []
+    list_entropy = []
+
+    snmf_failure = 0
+    # Launch sNMF for K from 2 to max_K
+    for K in range(2, max_K+1):
+        cmd = snmf_exe + " -x " + tmp_dir + "/" + str(session) + ".variants.geno" + " -c -K " + str(K)
+        returned_value = os.popen(cmd).read()
+        match = re.search(r"Cross-Entropy \(masked data\):\s*([0-9]+(?:\.[0-9]+)?)", returned_value)
+        if match:
+            valeur = float(match.group(1))
+            list_entropy.append(valeur)
+        else:
+            list_entropy.append(None)
+            snmf_failure = 1
+
+    previous_qmat = pd.DataFrame(columns=['Individual', 'Assigned_to_pop', 'max_prop'])
+    if snmf_failure == 0:
+        # get the assignation of individuals to populations
+        previous_dict_groups = {}
+
+        for K in range(2, max_K+1):
+            ancestry_cols = [f"Pop_{i+1}" for i in range(K)]
+            qmat = pd.read_csv(tmp_dir + "/" + str(session) + ".variants."+str(K)+".Q", sep=" ", header=None, names=ancestry_cols)
+            qmat['Individual'] = list_sp3
+            qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+            qmat['max_prop'] = qmat[ancestry_cols].max(axis=1)
+
+            #print("\n\n")
+
+            groups = qmat.groupby("Assigned_to_pop")["Individual"].agg(concat=lambda x: ", ".join(sorted(x)),size="count").reset_index().sort_values("size", ascending=False)
+            #print(groups)
+            #print(str(K))
+            dict_groups = {}
+            dict_renaming = {}
+            dict_renaming2 = {}
+            dict_done = {}
+            dict_splitted = {}
+
+
+            # first assignment for population with exact same individuals
+            for row in groups.itertuples():
+                pop_name = row[1]
+                individuals = row[2]
+                dict_groups[individuals] = pop_name
+                #print(pop_name + " : " + individuals)
+                # keep the same name of population if it exists in previous dict
+                if individuals in previous_dict_groups:
+                    previous_pop_name = previous_dict_groups[individuals]
+                    dict_renaming[pop_name] = previous_pop_name
+                    dict_done[previous_pop_name] = 1
+                    #print("same as previous" + previous_pop_name)
+
+            for row in groups.itertuples():
+                pop_name = row[1]
+                individuals = row[2]
+                dict_groups[individuals] = pop_name
+                #print(pop_name + " : " + individuals)
+                # keep the same name of population if it exists in previous dict
+                if individuals in previous_dict_groups:
+                    dprint("do nothing here")
+                # else it means that the pop has been splitted into two populations
+                else:
+                    if len(previous_dict_groups) > 0:
+                        individuals_list = individuals.split(", ")
+                        dict_of_pop_in_previous = {}
+                        for ind in individuals_list:
+                            # get the pop in previous qmat
+                            pop = previous_qmat.loc[previous_qmat["Individual"] == ind, "Assigned_to_pop"].iloc[0]
+
+                            if pop not in dict_of_pop_in_previous:
+                                dict_of_pop_in_previous[pop] = 1
+                            else:
+                                dict_of_pop_in_previous[pop] += 1
+                            if pop not in dict_splitted:
+                                dict_splitted[pop] = pop_name
+                            else:
+                                dict_splitted[pop] += ","+pop_name
+
+
+
+                        dprint("splitted")
+
+
+
+                        # renaming for all except the last one
+                        if len(dict_of_pop_in_previous) > 1:
+                            #dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]
+                            if dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] and list(dict_of_pop_in_previous)[0] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                            elif dict_of_pop_in_previous[list(dict_of_pop_in_previous)[1]] >= dict_of_pop_in_previous[list(dict_of_pop_in_previous)[0]] and list(dict_of_pop_in_previous)[1] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[1]
+                                dict_done[list(dict_of_pop_in_previous)[1]] = 1
+
+                        else:
+                            if list(dict_of_pop_in_previous)[0] not in dict_done:
+                                dict_renaming[pop_name] = list(dict_of_pop_in_previous)[0]
+                                dict_done[list(dict_of_pop_in_previous)[0]] = 1
+                            else:
+                                new_pop_name = "Pop_" + str(K)
+                                if len(dict_of_pop_in_previous) > 1:
+                                    dict_renaming[list(dict_of_pop_in_previous)[0]+","+list(dict_of_pop_in_previous)[1]] = new_pop_name
+                                else:
+                                    dict_renaming[pop_name] = new_pop_name
+                                    dict_done[new_pop_name] = 1
+
+                        #print(dict_of_pop_in_previous.keys())
+                        #print(list(dict_of_pop_in_previous)[0])
+                    else:
+                        dprint("do nothing")
+
+            #print("Dict renaming before adjustment")
+            #print(dict_renaming)
+            #print("Dict renaming after adjustment")
+            #print(dict_renaming2)
+            #print("Dict splitted")
+            for key, value in dict_splitted.items():
+                listvalue = value.split(",")
+                dict_splitted[key] = list(dict.fromkeys(listvalue))
+
+            #print(dict_splitted)
+            list_keys_to_removed = []
+            for key in dict_renaming.keys():
+                value = dict_renaming[key]
+                list_values = value.split(",")
+
+                if len(list_values) > 1:
+                    has_been_adjusted = 0
+                    for val in list_values:
+                        dprint("val: " + val)
+                        if val not in dict_done:
+                            has_been_adjusted = 1
+                            dict_renaming[key] = val
+                    if has_been_adjusted == 0:
+                        new_pop_name = "Pop_" + str(K)
+                        dict_renaming[key] = new_pop_name
+
+
+            #print(dict_renaming)
+            # rename pop for keeping the same as previously
+            #qmat = qmat.rename(columns=dict_renaming)
+            #qmat2 = qmat.drop('Assigned_to_pop', axis=1)
+            #qmat = qmat
+            #qmat["Assigned_to_pop"] = qmat[ancestry_cols].idxmax(axis=1)
+            #print(qmat)
+            #qmat['Assigned_to_pop'] = qmat[ancestry_cols].idxmax(axis=1)
+
+            previous_dict_groups = dict_groups
+            previous_qmat = qmat
+            #print(dict_groups)
+            #print(previous_dict_groups)
+
+            qmat_sorted = qmat.sort_values(
+                by=['Assigned_to_pop', 'max_prop'],
+                ascending=[True, False]
+            )
+
+            individual_order = qmat_sorted['Individual'].tolist()
+
+            qmat['Individual'] = pd.Categorical(
+                qmat['Individual'],
+                categories=individual_order,
+                ordered=True
+            )
+
+            qmat_long = qmat.melt(id_vars=['Individual'],
+                        value_vars=ancestry_cols,
+                        var_name='Cluster', value_name='Ancestry')
+
+            qmat_long['K'] = K
+            results.append(qmat_long)
+    else:
+        results = []
+
+
+    if results:
+        dfsnmf = pd.concat(results)
+    else:
+        dfsnmf = pd.DataFrame(columns=['Individual','Ancestry','Cluster','K'])
+
+    dict_cross_entropy = {'K': range(2, max_K+1),'Cross-entropy': list_entropy}
+    dprint(dict_cross_entropy)
+    df_crossentropy = pd.DataFrame.from_dict(dict_cross_entropy)
+    return dfsnmf, df_crossentropy, previous_qmat
+
+
+##############################################################################################
+# On-demand analyses launched from the buttons under the tables (genes, segments, SNPs).
+# They use the rows currently displayed in the chosen table (AG Grid virtualRowData = rows
+# after filtering and sorting), so that the analysis takes the table filters into account.
+##############################################################################################
+
+def message_figure(text):
+    fig = empty_figure()
+    fig.update_layout(annotations=[dict(text=text, x=0.5, y=0.5, xref="paper", yref="paper",
+                                        showarrow=False, font=dict(size=16))])
+    return fig
+
+
+def analysis_bar(prefix, buttons, extra=None):
+    """Zone of secondary analyses under the tables: blue buttons + number of rows analysed."""
+    status = [dcc.Loading(html.Div(id=b.id + "-status"), type="circle") for b in buttons if isinstance(b, html.Button)]
+    return html.Div([
+        html.Div([*buttons, *(extra or []), *status],
+                 style={"display": "flex", "alignItems": "center", "gap": "10px", "flexWrap": "wrap"}),
+        html.Small(id=prefix + "-analysis-count", style={"color": "grey"}),
+    ], style={"marginTop": "5px"})
+
+
+def analysis_bar_genes():
+    return analysis_bar("genes", [
+        html.Button("Hierarchical clustering", id="run-clustering-genes", className="pe-btn-cta", n_clicks=0),
+        html.Button("COG enrichment", id="run-cog-genes", className="pe-btn-cta", n_clicks=0),
+        dcc.Dropdown(id="cog-comparison", options=COG_COMPARISONS_DEFAULT + COG_COMPARISONS_CONTRAST, value="core_vs_all",
+                     clearable=False, style={"width": "420px"}),
+        html.Button("Pan-GWAS", id="pangwas", className="pe-btn-cta", n_clicks=0, disabled=True,
+                    title="Select a group of genomes first (PAV pattern)"),
+    ])
+
+
+def analysis_bar_segments():
+    return analysis_bar("segments", [
+        html.Button("Hierarchical clustering", id="run-clustering-segments", className="pe-btn-cta", n_clicks=0),
+    ])
+
+
+def analysis_bar_snps():
+    return analysis_bar("snps", [
+        html.Button("Population structure", id="run-snmf", className="pe-btn-cta", n_clicks=0),
+    ], extra=[
+        html.Span("K max:", style={"marginLeft": "4px"}),
+        dcc.Input(id="snmf-max-k", type="number", value=5, min=2, max=15, step=1, style={"width": "70px"}),
+    ])
+
+
+def table_rows(virtual_rows, rows):
+    """Rows displayed in an AG Grid after filtering (virtualRowData), or all rows."""
+    if virtual_rows is not None:
+        return virtual_rows
+    return rows or []
+
+
+def _register_count_callback(prefix, table, unit):
+    @app.callback(
+        Output(prefix + "-analysis-count", "children"),
+        Input(table, "virtualRowData"),
+        State(table, "rowData"),
+        prevent_initial_call=True
+    )
+    def _count(v, r):
+        rows = table_rows(v, r)
+        total = len(r or [])
+        txt = f"Analyses use the {len(rows)} {unit} displayed in the table above"
+        if total and len(rows) < total:
+            txt += f" (filtered from {total})"
+        return txt
+    return _count
+
+
+_register_count_callback("genes", "table_pangenes", "genes")
+_register_count_callback("segments", "table_segments_list", "segments")
+_register_count_callback("snps", "table_snps_list", "SNPs")
+
+
+COG_COMPARISONS_DEFAULT = [
+    {"label": "Core-genes vs all pangenes", "value": "core_vs_all"},
+    {"label": "Accessory (shell) genes vs all pangenes", "value": "shell_vs_all"},
+    {"label": "Strain-specific genes vs all pangenes", "value": "specific_vs_all"},
+]
+COG_COMPARISONS_CONTRAST = [
+    {"label": "Core-genes vs strain-specific genes (direct contrast)", "value": "core_vs_specific"},
+]
+
+
+# Comparisons available for COG enrichment (sub-selection comparisons when a sub-selection exists)
+# and Pan-GWAS only available when a group of genomes is selected
+@app.callback(
+    Output("cog-comparison", "options"),
+    Output("cog-comparison", "value"),
+    Output("pangwas", "disabled"),
+    Output("pangwas", "title"),
+    Input("table_pangenes", "virtualRowData"),
+    Input("specific_to", "value"),
+    State("table_pangenes", "rowData"),
+    State("cog-comparison", "value"),
+)
+def toggle_subselection_buttons(v_all, specific_to, r_all, current):
+    rows_all = table_rows(v_all, r_all)
+    filtered = bool(r_all) and len(rows_all) < len(r_all)
+    options = list(COG_COMPARISONS_DEFAULT)
+    if specific_to:
+        options.append({"label": "Genes respecting the PAV pattern vs all pangenes", "value": "pattern_vs_all"})
+    if filtered:
+        options.append({"label": "Filtered pangenes vs all pangenes", "value": "filtered_vs_all"})
+    options += COG_COMPARISONS_CONTRAST
+    if specific_to:
+        options.append({"label": "PAV pattern vs opposite pattern (direct contrast)", "value": "pattern_vs_opposite"})
+    values = [o["value"] for o in options]
+    value = current if current in values else "core_vs_all"
+    gwas_ok = bool(specific_to)
+    return (options, value, not gwas_ok,
+            "Association between genes and the selected group of genomes (Scoary)" if gwas_ok
+            else "Select a group of genomes first (PAV pattern)")
+
+
+def cog_gene_sets(comparison, session, v_all, r_all, v_pat, r_pat, v_opp, r_opp):
+    """Return (subset ids, background ids, subset label, background label) for the COG enrichment."""
+    def ids_of(rows):
+        return set(str(r.get("ClutserID")) for r in rows or [] if r.get("ClutserID") is not None)
+    matrix = pd.read_csv(tmp_dir + "/" + str(session) + ".matrix01.tsv", sep="\t", index_col=0)
+    matrix.columns = matrix.columns.astype(str)
+    nb_present = (matrix.fillna(0) > 0).sum(axis=0)
+    n = matrix.shape[0]
+    present = set(nb_present[nb_present > 0].index)
+    core = set(nb_present[nb_present == n].index)
+    specific = set(nb_present[nb_present == 1].index)
+    rest = "other genes of the pangenome"
+    # "X vs all pangenes": Fisher test of X against all the other genes of the pangenome
+    if comparison == "core_vs_specific":
+        return core, specific, "core-genes", "strain-specific genes"
+    if comparison == "pattern_vs_opposite":
+        return (ids_of(table_rows(v_pat, r_pat)), ids_of(table_rows(v_opp, r_opp)),
+                "genes respecting the PAV pattern", "genes respecting the opposite pattern")
+    if comparison == "shell_vs_all":
+        sub = present - core - specific
+        return sub, present - sub, "accessory (shell) genes", rest
+    if comparison == "specific_vs_all":
+        return specific, present - specific, "strain-specific genes", rest
+    if comparison == "pattern_vs_all":
+        sub = ids_of(table_rows(v_pat, r_pat)) & present
+        return sub, present - sub, "genes respecting the PAV pattern", rest
+    if comparison == "filtered_vs_all":
+        sub = ids_of(table_rows(v_all, r_all)) & present
+        return sub, present - sub, "filtered pangenes", rest
+    return core, present - core, "core-genes", rest
+
+
+# Hide all on-demand results when a new project / selection of genomes is loaded
+@app.callback(
+    Output('genes-clustering-results', 'style', allow_duplicate=True),
+    Output('genes-cog-results', 'style', allow_duplicate=True),
+    Output('segments-clustering-results', 'style', allow_duplicate=True),
+    Output('snps-snmf-results', 'style', allow_duplicate=True),
+    Output('genes-pangwas-results', 'style', allow_duplicate=True),
+    Input('current_session', 'value'),
+    prevent_initial_call=True
+)
+def hide_ondemand_results(session):
+    hidden = {'display': 'none'}
+    return hidden, hidden, hidden, hidden, hidden
+
+
+# The gene tables change when a PAV pattern is applied: the COG results are no longer valid
+@app.callback(
+    Output('genes-cog-results', 'style', allow_duplicate=True),
+    Output('genes-pangwas-results', 'style', allow_duplicate=True),
+    Input('nb_of_selected_clusters', 'children'),
+    prevent_initial_call=True
+)
+def hide_cog_results(_):
+    return {'display': 'none'}, {'display': 'none'}
+
+
+@app.callback(
+    Output('sNMF', 'figure', allow_duplicate=True),
+    Output('sNMF_cross_entropy', 'figure', allow_duplicate=True),
+    Output('snps-snmf-results', 'style', allow_duplicate=True),
+    Output('snps-snmf-header', 'children'),
+    Output('PCA', 'figure', allow_duplicate=True),
+    Output('run-snmf-status', 'children'),
+    Output('iframe-snptree', 'src', allow_duplicate=True),
+    Input('run-snmf', 'n_clicks'),
+    State('table_snps_list', 'virtualRowData'),
+    State('table_snps_list', 'rowData'),
+    State('snmf-max-k', 'value'),
+    State('current_session', 'value'),
+    State('dimension_pca', 'value'),
+    State('colorizing_pca', 'value'),
+    State('colorizing_tree', 'value'),
+    prevent_initial_call=True
+)
+def run_snmf_on_selection(n_run, v1, r1, max_k, session, dimension_pca, colorizing_pca, colorizing_tree):
+    return (*_run_snp_analyses(n_run, v1, r1, max_k, session, dimension_pca, colorizing_pca, colorizing_tree),)
+
+
+def _run_snp_analyses(n_run, v1, r1, max_k, session, dimension_pca, colorizing_pca, colorizing_tree):
+    """Population structure (sNMF) on demand, on the SNPs currently displayed in the selected
+    table (after the filters applied in the table)."""
+    if not session or not n_run:
+        raise PreventUpdate
+    shown = {'display': 'block', 'paddingLeft': '15px'}
+    rows = table_rows(v1, r1)
+    label = "filtered SNPs" if r1 and len(rows) < len(r1) else "all SNPs"
+    ids = set(str(r.get("SNP")) for r in rows if r.get("SNP") is not None)
+    vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
+    if not ids or not os.path.exists(vcf_file):
+        return message_figure("No SNP to analyse"), empty_figure(), shown, "No SNP in the selected table (check the filters).", no_update, "", no_update
+
+    # VCF restricted to the selected SNPs
+    subset_vcf = tmp_dir + "/" + str(session) + ".snmf_subset.vcf"
+    samples = []
+    nb = 0
+    with open(vcf_file) as fh, open(subset_vcf, "w") as out:
+        for line in fh:
+            if line.startswith("#"):
+                if line.startswith("#CHROM"):
+                    samples = line.rstrip("\n").split("\t")[9:]
+                out.write(line)
+                continue
+            parts = line.split("\t", 2)
+            if len(parts) > 2 and f"{parts[0]}:{parts[1]}" in ids:
+                out.write(line)
+                nb += 1
+    if nb < 2 or len(samples) < 3:
+        return message_figure("Not enough data"), empty_figure(), shown, \
+            f"sNMF not possible: {nb} SNPs x {len(samples)} genomes (at least 2 SNPs and 3 genomes required).", no_update, "", no_update
+
+    prefix = tmp_dir + "/" + str(session)
+
+    # ---- SNP-based distance tree (neighbour-joining on plink distances)
+    tree_src = no_update
+    for f in (prefix + ".dataset.tree", prefix + ".dataset.dist", prefix + ".dataset.dist.id"):
+        if os.path.exists(f):
+            os.remove(f)
+    subprocess.run([plink2_exe, "--vcf", subset_vcf, "--max-alleles", "2", "--min-alleles", "2",
+                    "--make-bed", "--out", prefix + ".dataset"], capture_output=True)
+    subprocess.run([plink_exe, "--bfile", prefix + ".dataset", "--distance", "square",
+                    "--allow-extra-chr", "--out", prefix + ".dataset"], capture_output=True)
+    if os.path.exists(prefix + ".dataset.dist.id") and os.path.exists(prefix + ".dataset.dist"):
+        try:
+            from skbio import DistanceMatrix
+            from skbio.tree import nj
+            ids_tree = pd.read_csv(prefix + ".dataset.dist.id", sep=r"\s+", header=None, comment="#")[1].astype(str).tolist()
+            D = np.loadtxt(prefix + ".dataset.dist")
+            rooted_tree = nj(DistanceMatrix(D, ids_tree)).root_at_midpoint()
+            with open(prefix + ".dataset.tree", "w") as f:
+                f.write(str(rooted_tree))
+        except Exception as e:
+            print("SNP-based tree failed:", e)
+
+    # ---- PCA with plink
+    df_pca = pd.DataFrame(columns=['#IID', 'PC1', 'PC2', 'PC3'])
+    for f in (prefix + ".plink.eigenvec", prefix + ".plink.eigenvec.tsv"):
+        if os.path.exists(f):
+            os.remove(f)
+    subprocess.run([plink_exe, "--vcf", subset_vcf, "--pca", "--double-id", "--allow-extra-chr",
+                    "--out", prefix + ".plink"], capture_output=True)
+    if os.path.exists(prefix + ".plink.eigenvec"):
+        df_eig = pd.read_csv(prefix + ".plink.eigenvec", sep=r"\s+", header=None)
+        if df_eig.shape[1] >= 5:
+            df_pca = pd.DataFrame({'#IID': df_eig[0].astype(str), 'PC1': df_eig[2], 'PC2': df_eig[3], 'PC3': df_eig[4]})
+    df_meta = pd.DataFrame(columns=['Strain name'])
+    if os.path.exists(prefix + ".snp_metadata.csv"):
+        df_meta = pd.read_csv(prefix + ".snp_metadata.csv")
+        df_meta['Strain name'] = df_meta['Strain name'].astype(str)
+    df_base = pd.merge(df_pca, df_meta, left_on='#IID', right_on='Strain name', how='left')
+    df_base['Strain name'] = df_base['Strain name'].fillna(df_base['#IID'])
+    df_base.to_csv(prefix + ".pca_metadata_base.csv", index=False)
+
+    max_K = max(2, int(max_k or 5))
+    dfsnmf, df_crossentropy, qmat = compute_snmf(session, subset_vcf, samples, max_K)
+    max_K = int(df_crossentropy["K"].max()) if not df_crossentropy.empty else max_K
+    snmf_ok = not dfsnmf.empty
+
+    # order of individuals: SNP-based tree when available
+    individual_order = []
+    tree_file = tmp_dir + "/" + str(session) + ".dataset.tree"
+    if os.path.exists(tree_file):
+        try:
+            from skbio import TreeNode
+            individual_order = [tip.name for tip in TreeNode.read(tree_file).tips()]
+        except Exception as e:
+            print("Could not read SNP tree:", e)
+    if not individual_order and snmf_ok:
+        individual_order = list(dict.fromkeys(dfsnmf["Individual"].astype(str)))
+
+    if not snmf_ok:
+        fig_snmf = message_figure("sNMF failed (try with more SNPs or a lower K max)")
+        fig_cross_entropy = empty_figure()
+    else:
+      fig_snmf = px.bar(dfsnmf, x="Individual", y="Ancestry", color="Cluster",
+                      category_orders={"Individual": individual_order}, facet_row="K", height=800)
+      fig_snmf.update_layout(title="Population structure (by sNMF) for different K", barmode='stack', showlegend=True)
+      fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy",
+                                title=f"Values of the cross-entropy criterion for sNMF runs (K=2 to K={max_K})")
+
+    # update the population assignment used to colorize the PCA
+    fig_pca = no_update
+    base = prefix + ".pca_metadata_base.csv"
+    if os.path.exists(base):
+        df_base = pd.read_csv(base)
+        if qmat.empty:
+            qmat = pd.DataFrame({'Individual': df_base['Strain name'], 'Assigned_to_pop': 'sNMF failed', 'max_prop': np.nan})
+        q = qmat[['Individual', 'Assigned_to_pop', 'max_prop']].copy()
+        q['Individual'] = q['Individual'].astype(str)
+        df_new = pd.merge(df_base, q, left_on='Strain name', right_on='Individual', how='left')
+        df_new['Assigned_to_pop'] = df_new['Assigned_to_pop'].fillna('NA')
+        df_new['Individual'] = df_new['Individual'].fillna(df_new['Strain name'])
+        df_new.to_csv(tmp_dir + "/" + str(session) + ".metadata.txt")
+        fig_pca = pca(dimension_pca or "3D", colorizing_pca, session)
+        try:
+            tree_src = tree(colorizing_tree or "Country", session) + "?t=" + str(int(time_module.time() * 1000))
+        except PreventUpdate:
+            pass
+
+    header = f"Population structure (sNMF, K=2 to {max_K}), PCA and SNP-based tree computed on {nb} SNPs ({label}) x {len(samples)} genomes"
+    return fig_snmf, fig_cross_entropy, shown, header, fig_pca, "", tree_src
+
+
+
+##############################################################################################
+# Haplotype network from the PAV matrix used for the hierarchical clustering (genes / segments)
+# Same tools as for the repeats (MLVA): haplotype_network.py (distances + minimum spanning tree)
+# and draw_haplotype_network.plot_haplotype_network (pie charts).
+##############################################################################################
+
+def pav_haplotype_color_options(session):
+    options = ["HierarchicalClustering"]
+    try:
+        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv", nrows=1)
+        options += [c for c in df_metadata.columns.tolist()
+                    if c not in ("Strain name", "HierarchicalClustering") and not c.startswith("Unnamed")]
+    except Exception as e:
+        print("Could not read metadata for haplotype network:", e)
+    return options
+
+
+def build_haplotype_network(values, session, out_prefix, color_by, recompute, unit, group_label=None, group_map=None):
+    """Haplotype network (same tools as for the repeats) from a matrix rows = genomes, columns = markers.
+    Genomes with identical rows form a haplotype; distance between haplotypes = Manhattan distance
+    (number of differences for 0/1 values); network = minimum spanning tree (haplotype_network.py).
+    Pie charts colored by group_map (when color_by == group_label) or by a metadata column.
+    Returns (img src, info text)."""
+    values = values.copy()
+    values.index = values.index.astype(str)
+    profiles = values.astype(str).agg("_".join, axis=1)
+    haplo_ids = {p: f"haplo{i}" for i, p in enumerate(profiles.unique(), start=1)}
+    df_strains = pd.DataFrame({"Strain_name": values.index, "Haplotype": profiles.map(haplo_ids).values})
+    nb_haplo = len(haplo_ids)
+    info = f"{nb_haplo} haplotypes for {values.shape[0]} genomes, based on {values.shape[1]} {unit}."
+    if nb_haplo < 2:
+        return "", info + " A network requires at least 2 different haplotypes."
+
+    network_csv = out_prefix + ".haplotype_network.csv"
+    if recompute or not os.path.exists(network_csv):
+        first = ~profiles.duplicated().values
+        df_haplo = values.loc[first].copy()
+        df_haplo.index = [haplo_ids[p] for p in profiles[first].values]
+        df_haplo.columns = range(df_haplo.shape[1])
+        df_haplo.to_csv(out_prefix + ".haplotypes.txt")
+        if os.path.exists(network_csv):
+            os.remove(network_csv)
+        cmd_args = ["python", "haplotype_network.py", "-i", out_prefix + ".haplotypes.txt", "-o", out_prefix]
+        with open(tmp_dir + "/haplotype_network.log", "a") as log_file:
+            subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT)
+        df_strains.to_csv(out_prefix + ".strain_haplotypes.csv", index=False)
+    if not os.path.exists(network_csv):
+        return "", info + " The haplotype network could not be computed."
+
+    # colors of the pie charts: group (clusters, sNMF populations) or any metadata
+    df_meta = df_strains.copy()
+    label = color_by or group_label or "Country"
+    if group_label is not None and label == group_label:
+        df_meta[label] = df_meta["Strain_name"].map(group_map or {})
+    else:
+        df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+        mapping = dict(zip(df_metadata["Strain name"].astype(str), df_metadata[label])) if label in df_metadata.columns else {}
+        df_meta[label] = df_meta["Strain_name"].map(mapping)
+        if label == "Country":
+            df_meta[label] = df_meta[label].map(lambda v: str(v).split(":", 1)[0].strip() if pd.notna(v) else v)
+    df_meta.to_csv(out_prefix + ".haplotype_metadata.csv", index=False)
+
+    try:
+        fig, ax, G, pos = plot_haplotype_network(
+            network_csv,
+            out_prefix + ".haplotype_metadata.csv",
+            sample_col="Strain_name",
+            haplotype_col="Haplotype",
+            origin_col=label,
+            scale=18,
+            distance_transform="sqrt",
+            min_visual_distance=2.5,
+            node_size_min=0.01,
+            node_size_max=0.08,
+            show_labels=True,
+            show_weights=True
+        )
+    except Exception as e:
+        return "", info + f" Drawing of the network failed: {e}"
+    svg = matplotlib_to_svg(fig)
+    import matplotlib.pyplot as plt
+    plt.close(fig)
+    return "data:image/svg+xml;base64," + base64.b64encode(svg.encode()).decode(), info
+
+
+def build_pav_haplotype_network(matrix_file, clusters_file, session, out_prefix, color_by, recompute, unit):
+    """Haplotype network from the 0/1 PAV matrix used for the clustering (rows = genomes)."""
+    if not os.path.exists(matrix_file) or not os.path.exists(clusters_file):
+        return "", ""
+    matrix = pd.read_csv(matrix_file, sep="\t", index_col=0)
+    binary = (matrix.apply(pd.to_numeric, errors="coerce").fillna(0) > 0).astype(int)
+    df_clusters = pd.read_csv(clusters_file, sep="\t")
+    clusters = {str(k): f"Cluster {v}" for k, v in zip(df_clusters["strain"], df_clusters["HierarchicalClustering"])}
+    return build_haplotype_network(binary, session, out_prefix, color_by, recompute, unit,
+                                   group_label="HierarchicalClustering", group_map=clusters)
+
+
+def snp_allele_matrix(vcf_file):
+    """Rows = genomes, columns = SNPs, value = number of Alt alleles (allele index for multi-allelic).
+    SNPs with missing data in at least one genome are removed. Returns (matrix, nb removed)."""
+    samples, cols, rows = [], [], []
+    with open(vcf_file) as fh:
+        for line in fh:
+            if line.startswith("##"):
+                continue
+            if line.startswith("#CHROM"):
+                samples = line.rstrip("\n").split("\t")[9:]
+                continue
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 10:
+                continue
+            fmt = parts[8].split(":")
+            gt_i = fmt.index("GT") if "GT" in fmt else 0
+            vals = []
+            for v in parts[9:]:
+                fields = v.split(":")
+                alleles = re.split(r"[/|]", fields[gt_i] if gt_i < len(fields) else ".")
+                if any(x in (".", "") for x in alleles):
+                    vals.append(np.nan)
+                else:
+                    vals.append(sum(int(x) for x in alleles))
+            cols.append(f"{parts[0]}:{parts[1]}")
+            rows.append(vals)
+    df = pd.DataFrame(rows, index=cols, columns=samples)
+    complete = df.notna().all(axis=1)
+    return df[complete].astype(int).T, int((~complete).sum())
+
+
+@app.callback(
+    Output('haplo-network-genes', 'src'),
+    Output('haplo-network-genes-info', 'children'),
+    Output('haplo-color-genes', 'options'),
+    Input('table_clustering_assignation', 'rowData'),
+    Input('haplo-color-genes', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def haplotype_network_genes(rowData, color_by, session):
+    if not session or not rowData:
+        return "", "", no_update
+    recompute = ctx.triggered_id == 'table_clustering_assignation'
+    prefix = tmp_dir + "/" + str(session)
+    src, info = build_pav_haplotype_network(prefix + ".matrix01.filtered.tsv", prefix + ".clusters.tsv",
+                                            session, prefix + ".genes", color_by, recompute, "genes")
+    return src, info, (pav_haplotype_color_options(session) if recompute else no_update)
+
+
+@app.callback(
+    Output('haplo-network-segments', 'src'),
+    Output('haplo-network-segments-info', 'children'),
+    Output('haplo-color-segments', 'options'),
+    Input('table_clustering_assignation-segments', 'rowData'),
+    Input('haplo-color-segments', 'value'),
+    State('current_session', 'value'),
+    State('reference', 'value'),
+    prevent_initial_call=True
+)
+def haplotype_network_segments(rowData, color_by, session, reference):
+    if not session or not reference or not rowData:
+        return "", "", no_update
+    recompute = ctx.triggered_id == 'table_clustering_assignation-segments'
+    prefix = segments_clustering_prefix(session, reference)
+    src, info = build_pav_haplotype_network(prefix + ".matrix01.tsv", prefix + ".clusters.tsv",
+                                            session, prefix + ".haplo", color_by, recompute, "segments")
+    return src, info, (pav_haplotype_color_options(session) if recompute else no_update)
+
+
+@app.callback(
+    Output('haplo-network-snps', 'src'),
+    Output('haplo-network-snps-info', 'children'),
+    Output('haplo-color-snps', 'options'),
+    Input('snps-snmf-header', 'children'),
+    Input('haplo-color-snps', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def haplotype_network_snps(header, color_by, session):
+    """Haplotype network based on the alleles of the SNPs used for the population structure analysis."""
+    if not session:
+        raise PreventUpdate
+    prefix = tmp_dir + "/" + str(session)
+    vcf_file = prefix + ".snmf_subset.vcf"
+    if not os.path.exists(vcf_file):
+        return "", "", no_update
+    recompute = ctx.triggered_id == 'snps-snmf-header'
+    values, nb_missing = snp_allele_matrix(vcf_file)
+    if values.shape[1] == 0:
+        return "", "No SNP without missing data: the haplotype network cannot be computed.", no_update
+    populations = {}
+    if os.path.exists(prefix + ".metadata.txt"):
+        df_pop = pd.read_csv(prefix + ".metadata.txt")
+        if {"Strain name", "Assigned_to_pop"}.issubset(df_pop.columns):
+            populations = dict(zip(df_pop["Strain name"].astype(str), df_pop["Assigned_to_pop"].astype(str)))
+    src, info = build_haplotype_network(values, session, prefix + ".snps", color_by, recompute, "SNPs",
+                                        group_label="Population (sNMF)", group_map=populations)
+    if nb_missing:
+        info += f" {nb_missing} SNPs with missing data were ignored."
+    options = no_update
+    if recompute:
+        options = ["Population (sNMF)"] + [o for o in pav_haplotype_color_options(session) if o != "HierarchicalClustering"]
+    return src, info, options
+
 
 def circos_config_for_layout(circos_layout):
     """Return a copy of layout_config whose ticks are adapted to the total size of the layout:
