@@ -359,3 +359,18 @@ table tr:hover td { background-color: #F8FAFC; }
   transform: none;
   box-shadow: none;
 }
+
+/* AG Grid selection checkboxes: the real <input> must cover its 16x16 wrapper, otherwise a
+   click lands on the wrapper and nothing is ticked (the input was rendered with a 0x0 size). */
+.ag-checkbox-input-wrapper { position: relative; }
+.ag-checkbox-input-wrapper input.ag-checkbox-input,
+.ag-checkbox-input-wrapper input[type="checkbox"] {
+  position: absolute !important;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
