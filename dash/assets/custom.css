@@ -351,3 +351,11 @@ table tr:hover td { background-color: #F8FAFC; }
   .brand-text { font-size: 1.05rem; }
   .nav-item-box { display: block; margin: 2px 0 !important; }
 }
+
+/* Disabled CTA buttons (e.g. COG enrichment / Pan-GWAS before a sub-selection) */
+.pe-btn-cta:disabled, .pe-btn-cta:disabled:hover {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
