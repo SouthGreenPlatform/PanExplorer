@@ -198,6 +198,43 @@ except Exception:
 
 colors = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52', '#800080', '#008080', '#C0C0C0', '#808080']
 
+
+def natural_key(value):
+    """Sort key: 'Pop_2' < 'Pop_10', 2 < 10."""
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", str(value))]
+
+
+def is_missing_category(value):
+    return str(value) in ("none", "None", "nan", "NaN", "") or value is None
+
+
+def category_color_map(values):
+    """Same colors everywhere (trees, PCoA, PCA, maps, haplotype networks):
+    the categories, sorted in natural order, take the colors of the global list in that order."""
+    cats = sorted({str(v) for v in values if not is_missing_category(v)}, key=natural_key)
+    return {c: colors[i % len(colors)] for i, c in enumerate(cats)}
+
+
+def population_color_map(values):
+    """sNMF populations: Pop_N always gets the N-th color, whatever the populations present."""
+    cmap = {}
+    others = []
+    for v in {str(v) for v in values if not is_missing_category(v)}:
+        m = re.match(r"^Pop_(\d+)$", v)
+        if m:
+            cmap[v] = colors[(int(m.group(1)) - 1) % len(colors)]
+        else:
+            others.append(v)
+    for v in sorted(others, key=natural_key):
+        cmap[v] = "#7f7f7f"
+    return cmap
+
+
+def clean_country(value):
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return value
+    return str(value).split(":", 1)[0].strip()
+
 # Constants
 METADATA_PREVIEW_ROWS = 500
 DEFAULT_COLORS = colors
@@ -370,14 +407,14 @@ columnDefs = [
 ]
 
 columnDefs2 = [
-    {
-        "field": "ID",
-        "width": 120,
-        "checkboxSelection": True,
-        "headerCheckboxSelection": True,
-    },
-    {"field": "Repeat","width": 200,},
-    {"field": "Flanking","width": 1000,},
+    {"field": "ID", "headerName": "Locus", "width": 170, "filter": "agTextColumnFilter", "pinned": "left",
+     "checkboxSelection": True, "headerCheckboxSelection": True, "headerCheckboxSelectionFilteredOnly": True},
+    {"field": "Repeat", "headerName": "Repeat unit", "width": 200, "filter": "agTextColumnFilter"},
+    {"field": "Nb_alleles", "headerName": "Nb alleles", "width": 120, "filter": "agNumberColumnFilter"},
+    {"field": "Min_repeats", "headerName": "Min repeats", "width": 130, "filter": "agNumberColumnFilter"},
+    {"field": "Max_repeats", "headerName": "Max repeats", "width": 130, "filter": "agNumberColumnFilter"},
+    {"field": "HGDI", "headerName": "Diversity (HGDI)", "width": 150, "filter": "agNumberColumnFilter"},
+    {"field": "Flanking", "width": 600, "filter": "agTextColumnFilter"},
 ]
 
 
@@ -395,8 +432,8 @@ columnDefs5 = [
 ]
 
 columnDefs6 = [
-    {"field": "strain","width": 300},
-    {"field": "HierarchicalClustering","width": 200},
+    {"field": "strain", "flex": 2, "minWidth": 120},
+    {"field": "HierarchicalClustering", "headerName": "Cluster", "flex": 1, "minWidth": 80},
 ]
 
 columnDefs7 = [
@@ -1797,7 +1834,7 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                                 dbc.Col(
                                     [
                                         dbc.Label(
-                                            "Tree colored by:",
+                                            "Color all figures by:",
                                             className="fw-bold"
                                         ),
                                         dcc.Dropdown(
@@ -1824,7 +1861,7 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Loading(dcc.Graph(id='pcoa',style={'width': '60vh', 'height': '800px','padding': '5px'})),
+                                                    dcc.Loading(dcc.Graph(id='pcoa',style={'width': '100%', 'height': '700px','padding': '5px'})),
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -1835,7 +1872,7 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
+                                                    dcc.Loading(html.Iframe(id='iframe-content',style={'width': '100%', 'height': '700px', 'border': 'none'}))
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -1852,7 +1889,7 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                                                         html.Div(children=[
                                                             dag.AgGrid(
                                                                 id="table_clustering_assignation",
-                                                                style={'margin-left': '1px',"paddingRight": "15px"},
+                                                                style={'margin-left': '1px',"paddingRight": "15px", 'height': '620px'},
                                                                 rowData=[],
                                                                 columnDefs=columnDefs6,
                                                                 defaultColDef={"filter": True},
@@ -1884,9 +1921,9 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                                                                "Distance between haplotypes = number of genes with a different presence/absence; "
                                                                "network = minimum spanning tree.", style={"color": "grey"}),
                                                     html.Div([
-                                                        html.Span("Pie charts colored by:", className="fw-bold"),
-                                                        dcc.Dropdown(id='haplo-color-genes', options=['HierarchicalClustering', 'Country'],
-                                                                     value='HierarchicalClustering', clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+                                                        html.Span("Node labels:", className="fw-bold"),
+            dcc.RadioItems(id='haplo-labels-genes', options=[{"label": " Haplotypes", "value": "haplotype"}, {"label": " Genomes", "value": "genomes"}],
+                           value='haplotype', inline=True, inputStyle={"marginLeft": "10px"}),
                                                     ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
                                                     html.Div(id='haplo-network-genes-info', style={"color": "grey"}),
                                                     dcc.Loading(html.Img(id='haplo-network-genes', style={"width": "90%", "height": "auto"})),
@@ -2339,7 +2376,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                 dbc.Col(
                                     [
                                         dbc.Label(
-                                            "Tree colored by:",
+                                            "Color all figures by:",
                                             className="fw-bold"
                                         ),
                                         dcc.Dropdown(
@@ -2363,7 +2400,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Loading(dcc.Graph(id='pcoa-segments',style={'width': '60vh', 'height': '800px','padding': '5px'})),
+                                                    dcc.Loading(dcc.Graph(id='pcoa-segments',style={'width': '100%', 'height': '700px','padding': '5px'})),
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -2374,7 +2411,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                         [
                                             dbc.CardBody(
                                                 [
-                                                    dcc.Loading(html.Iframe(id='iframe-content-segments',style={'width': '60vh', 'height': '800px', 'border': 'none'}))
+                                                    dcc.Loading(html.Iframe(id='iframe-content-segments',style={'width': '100%', 'height': '700px', 'border': 'none'}))
                                                 ],
                                                 style={"textAlign": "center"}
                                             ),
@@ -2390,7 +2427,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                         html.Div(children=[
                                                             dag.AgGrid(
                                                                 id="table_clustering_assignation-segments",
-                                                                style={'margin-left': '1px',"paddingRight": "15px"},
+                                                                style={'margin-left': '1px',"paddingRight": "15px", 'height': '620px'},
                                                                 rowData=[],
                                                                 columnDefs=columnDefs6,
                                                                 defaultColDef={"filter": True},
@@ -2420,9 +2457,9 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                                "Distance between haplotypes = number of segments with a different presence/absence; "
                                                                "network = minimum spanning tree.", style={"color": "grey"}),
                                                     html.Div([
-                                                        html.Span("Pie charts colored by:", className="fw-bold"),
-                                                        dcc.Dropdown(id='haplo-color-segments', options=['HierarchicalClustering', 'Country'],
-                                                                     value='HierarchicalClustering', clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+                                                        html.Span("Node labels:", className="fw-bold"),
+            dcc.RadioItems(id='haplo-labels-segments', options=[{"label": " Haplotypes", "value": "haplotype"}, {"label": " Genomes", "value": "genomes"}],
+                           value='haplotype', inline=True, inputStyle={"marginLeft": "10px"}),
                                                     ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
                                                     html.Div(id='haplo-network-segments-info', style={"color": "grey"}),
                                                     dcc.Loading(html.Img(id='haplo-network-segments', style={"width": "90%", "height": "auto"})),
@@ -3041,95 +3078,53 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
         dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF_cross_entropy')], style={"textAlign": "center"})],
                          style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
     ], style={"padding": "15px"}),
-    html.H5("PCA"),
-    html.Div(id='pca_tab_content', children=[
-                                html.Br(),
-                                dbc.Row([
-                                        dbc.Col(
-                                            html.Label("Colored by: "),style={'width': '150px'},
-                                        ),
-                                        dbc.Col(
-                                            dcc.Dropdown(
-                                                    ['Country','Population as defined by sNMF'],
-                                                    value='Country',
-                                                    id='colorizing_pca',
-                                                    style={'width': '300px'},
-                                                    multi=False
-                                                )
-                                        ),
-                                        dbc.Col(
-                                            html.Label("Number of axes: "),style={'width': '150px'},
-                                        ),
-                                        dbc.Col(
-                                            dcc.Dropdown(
-                                                    ['2D','3D'],
-                                                    value='3D',
-                                                    id='dimension_pca',
-                                                    style={'width': '100px'},
-                                                    multi=False
-                                                )
-                                            
-                                        ),
-                                        
-                                    ],style={'width': '700px'}),
-                                html.Br(),html.Br(),
-                                dbc.Row(
-                                        [
-                                            dbc.Col(dbc.Card(
-                                                [
-                                                    dbc.CardBody(
-                                                        [
-                                                            dcc.Loading(dcc.Graph(id='PCA'))
-                                                        ],
-                                                        style={"textAlign": "center"}
-                                                    ),
-                                                ],
-                                                style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                            )),                                                                                                      
-                                                        
-                                        ],
-                                        style= {"padding":"15px"}
-                                ),
-
-                            ], style={"paddingLeft": "15px"}
-                            ),
-    html.H5("SNP-based distance tree"),
-    html.Div(id='snptree_tab_content', children=[
-                                html.Br(),
-                                dbc.Row([
-                                        dbc.Col(
-                                            html.Label("Colored by: "),style={'width': '150px'},
-                                        ),
-                                        dbc.Col(
-                                            dcc.Dropdown(
-                                                    ['Country','Population as defined by sNMF'],
-                                                    value='Country',
-                                                    id='colorizing_tree',
-                                                    style={'width': '300px'},
-                                                    multi=False
-                                                )
-                                        ),
-                                        
-                                    ],style={'width': '450px'}),
-                                html.Br(),
-                                dbc.Row(
-                                    [
-                                        dcc.Loading(html.Iframe(id='iframe-snptree',style={'width': '1200px', 'height': '800px', 'border': 'none'}))
-                                    ],
-                                    align="center",
-                                ),
-                                html.Br(),
-                            ], style={"paddingLeft": "15px"}
-                            ),
+    html.Div([
+        html.Span("Color all figures by:", className="fw-bold"),
+        dcc.Dropdown(['Country', 'Population as defined by sNMF'], value='Population as defined by sNMF', id='colorizing_pca',
+                     clearable=False, style={'width': '300px'}),
+        html.Small("(PCA, SNP-based tree, haplotype network)", style={"color": "grey"}),
+    ], style={"display": "flex", "alignItems": "center", "gap": "10px", "paddingLeft": "15px"}),
+    dbc.Row([
+        dbc.Col(dbc.Card([dbc.CardBody([
+            html.H5("PCA"),
+            html.Div([
+                html.Span("Axes:", className="fw-bold"),
+                dcc.Dropdown(['2D', '3D'], value='2D', id='dimension_pca', clearable=False, style={'width': '80px', 'textAlign': 'left'}),
+            ], id='pca_tab_content', style={"display": "flex", "alignItems": "center", "gap": "8px", "justifyContent": "center"}),
+            dcc.Loading(dcc.Graph(id='PCA', style={'height': '650px'})),
+        ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}), width=5),
+        dbc.Col(dbc.Card([dbc.CardBody([
+            html.H5("SNP-based distance tree"),
+            html.Div(dcc.Dropdown(['Country', 'Population as defined by sNMF'], value='Population as defined by sNMF', id='colorizing_tree'),
+                     id='snptree_tab_content', style={"display": "none"}),
+            dcc.Loading(html.Iframe(id='iframe-snptree', style={'width': '100%', 'height': '650px', 'border': 'none'})),
+        ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}), width=4),
+        dbc.Col(dbc.Card([dbc.CardBody([
+            html.H5("Assignation to populations"),
+            html.Small("sNMF population (highest K) of each genome", style={"color": "grey"}),
+            dcc.Loading(dag.AgGrid(
+                id="table_snmf_assignation",
+                rowData=[],
+                columnDefs=[{"field": "strain", "flex": 2, "minWidth": 120},
+                            {"field": "population", "headerName": "Population", "flex": 1, "minWidth": 90},
+                            {"field": "ancestry", "headerName": "Ancestry", "flex": 1, "minWidth": 80}],
+                defaultColDef={"filter": True, "sortable": True, "resizable": True},
+                dashGridOptions={"pagination": True, "animateRows": False},
+                style={"height": "600px"},
+            )),
+            html.Button("Download table", id="download_table_snmf_assignation", className="thin-button", n_clicks=0),
+            dcc.Download(id="download-snmf-assignation"),
+        ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}), width=3),
+    ], style={"padding": "15px"}),
     dbc.Row([dbc.Col(dbc.Card([dbc.CardBody([
         html.H5("Haplotype network"),
         html.Small("Genomes sharing exactly the same alleles at the analysed SNPs form a haplotype. "
                    "Distance between haplotypes = number of allelic differences (SNPs with missing data are ignored); "
                    "network = minimum spanning tree.", style={"color": "grey"}),
         html.Div([
-            html.Span("Pie charts colored by:", className="fw-bold"),
-            dcc.Dropdown(id='haplo-color-snps', options=['Population (sNMF)', 'Country'], value='Population (sNMF)',
-                         clearable=False, style={'width': '300px', 'textAlign': 'left'}),
+            html.Span("Node labels:", className="fw-bold"),
+            dcc.RadioItems(id='haplo-labels-snps', options=[{"label": " Haplotypes", "value": "haplotype"}, {"label": " Genomes", "value": "genomes"}],
+                           value='haplotype', inline=True, inputStyle={"marginLeft": "10px"}),
         ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
         html.Div(id='haplo-network-snps-info', style={"color": "grey"}),
         dcc.Loading(html.Img(id='haplo-network-snps', style={"width": "90%", "height": "auto"})),
@@ -3203,48 +3198,83 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
                                 style= {"padding":"15px"}
                             ),
                             dbc.Row([
-                                dbc.Col(
-                                    dcc.Loading(
-                                            dag.AgGrid(
-                                                id="mlva_table",
-                                                #style={'width': '180vh','height': '50vh','padding': '15px'},
-                                                columnDefs=columnDefs2,
-                                                rowData=[],
-                                                selectedRows=[],
-                                                columnSize="sizeToFit",
-                                                selectAll=True,
-                                                defaultColDef={"filter": True},
-                                                dashGridOptions={"rowSelection": "multiple"},
-                                                #dashGridOptions={"rowSelection": "multiple", "suppressRowClickSelection": True, "animateRows": False},
-                                            ), 
-                                        ),
-                                ),
-                            ], style= {"padding":"15px"}),                    
-                                        
-                                              
-                        html.Button("Download matrix", id="btn-download", n_clicks=0),
-                        dcc.Download(id="download-dataframe"),
-                        html.Br(),
-
-                        
-                        html.Br(),
-                        html.Button('Update heatmap and generate haplotype network', 
-                                    style={
-                                        "backgroundColor": "#1E90FF",   # bleu
-                                        "color": "white",
-                                    },
-                                    id='submit-vntr', 
-                                    n_clicks=0),
-                        html.Br(),
-                        html.Br(),
-                        #dcc.Loading(html.Div(id='dynamic_network')),
-                        dcc.Loading(html.Img(
-                            id="haplotype-network",
-                            style={
-                                "width": "90%",
-                                "height": "auto"
-                            }
-                        ))
+                                dbc.Col(dbc.Card([dbc.CardBody([
+                                    html.Small("Click on rows (or use the checkboxes) to select the loci of interest; 'Select all' selects the loci displayed after filtering. "
+                                               "or simply filter the columns: the heatmap and the analyses below use the ticked loci, "
+                                               "or all the loci displayed in the table when none is ticked.", style={"color": "grey"}),
+                                    html.H5("VNTR loci", id="nb_of_vntr_table", style={"color": "green"}),
+                                    dcc.Loading(dag.AgGrid(
+                                        id="mlva_table",
+                                        columnDefs=columnDefs2,
+                                        rowData=[],
+                                        getRowId="params.data.ID",
+                                        defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                                        selectedRows=[],
+                                        dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False,
+                                                         "rowSelection": "multiple", "rowMultiSelectWithClick": True},
+                                        style={"height": "350px", "width": "100%"},
+                                    )),
+                                    html.Button("Select all", id="select-all-vntr", className="thin-button", n_clicks=0),
+                                    html.Button("Deselect all", id="deselect-all-vntr", className="thin-button", n_clicks=0),
+                                    html.Button("Download matrix", id="btn-download", className="thin-button", n_clicks=0),
+                                    dcc.Download(id="download-dataframe"),
+                                    html.Button("Update heatmap with the loci displayed in the table", id='submit-vntr', className="thin-button", n_clicks=0),
+                                ], style={"textAlign": "left"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                            ], style= {"padding":"15px"}),
+                        html.Div(analysis_bar("repeats", [
+                            html.Button("Hierarchical clustering", id="run-clustering-repeats", className="pe-btn-cta", n_clicks=0),
+                        ]), style={'paddingRight': '30px', 'paddingBottom': '10px'}),
+                        html.Div(id='repeats-clustering-results', style={'display': 'none'}, children=[
+                            html.H5(id='repeats-clustering-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
+                            dbc.Row([
+                                dbc.Col([dbc.Label("Hierarchical Clustering method", className="fw-bold"),
+                                         dcc.Dropdown(id="clustering-method-repeats",
+                                                      options=[{"label": "Distance threshold", "value": "distance"},
+                                                               {"label": "Number of clusters", "value": "maxclust"}],
+                                                      value="maxclust", clearable=False)], width=3),
+                                dbc.Col([dbc.Label("Number of clusters", id="clustering-parameter-label-repeats", className="fw-bold"),
+                                         dbc.Input(id="clustering-parameter-repeats", type="number", value=2, min=2, step=1),
+                                         dbc.FormText("Number of clusters to generate.", id="clustering-parameter-help-repeats")], width=2),
+                                dbc.Col([dbc.Label("Distance between genomes", className="fw-bold"),
+                                         dcc.Dropdown(id="repeats-distance",
+                                                      options=[{"label": "Categorical (proportion of loci with a different number of repeats)", "value": "hamming"},
+                                                               {"label": "Manhattan (sum of the differences in number of repeats)", "value": "cityblock"}],
+                                                      value="hamming", clearable=False)], width=3),
+                                dbc.Col([dbc.Label("Color all figures by:", className="fw-bold"),
+                                         dcc.Dropdown(['HierarchicalClustering', 'Country'], value='HierarchicalClustering',
+                                                      id='colorizing-repeats', clearable=False)], width=2),
+                                dbc.Col(html.Button("Recalculate with these parameters", id="recalculate-clustering-repeats",
+                                                    className="thin-button", n_clicks=0), width=2, style={"alignSelf": "end"}),
+                            ], style={"paddingRight": "15px"}),
+                            dbc.Row([
+                                dbc.Col(dbc.Card([dbc.CardBody([dcc.Loading(dcc.Graph(id='pcoa-repeats', style={'width': '100%', 'height': '700px'}))],
+                                                               style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                                dbc.Col(dbc.Card([dbc.CardBody([dcc.Loading(html.Iframe(id='iframe-content-repeats', style={'width': '100%', 'height': '700px', 'border': 'none'}))],
+                                                               style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                                dbc.Col(dbc.Card([dbc.CardBody([
+                                    html.H5("Assignation to clusters"),
+                                    dcc.Loading(dag.AgGrid(id="table_clustering_assignation-repeats", rowData=[], columnDefs=columnDefs6,
+                                                           defaultColDef={"filter": True, "sortable": True},
+                                                           dashGridOptions={"pagination": True, "animateRows": False},
+                                                           style={'height': '620px'})),
+                                    html.Button("Download table", id="download_table_assignation-repeats", className="thin-button", n_clicks=0),
+                                    dcc.Download(id="download-assignation-repeats"),
+                                ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
+                            ], style={"padding": "15px"}),
+                            dbc.Row([dbc.Col(dbc.Card([dbc.CardBody([
+                                html.H5("Haplotype network"),
+                                html.Small("Genomes sharing exactly the same number of repeats at all the selected loci form a haplotype. "
+                                           "Distance between haplotypes = sum of the differences in number of repeats (Manhattan); "
+                                           "network = minimum spanning tree.", style={"color": "grey"}),
+                                html.Div([
+                                    html.Span("Node labels:", className="fw-bold"),
+                                    dcc.RadioItems(id='haplo-labels-repeats', options=[{"label": " Haplotypes", "value": "haplotype"}, {"label": " Genomes", "value": "genomes"}],
+                                                   value='haplotype', inline=True, inputStyle={"marginLeft": "10px"}),
+                                ], style={"display": "flex", "alignItems": "center", "gap": "10px", "justifyContent": "center", "margin": "10px"}),
+                                html.Div(id='haplo-network-repeats-info', style={"color": "grey"}),
+                                dcc.Loading(html.Img(id='haplo-network-repeats', style={"width": "90%", "height": "auto"})),
+                            ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}))], style={"padding": "15px"}),
+                        ]),
                     ], style={"paddingLeft": "15px"}
                      ), 
                 ]),
@@ -5495,7 +5525,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
                            text_auto=True
                            )
     graph_mlva.update_yaxes(tickmode="linear") 
-    mlva_table = df_vntr.to_dict('records')
+    mlva_table = vntr_table_records(df_vntr)
     newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
 
     # filter samples
@@ -5884,7 +5914,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     nb_genomes = str(len(list_sp2))
     
     dprint("ok6")
-    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "", "", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns,list_metadata_columns,list_metadata_columns, empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
+    return "",nb_genomes, str(nb_pangenes),str(nb_coregenes), str(nb_specific_genes),nb_genomes,nb_segments,nb_links,nb_of_vntr,nb_genomes,nb_of_snps,nb_genomes,fig,upset_plot,table_pangenes,columnDefs3,table_cluster1,columnDefs3,table_cluster2,columnDefs3,fig_ANI,fig_gene,fig_pie,fig_COG2,fig_modules,fig_pathways,fig_rarefaction,current_layout,current_tracks,reference, graph_macrosynteny, clinker, mlva_table, graph_mlva, fig_scatter, "", "", {'display': 'block'}, fig_VCF, fig_snmf, fig_cross_entropy, graph_gfa2, node_names, '', tab_style_segments, tab_style_repeats, tab_style_snps, tab_style_ani,tab_style_defense, session,list_metadata_columns + ['Population as defined by sNMF'],list_metadata_columns + ['Population as defined by sNMF'],list_metadata_columns + ['HierarchicalClustering'], empty_figure(),empty_figure(),nb_of_clusters,nb_of_selected_clusters,nb_of_selected_clusters2,circos_legend,circos_legend2, pcoa, table_clustering_assignation,upset_plot_segments,fig_defense
 
 ############################################
 # Disable button during loading
@@ -6503,21 +6533,30 @@ def pca(dimension_pca,colorizing_pca,session):
 
     if os.path.exists(f"{tmp_dir}/{session}.metadata.txt"):
         df_pca_metadata = pd.read_csv(f"{tmp_dir}/{session}.metadata.txt")
-        if dimension_pca=="3D":
-            if colorizing_pca=="Country" or colorizing_pca=="Continent" or colorizing_pca=="Organism":
-                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color=colorizing_pca, hover_name="Individual", hover_data=["Assigned_to_pop"])
-            else:
-                fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
+        if colorizing_pca in df_pca_metadata.columns and colorizing_pca != "Assigned_to_pop":
+            color_col = colorizing_pca
+            if color_col == "Country":
+                df_pca_metadata[color_col] = df_pca_metadata[color_col].map(clean_country)
+            cmap = category_color_map(df_pca_metadata[color_col])
+            cmap["Unknown"] = "#7f7f7f"
+            df_pca_metadata[color_col] = df_pca_metadata[color_col].map(lambda v: "Unknown" if is_missing_category(v) else str(v))
         else:
-            if colorizing_pca=="Country" or colorizing_pca=="Continent" or colorizing_pca=="Organism":
-                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color=colorizing_pca, hover_name="Individual", hover_data=["Assigned_to_pop"])
-            else:
-                fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color='Assigned_to_pop', hover_name="Individual", hover_data=["Assigned_to_pop"])
+            color_col = 'Assigned_to_pop'
+            df_pca_metadata[color_col] = df_pca_metadata[color_col].astype(str)
+            cmap = population_color_map(df_pca_metadata[color_col])
+        order = {color_col: sorted(df_pca_metadata[color_col].unique(), key=natural_key)}
+        if dimension_pca=="3D":
+            fig_scatter = px.scatter_3d(df_pca_metadata, x='PC1', y='PC2', z='PC3', color=color_col, hover_name="Individual",
+                                        hover_data=["Assigned_to_pop"], color_discrete_map=cmap, category_orders=order)
+        else:
+            fig_scatter = px.scatter(df_pca_metadata, x='PC1', y='PC2', color=color_col, hover_name="Individual",
+                                     hover_data=["Assigned_to_pop"], color_discrete_map=cmap, category_orders=order)
     else:
         fig_scatter = px.scatter(pd.DataFrame({'PC1':[], 'PC2':[], 'PC3':[]}), x='PC1', y='PC2')
         fig_scatter.update_layout(title="No PCA data found.")
 
-    fig_scatter.update_traces(marker=dict(size=12))
+    fig_scatter.update_traces(marker=dict(size=8 if dimension_pca == "3D" else 12))
+    fig_scatter.update_layout(height=650, margin=dict(l=10, r=10, t=40, b=10))
     return fig_scatter
 
 
@@ -7048,7 +7087,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
 @app.callback(
     Output('iframe-snptree', 'src', allow_duplicate=True),
-    Input('colorizing_tree', 'value'),
+    Input('colorizing_pca', 'value'),
     State('current_session', 'value'),
     prevent_initial_call=True    
 )
@@ -7067,7 +7106,7 @@ def tree(colorizing_tree,session):
         pass  # debug export removed (perf): df_metadata_selected.to_csv("metadata_selected.csv",sep=',')
         generate_tree_html(snp_based_newick, df_metadata_selected, colorizing_tree, "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html")
 
-    return "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html"
+    return "assets/snp_based_tree."+str(session)+"." + colorizing_tree+".html?t=" + str(int(time_module.time() * 1000))
 
 
 @app.callback(
@@ -7165,249 +7204,28 @@ def enrichment(submit_enrichment,metadata_table,proj_title,session):
 
 
 @app.callback(
-        #Output('dynamic_network','children'),
         Output('graph_mlva', 'figure'),
-        Output("haplotype-network", "src"),
         Input('submit-vntr', 'n_clicks'),
-        State('mlva_table','selectedRows'),
-        State('metadata_table','selectedRows'),
-        State('projets', 'value'),
+        State('mlva_table', 'selectedRows'),
+        State('mlva_table', 'virtualRowData'),
+        State('mlva_table', 'rowData'),
+        State('current_session', 'value'),
         prevent_initial_call=True
-        
 )
-
-def update_MLVA(submit_vntr,mlva_table,metadata_table,proj_title):
-
-    ###########################################################
-    # MLVA
-    ###########################################################
-    if not proj_title:
-        return "No project."
-    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
-    path = ""
-    if not row:
-        path = conf["session_dir"] + "/" + proj_title
-    else:
-        path = row[0]
-    directory = path
-
-
-    list_selected = ['ID','Repeat','Flanking']
-    #if submit_samples:
-    if metadata_table:
-        wjdata = json.loads(json.dumps(metadata_table, indent=2))
-        val = wjdata
-        for strain in wjdata:
-            strain_name = strain['Strain name']
-            list_selected.append(strain_name)
-                
-    #else:
-    #    for value in df_metadata2['Strain name']:
-    #        list_selected.append(value)
-
-
-    session = random.randint(1, 9000000)
-    vntr_file = directory+'/vntr_matrix.tsv'
-
-    #print("submit vntr button" + str(submit_vntr) + " "+str(session))
-
-    df_vntr = pd.DataFrame(columns=['ID'])
-    if os.path.exists(vntr_file):
-
-        # remove lines/markers with missing data
-        vntr_file_nomissing = directory+'/vntr_matrix.nomissing.tsv'
-        cmd_args = ["grep", "-v", "'-'", vntr_file]
-        with open(vntr_file_nomissing, "w") as file:
-            subprocess.run(cmd_args, stdout=file, stderr=subprocess.STDOUT, check=True)
-
-        df_vntr = pd.read_csv(vntr_file_nomissing,sep='\t')
-        df_vntr_filtered = df_vntr[list_selected]
-        df_vntr = df_vntr_filtered
-
-    repeats = []
-    if mlva_table:
-        wjdata1 = json.loads(json.dumps(mlva_table, indent=2))
-        for vntr in wjdata1:
-            #print(vntr)
-            vntr_name = vntr['ID']
-            repeats.append(vntr_name) 
-
-    mask = df_vntr['ID'].isin(repeats)
-    testdf = df_vntr[mask]
-
-    list_repeats = testdf['ID'].tolist()
-
-    newdf = testdf.drop(["ID","Repeat","Flanking"], axis='columns')
-    graph_mlva = px.imshow(newdf.T, 
-                           aspect="auto",
+def update_MLVA(submit_vntr, selected, v_rows, rows, session):
+    """Heatmap of the number of repeats for the loci displayed in the table (after filtering)."""
+    if not session:
+        raise PreventUpdate
+    loci, _ = repeats_loci(selected, v_rows, rows)
+    m = repeats_matrix(session, loci)
+    if m is None or m.shape[1] == 0:
+        return message_figure("No locus to display")
+    graph_mlva = px.imshow(m, aspect="auto",
                            labels=dict(y="Samples", x="VNTR loci", color="Number of repeats"),
-                           x=list_repeats,
-                           #y=list_sp2,
-                           text_auto=True
-                           )
-    graph_mlva.update_layout(title='Genotyping matrix indicating number of repeats for each VNTR loci')
-
-    mlva_table = df_vntr.to_dict('records')
-    newdf.T.to_csv(directory+ "/export_mlva.tsv",sep='\t')
-
-    
-    transposed_newdf = newdf.transpose()
-
-    
-
-    # concatenate numbers of repeats as an haplotype value for each sample
-    transposed_newdf['haplotype'] = transposed_newdf.astype(str).agg('_'.join, axis=1)
-    
-    #transposed_newdf = transposed_newdf.reset_index().rename(columns={"index": "Strain_name"})
-
-    # assign metadata to haplotype
-     
-    
-    df_metadata_tmp = pd.read_csv(directory+'/metadata.xls',sep='\t')
-    dict_metadata = df_metadata_tmp.set_index('Strain name')['Country'].to_dict()
-    dict_haplo = {}
-    dict_element_for_colorizing = {}
-    #concat_metadata = ""
-    for strain, row in transposed_newdf.iterrows():
-        country = dict_metadata[strain]
-        dict_element_for_colorizing[country]=1
-        #haplo_metadata_file.write(row.haplotype_name)
-        #concat_metadata = concat_metadata + str(strain) + "," + row.haplotype_name + "," + str(country) + "\n"
-        if row.haplotype in dict_haplo.keys():
-            dict_haplo[row.haplotype] = dict_haplo[row.haplotype] + "," + str(country)
-        else:
-            dict_haplo[row.haplotype] = str(country)
-
-    
-    transposed_newdf = transposed_newdf.reset_index()
-    transposed_newdf = transposed_newdf.rename(
-        columns={
-            "index": "Strain_name"
-        }
-    )
-
-    haplotype_ids = {
-        haplotype: f"haplo{i}"
-        for i, haplotype in enumerate(
-            transposed_newdf["haplotype"].unique(),
-            start=1
-        )
-    }
-
-    transposed_newdf["Haplotype"] = (
-        transposed_newdf["haplotype"]
-        .map(haplotype_ids)
-    )
-    transposed_newdf.to_csv(tmp_dir+"/"+str(session)+".strain_haplotypes.txt")
-    # make correspondence
-    haplo_dict = dict(
-        zip(transposed_newdf["haplotype"], transposed_newdf["Haplotype"])
-    )
-
-    df_network_metadata = pd.merge(transposed_newdf, df_metadata_tmp, left_on='Strain_name', right_on='Strain name')
-    df_network_metadata = df_network_metadata[["Strain_name","Haplotype","Country"]]
-    df_network_metadata.to_csv(tmp_dir+"/"+str(session)+".haplotype_metadata.csv")
-
-    # put frequency of haplotypes into a dictionnary 
-    dico_freq = transposed_newdf['haplotype'].value_counts().to_dict()
-    haplotype_freq_df = pd.DataFrame([dico_freq]).transpose()
-    haplotype_freq_df.to_csv(tmp_dir+"/"+str(session)+".haplotype_frequency.txt")
-    
-
-
-    with open(tmp_dir+"/"+str(session)+".haplotypes.txt", 'a') as f, open("assets/network."+str(session)+".1.json", 'a') as j:
-        for i in range(len(newdf)):
-            f.write(","+str(i))
-        
-        j.write("{\n")
-        j.write("  \"nodes\": [\n")
-        f.write("\n")
-        i = 0
-        concat = ""
-        for row in haplotype_freq_df.itertuples():
-            i+=1
-            haplotype = row[0]
-            size = row[1]
-            country = dict_haplo[haplotype]
-            list_countries = dict_haplo[haplotype].split(",")
-            haplotype_name = haplo_dict[haplotype]
-            concat = concat + "{\"id\": \"" + str(haplotype_name)+"\",\"size\":"+str(10 * size)+","
-            color_nb = 0
-            concat = concat + "\"pieChart\" : ["
-            subconcat = ""
-            for country in dict_element_for_colorizing.keys():
-                nb_occurence = list_countries.count(country)
-                
-                percentage = (nb_occurence / size) * 100
-                if nb_occurence > 0:
-                    subconcat = subconcat + "{ \"color\": \"" + colors[color_nb] + "\", \"percent\": " + str(percentage) + " },"
-
-                color_nb += 1
-            subconcat = subconcat[:len(subconcat)-1]
-
-            concat = concat + subconcat + "]},\n"
-            f.write(str(haplotype_name)+","+row[0].replace("_", ",")+"\n")
-        
-        concat = concat[:len(concat)-2]
-        j.write(concat+"\n")
-        j.write("],\n")
-
-    # run haplotype network
-    cmd_args = ["python", "haplotype_network.py", "-i", tmp_dir+"/"+str(session)+".haplotypes.txt", "-o", tmp_dir+"/"+str(session)]
-    with open(tmp_dir+"/haplotype_network.log", "a") as log_file:
-        subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
-
-    with open("assets/network."+str(session)+".2.json", 'a') as j, open(tmp_dir+"/"+str(session)+".haplotype_network.csv",'r') as n:
-        j.write("  \"links\": [\n")
-
-        lines = n.readlines()[1:]
-        concat = ""
-        for line in lines:
-            informations = line.split(',')
-            concat = concat + "{\"source\": \""+informations[0]+"\", \"target\": \""+ informations[1] +"\", \"value\": "+ informations[2] +"},\n"
-
-        concat = concat[:len(concat)-2]
-        j.write(concat+"\n")
-        j.write("]\n")
-        j.write("}\n")
-
-    cmd_args = ["cat", "assets/network."+str(session)+".1.json", "assets/network."+str(session)+".2.json"]
-    with open("assets/network."+str(session)+".json", "a") as json_file:
-        subprocess.run(cmd_args, stdout=json_file, stderr=subprocess.STDOUT, check=True)
-
-    # add the prefix haplo to indexes
-    cmd_args = ["sed", "s/SESSION/" + str(session) + "/g", "html_templates/network_template.html"]
-    with open("assets/network."+str(session)+".html", "w") as html_file:
-        subprocess.run(cmd_args, stdout=html_file, stderr=subprocess.STDOUT, check=True)
-
-    dynamic_network = html.Iframe(src="assets/network."+str(session)+".html",style={"height": "1000px", "width": "100%"}),
-
-
-
-    fig, ax, G, pos = plot_haplotype_network(
-        tmp_dir+"/"+str(session)+".haplotype_network.csv",
-        tmp_dir+"/"+str(session)+".haplotype_metadata.csv",
-        sample_col="Strain_name",
-        haplotype_col="Haplotype",
-        origin_col="Country",
-        scale=18,
-        distance_transform="sqrt",
-        min_visual_distance=2.5,
-        node_size_min=0.01,
-        node_size_max=0.08,
-        show_labels=True,
-        show_weights=False
-    )
-
-    svg = matplotlib_to_svg(fig) 
-
-    return graph_mlva, (
-        "data:image/svg+xml;base64,"
-        + base64.b64encode(
-            svg.encode()
-        ).decode()
-    )
-
+                           text_auto=True)
+    graph_mlva.update_layout(title=f'Genotyping matrix indicating number of repeats for {m.shape[1]} VNTR loci')
+    graph_mlva.update_yaxes(tickmode="linear")
+    return graph_mlva
 
 
 
@@ -7899,13 +7717,22 @@ def build_ani_clustered_heatmap(df_ani, height=1200, width=1700):
     return fig
 
 
-def generate_tree_html(newick, df_metadata, colorizing, html_file):
+def generate_tree_html(newick, df_metadata, colorizing, html_file, color_map=None):
 
     concat_for_hash = ""
-    list_metadata_color = df_metadata[colorizing].unique().tolist()
-    list_metadata_color.sort()
-    dict_colors = {}
-    i = 0
+    df_metadata = df_metadata.copy()
+    if colorizing not in df_metadata.columns and colorizing == "Population as defined by sNMF" and "Assigned_to_pop" in df_metadata.columns:
+        colorizing = "Assigned_to_pop"
+    if colorizing not in df_metadata.columns:
+        df_metadata[colorizing] = None
+    if colorizing == "Country":
+        df_metadata[colorizing] = df_metadata[colorizing].map(clean_country)
+    if color_map is None:
+        if colorizing == "Assigned_to_pop":
+            color_map = population_color_map(df_metadata[colorizing])
+        else:
+            color_map = category_color_map(df_metadata[colorizing])
+    dict_colors = {str(k): v for k, v in color_map.items()}
 
     legend = ""
     legend += "<style>"
@@ -7913,18 +7740,10 @@ def generate_tree_html(newick, df_metadata, colorizing, html_file):
     legend += ".legend span{width:16px;height:16px;margin-right:6px}"
     legend += "</style>"
     legend += "<div class=\"legend\">"
-    
-    for country in list_metadata_color:
-        if country != "none" and country != "None" and str(country) != "nan" and country != "":
-            col = ""
-            if i < len(colors):
-                col =  colors[i]
-            else:
-                col =  "black"
-            string_country = str(country)
-            dict_colors[string_country] = col
-            legend = legend + "<div><span style=\"background:" + str(col) + "\"></span>" + str(country) + "</div>"
-            i += 1
+    present = sorted({str(v) for v in df_metadata[colorizing] if not is_missing_category(v)}, key=natural_key)
+    for country in present:
+        col = dict_colors.get(country, "black")
+        legend = legend + "<div><span style=\"background:" + str(col) + "\"></span>" + str(country) + "</div>"
     legend += "</div>"
 
     dprint(dict_colors)
@@ -8353,8 +8172,7 @@ def build_geo_pie_clusters(session, clusters_path=None, map_id="geo_pie_clusters
 
     df_merged["HierarchicalClustering"] = df_merged["HierarchicalClustering"].astype(str)
     all_clusters = sorted(df_merged["HierarchicalClustering"].unique())
-    palette = px.colors.qualitative.Plotly + px.colors.qualitative.Set3
-    cluster_colors = {c: palette[i % len(palette)] for i, c in enumerate(all_clusters)}
+    cluster_colors = category_color_map(all_clusters)
 
     # Using GPS location
     if "GPS_coordinates" in df_metadata.columns:
@@ -8530,13 +8348,7 @@ def _update_clustering_impl(n_run, n_recalc, v1, r1, method, parameter, session,
     df_clustering_assignation = pd.read_csv(prefix + ".clusters.tsv", sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records')
 
-    df_pcoa = pd.read_csv(prefix + ".pcoa_coordinates.tsv", sep="\t")
-    categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
-    df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
-    pcoa = px.scatter(df_pcoa, x='PCoA1', y='PCoA2', color="Clusters", hover_name="strain",
-                      hover_data=["HierarchicalClustering"], title="PCoA based on Jaccard distance",
-                      category_orders={"Clusters": [str(x) for x in categories]})
-    pcoa.update_traces(marker=dict(size=12))
+    pcoa = build_colored_pcoa(prefix + ".pcoa_coordinates.tsv", session, colorizing_tree, "PCoA based on Jaccard distance")
 
     colorizing_tree = colorizing_tree or "HierarchicalClustering"
     with open(prefix + ".pav_jaccard_tree.nwk") as fp:
@@ -9420,6 +9232,56 @@ submit_genomes.register_callbacks(app)
 # Same procedure as for the gene PAV: Jaccard distance, UPGMA clustering, PCoA, Newick tree
 #############################################################################################
 
+def strain_color_values(strains, session, color_by):
+    """Value used to color each strain: cluster number (HierarchicalClustering) is handled by the caller,
+    otherwise the metadata column (Country cleaned). Missing values -> 'Unknown'."""
+    df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+    mapping = {}
+    if color_by in df_metadata.columns:
+        mapping = dict(zip(df_metadata["Strain name"].astype(str), df_metadata[color_by]))
+    values = [mapping.get(str(s)) for s in strains]
+    if color_by == "Country":
+        values = [clean_country(v) for v in values]
+    return values
+
+
+def build_colored_pcoa(pcoa_file, session, color_by, title):
+    """PCoA colored by cluster or by a metadata column, with the same colors as the tree and the network."""
+    df_pcoa = pd.read_csv(pcoa_file, sep="\t")
+    df_pcoa["Clusters"] = df_pcoa["HierarchicalClustering"].astype(str)
+    if not color_by or color_by == "HierarchicalClustering":
+        col = "Clusters"
+        cmap = category_color_map(df_pcoa[col])
+    else:
+        col = str(color_by)
+        raw = strain_color_values(df_pcoa["strain"], session, color_by)
+        cmap = category_color_map(raw)
+        cmap["Unknown"] = "#7f7f7f"
+        df_pcoa[col] = ["Unknown" if is_missing_category(v) else str(v) for v in raw]
+    fig = px.scatter(df_pcoa, x='PCoA1', y='PCoA2', color=col, hover_name="strain",
+                     hover_data=["HierarchicalClustering"], title=title,
+                     category_orders={col: sorted(df_pcoa[col].unique(), key=natural_key)},
+                     color_discrete_map=cmap)
+    fig.update_traces(marker=dict(size=12))
+    fig.update_layout(legend_title_text="Cluster" if col == "Clusters" else col)
+    return fig
+
+
+def build_cluster_tree_html(newick_file, clusters_file, session, colorizing_tree, html_prefix):
+    """Tree (phylotree) of a clustering, colored by cluster or by a metadata column."""
+    with open(newick_file) as fp:
+        newick = fp.read()
+    df_metadata = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+    df_strains_clusters = pd.read_csv(clusters_file, sep="\t")
+    df_tree = pd.merge(df_metadata, df_strains_clusters, how="right", left_on='Strain name', right_on='strain')
+    df_tree['Strain name'] = df_tree['Strain name'].fillna(df_tree['strain'])
+    if colorizing_tree not in df_tree.columns:
+        colorizing_tree = "HierarchicalClustering"
+    html_file = html_prefix + "." + str(colorizing_tree).replace(" ", "_") + ".html"
+    generate_tree_html(newick, df_tree, colorizing_tree, html_file)
+    return html_file + "?t=" + str(int(time_module.time() * 1000))
+
+
 def segments_clustering_prefix(session, reference):
     return tmp_dir + "/" + str(session) + "." + str(reference) + ".segments"
 
@@ -9447,7 +9309,12 @@ def build_segments_tree_html(session, reference, colorizing_tree):
     return html_file + "?t=" + str(int(time_module.time() * 1000))
 
 
-def build_segments_pcoa_figure(session, reference):
+def build_segments_pcoa_figure(session, reference, color_by=None):
+    return build_colored_pcoa(segments_clustering_prefix(session, reference) + ".pcoa_coordinates.tsv", session, color_by,
+                              "PCoA based on Jaccard distance (segments PAV)")
+
+
+def _old_build_segments_pcoa_figure(session, reference):
     prefix = segments_clustering_prefix(session, reference)
     df_pcoa = pd.read_csv(prefix + ".pcoa_coordinates.tsv", sep="\t")
     categories = sorted(df_pcoa["HierarchicalClustering"].dropna().unique())
@@ -9460,6 +9327,7 @@ def build_segments_pcoa_figure(session, reference):
                           hover_data=["HierarchicalClustering"],
                           title="PCoA based on Jaccard distance (segments PAV)",
                           category_orders={"Clusters": [str(x) for x in categories]},
+                          color_discrete_map=category_color_map(df_pcoa["Clusters"]),
                           )
     pcoa_fig.update_traces(marker=dict(size=12))
     return pcoa_fig
@@ -9542,7 +9410,7 @@ def update_clustering_segments(n_run, n_recalc, v1, r1, method, parameter, sessi
     df_clustering_assignation = pd.read_csv(prefix + ".clusters.tsv", sep="\t")
     table_clustering_assignation = df_clustering_assignation.to_dict('records')
 
-    pcoa_fig = build_segments_pcoa_figure(session, reference)
+    pcoa_fig = build_segments_pcoa_figure(session, reference, colorizing_tree)
 
     # metadata columns available to colorize the tree (same as for the gene-based tree)
     options = dash.no_update
@@ -10945,12 +10813,13 @@ def cog_gene_sets(comparison, session, v_all, r_all, v_pat, r_pat, v_opp, r_opp)
     Output('segments-clustering-results', 'style', allow_duplicate=True),
     Output('snps-snmf-results', 'style', allow_duplicate=True),
     Output('genes-pangwas-results', 'style', allow_duplicate=True),
+    Output('repeats-clustering-results', 'style', allow_duplicate=True),
     Input('current_session', 'value'),
     prevent_initial_call=True
 )
 def hide_ondemand_results(session):
     hidden = {'display': 'none'}
-    return hidden, hidden, hidden, hidden, hidden
+    return hidden, hidden, hidden, hidden, hidden, hidden
 
 
 # The gene tables change when a PAV pattern is applied: the COG results are no longer valid
@@ -10979,7 +10848,7 @@ def hide_cog_results(_):
     State('current_session', 'value'),
     State('dimension_pca', 'value'),
     State('colorizing_pca', 'value'),
-    State('colorizing_tree', 'value'),
+    State('colorizing_pca', 'value'),
     prevent_initial_call=True
 )
 def run_snmf_on_selection(n_run, v1, r1, max_k, session, dimension_pca, colorizing_pca, colorizing_tree):
@@ -11082,7 +10951,10 @@ def _run_snp_analyses(n_run, v1, r1, max_k, session, dimension_pca, colorizing_p
         fig_cross_entropy = empty_figure()
     else:
       fig_snmf = px.bar(dfsnmf, x="Individual", y="Ancestry", color="Cluster",
-                      category_orders={"Individual": individual_order}, facet_row="K", height=800)
+                      category_orders={"Individual": individual_order,
+                                       "Cluster": sorted(dfsnmf["Cluster"].astype(str).unique(), key=natural_key)},
+                      color_discrete_map=population_color_map(dfsnmf["Cluster"]),
+                      facet_row="K", height=800)
       fig_snmf.update_layout(title="Population structure (by sNMF) for different K", barmode='stack', showlegend=True)
       fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy",
                                 title=f"Values of the cross-entropy criterion for sNMF runs (K=2 to K={max_K})")
@@ -11102,7 +10974,7 @@ def _run_snp_analyses(n_run, v1, r1, max_k, session, dimension_pca, colorizing_p
         df_new.to_csv(tmp_dir + "/" + str(session) + ".metadata.txt")
         fig_pca = pca(dimension_pca or "3D", colorizing_pca, session)
         try:
-            tree_src = tree(colorizing_tree or "Country", session) + "?t=" + str(int(time_module.time() * 1000))
+            tree_src = tree(colorizing_tree or "Population as defined by sNMF", session)
         except PreventUpdate:
             pass
 
@@ -11128,7 +11000,8 @@ def pav_haplotype_color_options(session):
     return options
 
 
-def build_haplotype_network(values, session, out_prefix, color_by, recompute, unit, group_label=None, group_map=None):
+def build_haplotype_network(values, session, out_prefix, color_by, recompute, unit, group_label=None, group_map=None,
+                            group_colors=None, label_mode="haplotype"):
     """Haplotype network (same tools as for the repeats) from a matrix rows = genomes, columns = markers.
     Genomes with identical rows form a haplotype; distance between haplotypes = Manhattan distance
     (number of differences for 0/1 values); network = minimum spanning tree (haplotype_network.py).
@@ -11172,6 +11045,10 @@ def build_haplotype_network(values, session, out_prefix, color_by, recompute, un
         if label == "Country":
             df_meta[label] = df_meta[label].map(lambda v: str(v).split(":", 1)[0].strip() if pd.notna(v) else v)
     df_meta.to_csv(out_prefix + ".haplotype_metadata.csv", index=False)
+    if group_label is not None and label == group_label and group_colors is not None:
+        origin_colors = dict(group_colors)
+    else:
+        origin_colors = category_color_map(df_meta[label])
 
     try:
         fig, ax, G, pos = plot_haplotype_network(
@@ -11186,17 +11063,27 @@ def build_haplotype_network(values, session, out_prefix, color_by, recompute, un
             node_size_min=0.01,
             node_size_max=0.08,
             show_labels=True,
-            show_weights=True
+            show_weights=True,
+            origin_colors=origin_colors
         )
     except Exception as e:
         return "", info + f" Drawing of the network failed: {e}"
+    if label_mode == "genomes":
+        # replace the haplotype names by the names of the genomes carrying them
+        genomes = df_strains.groupby("Haplotype")["Strain_name"].apply(list).to_dict()
+        for text in ax.texts:
+            names = genomes.get(text.get_text())
+            if names:
+                shown = names[:8] + ([f"+{len(names) - 8} others"] if len(names) > 8 else [])
+                text.set_text("\n".join(shown))
+                text.set_fontsize(7)
     svg = matplotlib_to_svg(fig)
     import matplotlib.pyplot as plt
     plt.close(fig)
     return "data:image/svg+xml;base64," + base64.b64encode(svg.encode()).decode(), info
 
 
-def build_pav_haplotype_network(matrix_file, clusters_file, session, out_prefix, color_by, recompute, unit):
+def build_pav_haplotype_network(matrix_file, clusters_file, session, out_prefix, color_by, recompute, unit, label_mode="haplotype"):
     """Haplotype network from the 0/1 PAV matrix used for the clustering (rows = genomes)."""
     if not os.path.exists(matrix_file) or not os.path.exists(clusters_file):
         return "", ""
@@ -11204,8 +11091,11 @@ def build_pav_haplotype_network(matrix_file, clusters_file, session, out_prefix,
     binary = (matrix.apply(pd.to_numeric, errors="coerce").fillna(0) > 0).astype(int)
     df_clusters = pd.read_csv(clusters_file, sep="\t")
     clusters = {str(k): f"Cluster {v}" for k, v in zip(df_clusters["strain"], df_clusters["HierarchicalClustering"])}
+    # same colors as in the PCoA and the tree (colors of the cluster numbers)
+    group_colors = {f"Cluster {k}": c for k, c in category_color_map(df_clusters["HierarchicalClustering"]).items()}
     return build_haplotype_network(binary, session, out_prefix, color_by, recompute, unit,
-                                   group_label="HierarchicalClustering", group_map=clusters)
+                                   group_label="HierarchicalClustering", group_map=clusters,
+                                   group_colors=group_colors, label_mode=label_mode)
 
 
 def snp_allele_matrix(vcf_file):
@@ -11242,76 +11132,418 @@ def snp_allele_matrix(vcf_file):
 @app.callback(
     Output('haplo-network-genes', 'src'),
     Output('haplo-network-genes-info', 'children'),
-    Output('haplo-color-genes', 'options'),
     Input('table_clustering_assignation', 'rowData'),
-    Input('haplo-color-genes', 'value'),
+    Input('colorizing_tree1', 'value'),
+    Input('haplo-labels-genes', 'value'),
     State('current_session', 'value'),
     prevent_initial_call=True
 )
-def haplotype_network_genes(rowData, color_by, session):
+def haplotype_network_genes(rowData, color_by, label_mode, session):
     if not session or not rowData:
-        return "", "", no_update
+        return "", ""
     recompute = ctx.triggered_id == 'table_clustering_assignation'
     prefix = tmp_dir + "/" + str(session)
-    src, info = build_pav_haplotype_network(prefix + ".matrix01.filtered.tsv", prefix + ".clusters.tsv",
-                                            session, prefix + ".genes", color_by, recompute, "genes")
-    return src, info, (pav_haplotype_color_options(session) if recompute else no_update)
+    return build_pav_haplotype_network(prefix + ".matrix01.filtered.tsv", prefix + ".clusters.tsv",
+                                       session, prefix + ".genes", color_by, recompute, "genes", label_mode)
+
+
+@app.callback(
+    Output('pcoa', 'figure', allow_duplicate=True),
+    Input('colorizing_tree1', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def recolor_pcoa_genes(color_by, session):
+    f = tmp_dir + "/" + str(session) + ".pcoa_coordinates.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return build_colored_pcoa(f, session, color_by, "PCoA based on Jaccard distance")
 
 
 @app.callback(
     Output('haplo-network-segments', 'src'),
     Output('haplo-network-segments-info', 'children'),
-    Output('haplo-color-segments', 'options'),
     Input('table_clustering_assignation-segments', 'rowData'),
-    Input('haplo-color-segments', 'value'),
+    Input('colorizing_tree1-segments', 'value'),
+    Input('haplo-labels-segments', 'value'),
     State('current_session', 'value'),
     State('reference', 'value'),
     prevent_initial_call=True
 )
-def haplotype_network_segments(rowData, color_by, session, reference):
+def haplotype_network_segments(rowData, color_by, label_mode, session, reference):
     if not session or not reference or not rowData:
-        return "", "", no_update
+        return "", ""
     recompute = ctx.triggered_id == 'table_clustering_assignation-segments'
     prefix = segments_clustering_prefix(session, reference)
-    src, info = build_pav_haplotype_network(prefix + ".matrix01.tsv", prefix + ".clusters.tsv",
-                                            session, prefix + ".haplo", color_by, recompute, "segments")
-    return src, info, (pav_haplotype_color_options(session) if recompute else no_update)
+    return build_pav_haplotype_network(prefix + ".matrix01.tsv", prefix + ".clusters.tsv",
+                                       session, prefix + ".haplo", color_by, recompute, "segments", label_mode)
+
+
+@app.callback(
+    Output('pcoa-segments', 'figure', allow_duplicate=True),
+    Input('colorizing_tree1-segments', 'value'),
+    State('current_session', 'value'),
+    State('reference', 'value'),
+    prevent_initial_call=True
+)
+def recolor_pcoa_segments(color_by, session, reference):
+    if not session or not reference or not os.path.exists(segments_clustering_prefix(session, reference) + ".pcoa_coordinates.tsv"):
+        raise PreventUpdate
+    return build_segments_pcoa_figure(session, reference, color_by)
 
 
 @app.callback(
     Output('haplo-network-snps', 'src'),
     Output('haplo-network-snps-info', 'children'),
-    Output('haplo-color-snps', 'options'),
     Input('snps-snmf-header', 'children'),
-    Input('haplo-color-snps', 'value'),
+    Input('colorizing_pca', 'value'),
+    Input('haplo-labels-snps', 'value'),
     State('current_session', 'value'),
     prevent_initial_call=True
 )
-def haplotype_network_snps(header, color_by, session):
+def haplotype_network_snps(header, color_by, label_mode, session):
     """Haplotype network based on the alleles of the SNPs used for the population structure analysis."""
     if not session:
         raise PreventUpdate
     prefix = tmp_dir + "/" + str(session)
     vcf_file = prefix + ".snmf_subset.vcf"
     if not os.path.exists(vcf_file):
-        return "", "", no_update
+        return "", ""
     recompute = ctx.triggered_id == 'snps-snmf-header'
     values, nb_missing = snp_allele_matrix(vcf_file)
     if values.shape[1] == 0:
-        return "", "No SNP without missing data: the haplotype network cannot be computed.", no_update
+        return "", "No SNP without missing data: the haplotype network cannot be computed."
     populations = {}
     if os.path.exists(prefix + ".metadata.txt"):
         df_pop = pd.read_csv(prefix + ".metadata.txt")
         if {"Strain name", "Assigned_to_pop"}.issubset(df_pop.columns):
             populations = dict(zip(df_pop["Strain name"].astype(str), df_pop["Assigned_to_pop"].astype(str)))
-    src, info = build_haplotype_network(values, session, prefix + ".snps", color_by, recompute, "SNPs",
-                                        group_label="Population (sNMF)", group_map=populations)
+    src, info = build_haplotype_network(values, session, prefix + ".snps", color_by or "Population as defined by sNMF", recompute, "SNPs",
+                                        group_label="Population as defined by sNMF", group_map=populations,
+                                        group_colors=population_color_map(populations.values()), label_mode=label_mode)
     if nb_missing:
         info += f" {nb_missing} SNPs with missing data were ignored."
-    options = no_update
-    if recompute:
-        options = ["Population (sNMF)"] + [o for o in pav_haplotype_color_options(session) if o != "HierarchicalClustering"]
-    return src, info, options
+    return src, info
+
+
+def snmf_assignation_records(session):
+    f = tmp_dir + "/" + str(session) + ".metadata.txt"
+    if not os.path.exists(f):
+        return []
+    df = pd.read_csv(f)
+    if not {"Strain name", "Assigned_to_pop"}.issubset(df.columns):
+        return []
+    out = pd.DataFrame({
+        "strain": df["Strain name"].astype(str),
+        "population": df["Assigned_to_pop"].astype(str),
+        "ancestry": df["max_prop"].round(3) if "max_prop" in df.columns else None,
+    })
+    out = out.sort_values("population", key=lambda c: c.map(natural_key))
+    return out.to_dict("records")
+
+
+@app.callback(
+    Output("table_snmf_assignation", "rowData"),
+    Output("table_snmf_assignation", "columnDefs"),
+    Input("snps-snmf-header", "children"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def update_snmf_assignation(header, session):
+    if not session:
+        raise PreventUpdate
+    rows = snmf_assignation_records(session)
+    cmap = population_color_map([r["population"] for r in rows])
+    column_defs = [
+        {"field": "strain", "flex": 2, "minWidth": 120},
+        {"field": "population", "headerName": "Population", "flex": 1, "minWidth": 90,
+         "cellStyle": {"styleConditions": [
+             {"condition": f"params.value == '{pop}'", "style": {"backgroundColor": col, "color": "white", "fontWeight": "bold"}}
+             for pop, col in cmap.items()]}},
+        {"field": "ancestry", "headerName": "Ancestry", "flex": 1, "minWidth": 80},
+    ]
+    return rows, column_defs
+
+
+@app.callback(
+    Output("download-snmf-assignation", "data"),
+    Input("download_table_snmf_assignation", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def download_snmf_assignation(n, session):
+    rows = snmf_assignation_records(session)
+    if not rows:
+        raise PreventUpdate
+    return dcc.send_data_frame(pd.DataFrame(rows).to_csv, "snmf_assignation.tsv", sep="\t", index=False)
+
+
+# Cluster column of the assignation tables colored as in the PCoA / tree / haplotype network
+def _cluster_column_defs(rows):
+    cmap = category_color_map([r.get("HierarchicalClustering") for r in rows or []])
+    return [
+        {"field": "strain", "flex": 2, "minWidth": 120},
+        {"field": "HierarchicalClustering", "headerName": "Cluster", "flex": 1, "minWidth": 80,
+         "cellStyle": {"styleConditions": [
+             {"condition": f"String(params.value) == '{k}'", "style": {"backgroundColor": c, "color": "white", "fontWeight": "bold"}}
+             for k, c in cmap.items()]}},
+    ]
+
+
+@app.callback(
+    Output("table_clustering_assignation", "columnDefs"),
+    Input("table_clustering_assignation", "rowData"),
+    prevent_initial_call=True
+)
+def color_cluster_assignation_genes(rows):
+    return _cluster_column_defs(rows)
+
+
+@app.callback(
+    Output("table_clustering_assignation-segments", "columnDefs"),
+    Input("table_clustering_assignation-segments", "rowData"),
+    prevent_initial_call=True
+)
+def color_cluster_assignation_segments(rows):
+    return _cluster_column_defs(rows)
+
+
+##############################################################################################
+# Repeats (MLVA): hierarchical clustering, PCoA, tree and haplotype network on the repeat numbers
+##############################################################################################
+
+def vntr_table_records(df_vntr):
+    """One row per VNTR locus with the number of alleles, the range of repeat numbers and the
+    Hunter-Gaston diversity index (HGDI) computed on the selected genomes."""
+    strains = [c for c in df_vntr.columns if c not in ("ID", "Repeat", "Flanking")]
+    records = []
+    for _, row in df_vntr.iterrows():
+        vals = pd.to_numeric(row[strains], errors="coerce").dropna()
+        n = len(vals)
+        counts = vals.value_counts()
+        hgdi = 1 - (counts * (counts - 1)).sum() / (n * (n - 1)) if n > 1 else None
+        records.append({
+            "ID": str(row["ID"]),
+            "Repeat": row.get("Repeat"),
+            "Nb_alleles": int(vals.nunique()),
+            "Min_repeats": float(vals.min()) if n else None,
+            "Max_repeats": float(vals.max()) if n else None,
+            "HGDI": round(float(hgdi), 3) if hgdi is not None else None,
+            "Flanking": row.get("Flanking"),
+        })
+    return records
+
+
+def repeats_loci(selected, v_rows, rows):
+    """Loci used by the heatmap / analyses: ticked loci if any, else loci displayed in the table."""
+    if selected:
+        return selected, "ticked"
+    return table_rows(v_rows, rows), "displayed"
+
+
+def repeats_prefix(session):
+    return tmp_dir + "/" + str(session) + ".repeats"
+
+
+def repeats_matrix(session, selected_loci):
+    """Rows = genomes, columns = selected VNTR loci, values = number of repeats."""
+    f = tmp_dir + "/" + str(session) + ".vntr_matrix.tsv"
+    if not os.path.exists(f):
+        return None
+    df = pd.read_csv(f, sep="\t")
+    if selected_loci is not None:
+        ids = {str(r.get("ID")) for r in selected_loci}
+        df = df[df["ID"].astype(str).isin(ids)]
+    df = df.set_index(df["ID"].astype(str)).drop(columns=[c for c in ("ID", "Repeat", "Flanking") if c in df.columns])
+    df = df.apply(pd.to_numeric, errors="coerce").dropna(axis=0, how="any")
+    m = df.T
+    m.index = m.index.astype(str)
+    m.index.name = "strain"
+    return m
+
+
+@app.callback(
+    Output("clustering-parameter-label-repeats", "children"),
+    Output("clustering-parameter-repeats", "type"),
+    Output("clustering-parameter-repeats", "value"),
+    Output("clustering-parameter-repeats", "min"),
+    Output("clustering-parameter-repeats", "max"),
+    Output("clustering-parameter-repeats", "step"),
+    Output("clustering-parameter-help-repeats", "children"),
+    Input("clustering-method-repeats", "value"),
+    State("repeats-distance", "value"),
+    prevent_initial_call=True
+)
+def update_clustering_parameter_repeats(method, metric):
+    if method == "distance":
+        if metric == "cityblock":
+            return "Threshold", "number", 2, 0, None, 1, "Distance threshold (sum of differences in number of repeats)."
+        return "Threshold", "number", 0.20, 0, 1, 0.01, "Distance threshold (proportion of loci that differ)."
+    return "Number of clusters", "number", 2, 2, None, 1, "Number of clusters to generate."
+
+
+@app.callback(
+    Output("repeats-analysis-count", "children"),
+    Output("nb_of_vntr_table", "children"),
+    Input("mlva_table", "virtualRowData"),
+    Input("mlva_table", "selectedRows"),
+    State("mlva_table", "rowData"),
+    prevent_initial_call=True
+)
+def count_repeats(v_rows, selected, rows):
+    loci, mode = repeats_loci(selected, v_rows, rows)
+    total = len(rows or [])
+    if mode == "ticked":
+        txt = f"Analyses use the {len(loci)} loci ticked in the table above"
+    else:
+        txt = f"Analyses use the {len(loci)} loci displayed in the table above"
+        if total and len(loci) < total:
+            txt += f" (filtered from {total})"
+    title = f"VNTR loci: {total} loci" + (f" ({len(selected)} ticked)" if selected else "")
+    return txt, title
+
+
+# "Select all" (loci displayed after filtering) / "Deselect all" for the VNTR table
+app.clientside_callback(
+    """
+    function(n_select, n_deselect, v_rows, rows) {
+        const dc = window.dash_clientside;
+        const trig = (((dc.callback_context.triggered || [])[0] || {}).prop_id || "").split(".")[0];
+        if (trig === "select-all-vntr") { return v_rows || rows || []; }
+        if (trig === "deselect-all-vntr") { return []; }
+        throw dc.PreventUpdate;
+    }
+    """,
+    Output("mlva_table", "selectedRows"),
+    Input("select-all-vntr", "n_clicks"),
+    Input("deselect-all-vntr", "n_clicks"),
+    State("mlva_table", "virtualRowData"),
+    State("mlva_table", "rowData"),
+    prevent_initial_call=True
+)
+
+
+@app.callback(
+    Output('pcoa-repeats', 'figure'),
+    Output('table_clustering_assignation-repeats', 'rowData'),
+    Output('iframe-content-repeats', 'src'),
+    Output('colorizing-repeats', 'options'),
+    Output('repeats-clustering-results', 'style'),
+    Output('repeats-clustering-header', 'children'),
+    Output('run-clustering-repeats-status', 'children'),
+    Input('run-clustering-repeats', 'n_clicks'),
+    Input('recalculate-clustering-repeats', 'n_clicks'),
+    State('mlva_table', 'selectedRows'),
+    State('mlva_table', 'virtualRowData'),
+    State('mlva_table', 'rowData'),
+    State('clustering-method-repeats', 'value'),
+    State('clustering-parameter-repeats', 'value'),
+    State('repeats-distance', 'value'),
+    State('current_session', 'value'),
+    State('colorizing-repeats', 'value'),
+    prevent_initial_call=True
+)
+def update_clustering_repeats(n_run, n_recalc, selected, v_rows, rows, method, parameter, metric, session, color_by):
+    selected_loci, _ = repeats_loci(selected, v_rows, rows)
+    if not session or not (n_run or n_recalc):
+        raise PreventUpdate
+    shown = {'display': 'block'}
+    m = repeats_matrix(session, selected_loci)
+    if m is None or m.shape[0] < 3 or m.shape[1] < 1:
+        n = 0 if m is None else m.shape[1]
+        g = 0 if m is None else m.shape[0]
+        return message_figure("Not enough data"), [], "", no_update, shown, \
+            f"Clustering not possible: {n} loci x {g} genomes (at least 1 locus and 3 genomes required).", ""
+    prefix = repeats_prefix(session)
+    m.to_csv(prefix + ".matrix.tsv", sep="\t")
+    method = method or "maxclust"
+    if parameter is None:
+        parameter = 2 if method == "maxclust" else 0.20
+    if method == "maxclust":
+        parameter = max(2, min(int(parameter), m.shape[0]))
+    try:
+        analyze_pav_matrix(input_file=prefix + ".matrix.tsv", distance_output=prefix + ".distance.tsv",
+                           cluster_output=prefix + ".clusters.tsv", pcoa_output=prefix + ".pcoa_coordinates.tsv",
+                           newick_output=prefix + ".tree.nwk", pcoa_plot=None, dendrogram_plot=None,
+                           cluster_distance_threshold=parameter, clustering_method="average",
+                           criterion=method, metric=metric or "hamming")
+    except Exception as e:
+        return message_figure("Clustering failed"), [], "", no_update, shown, f"Clustering failed: {e}", ""
+    rows = pd.read_csv(prefix + ".clusters.tsv", sep="\t")[["strain", "HierarchicalClustering"]].to_dict("records")
+    dist_label = "Manhattan distance" if metric == "cityblock" else "categorical distance"
+    fig = build_colored_pcoa(prefix + ".pcoa_coordinates.tsv", session, color_by, f"PCoA based on {dist_label} (repeats)")
+    tree_src = build_cluster_tree_html(prefix + ".tree.nwk", prefix + ".clusters.tsv", session,
+                                       color_by or "HierarchicalClustering", "assets/tree_repeats." + str(session))
+    options = ["HierarchicalClustering"] + [o for o in pav_haplotype_color_options(session) if o != "HierarchicalClustering"]
+    header = f"Hierarchical clustering ({dist_label}, UPGMA) computed on {m.shape[1]} VNTR loci x {m.shape[0]} genomes"
+    return fig, rows, tree_src, options, shown, header, ""
+
+
+@app.callback(
+    Output('pcoa-repeats', 'figure', allow_duplicate=True),
+    Output('iframe-content-repeats', 'src', allow_duplicate=True),
+    Input('colorizing-repeats', 'value'),
+    State('repeats-distance', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def recolor_repeats(color_by, metric, session):
+    prefix = repeats_prefix(session)
+    if not session or not os.path.exists(prefix + ".pcoa_coordinates.tsv"):
+        raise PreventUpdate
+    dist_label = "Manhattan distance" if metric == "cityblock" else "categorical distance"
+    fig = build_colored_pcoa(prefix + ".pcoa_coordinates.tsv", session, color_by, f"PCoA based on {dist_label} (repeats)")
+    tree_src = build_cluster_tree_html(prefix + ".tree.nwk", prefix + ".clusters.tsv", session,
+                                       color_by or "HierarchicalClustering", "assets/tree_repeats." + str(session))
+    return fig, tree_src
+
+
+@app.callback(
+    Output('haplo-network-repeats', 'src'),
+    Output('haplo-network-repeats-info', 'children'),
+    Input('table_clustering_assignation-repeats', 'rowData'),
+    Input('colorizing-repeats', 'value'),
+    Input('haplo-labels-repeats', 'value'),
+    State('current_session', 'value'),
+    prevent_initial_call=True
+)
+def haplotype_network_repeats(rows, color_by, label_mode, session):
+    if not session or not rows:
+        return "", ""
+    prefix = repeats_prefix(session)
+    if not os.path.exists(prefix + ".matrix.tsv"):
+        return "", ""
+    recompute = ctx.triggered_id == 'table_clustering_assignation-repeats'
+    m = pd.read_csv(prefix + ".matrix.tsv", sep="\t", index_col=0).astype(int)
+    df_clusters = pd.read_csv(prefix + ".clusters.tsv", sep="\t")
+    clusters = {str(k): f"Cluster {v}" for k, v in zip(df_clusters["strain"], df_clusters["HierarchicalClustering"])}
+    group_colors = {f"Cluster {k}": c for k, c in category_color_map(df_clusters["HierarchicalClustering"]).items()}
+    return build_haplotype_network(m, session, prefix, color_by, recompute, "VNTR loci",
+                                   group_label="HierarchicalClustering", group_map=clusters,
+                                   group_colors=group_colors, label_mode=label_mode)
+
+
+@app.callback(
+    Output("table_clustering_assignation-repeats", "columnDefs"),
+    Input("table_clustering_assignation-repeats", "rowData"),
+    prevent_initial_call=True
+)
+def color_cluster_assignation_repeats(rows):
+    return _cluster_column_defs(rows)
+
+
+@app.callback(
+    Output("download-assignation-repeats", "data"),
+    Input("download_table_assignation-repeats", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def download_assignation_repeats(n, session):
+    f = repeats_prefix(session) + ".clusters.tsv"
+    if not os.path.exists(f):
+        raise PreventUpdate
+    df = pd.read_csv(f, sep="\t")[["strain", "HierarchicalClustering"]]
+    return dcc.send_data_frame(df.to_csv, "repeats_cluster_assignation.tsv", sep="\t", index=False)
 
 
 def circos_config_for_layout(circos_layout):
