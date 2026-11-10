@@ -15,7 +15,7 @@ def load_annotations(file_path):
 
     If an orthogroup has several terms → multiple lines.
     """
-    df = pd.read_csv(file_path, sep="\t", header=None, names=["orthogroup", "term"])
+    df = pd.read_csv(file_path, sep="\t", header=None, names=["orthogroup", "term"], dtype=str)
     df = df.dropna()
 
     # Group terms per orthogroup
@@ -63,7 +63,10 @@ def main():
     )
 
     # FDR
-    df["FDR"] = smm.multipletests(df["p_value"], method="fdr_bh")[1]
+    if df.empty:
+        df["FDR"] = []
+    else:
+        df["FDR"] = smm.multipletests(df["p_value"], method="fdr_bh")[1]
 
     df = df.sort_values(["FDR", "odds_ratio"])
 
