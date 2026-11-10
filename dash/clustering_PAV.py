@@ -58,7 +58,8 @@ def analyze_pav_matrix(
     dendrogram_plot=None,
     cluster_distance_threshold=0.3,
     clustering_method="average",
-    criterion="distance"
+    criterion="distance",
+    metric="jaccard"
 ):
     """
     Analyze a binary presence/absence matrix.
@@ -174,7 +175,9 @@ def analyze_pav_matrix(
 
     unique_values = set(values)
 
-    if not unique_values.issubset({0, 1}):
+    # metric "jaccard": binary PAV matrix; other scipy metrics (e.g. "hamming" = categorical
+    # distance, "cityblock" = Manhattan) can be used on numeric matrices (e.g. repeat numbers)
+    if metric == "jaccard" and not unique_values.issubset({0, 1}):
         raise ValueError(
             "The presence/absence matrix must contain only "
             "0 and 1 values."
@@ -193,7 +196,10 @@ def analyze_pav_matrix(
 
     # Convert the matrix to boolean.
     # This is appropriate for presence/absence data.
-    X = df.astype(bool)
+    if metric == "jaccard":
+        X = df.astype(bool)
+    else:
+        X = df.apply(pd.to_numeric, errors="coerce").astype(float)
 
 
     # ==========================================================
@@ -208,7 +214,7 @@ def analyze_pav_matrix(
     # pdist returns a condensed distance matrix.
     jaccard_condensed = pdist(
         X,
-        metric="jaccard"
+        metric=metric
     )
 
     # Convert the condensed matrix into a square matrix.
