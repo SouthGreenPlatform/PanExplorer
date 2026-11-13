@@ -24,7 +24,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import dash
-from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx, no_update
+from dash import html, dcc, Input, Output, State, Patch, callback_context, DiskcacheManager, ctx, no_update, ALL
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 
@@ -401,6 +401,19 @@ columnDefs = [
         "filter": False,
         "headerTooltip": "Tick the genomes to compare to the rest of the selected genomes (only possible for selected genomes)",
     },
+    # reference genome for the projections (circos, segments...): one radio button per genome
+    {
+        "field": "Reference",
+        "headerName": "Reference",
+        "cellRenderer": "ReferenceRadio",   # assets/reference_radio.js
+        "pinned": "left",
+        "width": 115,
+        "filter": False,
+        "headerTooltip": "Reference genome used for the projections (by default, the genome with the fewest chromosomes/contigs)",
+    },
+    {"field": "Nb_sequences", "headerName": "Chromosomes / contigs", "filter": "agNumberColumnFilter", "width": 170,
+     "headerTooltip": "Number of sequences (chromosomes, plasmids, scaffolds, contigs) of the assembly"},
+    {"field": "Genome_size_Mb", "headerName": "Genome size (Mb)", "filter": "agNumberColumnFilter", "width": 150},
     {"field": "Country", "headerName": "Country", "filter": "agTextColumnFilter", "flex": 1, "minWidth": 120},
     {"field": "Continent", "headerName": "Continent", "filter": "agTextColumnFilter", "flex": 1, "minWidth": 120},
     {"field": "Organism", "headerName": "Organism", "filter": "agTextColumnFilter", "flex": 2, "minWidth": 200}
@@ -1117,27 +1130,35 @@ def load_project_preview(proj_title):
                     zoom=3,
                     bounds=compute_map_bounds(df_country["lat"].tolist(), df_country["lon"].tolist()),
                     boundsOptions={"padding": [30, 30]},
-                    style={"width": "100%", "height": "400px"},
+                    style={"width": "100%", "height": "100%", "minHeight": "400px", "flex": "1"},
                 )
         panel_map = dbc.Col(dbc.Card(
                                                             [
                                                                 dbc.CardBody(
                                                                     [
+                                                                        html.Small("Click on a country to deselect (or select again) all its genomes.", style={"color": "grey"}),
                                                                         map
                                                                     ],
-                                                                    style={"textAlign": "center"}
+                                                                    style={"textAlign": "center", "display": "flex", "flexDirection": "column", "height": "100%"}
                                                                 ),
                                                             ],
-                                                            style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                                            style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)", "height": "100%"}
                                                         ))
     
     if AGGRID_AVAILABLE:
         
         
         records = df.to_dict("records")
+        stats = genome_assembly_stats(path, [str(r.get("Strain name")) for r in records])
         for i, r in enumerate(records):
             r["Group"] = False
             r["_row_id"] = str(i)
+            nb_seq, size = stats.get(str(r.get("Strain name")), (None, None))
+            r["Nb_sequences"] = nb_seq
+            r["Genome_size_Mb"] = round(size / 1e6, 3) if size else None
+        default_ref = best_reference_genome(records)
+        for r in records:
+            r["Reference"] = (str(r.get("Strain name")) == default_ref)
         grid = dag.AgGrid(id="metadata_table",
                           getRowId="params.data._row_id",
                           #columnDefs=[{"field": c} for c in df.columns],
@@ -1168,6 +1189,7 @@ def load_project_preview(proj_title):
                                                         dbc.CardBody(
                                                             [
                                                                 html.Small("Click on rows (or use the checkboxes) to select the genomes to analyze.", style={"color": "grey"}),
+                                                                html.Div(id="reference_label", style={"color": "grey", "fontSize": "0.875em", "marginBottom": "4px"}),
                                                                 html.H5(f"Genomes: {len(df)} / {len(df)} selected", id="nb_genomes_metadata", style={"color": "green"}),
                                                                 html.Div([
                                                                     html.Button("Select all", id="select-all-strains", className="thin-button", n_clicks=0),
@@ -1190,14 +1212,8 @@ def load_project_preview(proj_title):
         #children.append(grid)
         #children.append(map)
         children.append(html.Br())
-        children.append(html.Label('Reference Genome for projection ', style={'margin-right': '15px'}))
-        children.append(
-            dcc.Dropdown(
-                    id='reference',
-                    style={'width': '500px'},
-                    multi=False
-                )
-        )
+        # reference genome chosen with the "Reference" column of the table (dropdown kept hidden)
+        children.append(html.Div(dcc.Dropdown(id='reference', multi=False), style={"display": "none"}))
         
 
     else:
@@ -1215,9 +1231,7 @@ def load_project_preview(proj_title):
 
     children.append(
         html.Div([
-            html.Small("Genomes compared to the rest of the selected genomes: tick them in the 'Compared group' "
-                       "column of the table above (only selected genomes), they are listed below. The list can also be "
-                       "edited / pasted by hand (one genome per line, or separated by commas / semicolons), then 'Apply list'.",
+            html.Small("Compared group: tick genomes in the 'Compared group' column, or paste a list below, then 'Apply list'.",
                        style={"color": "grey"}),
             dcc.Textarea(id="group_manual_list",
                          style={"width": "100%", "height": "70px", "marginTop": "6px"}),
@@ -1352,20 +1366,20 @@ def load_project_preview(proj_title):
                                             ['Hierarchical clustering','Physical position in ref genome'],
                                             value = 'Hierarchical clustering',
                                             id='ordering',
-                                            style={'width': '350px'},
+                                            style={'width': '290px'},
                                             multi=False
                                         ),  
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),                                
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'290px'}),                                
                                 html.Div([
                                     html.Label("Colorize PAV heatmap by:"),
                                     dcc.Dropdown(
                                             ['Default presence/absence','Level of presence','Gene copy number','Organism','Continent','Country','Cluster assigned to sample', 'Reference genome','Core-genes','Strain-specific genes'],
                                             id='colorizing',
                                             value = 'Default presence/absence',
-                                            style={'width': '350px'},
+                                            style={'width': '265px'},
                                             multi=False
                                         ),
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'265px'}),
 
                                 html.Div([
                                     html.Label("Colorize sample labels by:"),
@@ -1373,10 +1387,10 @@ def load_project_preview(proj_title):
                                             ['Organism','Continent','Country','Cluster assigned to sample'],
                                             id='colorizing_labels',
                                             value = 'Organism',
-                                            style={'width': '350px'},
+                                            style={'width': '220px'},
                                             multi=False
                                         ),
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
+                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'220px'}),
 
                                 # html.Div([
                                 #     html.Label("Highlight:"),
@@ -4496,15 +4510,121 @@ def update_pivot(metadata_table,projets,url):
     return [{'label': i, 'value': i} for i in reference_list] , [{'label': i, 'value': i} for i in reference_list]
 
 
+def genome_assembly_stats(project_dir, strains):
+    """{strain: (number of sequences, total length in bp)} read from the GenBank files of the project
+    (original .gbff.gz if available, else .gb, else .gff sequence-region lines / max coordinates).
+    Cached in the project directory (or in tmp_dir if it is not writable)."""
+    cache_name = "genome_assembly_stats.tsv"
+    cache_files = [os.path.join(project_dir, cache_name),
+                   os.path.join(tmp_dir, re.sub(r"[^A-Za-z0-9_.-]", "_", str(project_dir)) + "." + cache_name)]
+    stats = {}
+    for f in cache_files:
+        if os.path.exists(f):
+            try:
+                df = pd.read_csv(f, sep="\t", dtype={"strain": str})
+                stats = {r.strain: (int(r.nb_sequences), int(r.length)) for r in df.itertuples() if r.nb_sequences > 0}
+            except Exception:
+                stats = {}
+            break
+    missing = [s for s in strains if s not in stats]
+    if not missing:
+        return stats
+    gdir = os.path.join(project_dir, "genomes", "genomes")
+    import gzip
+    for strain in missing:
+        nb, total = 0, 0
+        candidates = [(os.path.join(gdir, strain + ".gbff.gz"), "gbff.gz"), (os.path.join(gdir, strain + ".gb"), "gb"),
+                      (os.path.join(gdir, strain + ".gff"), "gff")]
+        for f, kind in candidates:
+            if not os.path.exists(f):
+                continue
+            try:
+                if kind in ("gbff.gz", "gb"):
+                    opener = gzip.open if kind == "gbff.gz" else open
+                    with opener(f, "rt", errors="replace") as fh:
+                        for line in fh:
+                            if line.startswith("LOCUS"):
+                                m = re.search(r"\s(\d+)\s+bp", line)
+                                nb += 1
+                                total += int(m.group(1)) if m else 0
+                else:
+                    regions, maxpos = {}, {}
+                    with open(f, errors="replace") as fh:
+                        for line in fh:
+                            if line.startswith("##sequence-region"):
+                                parts = line.split()
+                                if len(parts) >= 4:
+                                    regions[parts[1]] = int(parts[3])
+                            elif line and not line.startswith("#"):
+                                parts = line.split("\t")
+                                if len(parts) > 4 and parts[4].isdigit():
+                                    maxpos[parts[0]] = max(maxpos.get(parts[0], 0), int(parts[4]))
+                    sizes = regions or maxpos
+                    nb, total = len(sizes), sum(sizes.values())
+            except Exception as e:
+                print("Could not read genome statistics of", strain, ":", e)
+                nb, total = 0, 0
+            if nb:
+                break
+        if nb:
+            stats[strain] = (nb, total)
+    rows = [{"strain": k, "nb_sequences": v[0], "length": v[1]} for k, v in stats.items()]
+    for f in cache_files:
+        try:
+            pd.DataFrame(rows, columns=["strain", "nb_sequences", "length"]).to_csv(f, sep="\t", index=False)
+            break
+        except Exception:
+            continue
+    return stats
+
+
+def best_reference_genome(rows):
+    """Default reference: the genome with the fewest sequences (chromosomes/contigs), then the largest."""
+    best, best_key = None, None
+    for r in rows or []:
+        nb = r.get("Nb_sequences")
+        size = r.get("Genome_size_Mb") or 0
+        key = (nb if nb is not None else float("inf"), -size)
+        if best_key is None or key < best_key:
+            best, best_key = str(r.get("Strain name")), key
+    return best
+
+
+# Reference genome: chosen with the radio buttons of the "Reference" column of the metadata table;
+# by default (or when the reference is deselected) the selected genome with the fewest chromosomes/contigs
 @app.callback(
     Output('reference', 'value'),
-    Input('reference', 'options')
+    Output('metadata_table', 'rowTransaction', allow_duplicate=True),
+    Output('reference_label', 'children'),
+    Input('reference', 'options'),
+    Input('metadata_table', 'cellValueChanged'),
+    State('metadata_table', 'selectedRows'),
+    State('metadata_table', 'rowData'),
+    State('reference', 'value'),
+    prevent_initial_call='initial_duplicate'
 )
-def set_reference_value(available_options):
-    if available_options:
-        return available_options[0]['value']
-    else:
-        return ''
+def choose_reference_genome(options, cell_changed, selected_rows, row_data, current):
+    selected = {str(r.get("Strain name")) for r in (selected_rows or [])}
+    row_data = row_data or []
+    choice = None
+    if ctx.triggered_id == "metadata_table":
+        events = cell_changed if isinstance(cell_changed, list) else [cell_changed or {}]
+        for ev in events:
+            if ev.get("colId") == "Reference" and ev.get("value"):
+                name = str((ev.get("data") or {}).get("Strain name"))
+                if name in selected:
+                    choice = name
+        if choice is None:
+            raise PreventUpdate
+    if choice is None:
+        if current in selected:
+            choice = current
+        else:
+            choice = best_reference_genome([r for r in row_data if str(r.get("Strain name")) in selected])
+    updates = [dict(r, Reference=(str(r.get("Strain name")) == choice))
+               for r in row_data if bool(r.get("Reference")) != (str(r.get("Strain name")) == choice)]
+    label = "Change the reference genome used for projection with the 'Reference' column."
+    return (choice or ""), ({"update": updates} if updates else no_update), label
     
 
 
@@ -7049,29 +7169,21 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
 
             if len(list_organisms) > 1:
-                fig.update_yaxes(tickfont=dict(color="rgba(0,0,0,0)"))
-                for i, label in enumerate(list_sp2):
-
+                # colored tick labels (HTML in ticktext) instead of annotations: annotations were taken
+                # into account by the autorange of the y axis (also after zoom / reset), leaving an empty
+                # band without heatmap at the top and bottom
+                ticktext = []
+                for label in list_sp2:
                     color = "black"
                     if colorizing_labels == "Cluster assigned to sample":
                         cluster = df_clustering.loc[df_clustering['strain'] == label, 'HierarchicalClustering'].values[0]
-                        color = colors[cluster-1]
+                        color = colors[(int(cluster) - 1) % len(colors)]
                     else:
                         organism = df_metadata3.loc[df_metadata3['Strain name'] == label, colorizing_labels].values[0]
                         if organism in association:
                             color = association[organism]
-
-                    fig.add_annotation(
-                        x=0,
-                        y=label,
-                        xref="paper",
-                        yref="y",
-                        text=str(label),
-                        showarrow=False,
-                        xanchor="right",
-                        font=dict(color=color, size=11)
-                    )
-                fig.update_layout(margin=dict(l=150))
+                    ticktext.append(f"<span style='color:{color}'>{label}</span>")
+                fig.update_yaxes(tickmode="array", tickvals=list_sp2, ticktext=ticktext, tickfont=dict(size=11))
 
 
     fig.update_layout(
@@ -8065,63 +8177,73 @@ def compute_map_bounds(lats, lons, min_span=10):
 @app.callback(
     Output("country-markers", "children"),
     Output("map_of_samples", "bounds"),
-    Input('metadata_table','selectedRows')
+    Input('metadata_table','selectedRows'),
+    State('metadata_table','rowData'),
 )
-def update_markers(value):
-
-    markers = []
-
-    # no genome selected (e.g. "Deselect all"): empty map
-    if not value:
+def update_markers(value, row_data):
+    """One marker per country: size = number of selected genomes, grey when none is selected.
+    Clicking a marker deselects (or selects again) all the genomes of the country."""
+    rows = row_data or value or []
+    if not rows:
         return [], no_update
-    df = pd.DataFrame(value)
-    if "Country" not in df.columns:
+    df_all = pd.DataFrame(rows)
+    if "Country" not in df_all.columns:
         return [], no_update
-
-    df_country = (
-            df.groupby("Country")
-            .size()
-            .reset_index(name="count")
-        )
-    
-    #df_country["Country"] = df_country["Country"].str.split(":", n=1).str[0]
-    df_country["Country"] = (
-                            df_country["Country"]
-                            .fillna("")
-                            .astype(str)
-                            .str.split(":", n=1)
-                            .str[0]
-                            .str.strip()
-                        )
+    selected = {str(r.get("Strain name")) for r in (value or [])}
+    df_all["Country"] = df_all["Country"].map(lambda v: clean_country(v) if v is not None else "").fillna("").astype(str)
+    df_all["selected"] = df_all["Strain name"].astype(str).isin(selected)
+    df_country = df_all.groupby("Country").agg(total=("selected", "size"), count=("selected", "sum")).reset_index()
     df_country = df_country[df_country["Country"] != ""]
     df_country["lat"] = df_country["Country"].apply(get_lat)
     df_country["lon"] = df_country["Country"].apply(get_lon)
     df_country = df_country[df_country["lat"].notna()]
-    max_strains = df_country["count"].max()
-    
-    for _, row in df_country.iterrows():
-
-         radius = 5 + 20 * (row["count"] / max_strains) ** 0.5
-         markers.append(
-             dl.CircleMarker(
-                center=[row["lat"], row["lon"]],
-                radius=radius,
-                children=[
-                        dl.Tooltip(
-                            f"{row['Country']}: {row['count']} strains"
-                        )
-                    ],
-                    color="black",
-                    fillColor="red",
-                    fillOpacity=0.7,
-                    weight=1,
-             )
-         )
-
     if df_country.empty:
-        return markers, no_update
-    # adjust the view on the points (country scale if they are close, world view if spread)
+        return [], no_update
+    max_strains = max(df_country["total"].max(), 1)
+
+    markers = []
+    for _, row in df_country.iterrows():
+        n_sel, total = int(row["count"]), int(row["total"])
+        radius = 5 + 20 * (max(n_sel, 1) / max_strains) ** 0.5
+        action = "deselect" if n_sel else "select"
+        markers.append(
+            dl.CircleMarker(
+                # the state is part of the id: the marker is re-created (and its color updated) when it changes
+                id={"type": "country-marker", "index": f"{row['Country']}|{1 if n_sel else 0}"},
+                center=[row["lat"], row["lon"]],
+                radius=radius if n_sel else 5,
+                children=[dl.Tooltip(f"{row['Country']}: {n_sel} / {total} genomes selected (click to {action} them)")],
+                color="black",
+                fillColor="red" if n_sel else "#bbbbbb",
+                fillOpacity=0.7 if n_sel else 0.5,
+                weight=1,
+            )
+        )
     return markers, compute_map_bounds(df_country["lat"].tolist(), df_country["lon"].tolist())
+
+
+@app.callback(
+    Output("metadata_table", "selectedRows", allow_duplicate=True),
+    Input({"type": "country-marker", "index": ALL}, "n_clicks"),
+    State("metadata_table", "selectedRows"),
+    State("metadata_table", "rowData"),
+    prevent_initial_call=True
+)
+def toggle_country_genomes(n_clicks, selected_rows, row_data):
+    """Click on a country of the map: deselect all its genomes (or select them if none is selected)."""
+    trig = ctx.triggered_id
+    if not trig or not ctx.triggered or not ctx.triggered[0].get("value"):
+        raise PreventUpdate   # markers re-created (n_clicks = None)
+    country = str(trig["index"]).rsplit("|", 1)[0]
+    row_data = row_data or []
+    in_country = {str(r.get("Strain name")) for r in row_data if clean_country(r.get("Country")) == country}
+    selected = {str(r.get("Strain name")) for r in (selected_rows or [])}
+    if selected & in_country:
+        new_selected = selected - in_country
+    else:
+        new_selected = selected | in_country
+    return [r for r in row_data if str(r.get("Strain name")) in new_selected]
+
 
 def build_upset_plot(df_binary, title,feature):
     """Construit un upset plot a partir d'une matrice binaire (0/1) dont les
