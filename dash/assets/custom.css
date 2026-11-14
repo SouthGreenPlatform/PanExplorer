@@ -374,3 +374,75 @@ table tr:hover td { background-color: #F8FAFC; }
   cursor: pointer;
   z-index: 1;
 }
+
+/* ---------- Analysis levels ----------
+   Level 1 = statistics / tables / figures of the tab, level 2 = analyses launched from the tables
+   (clustering, enrichment, Pan-GWAS...), level 3 = analyses launched from level-2 results.
+   Built by analysis_level() in panexplorer2.py: tinted background + colored vertical band. */
+.pe-level {
+  position: relative;
+  margin: 28px 15px 20px 15px;
+  padding: 16px 18px 18px 28px;
+  border-radius: var(--pe-radius);
+}
+.pe-level::before {               /* vertical band */
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 7px;
+  border-radius: var(--pe-radius) 0 0 var(--pe-radius);
+}
+.pe-level-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 12px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(17, 24, 39, 0.12);
+}
+.pe-level-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700; font-size: 0.85em;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, 0.18);
+}
+.pe-level-title {
+  font-weight: 700;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pe-level-subtitle { color: var(--pe-text-muted); }
+
+/* level 1: blue (statistics, tables and figures of the tab) */
+.pe-level1 {
+  background: linear-gradient(180deg, #EAF1FE 0%, #F6F9FF 140px, #F6F9FF 100%);
+  border: 1px solid #D6E3FB;
+  margin-top: 18px;
+}
+.pe-level1::before { background: linear-gradient(180deg, var(--pe-primary), #93C5FD); }
+.pe-level1 > .pe-level-header .pe-level-badge { background: var(--pe-primary); }
+.pe-level1 > .pe-level-header .pe-level-title { color: var(--pe-primary-dark); }
+
+/* level 2: green (analyses launched from the tables) */
+.pe-level2 {
+  background: linear-gradient(180deg, #E9F9F2 0%, #F5FCF9 140px, #F5FCF9 100%);
+  border: 1px solid #CDEFE0;
+  box-shadow: inset 0 1px 0 #fff;
+}
+.pe-level2::before { background: linear-gradient(180deg, var(--pe-success), #6EE7B7); }
+.pe-level2 > .pe-level-header .pe-level-badge { background: var(--pe-success); }
+.pe-level2 > .pe-level-header .pe-level-title { color: #047857; }
+
+/* level 3: violet (can be nested inside a level 2 block) */
+.pe-level3 {
+  background: linear-gradient(180deg, #F3EEFF 0%, #FAF7FF 140px, #FAF7FF 100%);
+  border: 1px solid #E4D8FD;
+}
+.pe-level3::before { background: linear-gradient(180deg, var(--pe-accent), #C4B5FD); }
+.pe-level3 > .pe-level-header .pe-level-badge { background: var(--pe-accent); }
+.pe-level3 > .pe-level-header .pe-level-title { color: #6D28D9; }
+.pe-level .pe-level { margin: 22px 0 10px 0; }   /* nested level */
