@@ -431,6 +431,8 @@ columnDefs2 = [
 ]
 
 
+VNTR_CIRCOS_COLORS = {"all": "#10B981", "selected": "red", "search": "#2563EB"}
+
 columnDefs4 = [
     {"field": "Species","width": 400},
     {"field": "Genes","width": 400},
@@ -1340,7 +1342,7 @@ def load_project_preview(proj_title):
                     dcc.Tab(label='PAV matrix', style=tab_style, selected_style=tab_selected_style, children=[                        
 
                                                     
-                        html.Div(id='pav_tab_content', children=[
+                        analysis_level(1, "Exploration", "statistics, tables and figures of the selected genomes", [html.Div(id='pav_tab_content', children=[
 
                             html.Br(),
                             html.Div(style={"display": "flex","alignItems": "center", "gap": "10px"},children=[
@@ -1793,9 +1795,9 @@ def load_project_preview(proj_title):
                  
                                     
                         ], style={"paddingLeft": "15px"}
-                        ),
+                        )]),
 
-                        html.Div(analysis_bar_genes(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+                        analysis_level(2, "Downstream analyses", "computed on the rows displayed or selected in the tables above", [html.Div(analysis_bar_genes(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
 html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
     html.H5(id='genes-clustering-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
     html.Div(id='tree_tab_content', children=[
@@ -1973,6 +1975,7 @@ html.Div(id='genes-clustering-results', style={'display': 'none', 'paddingLeft':
                             html.Br(),
                         ], style={"paddingLeft": "15px"}
                         ),
+    gg_layout(),
 ]),
 html.Div(id='genes-cog-results', style={'display': 'none'}, children=[
     html.H5(id='genes-cog-header', style={'color': '#1f4e79', 'paddingLeft': '15px', 'paddingTop': '10px'}),
@@ -2052,7 +2055,7 @@ html.Div(id='genes-cog-results', style={'display': 'none'}, children=[
                                 ],
                             style= {"padding":"15px", "height": "800px"}
                             ),
-]),
+])]),
 
                     ]),
                     
@@ -2170,7 +2173,7 @@ html.Div(id='genes-cog-results', style={'display': 'none'}, children=[
                                                                 
                         dcc.Tab(label='PAV matrix', value='PAV matrix segments', style=tab_style, selected_style=tab_selected_style, children=[  
 
-                            html.Br(),
+                            analysis_level(1, "Exploration", "statistics, tables and figures of the selected genomes", [html.Br(),
                             # ── Segment presence/absence : PAV matrix / Upset plot ──────────────
                             html.Div(id='segments_pav_controls_container', style={"display": "flex","alignItems": "center", "gap": "10px", "paddingLeft": "15px"},children=[
                                 html.Label("Display as:"),
@@ -2340,8 +2343,8 @@ html.Div(id='genes-cog-results', style={'display': 'none'}, children=[
                                     ), width=6),
                                 ],
                                 style= {"padding":"15px"}
-                            ),
-html.Div(analysis_bar_segments(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+                            )]),
+analysis_level(2, "Downstream analyses", "computed on the rows displayed or selected in the tables above", [html.Div(analysis_bar_segments(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
 html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
     html.H5(id='segments-clustering-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
     html.Div(id='tree_tab_content_segments', children=[
@@ -2506,7 +2509,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                             html.Br(),
                         ], style={"paddingLeft": "15px"}
                         ),
-]),
+])]),
 
                             dbc.Modal([
                                     dbc.ModalHeader(
@@ -2994,6 +2997,19 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                             ),
                                         ],
                                         style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+                                    )),
+                                    dbc.Col(dbc.Card(
+                                        [
+                                            html.Div(style={"height": "8px", "backgroundColor": "#8B5CF6"}),
+                                            dbc.CardBody(
+                                                [
+                                                    html.H2("0", id='nb_of_indels', style={"fontSize": "42px","fontWeight": "bold","color": "#8B5CF6"}),
+                                                    html.Div("Insertions / deletions")
+                                                ],
+                                                style={"textAlign": "center"}
+                                            ),
+                                        ],
+                                        style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
                                     )),                                                                                                                                         
                                 ],
                             style= {"padding":"15px"}
@@ -3003,7 +3019,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                         
                         dcc.Tab(label='Genotyping matrix', style=tab_style, selected_style=tab_selected_style, children=[
                             html.Div(id='genotypingmatrix_tab_content', children=[
-                                html.Br(),
+                                analysis_level(1, "Exploration", "statistics, tables and figures of the selected genomes", [html.Br(),
 
                                 dbc.Row(
                                         [
@@ -3033,7 +3049,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                     [
                                                         html.Small("Click on a row (or on a cell of the genotyping matrix) to display the details of the SNP.", style={"color": "grey"}),
                                                         dcc.Loading(html.Div(children=[
-                                                            html.H5("All SNPs", id="nb_of_snps_all", style={"color": "green"}),
+                                                            html.H5("All variants", id="nb_of_snps_all", style={"color": "green"}),
                                                             html.Div(id="snps_list_summary", style={"marginBottom": "8px"}),
                                                             dag.AgGrid(
                                                                 id="table_snps_list",
@@ -3042,10 +3058,11 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                                 defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                 getRowId="params.data.SNP",
                                                                 dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"},
-                                                                style={"height": "300px", "width": "100%"},
+                                                                style={"height": "250px", "width": "100%"},
                                                             ),
                                                             html.Button("Download table", id="download_table_snps_list", className="thin-button", n_clicks=0),
                                                             dcc.Download(id="download-snps-list"),
+
 
                                                             html.H5("Strain-specific SNPs", id="nb_of_snps_pattern", style={"color": "red", "marginTop": "15px"}),
                                                             dag.AgGrid(
@@ -3055,7 +3072,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                                 defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                 getRowId="params.data.SNP",
                                                                 dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"},
-                                                                style={"height": "300px", "width": "100%"},
+                                                                style={"height": "250px", "width": "100%"},
                                                             ),
                                                             html.Button("Download table", id="download_table_snps_pattern", className="thin-button", n_clicks=0),
                                                             dcc.Download(id="download-snps-pattern"),
@@ -3068,7 +3085,7 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                                 defaultColDef={"sortable": True, "resizable": True, "filter": True},
                                                                 getRowId="params.data.SNP",
                                                                 dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False, "rowSelection": "single"},
-                                                                style={"height": "300px", "width": "100%"},
+                                                                style={"height": "250px", "width": "100%"},
                                                             ),
                                                             html.Button("Download table", id="download_table_snps_opposite", className="thin-button", n_clicks=0),
                                                             dcc.Download(id="download-snps-opposite"),
@@ -3078,18 +3095,39 @@ html.Div(id='segments-clustering-results', style={'display': 'none', 'paddingLef
                                                 ),
                                             ],
                                             style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
-                                        )),
+                                        ), width=6),
+                                        dbc.Col(dbc.Card([dbc.CardBody([
+                                            html.Div("Variants positioned on the reference sequence(s) of the VCF"),
+                                            html.Div([
+                                                html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': "#10B981",'borderRadius': '3px','marginRight': '6px'}),
+                                                html.Span("SNP density", style={'marginRight': '20px'}),
+                                                html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': "#8B5CF6",'borderRadius': '3px','marginRight': '6px'}),
+                                                html.Span("Indel density", style={'marginRight': '20px'}),
+                                                html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': "red",'borderRadius': '3px','marginRight': '6px'}),
+                                                html.Span("Strain-specific / pattern", id="circos_snps_legend_pattern", style={'marginRight': '20px'}),
+                                                html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': "purple",'borderRadius': '3px','marginRight': '6px'}),
+                                                html.Span("Opposite pattern", style={'marginRight': '20px'}),
+                                            ]),
+                                            dcc.Loading(dash_bio.Circos(
+                                                id="circos-snps",
+                                                layout=[],
+                                                config=layout_config,
+                                                tracks=[],
+                                                style={"height": "800px"},
+                                            )),
+                                        ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}), width=6),
                                     ],
                                     style= {"padding":"15px"}
-                                ),
-html.Div(analysis_bar_snps(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
+                                )]),
+analysis_level(2, "Downstream analyses", "computed on the rows displayed or selected in the tables above", [html.Div(analysis_bar_snps(), style={'paddingLeft': '30px', 'paddingRight': '30px', 'paddingBottom': '10px'}),
 html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'}, children=[
     html.H5(id='snps-snmf-header', style={'color': '#1f4e79', 'paddingTop': '10px'}),
     html.H5("Population structure (sNMF)", style={'paddingTop': '10px'}),
     dbc.Row([
         dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF')], style={"textAlign": "center"})],
                          style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
-        dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF_cross_entropy')], style={"textAlign": "center"})],
+        dbc.Col(dbc.Card([dbc.CardBody([dcc.Graph(id='sNMF_cross_entropy', style={'height': '370px'}),
+                                         dcc.Graph(id='sNMF_assignment', style={'height': '400px'})], style={"textAlign": "center"})],
                          style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
     ], style={"padding": "15px"}),
     html.Div([
@@ -3144,7 +3182,9 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
         dcc.Loading(html.Img(id='haplo-network-snps', style={"width": "90%", "height": "auto"})),
     ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}))],
         style={"padding": "15px"}),
-]),
+    analysis_level(3, "Population genetics", "per group: diversity statistics, FST and group-specific variants", [popgen_bar(), popgen_results_layout()]),
+
+])]),
 
                                 dbc.Modal([
                                     dbc.ModalHeader(dbc.ModalTitle(id="detail-title-snp")),
@@ -3170,7 +3210,7 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
                 ]),
                 dcc.Tab(label='Repeats (MLVA)', id='tab_repeats', style=marker_tab_style, selected_style=marker_tab_selected_style, className='marker-tab', selected_className='marker-tab--selected', children=[
                     html.Div(id='mlva_tab_content', children=[
-                        html.Br(),
+                        analysis_level(1, "Exploration", "statistics, tables and figures of the selected genomes", [html.Br(),
                         
                         dbc.Row(
                                 [
@@ -3226,16 +3266,49 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
                                         selectedRows=[],
                                         dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False,
                                                          "rowSelection": "multiple", "rowMultiSelectWithClick": True},
-                                        style={"height": "350px", "width": "100%"},
+                                        style={"height": "700px", "width": "100%"},
                                     )),
                                     html.Button("Select all", id="select-all-vntr", className="thin-button", n_clicks=0),
                                     html.Button("Deselect all", id="deselect-all-vntr", className="thin-button", n_clicks=0),
                                     html.Button("Download matrix", id="btn-download", className="thin-button", n_clicks=0),
                                     dcc.Download(id="download-dataframe"),
                                     html.Button("Update heatmap with the loci displayed in the table", id='submit-vntr', className="thin-button", n_clicks=0),
-                                ], style={"textAlign": "left"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"})),
-                            ], style= {"padding":"15px"}),
-                        html.Div(analysis_bar("repeats", [
+                                    # search of a sequence in the flanking sequences of the VNTR loci
+                                    html.Div([
+                                        html.Span("Search a sequence in the flanking regions:", className="fw-bold", style={"marginRight": "8px"}),
+                                        dcc.Input(id="vntr_seq_search", type="text", placeholder="e.g. ACGTTGCAGGCT (min 8 nt, both strands)",
+                                                  debounce=True, style={"width": "340px", "fontFamily": "monospace", "marginRight": "6px"}),
+                                        html.Button("Search", id="vntr_seq_search_btn", className="thin-button", n_clicks=0),
+                                    ], style={"marginTop": "15px", "display": "flex", "alignItems": "center", "flexWrap": "wrap"}),
+                                    html.Div(id="vntr_seq_search_results", style={"marginTop": "8px", "fontSize": "0.9em"}),
+                                    dcc.Store(id="vntr_search_hits", data=[]),
+                                ], style={"textAlign": "left"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}), width=5),
+                                # circos: VNTR loci positioned on the reference genome (flanking sequences searched in
+                                # the GenBank sequence of the reference); click on a locus -> detail below
+                                dbc.Col(dbc.Card([dbc.CardBody([
+                                    html.Div("VNTR loci positioned on the reference genome", style={"fontWeight": "bold"}),
+                                    html.Div(id="circos_vntr_info", style={"color": "grey", "fontSize": "0.85em"}),
+                                    html.Div([
+                                        html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': VNTR_CIRCOS_COLORS["all"],'borderRadius': '50%','marginRight': '5px'}),
+                                        html.Span("VNTR loci (radius = HGDI, 0 inside / 1 outside)", style={'marginRight': '12px'}),
+                                        html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': VNTR_CIRCOS_COLORS["selected"],'borderRadius': '50%','marginRight': '5px'}),
+                                        html.Span("Ticked / filtered loci", style={'marginRight': '12px'}),
+                                        html.Span(style={'display': 'inline-block','width': '10px','height': '10px','backgroundColor': VNTR_CIRCOS_COLORS["search"],'borderRadius': '50%','marginRight': '5px'}),
+                                        html.Span("Sequence search hits"),
+                                    ], style={"fontSize": "0.85em"}),
+                                    dcc.Loading(dash_bio.Circos(
+                                        id="circos-vntr",
+                                        layout=[],
+                                        config=layout_config,
+                                        selectEvent={"0": "click", "1": "click", "2": "click"},
+                                        tracks=[],
+                                        style={"height": "800px"},
+                                    ), style={"overflowX": "auto"}),
+                                    html.Small("Click on a locus to display its details and flanking sequences.", style={"color": "grey"}),
+                                    html.Div(id="vntr_detail", style={"textAlign": "left", "marginTop": "8px"}),
+                                ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}), width=7),
+                            ], style= {"padding":"15px"})]),
+                        analysis_level(2, "Downstream analyses", "computed on the rows displayed or selected in the tables above", [html.Div(analysis_bar("repeats", [
                             html.Button("Hierarchical clustering", id="run-clustering-repeats", className="pe-btn-cta", n_clicks=0),
                         ]), style={'paddingRight': '30px', 'paddingBottom': '10px'}),
                         html.Div(id='repeats-clustering-results', style={'display': 'none'}, children=[
@@ -3288,7 +3361,7 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
                                 html.Div(id='haplo-network-repeats-info', style={"color": "grey"}),
                                 dcc.Loading(html.Img(id='haplo-network-repeats', style={"width": "90%", "height": "auto"})),
                             ], style={"textAlign": "center"})], style={"borderRadius": "16px","overflow": "hidden","border": "none","boxShadow": "0 6px 15px rgba(0,0,0,.15)"}))], style={"padding": "15px"}),
-                        ]),
+                        ])]),
                     ], style={"paddingLeft": "15px"}
                      ), 
                 ]),
@@ -5697,7 +5770,8 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         
         vcf_file = tmp_dir + "/" + str(session) + ".selected_genomes.vcf"
 
-        nb_of_snps = str(sum(1 for line in open(vcf_file)) - 1)
+        # number of SNPs (without the indels), counted as in the table "All SNPs"
+        nb_of_snps = str(vcf_variant_counts(vcf_file)[0])
 
         # SNP-based tree, PCA and sNMF are now computed on demand (button under the SNP tables).
         # Remove results of a previous run so that they are not displayed for this new selection.
@@ -10327,12 +10401,21 @@ def compute_snps_view(session, specific_to):
                          style={"backgroundColor": color, "color": "white", "borderRadius": "12px",
                                 "padding": "3px 10px", "marginRight": "8px", "fontSize": "0.9em"})
 
+    is_snp = df_list["Type"].isin(["Transition", "Transversion"])
+    df_snps, df_indels = df_list[is_snp], df_list[~is_snp]
     n_ts = int((df_list["Type"] == "Transition").sum())
     n_tv = int((df_list["Type"] == "Transversion").sum())
-    minor = df_list["Minor_allele_in"].fillna("").astype(str)
+    minor = df_snps["Minor_allele_in"].fillna("").astype(str)
     n_single = int(((minor != "") & (~minor.str.contains(","))).sum())
+    def tag(label, n, color):
+        return html.Span(f"{label}: {n}",
+                         style={"backgroundColor": color, "color": "white", "borderRadius": "12px",
+                                "padding": "3px 10px", "marginRight": "8px", "fontSize": "0.9em", "fontWeight": "600"})
+
     summary = html.Div([
-        badge("Transitions", n_ts, "#10B981"),
+        tag("SNPs", len(df_snps), "#10B981"),
+        tag("Insertions / deletions", len(df_indels), "#8B5CF6"),
+        badge("Transitions", n_ts, "#34D399"),
         badge("Transversions", n_tv, "#3B82F6"),
         badge("Singletons (minor allele in 1 genome)", n_single, "#EF4444"),
         html.Span(f"Ts/Tv = {n_ts / n_tv:.2f}" if n_tv else "", style={"color": "grey"}),
@@ -10342,29 +10425,58 @@ def compute_snps_view(session, specific_to):
     if selection:
         pattern, opposite = snps_pattern_masks(df_alt, selection)
         df2, df3 = df_list[pattern], df_list[opposite]
-        title2 = f"SNPs respecting genotype pattern (Alt allele in the selected genomes): {len(df2)} SNPs"
-        title3 = f"SNPs respecting opposite pattern (Alt allele in the other genomes): {len(df3)} SNPs"
+        title2 = f"Variants respecting genotype pattern (Alt allele in the selected genomes): {variant_counts_text(df2)}"
+        title3 = f"Variants respecting opposite pattern (Alt allele in the other genomes): {variant_counts_text(df3)}"
     else:
         nb_alt = df_alt.sum(axis=1, skipna=True).values
         complete = ~np.isnan(df_alt.values).any(axis=1)
         n = df_alt.shape[1]
         df2 = df_list[complete & (nb_alt == 1)]
         df3 = df_list[complete & (nb_alt == n - 1)]
-        title2 = f"Strain-specific SNPs (Alt allele in a single genome): {len(df2)} SNPs"
-        title3 = f"SNPs where a single genome carries the Ref allele: {len(df3)} SNPs"
-    title1 = f"All SNPs: {len(df_list)} SNPs"
+        title2 = f"Strain-specific variants (Alt allele in a single genome): {variant_counts_text(df2)}"
+        title3 = f"Variants where a single genome carries the Ref allele: {variant_counts_text(df3)}"
+    title1 = f"All variants: {len(df_list)} variants"
 
     prefix = tmp_dir + "/" + str(session)
     df2.to_csv(prefix + ".snps_table2.tsv", sep="\t", index=False)
     df3.to_csv(prefix + ".snps_table3.tsv", sep="\t", index=False)
 
     return (segments_to_records(df_list), summary, segments_to_records(df2), segments_to_records(df3),
-            title1, title2, title3)
+            title1, title2, title3, str(len(df_indels)))
+
+
+def variant_counts_text(df):
+    n_snp = int(df["Type"].isin(["Transition", "Transversion"]).sum())
+    return f"{n_snp} SNPs, {len(df) - n_snp} indels"
+
+
+def vcf_variant_counts(vcf_file):
+    """(number of SNPs, number of indels/complex variants) of a VCF, duplicated positions counted once
+    (same rules as the tables of the SNP tab)."""
+    seen = set()
+    n_snp = n_indel = 0
+    with open(vcf_file) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            parts = line.split("\t", 5)
+            if len(parts) < 5:
+                continue
+            key = (parts[0], parts[1])
+            if key in seen:
+                continue
+            seen.add(key)
+            ref, alt = parts[3], parts[4]
+            if len(ref) == 1 and all(len(a) == 1 and a not in ("*", ".") for a in alt.split(",")):
+                n_snp += 1
+            else:
+                n_indel += 1
+    return n_snp, n_indel
 
 
 SNP_OUTPUTS = ["table_snps_list.rowData", "snps_list_summary.children", "table_snps_pattern.rowData",
                "table_snps_opposite.rowData", "nb_of_snps_all.children", "nb_of_snps_pattern.children",
-               "nb_of_snps_opposite.children"]
+               "nb_of_snps_opposite.children", "nb_of_indels.children"]
 
 
 @app.callback(
@@ -10380,7 +10492,7 @@ def update_snps_tables(nb_snps, session, specific_to):
     return compute_snps_view(session, specific_to)
 
 
-def get_snp_from_trigger(triggered, click_vcf, cell1, cell2, cell3):
+def get_snp_from_trigger(triggered, click_vcf, cell1, cell2, cell3, cell4=None):
     if triggered == "VCF_graph" and click_vcf:
         return str(click_vcf["points"][0].get("x", ""))
     cell = {"table_snps_list": cell1, "table_snps_pattern": cell2, "table_snps_opposite": cell3}.get(triggered)
@@ -10547,7 +10659,7 @@ def _download_snps(session, suffix, name):
 @app.callback(Output("download-snps-list", "data"), Input("download_table_snps_list", "n_clicks"),
               State("current_session", "value"), prevent_initial_call=True)
 def download_snps_list(n, session):
-    return _download_snps(session, ".snps_list.tsv", "snps_list.xls")
+    return _download_snps(session, ".snps_list.tsv", "variants_list.xls")
 
 
 @app.callback(Output("download-snps-pattern", "data"), Input("download_table_snps_pattern", "n_clicks"),
@@ -10788,6 +10900,20 @@ def message_figure(text):
     fig.update_layout(annotations=[dict(text=text, x=0.5, y=0.5, xref="paper", yref="paper",
                                         showarrow=False, font=dict(size=16))])
     return fig
+
+
+
+def analysis_level(level, title, subtitle, children):
+    """Visual block grouping a level of analyses (2 = analyses launched from the tables, 3 = analyses
+    launched from the results of level 2...): tinted background + colored vertical band
+    (classes pe-level / pe-level<N> of assets/custom.css). className is never modified by the
+    callbacks (which only toggle the style of the results), so the decoration is always kept."""
+    header = html.Div([
+        html.Span(str(level), className="pe-level-badge"),
+        html.Span(title, className="pe-level-title"),
+        html.Small(subtitle, className="pe-level-subtitle") if subtitle else None,
+    ], className="pe-level-header")
+    return html.Div([header, *children], className=f"pe-level pe-level{level}")
 
 
 def analysis_bar(prefix, buttons, extra=None):
@@ -11078,8 +11204,9 @@ def _run_snp_analyses(n_run, v1, r1, max_k, session, dimension_pca, colorizing_p
                       color_discrete_map=population_color_map(dfsnmf["Cluster"]),
                       facet_row="K", height=800)
       fig_snmf.update_layout(title="Population structure (by sNMF) for different K", barmode='stack', showlegend=True)
-      fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy",
-                                title=f"Values of the cross-entropy criterion for sNMF runs (K=2 to K={max_K})")
+      fig_cross_entropy = px.line(df_crossentropy, x="K", y="Cross-entropy", markers=True, height=370,
+                                title=f"Cross-entropy criterion of the sNMF runs (K=2 to K={max_K})")
+      fig_cross_entropy.update_layout(margin=dict(l=10, r=10, t=50, b=10))
 
     # update the population assignment used to colorize the PCA
     fig_pca = no_update
@@ -11668,6 +11795,112 @@ def download_assignation_repeats(n, session):
     return dcc.send_data_frame(df.to_csv, "repeats_cluster_assignation.tsv", sep="\t", index=False)
 
 
+##############################################################################################
+# Circos of the SNP tab: SNP / indel density and variants of the pattern tables on the
+# sequences of the VCF (lengths from the ##contig lines, else the last variant position)
+##############################################################################################
+SNP_CIRCOS_COLORS = {"snps": "#10B981", "indels": "#8B5CF6", "pattern": "red", "opposite": "purple"}
+
+
+def vcf_contig_layout(vcf_file, df_list):
+    lengths, order = {}, []
+    if os.path.exists(vcf_file):
+        with open(vcf_file) as fh:
+            for line in fh:
+                if line.startswith("##contig="):
+                    m_id = re.search(r"ID=([^,>]+)", line)
+                    m_len = re.search(r"length=(\d+)", line)
+                    if m_id:
+                        order.append(m_id.group(1))
+                        if m_len:
+                            lengths[m_id.group(1)] = int(m_len.group(1))
+                elif line.startswith("#CHROM") or not line.startswith("#"):
+                    break
+    if df_list is not None and not df_list.empty:
+        max_pos = df_list.groupby(df_list["Chrom"].astype(str))["Position"].max().to_dict()
+        for chrom, pos in max_pos.items():
+            if chrom not in order:
+                order.append(chrom)
+            lengths[chrom] = max(lengths.get(chrom, 0), int(pos) + 1)
+    chroms = [c for c in order if lengths.get(c)]
+    if df_list is not None and not df_list.empty:
+        with_variants = set(df_list["Chrom"].astype(str))
+        chroms = [c for c in chroms if c in with_variants]
+    return [{"id": c, "label": c if len(chroms) <= 10 else "", "len": lengths[c], "color": "#9aa5b1"} for c in chroms]
+
+
+def variant_density(rows, layout, bin_size):
+    lengths = {b["id"]: b["len"] for b in layout}
+    counts = {}
+    for r in rows or []:
+        chrom = str(r.get("Chrom"))
+        if chrom not in lengths:
+            continue
+        b = int(r.get("Position", 0)) // bin_size
+        counts[(chrom, b)] = counts.get((chrom, b), 0) + 1
+    data = []
+    for block in layout:
+        n_bins = (block["len"] + bin_size - 1) // bin_size
+        for b in range(n_bins):
+            data.append({"block_id": block["id"], "start": b * bin_size, "end": min((b + 1) * bin_size, block["len"]),
+                         "value": counts.get((block["id"], b), 0)})
+    return data
+
+
+def variant_points(rows, layout):
+    ids = {b["id"] for b in layout}
+    return [{"block_id": str(r.get("Chrom")), "position": int(r.get("Position", 0)), "value": 1, "name": r.get("SNP", "")}
+            for r in rows or [] if str(r.get("Chrom")) in ids]
+
+
+@app.callback(
+    Output("circos-snps", "layout"),
+    Output("circos-snps", "tracks"),
+    Input("table_snps_list", "rowData"),
+    Input("table_snps_pattern", "rowData"),
+    Input("table_snps_opposite", "rowData"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def update_circos_snps(variants, pattern, opposite, session):
+    if not session:
+        raise PreventUpdate
+    variants = variants or []
+    snps = [r for r in variants if r.get("Type") in ("Transition", "Transversion")]
+    indels = [r for r in variants if r.get("Type") not in ("Transition", "Transversion")]
+    df_all = pd.DataFrame(variants)
+    if df_all.empty:
+        return [], []
+    layout = vcf_contig_layout(tmp_dir + "/" + str(session) + ".selected_genomes.vcf", df_all)
+    if not layout:
+        return [], []
+    total = sum(b["len"] for b in layout)
+    bin_size = max(1000, int(total / 300))
+    tooltip = {"name": "value"}
+    tracks = [
+        {"type": "HISTOGRAM", "data": variant_density(snps, layout, bin_size),
+         "config": {"innerRadius": 300, "outerRadius": 360, "color": SNP_CIRCOS_COLORS["snps"], "tooltipContent": tooltip}},
+        {"type": "HISTOGRAM", "data": variant_density(indels, layout, bin_size),
+         "config": {"innerRadius": 245, "outerRadius": 295, "color": SNP_CIRCOS_COLORS["indels"], "tooltipContent": tooltip}},
+        {"type": "SCATTER", "data": variant_points(pattern, layout),
+         "config": {"innerRadius": 205, "outerRadius": 240, "min": 0, "max": 2, "color": SNP_CIRCOS_COLORS["pattern"],
+                    "strokeWidth": 0, "size": 20, "shape": "circle", "tooltipContent": {"name": "name"}}},
+        {"type": "SCATTER", "data": variant_points(opposite, layout),
+         "config": {"innerRadius": 165, "outerRadius": 200, "min": 0, "max": 2, "color": SNP_CIRCOS_COLORS["opposite"],
+                    "strokeWidth": 0, "size": 20, "shape": "circle", "tooltipContent": {"name": "name"}}},
+    ]
+    return layout, tracks
+
+
+@app.callback(
+    Output("circos-snps", "config"),
+    Input("circos-snps", "layout"),
+    prevent_initial_call=True
+)
+def update_circos_ticks_snps(circos_layout):
+    return circos_config_for_layout(circos_layout)
+
+
 def circos_config_for_layout(circos_layout):
     """Return a copy of layout_config whose ticks are adapted to the total size of the layout:
     about 150 minor ticks around the circle, a major (labelled) tick every 5 minor ticks,
@@ -11729,6 +11962,1912 @@ def update_circos_ticks_genes(circos_layout):
 def update_circos_ticks_segments(circos_layout):
     return circos_config_for_layout(circos_layout)
 
+
+##############################################################################################
+# Circos of the Repeats (MLVA) tab: VNTR loci positioned on the reference genome.
+# The VNTR matrix has no coordinates, only the two flanking sequences of each locus (300 bp,
+# each one on either strand): both flanks are searched in the GenBank sequence of the reference
+# (whole flank, then 40 bp anchors at each end) and the locus is placed between the two hits.
+# Positions are cached per project + reference in tmp_dir.
+##############################################################################################
+_VNTR_RC = str.maketrans("ACGTNacgtn", "TGCANtgcan")
+
+
+def _vntr_revcomp(s):
+    return s.translate(_VNTR_RC)[::-1]
+
+
+def read_genbank_sequences(project_dir, strain):
+    """{LOCUS name: sequence} of a genome of the project (.gb, else original .gbff.gz).
+    The LOCUS names are the block_id used by the circos of genes."""
+    import gzip
+    gdir = os.path.join(project_dir, "genomes", "genomes")
+    for f, opener in ((os.path.join(gdir, strain + ".gb"), open),
+                      (os.path.join(gdir, strain + ".gbff.gz"), gzip.open)):
+        if not os.path.exists(f):
+            continue
+        seqs, cur, inseq, buf = {}, None, False, []
+        with opener(f, "rt", errors="replace") as fh:
+            for line in fh:
+                if line.startswith("LOCUS"):
+                    parts = line.split()
+                    cur, buf, inseq = (parts[1] if len(parts) > 1 else "seq" + str(len(seqs) + 1)), [], False
+                elif line.startswith("ORIGIN"):
+                    inseq = True
+                elif line.startswith("//"):
+                    if cur:
+                        seqs[cur] = "".join(buf).upper()
+                    cur, inseq = None, False
+                elif inseq:
+                    buf.append(re.sub(r"[^A-Za-z]", "", line))
+        seqs = {k: v for k, v in seqs.items() if v}
+        if seqs:
+            return seqs
+    return {}
+
+
+def _vntr_find_flank(seqs, flank, anchor=40):
+    flank = re.sub(r"[^ACGTN]", "", str(flank).upper())
+    if len(flank) < 15:
+        return []
+    probes = [flank] if len(flank) <= anchor else [flank, flank[:anchor], flank[-anchor:]]
+    for probe in probes:
+        hits = []
+        for q in (probe, _vntr_revcomp(probe)):
+            for chrom, s in seqs.items():
+                i = s.find(q)
+                if i != -1:
+                    hits.append((chrom, i, i + len(q)))
+        if hits:
+            return hits
+    return []
+
+
+def locate_vntr(seqs, flanking, maxdist=20000):
+    """(sequence, start, end, method) of a VNTR locus on the reference (1-based), or None."""
+    parts = [x for x in str(flanking).split(",") if x.strip()]
+    hits = [_vntr_find_flank(seqs, x) for x in parts[:2]]
+    if len(hits) == 2 and hits[0] and hits[1]:
+        best = None
+        for c1, s1, e1 in hits[0]:
+            for c2, s2, e2 in hits[1]:
+                if c1 != c2:
+                    continue
+                (a1, b1), (a2, b2) = sorted([(s1, e1), (s2, e2)])
+                gap = a2 - b1
+                if gap <= maxdist and (best is None or abs(gap) < abs(best[3])):
+                    best = (c1, a1, b2, gap, b1, a2)
+        if best:
+            chrom, a1, b2, gap, b1, a2 = best
+            if gap > 0:
+                return chrom, b1 + 1, a2, "Both flanks"
+            return chrom, a1 + 1, b2, "Approximate"
+    for h in hits:
+        if h:
+            chrom, s, e = h[0]
+            return chrom, s + 1, e, "Approximate"
+    return None
+
+
+def vntr_positions(project_dir, reference, df_loci):
+    """DataFrame ID / Sequence / Start / End / Located_by of the loci on the reference, and the
+    circos layout (sequences of the reference). Cached in tmp_dir."""
+    key = re.sub(r"[^A-Za-z0-9_.-]", "_", str(project_dir)) + "." + str(reference)
+    cache = os.path.join(tmp_dir, key + ".vntr_positions.tsv")
+    cache_layout = os.path.join(tmp_dir, key + ".vntr_layout.tsv")
+    cols = ["ID", "Sequence", "Start", "End", "Located_by"]
+    df_cache = pd.DataFrame(columns=cols)
+    layout_df = None
+    if os.path.exists(cache) and os.path.exists(cache_layout):
+        try:
+            df_cache = pd.read_csv(cache, sep="\t", dtype={"ID": str, "Sequence": str})
+            layout_df = pd.read_csv(cache_layout, sep="\t", dtype={"id": str})
+        except Exception:
+            df_cache, layout_df = pd.DataFrame(columns=cols), None
+    ids = df_loci["ID"].astype(str)
+    missing = df_loci[~ids.isin(set(df_cache["ID"].astype(str)))]
+    if layout_df is None or not missing.empty:
+        seqs = read_genbank_sequences(project_dir, reference)
+        if not seqs:
+            return pd.DataFrame(columns=cols), []
+        layout_df = pd.DataFrame([{"id": k, "len": len(v)} for k, v in seqs.items()])
+        rows = []
+        for _, r in missing.iterrows():
+            res = locate_vntr(seqs, r.get("Flanking", ""))
+            if res:
+                rows.append({"ID": str(r["ID"]), "Sequence": res[0], "Start": int(res[1]), "End": int(res[2]), "Located_by": res[3]})
+            else:
+                rows.append({"ID": str(r["ID"]), "Sequence": None, "Start": None, "End": None, "Located_by": "Not found"})
+        df_cache = pd.concat([df_cache, pd.DataFrame(rows, columns=cols)], ignore_index=True)
+        try:
+            df_cache.to_csv(cache, sep="\t", index=False)
+            layout_df.to_csv(cache_layout, sep="\t", index=False)
+        except Exception as e:
+            print("Could not cache VNTR positions:", e)
+    nb_seq = len(layout_df)
+    layout = [{"id": str(r.id), "label": str(r.id) if nb_seq <= 10 else "", "len": int(r.len), "color": "#4d4d4d"}
+              for r in layout_df.itertuples()]
+    return df_cache[df_cache["ID"].astype(str).isin(set(ids))], layout
+
+
+def _vntr_project_dir(projets):
+    row = query_db("SELECT path FROM projects WHERE title = ?", (projets,), one=True)
+    return row[0] if row else conf["session_dir"] + "/" + str(projets)
+
+
+def _vntr_session_matrix(session):
+    f = tmp_dir + "/" + str(session) + ".vntr_matrix.tsv"
+    if not session or not os.path.exists(f):
+        return None
+    return pd.read_csv(f, sep="\t", dtype={"ID": str})
+
+
+@app.callback(
+    Output("circos-vntr", "layout"),
+    Output("circos-vntr", "tracks"),
+    Output("circos_vntr_info", "children"),
+    Input("mlva_table", "rowData"),
+    Input("mlva_table", "virtualRowData"),
+    Input("mlva_table", "selectedRows"),
+    Input("reference", "value"),
+    Input("vntr_search_hits", "data"),
+    State("projets", "value"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def update_circos_vntr(rows, v_rows, selected, reference, search_hits, projets, session):
+    if not session or not rows:
+        return [], [], ""
+    if not reference or not is_string_without_special_character(str(reference)):
+        return [], [], "No reference genome selected."
+    df_vntr = _vntr_session_matrix(session)
+    if df_vntr is None:
+        raise PreventUpdate
+    df_pos, layout = vntr_positions(_vntr_project_dir(projets), str(reference), df_vntr)
+    if not layout:
+        return [], [], f"The sequence of the reference genome ({reference}) is not available: the loci cannot be positioned."
+
+    info = {str(r["ID"]): r for r in rows}
+    all_points = []
+    for r in df_pos.itertuples():
+        if pd.isna(r.Start):
+            continue
+        locus = str(r.ID)
+        meta = info.get(locus, {})
+        hgdi = meta.get("HGDI")
+        label = f"{locus} ({meta.get('Repeat', '')}) - {r.Sequence}:{int(r.Start):,}-{int(r.End):,} - HGDI {hgdi if hgdi is not None else 'NA'}"
+        all_points.append({"block_id": r.Sequence, "position": int((int(r.Start) + int(r.End)) / 2),
+                           "value": float(hgdi) if hgdi is not None else 0.0, "name": label, "ID": locus})
+
+    # loci of interest: ticked loci, else loci displayed after filtering (only if the table is filtered)
+    loci, mode = repeats_loci(selected, v_rows, rows)
+    sel_ids = {str(l.get("ID")) for l in (loci or [])}
+    if mode == "displayed" and len(sel_ids) == len(rows):
+        sel_ids = set()
+    sel_points = [dict(p, value=1) for p in all_points if p["ID"] in sel_ids]
+    hit_ids = set(search_hits or [])
+    hit_points = [dict(p, value=1) for p in all_points if p["ID"] in hit_ids]
+
+    def scatter(data, inner, outer, color, shape):
+        return {"type": "SCATTER", "data": data,
+                "config": {"innerRadius": inner, "outerRadius": outer, "min": 0, "max": 2, "color": color,
+                           "strokeWidth": 0, "size": 40, "shape": shape, "tooltipContent": {"name": "name"}}}
+
+    tracks = [
+        {"type": "SCATTER", "data": all_points,
+         "config": {"innerRadius": 250, "outerRadius": 355, "min": 0, "max": 1, "color": VNTR_CIRCOS_COLORS["all"],
+                    "strokeWidth": 0.5, "strokeColor": "#065F46", "size": 40, "shape": "circle",
+                    "axes": [{"spacing": 0.25, "thickness": 1, "color": "#e5e7eb"}],
+                    "backgrounds": [{"start": 0, "end": 1, "color": "#f3f4f6", "opacity": 0.6}],
+                    "tooltipContent": {"name": "name"}}},
+        scatter(sel_points, 205, 240, VNTR_CIRCOS_COLORS["selected"], "triangle"),
+        scatter(hit_points, 165, 200, VNTR_CIRCOS_COLORS["search"], "circle"),
+    ]
+    nb_located = len(all_points)
+    nb_both = int((df_pos["Located_by"] == "Both flanks").sum())
+    msg = (f"{nb_located} / {len(df_pos)} loci located on {reference} "
+           f"({nb_both} between both flanks, {nb_located - nb_both} approximate, +/- a few hundred bp)")
+    return layout, tracks, msg
+
+
+@app.callback(
+    Output("circos-vntr", "config"),
+    Input("circos-vntr", "layout"),
+    prevent_initial_call=True
+)
+def update_circos_ticks_vntr(circos_layout):
+    return circos_config_for_layout(circos_layout)
+
+
+def _clean_dna(s):
+    return re.sub(r"[^ACGTN]", "", str(s or "").upper())
+
+
+def _highlight_seq(seq, query):
+    """Flanking sequence in monospace, with the occurrences of the query (both strands) highlighted."""
+    seq = str(seq or "")
+    spans = []
+    q = _clean_dna(query)
+    if len(q) >= 8:
+        up = seq.upper()
+        for probe in {q, _vntr_revcomp(q)}:
+            i = up.find(probe)
+            while i != -1:
+                spans.append((i, i + len(probe)))
+                i = up.find(probe, i + 1)
+    spans.sort()
+    children, pos = [], 0
+    for a, b in spans:
+        if a < pos:
+            continue
+        children += [seq[pos:a], html.Mark(seq[a:b], style={"backgroundColor": "#BFDBFE", "padding": "0"})]
+        pos = b
+    children.append(seq[pos:])
+    return html.Div(children, style={"fontFamily": "monospace", "fontSize": "0.8em", "wordBreak": "break-all",
+                                     "backgroundColor": "#f8fafc", "border": "1px solid #e5e7eb", "borderRadius": "6px",
+                                     "padding": "6px", "marginBottom": "6px"})
+
+
+def vntr_detail_panel(locus, session, projets, reference, query=None):
+    df_vntr = _vntr_session_matrix(session)
+    if df_vntr is None:
+        return ""
+    sub = df_vntr[df_vntr["ID"].astype(str) == str(locus)]
+    if sub.empty:
+        return ""
+    row = sub.iloc[0]
+    strains = [c for c in df_vntr.columns if c not in ("ID", "Repeat", "Flanking")]
+    flanks = [x for x in str(row.get("Flanking", "")).split(",")]
+    rec = vntr_table_records(sub)[0]
+    position = "not located"
+    if reference and is_string_without_special_character(str(reference)):
+        df_pos, _ = vntr_positions(_vntr_project_dir(projets), str(reference), sub)
+        if not df_pos.empty and pd.notna(df_pos.iloc[0]["Start"]):
+            p = df_pos.iloc[0]
+            position = f"{p['Sequence']}:{int(p['Start']):,}-{int(p['End']):,} ({p['Located_by'].lower()})"
+    # number of repeats per genome, grouped by allele
+    alleles = {}
+    for s in strains:
+        alleles.setdefault(str(row[s]), []).append(s)
+    allele_lines = [html.Li([html.B(f"{a} repeats: " if a != "-" else "missing: "), ", ".join(g)])
+                    for a, g in sorted(alleles.items(), key=lambda kv: (kv[0] == "-", pd.to_numeric(kv[0], errors="coerce")))]
+    return dbc.Card(dbc.CardBody([
+        html.H5(f"Locus {locus}", style={"color": "#065F46"}),
+        html.Div([html.B("Repeat unit: "), html.Span(str(row.get("Repeat", "")), style={"fontFamily": "monospace"})]),
+        html.Div([html.B(f"Position on {reference}: "), position]),
+        html.Div([html.B("Alleles: "), f"{rec['Nb_alleles']} (from {rec['Min_repeats']} to {rec['Max_repeats']} repeats), HGDI = {rec['HGDI']}"]),
+        html.Details([html.Summary("Number of repeats per genome"), html.Ul(allele_lines, style={"fontSize": "0.85em"})]),
+        html.B("Flanking sequence 1"), _highlight_seq(flanks[0] if flanks else "", query),
+        html.B("Flanking sequence 2"), _highlight_seq(flanks[1] if len(flanks) > 1 else "", query),
+    ]), style={"borderRadius": "12px", "border": "1px solid #d1fae5"})
+
+
+@app.callback(
+    Output("vntr_detail", "children"),
+    Input("circos-vntr", "eventDatum"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    State("reference", "value"),
+    State("vntr_seq_search", "value"),
+    prevent_initial_call=True
+)
+def show_vntr_detail(event, session, projets, reference, query):
+    if not event:
+        raise PreventUpdate
+    locus = event.get("ID") or str(event.get("name", "")).split(" ")[0]
+    return vntr_detail_panel(locus, session, projets, reference, query)
+
+
+@app.callback(
+    Output("vntr_seq_search_results", "children"),
+    Output("vntr_search_hits", "data"),
+    Output("vntr_detail", "children", allow_duplicate=True),
+    Input("vntr_seq_search_btn", "n_clicks"),
+    Input("vntr_seq_search", "value"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    State("reference", "value"),
+    prevent_initial_call=True
+)
+def search_vntr_flanks(n, query, session, projets, reference):
+    q = _clean_dna(query)
+    if not q:
+        return "", [], no_update
+    if len(q) < 8:
+        return html.Span("Please enter at least 8 nucleotides (A, C, G, T).", style={"color": "#B91C1C"}), [], no_update
+    df_vntr = _vntr_session_matrix(session)
+    if df_vntr is None:
+        raise PreventUpdate
+    rq = _vntr_revcomp(q)
+    hits = []
+    for _, row in df_vntr.iterrows():
+        for k, flank in enumerate(str(row.get("Flanking", "")).split(",")[:2], start=1):
+            f = flank.upper()
+            for probe, strand in ((q, "+"), (rq, "-")):
+                i = f.find(probe)
+                while i != -1:
+                    hits.append({"ID": str(row["ID"]), "flank": k, "start": i + 1, "end": i + len(probe), "strand": strand,
+                                 "len": len(f)})
+                    i = f.find(probe, i + 1)
+                if probe == rq == q:
+                    break
+    if not hits:
+        return html.Span(f"No VNTR flanking sequence contains {q} (or its reverse complement).", style={"color": "grey"}), [], no_update
+    ids = list(dict.fromkeys(h["ID"] for h in hits))
+    items = [html.Li(f"{h['ID']} - flanking sequence {h['flank']}, positions {h['start']}-{h['end']} / {h['len']} "
+                     f"({'same strand' if h['strand'] == '+' else 'reverse complement'})") for h in hits[:50]]
+    more = [html.Li(f"... and {len(hits) - 50} other hits")] if len(hits) > 50 else []
+    result = html.Div([
+        html.Span(f"{len(hits)} hit(s) in {len(ids)} locus/loci (shown in blue on the circos):",
+                  style={"color": VNTR_CIRCOS_COLORS["search"], "fontWeight": "bold"}),
+        html.Ul(items + more, style={"marginBottom": "0"}),
+    ])
+    detail = vntr_detail_panel(ids[0], session, projets, reference, q) if len(ids) == 1 else no_update
+    return result, ids, detail
+
+
+##############################################################################################
+# SNPs - level 3: population genetics per group (sNMF populations or a metadata column):
+# diversity statistics per group, pairwise FST (Hudson) and group-specific variants
+# positioned on the reference sequence(s) of the VCF.
+# Haploid genotypes: df_alt = 1 (Alt) / 0 (Ref) / NaN (missing), rows = SNPs, columns = genomes.
+##############################################################################################
+POPGEN_EXCLUDED_COLUMNS = {"#IID", "PC1", "PC2", "PC3", "Strain name", "Individual", "max_prop", "Assigned_to_pop"}
+SNMF_GROUP_LABEL = "Population as defined by sNMF"
+
+
+def popgen_group_options(session):
+    f = tmp_dir + "/" + str(session) + ".metadata.txt"
+    options = [SNMF_GROUP_LABEL]
+    if os.path.exists(f):
+        try:
+            df = pd.read_csv(f)
+            for c in df.columns:
+                if c in POPGEN_EXCLUDED_COLUMNS or c.startswith("Unnamed"):
+                    continue
+                n = df[c].dropna().astype(str).nunique()
+                if 2 <= n <= 30:
+                    options.append(c)
+        except Exception as e:
+            print("Could not read metadata for population genetics:", e)
+    return options
+
+
+def popgen_groups(session, group_by):
+    """{genome: group} from the metadata of the SNP analyses, and the color map of the groups."""
+    f = tmp_dir + "/" + str(session) + ".metadata.txt"
+    if not os.path.exists(f):
+        return {}, {}
+    df = pd.read_csv(f)
+    df["Strain name"] = df["Strain name"].astype(str)
+    if group_by in (None, SNMF_GROUP_LABEL) or group_by not in df.columns:
+        col = "Assigned_to_pop"
+        if col not in df.columns:
+            return {}, {}
+        values = df[col].astype(str)
+        groups = {s: v for s, v in zip(df["Strain name"], values) if not is_missing_category(v) and v not in ("NA", "sNMF failed")}
+        return groups, population_color_map(groups.values())
+    values = df[group_by].map(clean_country) if group_by == "Country" else df[group_by]
+    groups = {s: str(v) for s, v in zip(df["Strain name"], values) if not is_missing_category(v)}
+    return groups, category_color_map(groups.values())
+
+
+def popgen_statistics(df_alt, groups, total_length):
+    """Per-group statistics, pairwise Hudson FST and group-specific variants.
+    Returns (df_stats, df_fst, df_specific)."""
+    names = sorted(set(groups.values()), key=natural_key)
+    values = df_alt.values.astype(float)
+    present = ~np.isnan(values)
+    alt = np.nan_to_num(values, nan=0.0)
+    cols = list(df_alt.columns)
+    per_group = {}
+    for g in names:
+        mask = np.array([groups.get(c) == g for c in cols])
+        n = present[:, mask].sum(axis=1)
+        c = alt[:, mask].sum(axis=1)
+        per_group[g] = {"mask": mask, "n": n, "c": c, "size": int(mask.sum())}
+    n_all = present.sum(axis=1)
+    c_all = alt.sum(axis=1)
+    kb = max(total_length, 1) / 1000.0
+
+    stats, specific = [], []
+    for g in names:
+        d = per_group[g]
+        n, c, size = d["n"], d["c"], d["size"]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            p = np.where(n > 0, c / n, np.nan)
+            h = np.where(n >= 2, 2 * p * (1 - p) * n / (n - 1), 0.0)
+        poly = (n >= 2) & (c > 0) & (c < n)
+        S = int(poly.sum())
+        pi = float(np.nansum(h))
+        a1 = sum(1.0 / i for i in range(1, size)) if size >= 2 else 0
+        a2 = sum(1.0 / (i * i) for i in range(1, size)) if size >= 2 else 0
+        theta = S / a1 if a1 else np.nan
+        tajima = np.nan
+        if size >= 4 and S > 0:
+            nn = size
+            b1 = (nn + 1) / (3 * (nn - 1)); b2 = 2 * (nn * nn + nn + 3) / (9 * nn * (nn - 1))
+            c1 = b1 - 1 / a1; c2 = b2 - (nn + 2) / (a1 * nn) + a2 / (a1 * a1)
+            e1 = c1 / a1; e2 = c2 / (a1 * a1 + a2)
+            var = e1 * S + e2 * S * (S - 1)
+            tajima = (pi - S / a1) / np.sqrt(var) if var > 0 else np.nan
+        # group-specific alleles: present in the group, absent from all the other genomes (with data)
+        n_o, c_o = n_all - n, c_all - c
+        priv_alt = (c > 0) & (n_o > 0) & (c_o == 0)
+        priv_ref = ((n - c) > 0) & (n_o > 0) & (c_o == n_o)
+        fixed_alt = priv_alt & (c == n)
+        fixed_ref = priv_ref & (c == 0)
+        for idx in np.where(priv_alt | priv_ref)[0]:
+            is_alt = bool(priv_alt[idx])
+            carriers = c[idx] if is_alt else n[idx] - c[idx]
+            specific.append({"Group": g, "SNP": df_alt.index[idx], "Allele": "Alt" if is_alt else "Ref",
+                             "Freq_in_group": round(float(carriers / n[idx]), 3) if n[idx] else None,
+                             "Carriers": int(carriers),
+                             "Fixed": bool(fixed_alt[idx] if is_alt else fixed_ref[idx])})
+        stats.append({"Group": g, "Nb_genomes": size, "Polymorphic_sites": S,
+                      "Pi_per_kb": round(pi / kb, 4), "ThetaW_per_kb": round(theta / kb, 4) if a1 else None,
+                      "Tajima_D": round(float(tajima), 3) if not np.isnan(tajima) else None,
+                      "Specific_variants": int((priv_alt | priv_ref).sum()),
+                      "Fixed_specific_variants": int((fixed_alt | fixed_ref).sum())})
+
+    fst = pd.DataFrame(np.nan, index=names, columns=names)
+    for i, g1 in enumerate(names):
+        fst.loc[g1, g1] = 0.0
+        for g2 in names[i + 1:]:
+            n1, c1_, n2, c2_ = per_group[g1]["n"], per_group[g1]["c"], per_group[g2]["n"], per_group[g2]["c"]
+            ok = (n1 >= 2) & (n2 >= 2)
+            if not ok.any():
+                continue
+            p1, p2 = c1_[ok] / n1[ok], c2_[ok] / n2[ok]
+            num = (p1 - p2) ** 2 - p1 * (1 - p1) / (n1[ok] - 1) - p2 * (1 - p2) / (n2[ok] - 1)
+            den = p1 * (1 - p2) + p2 * (1 - p1)
+            if den.sum() > 0:
+                fst.loc[g1, g2] = fst.loc[g2, g1] = round(float(num.sum() / den.sum()), 4)
+    return pd.DataFrame(stats), fst, pd.DataFrame(specific, columns=["Group", "SNP", "Allele", "Freq_in_group", "Carriers", "Fixed"])
+
+
+def popgen_bar():
+    return html.Div([
+        html.Div([
+            html.Span("Groups defined by:", className="fw-bold"),
+            dcc.Dropdown(id="popgen-groups", options=[SNMF_GROUP_LABEL], value=SNMF_GROUP_LABEL, clearable=False,
+                         style={"width": "300px"}),
+            html.Button("Compute FST and statistics per group", id="run-popgen", className="pe-btn-cta", n_clicks=0),
+            dcc.Loading(html.Div(id="run-popgen-status"), type="circle"),
+        ], style={"display": "flex", "alignItems": "center", "gap": "10px", "flexWrap": "wrap"}),
+        html.Small("Computed on the SNPs used for the population structure (rows displayed in the SNP table). "
+                   "Genomes without group are ignored.", style={"color": "grey"}),
+    ], style={"paddingLeft": "15px", "paddingBottom": "10px"})
+
+
+CARD_STYLE_POPGEN = {"borderRadius": "16px", "overflow": "hidden", "border": "none", "boxShadow": "0 6px 15px rgba(0,0,0,.15)"}
+
+
+def popgen_results_layout():
+    return html.Div(id="popgen-results", style={"display": "none"}, children=[
+        html.H5(id="popgen-header", style={"color": "#1f4e79", "paddingTop": "10px"}),
+        dbc.Row([
+            dbc.Col(dbc.Card([dbc.CardBody([
+                html.H5("Diversity statistics per group"),
+                html.Small("Pi = nucleotide diversity, ThetaW = Watterson estimator (per kb of the sequences of the VCF); "
+                           "specific variants = allele carried only by genomes of the group (fixed = by all of them).",
+                           style={"color": "grey"}),
+                dag.AgGrid(id="table_popgen_stats", rowData=[], columnDefs=[],
+                           defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                           dashGridOptions={"animateRows": False, "domLayout": "autoHeight"}, style={"width": "100%"}),
+                html.Button("Download table", id="download_table_popgen_stats", className="thin-button", n_clicks=0),
+                dcc.Download(id="download-popgen-stats"),
+            ])], style=CARD_STYLE_POPGEN), width=7),
+            dbc.Col(dbc.Card([dbc.CardBody([
+                dcc.Loading(dcc.Graph(id="popgen-fst", style={"height": "450px"})),
+            ], style={"textAlign": "center"})], style=CARD_STYLE_POPGEN), width=5),
+        ], style={"padding": "15px"}),
+        dbc.Row([
+            dbc.Col(dbc.Card([dbc.CardBody([
+                html.Div("Group-specific variants positioned on the reference sequence(s) of the VCF", style={"fontWeight": "bold"}),
+                html.Small("One ring per group (outside to inside): density of the specific variants; points = fixed specific variants. "
+                           "Click on a point to find the variant in the table.", style={"color": "grey"}),
+                html.Div(id="popgen-circos-legend", style={"margin": "6px 0"}),
+                dcc.Loading(dash_bio.Circos(id="circos-popgen", layout=[], config=layout_config, tracks=[],
+                                            selectEvent={str(i): "click" for i in range(40)},
+                                            style={"height": "800px"}), style={"overflowX": "auto"}),
+            ], style={"textAlign": "center"})], style=CARD_STYLE_POPGEN), width=7),
+            dbc.Col(dbc.Card([dbc.CardBody([
+                html.H5("Group-specific variants", id="popgen-specific-title"),
+                dag.AgGrid(id="table_popgen_specific", rowData=[], columnDefs=columnDefs_popgen_specific,
+                           getRowId="params.data.Group + '_' + params.data.SNP",
+                           defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                           dashGridOptions={"pagination": True, "paginationPageSize": 20, "animateRows": False,
+                                            "rowSelection": "single"},
+                           style={"height": "760px", "width": "100%"}),
+                html.Button("Download table", id="download_table_popgen_specific", className="thin-button", n_clicks=0),
+                dcc.Download(id="download-popgen-specific"),
+            ])], style=CARD_STYLE_POPGEN), width=5),
+        ], style={"padding": "15px"}),
+        primers_layout(),
+    ])
+
+
+columnDefs_popgen_specific = [
+    {"field": "Group", "width": 110, "pinned": "left"},
+    {"field": "SNP", "width": 150},
+    {"field": "Chrom", "width": 110},
+    {"field": "Position", "width": 110, "filter": "agNumberColumnFilter", "type": "numericColumn"},
+    {"field": "Variation", "headerName": "Ref/Alt", "width": 100},
+    {"field": "Type", "width": 120},
+    {"field": "Allele", "headerName": "Specific allele", "width": 120},
+    {"field": "Freq_in_group", "headerName": "Freq. in group", "width": 120, "filter": "agNumberColumnFilter"},
+    {"field": "Fixed", "headerName": "Fixed in group", "width": 120},
+]
+
+
+@app.callback(
+    Output("popgen-groups", "options"),
+    Input("snps-snmf-header", "children"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def update_popgen_group_options(header, session):
+    if not session:
+        raise PreventUpdate
+    return popgen_group_options(session)
+
+
+def _group_cell_style(cmap):
+    return {"styleConditions": [{"condition": f"params.value == {json.dumps(g)}",
+                                 "style": {"backgroundColor": col, "color": "white", "fontWeight": "bold"}}
+                                for g, col in cmap.items()]}
+
+
+@app.callback(
+    Output("popgen-results", "style"),
+    Output("popgen-header", "children"),
+    Output("table_popgen_stats", "rowData"),
+    Output("table_popgen_stats", "columnDefs"),
+    Output("popgen-fst", "figure"),
+    Output("circos-popgen", "layout"),
+    Output("circos-popgen", "tracks"),
+    Output("popgen-circos-legend", "children"),
+    Output("table_popgen_specific", "rowData"),
+    Output("table_popgen_specific", "columnDefs"),
+    Output("popgen-specific-title", "children"),
+    Output("run-popgen-status", "children"),
+    Output("primers-group", "options"),
+    Output("primers-group", "value"),
+    Input("run-popgen", "n_clicks"),
+    State("popgen-groups", "value"),
+    State("table_snps_list", "virtualRowData"),
+    State("table_snps_list", "rowData"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def run_popgen(n, group_by, v_rows, rows, session):
+    if not n or not session:
+        raise PreventUpdate
+    hidden = {"display": "none"}
+    df_list, df_alt = build_snps_tables(session)
+    if df_alt is None or df_alt.empty:
+        return (hidden, "", [], [], empty_figure(), [], [], "", [], columnDefs_popgen_specific, "",
+                html.Span("No SNP data.", style={"color": "#B91C1C"}), [], None)
+    ids = {str(r.get("SNP")) for r in table_rows(v_rows, rows) if r.get("SNP") is not None}
+    if ids:
+        df_alt = df_alt[df_alt.index.isin(ids)]
+        df_list = df_list[df_list["SNP"].astype(str).isin(ids)]
+    groups, cmap = popgen_groups(session, group_by)
+    groups = {s: g for s, g in groups.items() if s in df_alt.columns}
+    group_names = sorted(set(groups.values()), key=natural_key)
+    if len(group_names) < 2:
+        return (hidden, "", [], [], empty_figure(), [], [], "", [], columnDefs_popgen_specific, "",
+                html.Span("At least 2 groups are needed (run the population structure first, or choose another grouping).",
+                          style={"color": "#B91C1C"}), [], None)
+    df_alt = df_alt[[c for c in df_alt.columns if c in groups]]
+
+    layout = vcf_contig_layout(tmp_dir + "/" + str(session) + ".selected_genomes.vcf", df_list)
+    total_length = sum(b["len"] for b in layout) if layout else int(df_list["Position"].max() or 1)
+    df_stats, df_fst, df_spec = popgen_statistics(df_alt, groups, total_length)
+
+    # ----- tables
+    stats_defs = [
+        {"field": "Group", "pinned": "left", "width": 120, "cellStyle": _group_cell_style(cmap)},
+        {"field": "Nb_genomes", "headerName": "Genomes", "width": 100},
+        {"field": "Polymorphic_sites", "headerName": "Polymorphic sites", "width": 140},
+        {"field": "Pi_per_kb", "headerName": "Pi (/kb)", "width": 100},
+        {"field": "ThetaW_per_kb", "headerName": "ThetaW (/kb)", "width": 120},
+        {"field": "Tajima_D", "headerName": "Tajima's D", "width": 110},
+        {"field": "Specific_variants", "headerName": "Specific variants", "width": 140},
+        {"field": "Fixed_specific_variants", "headerName": "Fixed specific", "width": 120},
+    ]
+    info = df_list.set_index(df_list["SNP"].astype(str))[["Chrom", "Position", "Variation", "Type"]]
+    df_spec = df_spec.join(info, on="SNP")
+    spec_defs = [dict(d, cellStyle=_group_cell_style(cmap)) if d["field"] == "Group" else d for d in columnDefs_popgen_specific]
+    df_stats.to_csv(tmp_dir + "/" + str(session) + ".popgen_stats.tsv", sep="\t", index=False)
+    df_spec.to_csv(tmp_dir + "/" + str(session) + ".popgen_specific.tsv", sep="\t", index=False)
+
+    # ----- FST heatmap
+    fig_fst = px.imshow(df_fst.astype(float), text_auto=".3f", color_continuous_scale="Blues", zmin=0,
+                        labels=dict(color="FST"), aspect="auto")
+    off = df_fst.values[~np.eye(len(df_fst), dtype=bool)].astype(float)
+    mean_fst = np.nanmean(off) if off.size and not np.isnan(off).all() else float("nan")
+    fig_fst.update_layout(title=f"Pairwise FST (Hudson) - mean = {mean_fst:.3f}", height=450,
+                          margin=dict(l=10, r=10, t=50, b=10))
+
+    # ----- circos: one ring per group (density of specific variants + fixed specific variants)
+    tracks, legend = [], []
+    if layout:
+        bin_size = max(1000, int(total_length / 300))
+        shown = group_names[:8]
+        outer, inner_min = 360, 120
+        ring = (outer - inner_min) / len(shown)
+        for k, g in enumerate(shown):
+            o = outer - k * ring
+            i = o - ring * 0.8
+            sub = df_spec[df_spec["Group"] == g]
+            rows_g = sub[["Chrom", "Position"]].to_dict("records")
+            col = cmap.get(g, "#7f7f7f")
+            tracks.append({"type": "HISTOGRAM", "data": variant_density(rows_g, layout, bin_size),
+                           "config": {"innerRadius": i, "outerRadius": o, "color": col, "opacity": 0.55,
+                                      "tooltipContent": {"name": "value"}}})
+            fixed = sub[sub["Fixed"]]
+            pts = [{"block_id": str(r.Chrom), "position": int(r.Position), "value": 1,
+                    "name": f"{g} - {r.SNP} ({r.Variation}) fixed {r.Allele}", "Group": g, "SNP": r.SNP}
+                   for r in fixed.itertuples() if str(r.Chrom) in {b["id"] for b in layout}]
+            tracks.append({"type": "SCATTER", "data": pts,
+                           "config": {"innerRadius": i, "outerRadius": o, "min": 0, "max": 2, "color": col,
+                                      "strokeWidth": 0.5, "strokeColor": "#111827", "size": 30, "shape": "circle",
+                                      "tooltipContent": {"name": "name"}}})
+            legend += [html.Span(style={"display": "inline-block", "width": "10px", "height": "10px", "backgroundColor": col,
+                                        "borderRadius": "3px", "marginRight": "5px"}),
+                       html.Span(f"{g} ({len(sub)})", style={"marginRight": "14px"})]
+        if len(group_names) > 8:
+            legend.append(html.Span(f"(only the first 8 groups of {len(group_names)} are shown)", style={"color": "grey"}))
+
+    nb_genomes = len(groups)
+    header = (f"Population genetics on {len(df_alt)} SNPs x {nb_genomes} genomes, "
+              f"{len(group_names)} groups defined by {group_by or SNMF_GROUP_LABEL}")
+    title_spec = f"Group-specific variants: {len(df_spec)} ({int(df_spec['Fixed'].sum()) if not df_spec.empty else 0} fixed)"
+    with open(tmp_dir + "/" + str(session) + ".popgen_groups.json", "w") as fh:
+        json.dump(groups, fh)
+    return ({"display": "block"}, header, df_stats.to_dict("records"), stats_defs, fig_fst,
+            layout, tracks, legend, df_spec.to_dict("records"), spec_defs, title_spec, "",
+            group_names, group_names[0])
+
+
+@app.callback(
+    Output("circos-popgen", "config"),
+    Input("circos-popgen", "layout"),
+    prevent_initial_call=True
+)
+def update_circos_ticks_popgen(circos_layout):
+    return circos_config_for_layout(circos_layout)
+
+
+@app.callback(
+    Output("table_popgen_specific", "selectedRows"),
+    Output("table_popgen_specific", "scrollTo"),
+    Input("circos-popgen", "eventDatum"),
+    State("table_popgen_specific", "rowData"),
+    prevent_initial_call=True
+)
+def select_popgen_variant(event, rows):
+    if not event or not rows or not event.get("SNP"):
+        raise PreventUpdate
+    sel = [r for r in rows if r.get("SNP") == event.get("SNP") and r.get("Group") == event.get("Group")]
+    if not sel:
+        raise PreventUpdate
+    return sel, {"rowId": f"{sel[0]['Group']}_{sel[0]['SNP']}"}
+
+
+@app.callback(
+    Output("download-popgen-stats", "data"),
+    Input("download_table_popgen_stats", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def download_popgen_stats(n, session):
+    f = tmp_dir + "/" + str(session) + ".popgen_stats.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return dcc.send_file(f, filename="popgen_statistics_per_group.tsv")
+
+
+@app.callback(
+    Output("download-popgen-specific", "data"),
+    Input("download_table_popgen_specific", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def download_popgen_specific(n, session):
+    f = tmp_dir + "/" + str(session) + ".popgen_specific.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return dcc.send_file(f, filename="group_specific_variants.tsv")
+
+
+##############################################################################################
+# Diagnostic primers for a group (population) from its fixed specific SNPs.
+# Pure Python design (nearest-neighbour Tm, GC, clamp, homopolymers, 3' dimers); if the
+# primer3-py package is installed, its thermodynamic functions (Tm, hairpin, dimers) are used.
+# Template: sequence of a genome of the target group around the SNP, found with the 10 bp
+# contexts given in the ID field of the Parsnp VCF (ACGT...ACGT.ACGT...ACGT), or directly with the
+# coordinates when the VCF sequence names are LOCUS names of the GenBank files.
+##############################################################################################
+try:
+    import primer3 as _primer3
+except Exception:
+    _primer3 = None
+
+_NN = {  # SantaLucia 1998 unified parameters: dH (kcal/mol), dS (cal/K/mol)
+    "AA": (-7.9, -22.2), "TT": (-7.9, -22.2), "AT": (-7.2, -20.4), "TA": (-7.2, -21.3),
+    "CA": (-8.5, -22.7), "TG": (-8.5, -22.7), "GT": (-8.4, -22.4), "AC": (-8.4, -22.4),
+    "CT": (-7.8, -21.0), "AG": (-7.8, -21.0), "GA": (-8.2, -22.2), "TC": (-8.2, -22.2),
+    "CG": (-10.6, -27.2), "GC": (-9.8, -24.4), "GG": (-8.0, -19.9), "CC": (-8.0, -19.9)}
+KASP_TAILS = {"FAM": "GAAGGTGACCAAGTTCATGCT", "HEX": "GAAGGTCGGAGTCAACGGATT"}
+_COMP = str.maketrans("ACGTN", "TGCAN")
+
+
+def revcomp(s):
+    return s.translate(_COMP)[::-1]
+
+
+def primer_tm(seq, mv=50.0, dv=1.5, dntp=0.6, dna=50.0):
+    if _primer3 is not None:
+        try:
+            return float(_primer3.calc_tm(seq, mv_conc=mv, dv_conc=dv, dntp_conc=dntp, dna_conc=dna))
+        except Exception:
+            pass
+    dh, ds = 0.0, 0.0
+    for i in range(len(seq) - 1):
+        h, s = _NN.get(seq[i:i + 2], (-8.0, -21.5))
+        dh += h; ds += s
+    for end in (seq[0], seq[-1]):  # initiation
+        if end in "GC":
+            dh += 0.1; ds += -2.8
+        else:
+            dh += 2.3; ds += 4.1
+    na = (mv + 120 * np.sqrt(max(dv - dntp, 0))) / 1000.0   # Na+ equivalent (M), von Ahsen 2001
+    ds += 0.368 * (len(seq) - 1) * np.log(na)
+    return dh * 1000 / (ds + 1.987 * np.log(dna * 1e-9 / 4)) - 273.15
+
+
+def gc_percent(seq):
+    return 100.0 * sum(seq.count(b) for b in "GC") / len(seq) if seq else 0.0
+
+
+def _max_run(seq):
+    best, run = 1, 1
+    for i in range(1, len(seq)):
+        run = run + 1 if seq[i] == seq[i - 1] else 1
+        best = max(best, run)
+    return best
+
+
+def _three_prime_dimer(a, b, k=5):
+    """True if the last k bases of a can pair with b (3' dimer), or a hairpin/dimer of primer3 < -9 kcal/mol."""
+    if _primer3 is not None:
+        try:
+            if _primer3.calc_heterodimer(a, b).dg / 1000.0 < -9:
+                return True
+        except Exception:
+            pass
+    return revcomp(a[-k:]) in b or revcomp(b[-k:]) in a
+
+
+def _hairpin(seq):
+    if _primer3 is not None:
+        try:
+            return _primer3.calc_hairpin(seq).dg / 1000.0 < -3
+        except Exception:
+            return False
+    return False
+
+
+def primer_ok(seq, tm_min, tm_max, gc_min=30, gc_max=70, clamp=True, allele_specific=False):
+    if "N" in seq or set(seq) - set("ACGT"):
+        return None
+    tm, gc = primer_tm(seq), gc_percent(seq)
+    if not (tm_min <= tm <= tm_max and gc_min <= gc <= gc_max) or _max_run(seq) > 4:
+        return None
+    last5 = seq[-5:]
+    if sum(b in "GC" for b in last5) > 4 and not allele_specific:
+        return None
+    if _hairpin(seq) or _three_prime_dimer(seq, seq):
+        return None
+    pen = abs(tm - 60) + abs(gc - 50) / 10.0 + abs(len(seq) - 21) * 0.2
+    if clamp and not allele_specific and seq[-1] not in "GC":
+        pen += 1
+    return {"seq": seq, "tm": round(float(tm), 1), "gc": round(float(gc), 1), "pen": pen}
+
+
+def _candidates_left(t, end_min, end_max, lmin=18, lmax=27, **kw):
+    """Forward primers t[e-L+1:e+1] with 3' end e in [end_min, end_max]."""
+    out = []
+    for e in range(max(end_min, lmin - 1), min(end_max, len(t) - 1) + 1):
+        for L in range(lmin, lmax + 1):
+            s = e - L + 1
+            if s < 0:
+                break
+            p = primer_ok(t[s:e + 1], **kw)
+            if p:
+                out.append(dict(p, start=s, end=e))
+    return out
+
+
+def _candidates_right(t, start_min, start_max, lmin=18, lmax=27, **kw):
+    """Reverse primers rc(t[s:s+L]) with 3' end (on the template) s in [start_min, start_max]."""
+    out = []
+    for s in range(max(start_min, 0), min(start_max, len(t) - lmin) + 1):
+        for L in range(lmin, lmax + 1):
+            if s + L > len(t):
+                break
+            p = primer_ok(revcomp(t[s:s + L]), **kw)
+            if p:
+                out.append(dict(p, start=s, end=s + L - 1))
+    return out
+
+
+def _best_pair(lefts, rights, pmin, pmax, max_dtm=3.0):
+    best = None
+    rights = sorted(rights, key=lambda r: r["pen"])[:400]
+    for l in sorted(lefts, key=lambda r: r["pen"])[:400]:
+        for r in rights:
+            size = r["end"] - l["start"] + 1
+            if not (pmin <= size <= pmax) or abs(l["tm"] - r["tm"]) > max_dtm:
+                continue
+            pen = l["pen"] + r["pen"] + abs(l["tm"] - r["tm"])
+            if best is None or pen < best[0]:
+                if _three_prime_dimer(l["seq"], r["seq"]):
+                    continue
+                best = (pen, l, r, size)
+    return best
+
+
+def design_snp_primers(t, s, target, other, mode, pmin, pmax, arms_mismatch=False, kasp=False):
+    """t = template (VCF orientation, other variable sites masked with N, target allele at index s).
+    mode 'allele': allele-specific primers (3' end on the SNP, target / other allele) + common primer.
+    mode 'amplicon': primers flanking the SNP (sequencing, HRM, CAPS).
+    Returns a list of primer records or None."""
+    kw = dict(tm_min=55, tm_max=65)
+    if mode == "amplicon":
+        lefts = _candidates_left(t, s - pmax + 40, s - 25, **kw)
+        rights = _candidates_right(t, s + 25, s + pmax - 40, **kw)
+        best = _best_pair(lefts, rights, pmin, pmax)
+        if not best:
+            return None
+        _, l, r, size = best
+        return [{"Primer": "Forward", "Sequence": l["seq"], "Tm": l["tm"], "GC": l["gc"], "Product_size": size},
+                {"Primer": "Reverse", "Sequence": r["seq"], "Tm": r["tm"], "GC": r["gc"], "Product_size": size}]
+
+    designs = []
+    # allele-specific forward primer (3' end = SNP) + common reverse primer
+    lefts = [p for p in _candidates_left(t, s, s, allele_specific=True, tm_min=54, tm_max=66)]
+    rights = _candidates_right(t, s + 40, s + pmax, **kw)
+    best = _best_pair(lefts, rights, pmin, pmax)
+    if best:
+        designs.append((best[0], "forward", best))
+    # allele-specific reverse primer (3' end = SNP) + common forward primer
+    rights2 = [p for p in _candidates_right(t, s, s, allele_specific=True, tm_min=54, tm_max=66)]
+    lefts2 = _candidates_left(t, s - pmax, s - 40, **kw)
+    best2 = _best_pair(lefts2, rights2, pmin, pmax)
+    if best2:
+        designs.append((best2[0], "reverse", best2))
+    if not designs:
+        return None
+    _, orient, (pen, l, r, size) = min(designs, key=lambda d: d[0])
+    if orient == "forward":
+        as_target, common, common_name = l["seq"], r, "Common reverse"
+        as_other = as_target[:-1] + other[0]
+    else:
+        as_target, common, common_name = r["seq"], l, "Common forward"
+        as_other = as_target[:-1] + revcomp(other)[-1]
+    if arms_mismatch and len(as_target) > 4:
+        def mism(p):  # destabilising mismatch at the 3rd base from the 3' end (ARMS)
+            b = p[-3]
+            return p[:-3] + {"A": "C", "C": "A", "G": "T", "T": "G"}[b] + p[-2:]
+        as_target, as_other = mism(as_target), mism(as_other)
+    tail_t = KASP_TAILS["FAM"] if kasp else ""
+    tail_o = KASP_TAILS["HEX"] if kasp else ""
+    return [
+        {"Primer": f"Allele-specific {orient} - target allele {target}" + (" (FAM tail)" if kasp else ""),
+         "Sequence": tail_t + as_target, "Tm": round(float(primer_tm(as_target)), 1), "GC": round(gc_percent(as_target), 1), "Product_size": size},
+        {"Primer": f"Allele-specific {orient} - other allele {other}" + (" (HEX tail)" if kasp else ""),
+         "Sequence": tail_o + as_other, "Tm": round(float(primer_tm(as_other)), 1), "GC": round(gc_percent(as_other), 1), "Product_size": size},
+        {"Primer": common_name, "Sequence": common["seq"], "Tm": common["tm"], "GC": common["gc"], "Product_size": size},
+    ]
+
+
+def snp_template(seqs, chrom, pos, vid, allele, ref_len, flank=450):
+    """Sequence of the genome around the SNP in VCF orientation, with the given allele at index flank.
+    Returns (template, located_on, strand) or None."""
+    m = re.match(r"^([ACGTNacgtn]{5,})\.([ACGTNacgtn]{5,})$", str(vid or ""))
+    hits = []
+    if m:
+        left, right = m.group(1).upper(), m.group(2).upper()
+        # Parsnp: the right context starts with the reference base(s) of the SNP
+        probes = [left + allele + right[ref_len:], left + allele + right]
+        for probe in probes:
+            hits = []
+            for name, sq in seqs.items():
+                for q, strand in ((probe, "+"), (revcomp(probe), "-")):
+                    i = sq.find(q)
+                    while i != -1 and len(hits) < 2:
+                        hits.append((name, i, strand))
+                        i = sq.find(q, i + 1)
+            if len(hits) == 1:
+                break
+        if len(hits) != 1:
+            return None
+        name, i, strand = hits[0]
+        sq = seqs[name]
+        if strand == "+":
+            c = i + len(left)
+            win = sq[max(0, c - flank): c + flank + ref_len]
+            off = c - max(0, c - flank)
+        else:
+            c = i + (len(probe) - len(left) - 1)   # genome index of the allele (rc), + strand
+            s0, s1 = max(0, c - flank - ref_len + 1), min(len(sq), c + flank + 1)
+            win = revcomp(sq[s0:s1])
+            off = s1 - 1 - c
+        return win, off, f"{name}:{c + 1}({strand})"
+    if chrom in seqs:
+        sq = seqs[chrom]
+        c = int(pos) - 1
+        if sq[c:c + len(allele)] != allele:
+            return None
+        s0 = max(0, c - flank)
+        return sq[s0: c + flank + ref_len], c - s0, f"{chrom}:{pos}(+)"
+    return None
+
+
+def primers_layout():
+    return dbc.Row([dbc.Col(dbc.Card([dbc.CardBody([
+        html.H5("Diagnostic primers for a group"),
+        html.Small("Primers designed on the fixed specific variants of the group (allele carried by all its genomes and by none of the "
+                   "other genomes), on the sequence of a genome of the group. The other variable sites are masked so that no primer "
+                   "overlaps them. Markers are chosen at least 1 kb apart.", style={"color": "grey"}),
+        html.Div([
+            html.Div([html.Span("Target group:", className="fw-bold"),
+                      dcc.Dropdown(id="primers-group", options=[], clearable=False, style={"width": "200px"})],
+                     style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+            html.Div([html.Span("Assay:", className="fw-bold"),
+                      dcc.Dropdown(id="primers-mode", clearable=False, style={"width": "330px"}, value="allele",
+                                   options=[{"label": "Allele-specific PCR (KASP / ARMS)", "value": "allele"},
+                                            {"label": "Amplicon around the SNP (sequencing, HRM, CAPS)", "value": "amplicon"}])],
+                     style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+            html.Div([html.Span("Product size:", className="fw-bold"),
+                      dcc.Input(id="primers-size-min", type="number", value=80, min=50, step=10, style={"width": "75px"}),
+                      html.Span("-"),
+                      dcc.Input(id="primers-size-max", type="number", value=250, min=80, step=10, style={"width": "75px"}),
+                      html.Span("bp")], style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+            html.Div([html.Span("Markers:", className="fw-bold"),
+                      dcc.Input(id="primers-number", type="number", value=5, min=1, max=50, step=1, style={"width": "65px"})],
+                     style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+            dcc.Checklist(id="primers-options", value=[], inline=True, inputStyle={"marginRight": "4px", "marginLeft": "10px"},
+                          options=[{"label": "ARMS mismatch (3rd base from 3' end)", "value": "arms"},
+                                   {"label": "KASP tails (FAM / HEX)", "value": "kasp"}]),
+            html.Button("Design primers", id="run-primers", className="pe-btn-cta", n_clicks=0),
+            dcc.Loading(html.Div(id="run-primers-status"), type="circle"),
+        ], style={"display": "flex", "alignItems": "center", "gap": "14px", "flexWrap": "wrap", "margin": "10px 0"}),
+        html.Div(id="primers-info", style={"color": "grey", "fontSize": "0.9em", "marginBottom": "6px"}),
+        dag.AgGrid(id="table_primers", rowData=[], columnDefs=columnDefs_primers,
+                   defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                   dashGridOptions={"pagination": True, "paginationPageSize": 30, "animateRows": False},
+                   style={"height": "500px", "width": "100%"}),
+        html.Button("Download primers", id="download_table_primers", className="thin-button", n_clicks=0),
+        dcc.Download(id="download-primers"),
+    ])], style=CARD_STYLE_POPGEN))], style={"padding": "15px"})
+
+
+columnDefs_primers = [
+    {"field": "Marker", "width": 110, "pinned": "left"},
+    {"field": "SNP", "width": 130},
+    {"field": "Variation", "headerName": "Ref/Alt", "width": 90},
+    {"field": "Target_allele", "headerName": "Target allele", "width": 110},
+    {"field": "Primer", "width": 300},
+    {"field": "Sequence", "headerName": "Sequence 5'-3'", "width": 330, "cellStyle": {"fontFamily": "monospace"}},
+    {"field": "Length", "width": 85},
+    {"field": "Tm", "headerName": "Tm (C)", "width": 85},
+    {"field": "GC", "headerName": "GC %", "width": 85},
+    {"field": "Product_size", "headerName": "Product (bp)", "width": 110},
+    {"field": "Binding_sites", "headerName": "3' binding sites in genome", "width": 120,
+     "headerTooltip": "Occurrences of the 15 bases at the 3' end of the primer in the template genome (both strands): 1 = unique"},
+    {"field": "Template", "headerName": "Template genome position", "flex": 1, "minWidth": 220},
+]
+
+
+def _vcf_ids(vcf_file):
+    ids = {}
+    with open(vcf_file) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            p = line.split("\t", 3)
+            if len(p) > 2:
+                ids[f"{p[0]}:{p[1]}"] = p[2]
+    return ids
+
+
+@app.callback(
+    Output("table_primers", "rowData"),
+    Output("primers-info", "children"),
+    Output("run-primers-status", "children"),
+    Input("run-primers", "n_clicks"),
+    State("primers-group", "value"),
+    State("primers-mode", "value"),
+    State("primers-size-min", "value"),
+    State("primers-size-max", "value"),
+    State("primers-number", "value"),
+    State("primers-options", "value"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    prevent_initial_call=True
+)
+def design_primers(n, group, mode, pmin, pmax, nmax, options, session, projets):
+    if not n or not session:
+        raise PreventUpdate
+    err = lambda m: ([], "", html.Span(m, style={"color": "#B91C1C"}))
+    spec_file = tmp_dir + "/" + str(session) + ".popgen_specific.tsv"
+    groups_file = tmp_dir + "/" + str(session) + ".popgen_groups.json"
+    if not group or not os.path.exists(spec_file) or not os.path.exists(groups_file):
+        return err("Compute the statistics per group first.")
+    pmin, pmax = int(pmin or 80), int(pmax or 250)
+    if pmax < pmin + 20:
+        return err("The maximum product size must be larger than the minimum.")
+    nmax = max(1, min(int(nmax or 5), 50))
+    options = options or []
+    df_spec = pd.read_csv(spec_file, sep="\t", dtype={"SNP": str, "Chrom": str, "Group": str})
+    groups = json.load(open(groups_file))
+    df_list, _ = build_snps_tables(session)
+    df_list = df_list.copy()
+    df_list["SNP"] = df_list["SNP"].astype(str)
+    cand = df_spec[(df_spec["Group"] == str(group))].merge(df_list[["SNP", "Ref", "Alt"]], on="SNP", how="left")
+    cand = cand[cand["Type"].isin(["Transition", "Transversion"])]
+    nb_fixed = int(cand["Fixed"].astype(bool).sum())
+    if cand.empty:
+        return err(f"No specific SNP for the group {group}.")
+    # positions of all the variable sites, to mask them in the templates
+    positions = df_list.groupby(df_list["Chrom"].astype(str))["Position"].apply(lambda s: np.sort(s.values)).to_dict()
+
+    def nb_close(r, w=100):
+        p = positions.get(str(r.Chrom), np.array([]))
+        return int(((p >= r.Position - w) & (p <= r.Position + w)).sum())
+    cand["close"] = [nb_close(r) for r in cand.itertuples()]
+    cand = cand.sort_values(["Fixed", "Freq_in_group", "close"], ascending=[False, False, True])
+
+    vids = _vcf_ids(tmp_dir + "/" + str(session) + ".selected_genomes.vcf")
+    project_dir = _vntr_project_dir(projets)
+    members = [g for g, grp in groups.items() if grp == str(group)]
+    genome_seqs = []
+    for g in members:
+        if is_string_without_special_character(g):
+            sq = read_genbank_sequences(project_dir, g)
+            if sq:
+                genome_seqs.append((g, sq))
+        if len(genome_seqs) >= 2:
+            break
+    if not genome_seqs:
+        return err(f"No GenBank sequence available for the genomes of the group {group}.")
+
+    rows, chosen, tried = [], [], 0
+    flank = max(450, pmax + 50)
+    for r in cand.itertuples():
+        if len(chosen) >= nmax or tried >= 300:
+            break
+        if any(c[0] == str(r.Chrom) and abs(c[1] - int(r.Position)) < 1000 for c in chosen):
+            continue
+        tried += 1
+        target = r.Alt if r.Allele == "Alt" else r.Ref
+        other = r.Ref if r.Allele == "Alt" else r.Alt
+        tpl = None
+        for g, sq in genome_seqs:
+            tpl = snp_template(sq, str(r.Chrom), int(r.Position), vids.get(r.SNP), str(target), len(str(r.Ref)), flank=flank)
+            if tpl:
+                tpl = (g, sq) + tpl
+                break
+        if not tpl:
+            continue
+        g, sq, t, s, loc = tpl
+        t = list(t)
+        for p in positions.get(str(r.Chrom), []):
+            k = s + int(p - r.Position)
+            if p != r.Position and 0 <= k < len(t):
+                t[k] = "N"
+        res = design_snp_primers("".join(t), s, str(target), str(other), mode or "allele", pmin, pmax,
+                                 arms_mismatch="arms" in options, kasp="kasp" in options)
+        if not res:
+            continue
+        chosen.append((str(r.Chrom), int(r.Position)))
+        marker = f"{group}_M{len(chosen)}"
+        for pr in res:
+            core = pr["Sequence"][-len(pr["Sequence"]):]
+            for tail in KASP_TAILS.values():
+                if core.startswith(tail):
+                    core = core[len(tail):]
+            k15 = core[-15:]
+            sites = sum(seq.count(k15) + seq.count(revcomp(k15)) for seq in sq.values())
+            rows.append({"Marker": marker, "SNP": r.SNP, "Variation": f"{r.Ref}/{r.Alt}", "Target_allele": target,
+                         "Primer": pr["Primer"], "Sequence": pr["Sequence"], "Length": len(pr["Sequence"]),
+                         "Tm": pr["Tm"], "GC": pr["GC"], "Product_size": pr["Product_size"],
+                         "Binding_sites": sites, "Template": f"{g} {loc}" + ("" if r.Fixed else f" (freq. in group {r.Freq_in_group})")})
+    pd.DataFrame(rows).to_csv(tmp_dir + "/" + str(session) + ".primers.tsv", sep="\t", index=False)
+    engine = "primer3-py" if _primer3 is not None else "built-in nearest-neighbour model"
+    info = (f"{len(chosen)} markers designed for {group} ({len(members)} genomes) from {nb_fixed} fixed specific SNPs "
+            f"({tried} SNPs tried); Tm computed with the {engine}. "
+            "Check the primers in silico (e.g. Primer-BLAST) before ordering.")
+    if not chosen:
+        return [], info, html.Span("No primer pair found: try a wider product size range or the other assay.", style={"color": "#B91C1C"})
+    return rows, info, ""
+
+
+@app.callback(
+    Output("download-primers", "data"),
+    Input("download_table_primers", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def download_primers(n, session):
+    f = tmp_dir + "/" + str(session) + ".primers.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return dcc.send_file(f, filename="diagnostic_primers.tsv")
+
+
+# sNMF: ancestry coefficient of each genome in its assigned population (highest K), next to the
+# cross-entropy (fills the right column at the height of the sNMF bar plots)
+@app.callback(
+    Output("sNMF_assignment", "figure"),
+    Input("snps-snmf-header", "children"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def update_snmf_assignment_figure(header, session):
+    rows = snmf_assignation_records(session) if session else []
+    if not rows:
+        return empty_figure()
+    df = pd.DataFrame(rows)
+    df = df[~df["population"].isin(["NA", "sNMF failed"])]
+    if df.empty:
+        return empty_figure()
+    counts = df["population"].value_counts().to_dict()
+    df["Population"] = df["population"].map(lambda p: f"{p} (n={counts[p]})")
+    cmap = population_color_map(df["population"])
+    cmap = {f"{p} (n={counts[p]})": c for p, c in cmap.items()}
+    order = sorted(df["Population"].unique(), key=natural_key)
+    fig = px.strip(df, x="Population", y="ancestry", color="Population", hover_name="strain",
+                   color_discrete_map=cmap, category_orders={"Population": order})
+    fig.add_hline(y=0.9, line_dash="dot", line_color="grey", annotation_text="0.9", annotation_position="right")
+    fig.update_traces(marker=dict(size=9, line=dict(width=0.5, color="white")), jitter=0.4)
+    nb_adm = int((df["ancestry"] < 0.9).sum())
+    fig.update_layout(title=f"Ancestry coefficient in the assigned population ({nb_adm} admixed genomes < 0.9)",
+                      yaxis_title="Ancestry coefficient", yaxis_range=[0, 1.05], showlegend=False,
+                      height=400, margin=dict(l=10, r=10, t=50, b=10))
+    return fig
+
+
+##############################################################################################
+# Genes - diagnostic primers of presence / absence: PCR on genes present in all the genomes of
+# the selected group and absent from the other genomes (clusters respecting the PAV pattern).
+# Primers: conserved in the copies of the gene of all the target genomes (exact match), 3' end
+# (15 bases) absent from the genes of the non-target genomes; same design functions as for SNPs.
+##############################################################################################
+
+def read_fna_genes(project_dir, strain):
+    """{gene id: nucleotide sequence} of a genome (.fna of the genes)."""
+    f = os.path.join(project_dir, "genomes", "genomes", str(strain) + ".fna")
+    seqs, cur, buf = {}, None, []
+    if not os.path.exists(f):
+        return seqs
+    with open(f, errors="replace") as fh:
+        for line in fh:
+            if line.startswith(">"):
+                if cur:
+                    seqs[cur] = "".join(buf).upper()
+                cur, buf = line[1:].split()[0], []
+            else:
+                buf.append(line.strip())
+    if cur:
+        seqs[cur] = "".join(buf).upper()
+    return seqs
+
+
+def _gene_id(cell):
+    """First gene of a cell of the ortholog matrix ('gnl|Bakta|CIX4228_19895,...' -> CIX4228_19895)."""
+    first = str(cell).split(",")[0].strip()
+    return first.split("|")[-1] if first not in ("-", "", "nan") else None
+
+
+@lru_cache(maxsize=2)
+def _nontarget_gene_index(project_dir, others, version):
+    """Unique gene sequences of the non-target genomes concatenated in one string (genomes of a species
+    share most of their genes): returns (big string, start offsets, list of genome sets)."""
+    seq_genomes = {}
+    for g in others:
+        if is_string_without_special_character(g):
+            for sq in read_fna_genes(project_dir, g).values():
+                seq_genomes.setdefault(sq, set()).add(g)
+    seqs = list(seq_genomes)
+    starts, pos = [], 0
+    for sq in seqs:
+        starts.append(pos)
+        pos += len(sq) + 1
+    return "|".join(seqs), starts, [seq_genomes[sq] for sq in seqs]
+
+
+def _offtarget_genomes(index, kmer):
+    import bisect
+    big, starts, genome_sets = index
+    found = set()
+    for q in {kmer, revcomp(kmer)}:
+        i = big.find(q)
+        while i != -1:
+            found |= genome_sets[bisect.bisect_right(starts, i) - 1]
+            i = big.find(q, i + 1)
+    return found
+
+
+def _conserved(seq, copies):
+    return all(seq in c or revcomp(seq) in c for c in copies)
+
+
+def design_gene_primers(template, copies, pmin, pmax, excluded=()):
+    kw = dict(tm_min=57, tm_max=63)
+    lefts = [p for p in _candidates_left(template, 0, len(template) - 1, **kw)
+             if p["seq"] not in excluded and _conserved(p["seq"], copies)]
+    rights = [p for p in _candidates_right(template, 0, len(template) - 1, **kw)
+              if p["seq"] not in excluded and _conserved(revcomp(p["seq"]), copies)]
+    best = _best_pair(lefts, rights, pmin, pmax, max_dtm=2.0)
+    if not best:
+        return None
+    _, l, r, size = best
+    return l, r, size
+
+
+
+
+
+##############################################################################################
+# Genes - level 3 (after the hierarchical clustering): groups of genomes (clusters of the
+# hierarchical clustering, a metadata column or the manual PAV selection), genes specific to each
+# group (with a tolerance), their positions on a genome of the group, and diagnostic primers of
+# presence / absence with an in silico PCR on all the analysed genomes (sensitivity / specificity).
+##############################################################################################
+GG_CLUSTERING = "HierarchicalClustering"
+GG_MANUAL = "Manual selection (PAV pattern)"
+GG_EXCLUDED = {"Strain name", "strain", "cluster", GG_CLUSTERING}
+
+
+def gg_group_options(session):
+    options = [{"label": "Clusters of the hierarchical clustering", "value": GG_CLUSTERING}]
+    f = tmp_dir + "/" + str(session) + ".df_metadata3.csv"
+    if os.path.exists(f):
+        try:
+            df = pd.read_csv(f)
+            for c in df.columns:
+                if c in GG_EXCLUDED or c.startswith("Unnamed"):
+                    continue
+                n = df[c].dropna().astype(str).nunique()
+                if 2 <= n <= 30:
+                    options.append({"label": c, "value": c})
+        except Exception as e:
+            print("Could not read metadata for the groups of genomes:", e)
+    options.append({"label": GG_MANUAL, "value": GG_MANUAL})
+    return options
+
+
+def gg_groups(session, group_by, specific_to, genomes):
+    """{genome: group} for the analysed genomes, and the color map of the groups."""
+    if group_by == GG_MANUAL:
+        sel = set(specific_to or [])
+        groups = {g: ("Selection" if g in sel else "Others") for g in genomes}
+        return groups, {"Selection": "red", "Others": "#7f7f7f"}
+    if group_by in (None, GG_CLUSTERING):
+        f = tmp_dir + "/" + str(session) + ".clusters.tsv"
+        if not os.path.exists(f):
+            return {}, {}
+        df = pd.read_csv(f, sep="\t", dtype=str)
+        ccol = next((c for c in (GG_CLUSTERING, "cluster") if c in df.columns), df.columns[-1])
+        groups = {str(s): f"Cluster_{c}" for s, c in zip(df["strain"], df[ccol]) if str(s) in genomes}
+        return groups, category_color_map(groups.values())
+    df = pd.read_csv(tmp_dir + "/" + str(session) + ".df_metadata3.csv")
+    values = df[group_by].map(clean_country) if group_by == "Country" else df[group_by]
+    groups = {str(s): str(v) for s, v in zip(df["Strain name"], values) if str(s) in genomes and not is_missing_category(v)}
+    return groups, category_color_map(groups.values())
+
+
+def gg_gene_fst(matrix, groups, fst_min):
+    """Hudson FST of each gene (presence / absence = haploid biallelic marker) between each group and
+    the other genomes. Keeps the genes with FST >= fst_min and more frequent in the group (genes whose
+    presence characterises the group). FST = 1 <=> present in all the genomes of the group and absent
+    from all the others. Returns a DataFrame."""
+    m = matrix.loc[[g for g in matrix.index if g in groups]].fillna(0).astype(float) > 0
+    vals = m.values.astype(float)
+    out = []
+    for grp in sorted(set(groups.values()), key=natural_key):
+        mask = np.array([groups[g] == grp for g in m.index])
+        n1, n2 = mask.sum(), (~mask).sum()
+        if n1 < 1 or n2 < 1:
+            continue
+        p1, p2 = vals[mask].mean(axis=0), vals[~mask].mean(axis=0)
+        num = (p1 - p2) ** 2
+        if n1 > 1:
+            num = num - p1 * (1 - p1) / (n1 - 1)
+        if n2 > 1:
+            num = num - p2 * (1 - p2) / (n2 - 1)
+        den = p1 * (1 - p2) + p2 * (1 - p1)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            fst = np.where(den > 0, num / den, np.nan)
+        keep = (fst >= fst_min - 1e-9) & (p1 > p2)
+        for j in np.where(keep)[0]:
+            out.append({"Group": grp, "Cluster": str(m.columns[j]), "FST": round(float(fst[j]), 3),
+                        "Presence_in_group": round(float(p1[j]) * 100, 1),
+                        "Presence_in_others": round(float(p2[j]) * 100, 1),
+                        "Strict": bool(p1[j] == 1 and p2[j] == 0)})
+    df = pd.DataFrame(out, columns=["Group", "Cluster", "FST", "Presence_in_group", "Presence_in_others", "Strict"])
+    order = {g: i for i, g in enumerate(sorted(set(groups.values()), key=natural_key))}
+    df["_order"] = df["Group"].map(order)
+    df = df.sort_values(["_order", "FST", "Presence_in_group"], ascending=[True, False, False])
+    return df.drop(columns="_order").reset_index(drop=True)
+
+
+def _locus_lengths(project_dir, strain):
+    f = os.path.join(project_dir, "genomes", "genomes", str(strain) + ".gb")
+    lengths = {}
+    if os.path.exists(f):
+        with open(f, errors="replace") as fh:
+            for line in fh:
+                if line.startswith("LOCUS"):
+                    m = re.search(r"^LOCUS\s+(\S+)\s+(\d+)\s+bp", line)
+                    if m:
+                        lengths[m.group(1)] = int(m.group(2))
+    return lengths
+
+
+def _ptt_positions(project_dir, strain):
+    """{gene id (PID / Synonym / Gene): (block_id, start, end, product)} from the .ptt of a genome."""
+    f = os.path.join(project_dir, "genomes", "genomes", str(strain) + ".ptt")
+    pos = {}
+    if not os.path.exists(f):
+        return pos
+    with open(f, errors="replace") as fh:
+        header = None
+        for line in fh:
+            cols = line.rstrip("\n").split("\t")
+            if cols[0] == "Location":
+                header = cols
+                continue
+            if header is None or ".." not in cols[0]:
+                continue
+            row = dict(zip(header, cols))
+            try:
+                a, b = row["Location"].split("..")
+            except ValueError:
+                continue
+            rec = (row.get("block_id") or "chr1", int(a), int(b), row.get("Product", ""))
+            for k in ("PID", "Synonym", "Gene"):
+                v = row.get(k)
+                if v and v != "-":
+                    pos.setdefault(v, rec)
+                    pos.setdefault(v.split("|")[-1], rec)
+    return pos
+
+
+def gg_layout():
+    return analysis_level(3, "Groups of genomes", "genes specific to each group, positions and diagnostic primers", [
+        html.Div([
+            html.Div([
+                html.Span("Groups defined by:", className="fw-bold"),
+                dcc.Dropdown(id="ggroups-groupby", options=[{"label": "Clusters of the hierarchical clustering", "value": GG_CLUSTERING}],
+                             value=GG_CLUSTERING, clearable=False, style={"width": "300px"}),
+                html.Span("Group-specific genes: FST (group vs other genomes) >=", className="fw-bold"),
+                dcc.Input(id="ggroups-fst-min", type="number", value=1, min=0.5, max=1, step=0.05, style={"width": "75px"}),
+                html.Button("Compute FST and statistics per group", id="ggroups-run", className="pe-btn-cta", n_clicks=0),
+                dcc.Loading(html.Div(id="ggroups-run-status"), type="circle"),
+            ], style={"display": "flex", "alignItems": "center", "gap": "8px", "flexWrap": "wrap"}),
+            html.Small("Same approach as for the SNPs: each gene is a presence / absence marker (haploid). Hudson FST between each "
+                       "group and the other genomes; FST = 1 = present in all the genomes of the group and absent from all the others. "
+                       "Only the genes more frequent in the group are kept (a PCR detects a presence).", style={"color": "grey"}),
+        ], style={"paddingLeft": "15px", "paddingBottom": "10px"}),
+        html.Div(id="ggroups-results", style={"display": "none"}, children=[
+            html.H5(id="ggroups-header", style={"color": "#1f4e79", "paddingTop": "10px"}),
+            dbc.Row([
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.H5("Statistics per group"),
+                    dag.AgGrid(id="table_ggroups_summary", rowData=[], columnDefs=[],
+                               defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                               dashGridOptions={"animateRows": False, "domLayout": "autoHeight"}, style={"width": "100%"}),
+                    dcc.Graph(id="ggroups-fst", style={"height": "420px", "marginTop": "10px"}),
+                    html.H5("Group-specific genes", id="ggroups-genes-title", style={"marginTop": "15px"}),
+                    dag.AgGrid(id="table_ggroups_genes", rowData=[], columnDefs=[],
+                               defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                               dashGridOptions={"pagination": True, "paginationPageSize": 15, "animateRows": False},
+                               style={"height": "480px", "width": "100%"}),
+                    html.Button("Download table", id="download_table_ggroups_genes", className="thin-button", n_clicks=0),
+                    dcc.Download(id="download-ggroups-genes"),
+                ])], style=CARD_STYLE_POPGEN), width=5),
+                dbc.Col(dbc.Card([dbc.CardBody([
+                    html.Div([
+                        html.Span("Specific genes of the group:", className="fw-bold"),
+                        dcc.Dropdown(id="ggroups-circos-group", options=[], clearable=False, style={"width": "220px"}),
+                    ], style={"display": "flex", "alignItems": "center", "gap": "8px", "justifyContent": "center"}),
+                    html.Div(id="ggroups-circos-info", style={"color": "grey", "fontSize": "0.85em", "margin": "4px"}),
+                    html.Div(id="ggroups-circos-legend", style={"fontSize": "0.85em"}),
+                    dcc.Loading(dash_bio.Circos(id="circos-ggroups", layout=[], config=layout_config, tracks=[],
+                                                style={"height": "800px"}), style={"overflowX": "auto"}),
+                ], style={"textAlign": "center"})], style=CARD_STYLE_POPGEN), width=7),
+            ], style={"padding": "15px"}),
+            dbc.Row([dbc.Col(dbc.Card([dbc.CardBody([
+                html.H5("Diagnostic primers (presence / absence)"),
+                html.Small("Primers designed on the group-specific genes (FST = 1 first), identical in all the copies of "
+                           "the gene of the group. In silico PCR on the genes of all the analysed genomes: a genome is predicted positive "
+                           "when the 3' ends (15 bases) of both primers are found in its genes. Sensitivity = positive genomes of the group, "
+                           "specificity = negative other genomes.", style={"color": "grey"}),
+                html.Div([
+                    html.Div([html.Span("Target group:", className="fw-bold"),
+                              dcc.Dropdown(id="ggroups-primers-group", options=[], clearable=False, style={"width": "200px"})],
+                             style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+                    html.Div([html.Span("Product size:", className="fw-bold"),
+                              dcc.Input(id="ggroups-size-min", type="number", value=150, min=50, step=10, style={"width": "75px"}),
+                              html.Span("-"),
+                              dcc.Input(id="ggroups-size-max", type="number", value=500, min=100, step=10, style={"width": "75px"}),
+                              html.Span("bp")], style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+                    html.Div([html.Span("Markers per group:", className="fw-bold"),
+                              dcc.Input(id="ggroups-number", type="number", value=5, min=1, max=20, step=1, style={"width": "65px"})],
+                             style={"display": "flex", "alignItems": "center", "gap": "6px"}),
+                    html.Button("Design primers", id="ggroups-primers-run", className="pe-btn-cta", n_clicks=0),
+                    dcc.Loading(html.Div(id="ggroups-primers-status"), type="circle"),
+                ], style={"display": "flex", "alignItems": "center", "gap": "14px", "flexWrap": "wrap", "margin": "10px 0"}),
+                html.Div(id="ggroups-primers-info", style={"color": "grey", "fontSize": "0.9em"}),
+                html.Div(id="ggroups-primers-combination", style={"margin": "6px 0"}),
+                dag.AgGrid(id="table_ggroups_primers", rowData=[], columnDefs=columnDefs_ggroups_primers,
+                           defaultColDef={"sortable": True, "resizable": True, "filter": True},
+                           dashGridOptions={"pagination": True, "paginationPageSize": 30, "animateRows": False},
+                           style={"height": "450px", "width": "100%"}),
+                html.Button("Download primers", id="download_table_ggroups_primers", className="thin-button", n_clicks=0),
+                dcc.Download(id="download-ggroups-primers"),
+                dcc.Store(id="ggroups-markers", data={}),
+            ])], style=CARD_STYLE_POPGEN))], style={"padding": "15px"}),
+        ]),
+    ])
+
+
+columnDefs_ggroups_primers = [
+    {"field": "Group", "width": 110, "pinned": "left"},
+    {"field": "Marker", "width": 90, "pinned": "left"},
+    {"field": "Cluster", "width": 95},
+    {"field": "Product", "headerName": "Gene product", "width": 220},
+    {"field": "Primer", "width": 95},
+    {"field": "Sequence", "headerName": "Sequence 5'-3'", "width": 240, "cellStyle": {"fontFamily": "monospace"}},
+    {"field": "Tm", "headerName": "Tm (C)", "width": 85},
+    {"field": "GC", "headerName": "GC %", "width": 80},
+    {"field": "Product_size", "headerName": "Product (bp)", "width": 110},
+    {"field": "Sensitivity", "headerName": "Sensitivity (%)", "width": 125, "filter": "agNumberColumnFilter"},
+    {"field": "Specificity", "headerName": "Specificity (%)", "width": 125, "filter": "agNumberColumnFilter"},
+    {"field": "False_positives", "headerName": "Other genomes predicted positive", "width": 200},
+    {"field": "Template", "headerName": "Template gene", "width": 220},
+]
+
+
+def _gg_cell_style(cmap):
+    return {"styleConditions": [{"condition": f"params.value == {json.dumps(g)}",
+                                 "style": {"backgroundColor": col, "color": "white", "fontWeight": "bold"}}
+                                for g, col in cmap.items()]}
+
+
+def _gg_session_matrix(session):
+    f = tmp_dir + "/" + str(session) + ".matrix01.tsv"
+    if not os.path.exists(f):
+        return None
+    m = pd.read_csv(f, sep="\t", index_col=0)
+    m.index = m.index.astype(str)
+    m.columns = m.columns.astype(str)
+    return m
+
+
+@app.callback(
+    Output("ggroups-groupby", "options"),
+    Input("genes-clustering-header", "children"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def gg_update_options(header, session):
+    if not session:
+        raise PreventUpdate
+    return gg_group_options(session)
+
+
+@app.callback(
+    Output("ggroups-results", "style"),
+    Output("ggroups-header", "children"),
+    Output("table_ggroups_summary", "rowData"),
+    Output("table_ggroups_summary", "columnDefs"),
+    Output("table_ggroups_genes", "rowData"),
+    Output("table_ggroups_genes", "columnDefs"),
+    Output("ggroups-genes-title", "children"),
+    Output("ggroups-circos-group", "options"),
+    Output("ggroups-circos-group", "value"),
+    Output("ggroups-primers-group", "options"),
+    Output("ggroups-primers-group", "value"),
+    Output("ggroups-markers", "data"),
+    Output("ggroups-run-status", "children"),
+    Output("ggroups-fst", "figure"),
+    Input("ggroups-run", "n_clicks"),
+    State("ggroups-groupby", "value"),
+    State("ggroups-fst-min", "value"),
+    State("specific_to", "value"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    prevent_initial_call=True
+)
+def gg_compute(n, group_by, fst_min, specific_to, session, projets):
+    if not n or not session:
+        raise PreventUpdate
+    fail = lambda m: ({"display": "none"}, "", [], [], [], [], "", [], None, [], None, {},
+                      html.Span(m, style={"color": "#B91C1C"}), empty_figure())
+    matrix = _gg_session_matrix(session)
+    if matrix is None:
+        return fail("Presence / absence matrix not found.")
+    if group_by == GG_MANUAL and not specific_to:
+        return fail("Select a group of genomes first (PAV pattern).")
+    groups, cmap = gg_groups(session, group_by, specific_to, set(matrix.index))
+    names = sorted(set(groups.values()), key=natural_key)
+    if len(names) < 2:
+        return fail("At least 2 groups are needed (run the hierarchical clustering or choose another grouping).")
+    fst_min = float(fst_min if fst_min is not None else 1.0)
+    df = gg_gene_fst(matrix, groups, fst_min)
+    # pairwise FST between groups on all the genes (same estimator as for the SNPs)
+    sub = matrix.loc[[g for g in matrix.index if g in groups]].fillna(0).astype(float)
+    sub = (sub > 0).astype(float).T
+    sub = sub[(sub.sum(axis=1) > 0) & (sub.sum(axis=1) < sub.shape[1])]       # accessory genes only
+    _, df_fst, _ = popgen_statistics(sub, groups, 1000)
+    fig_fst = px.imshow(df_fst.astype(float), text_auto=".3f", color_continuous_scale="Purples", zmin=0,
+                        labels=dict(color="FST"), aspect="auto")
+    off = df_fst.values[~np.eye(len(df_fst), dtype=bool)].astype(float)
+    mean_fst = np.nanmean(off) if off.size and not np.isnan(off).all() else float("nan")
+    single = [g for g in names if sum(1 for v in groups.values() if v == g) < 2]
+    note = f" (not computed for groups of 1 genome: {', '.join(single)})" if single else ""
+    fig_fst.update_layout(title=f"Pairwise FST on {len(sub)} accessory genes - mean = {mean_fst:.3f}{note}",
+                          height=420, margin=dict(l=10, r=10, t=50, b=10))
+
+    # products of the genes (functions of the clusters)
+    project_dir = _vntr_project_dir(projets)
+    prod = {}
+    f_func = project_dir + "/functions_of_clusters.tsv"
+    if os.path.exists(f_func):
+        try:
+            dff = pd.read_csv(f_func, sep="\t", header=None, dtype=str)
+            if dff.shape[1] >= 2:
+                prod = dict(zip(dff.iloc[:, 0].astype(str), dff.iloc[:, -1].astype(str)))
+        except Exception:
+            prod = {}
+    df["Product"] = df["Cluster"].map(lambda c: prod.get(c, ""))
+    df.to_csv(tmp_dir + "/" + str(session) + ".ggroups_genes.tsv", sep="\t", index=False)
+    with open(tmp_dir + "/" + str(session) + ".ggroups.json", "w") as fh:
+        json.dump({"groups": groups, "colors": cmap}, fh)
+
+    summary = []
+    pres = matrix.loc[[g for g in matrix.index if g in groups]].fillna(0).astype(float) > 0
+    for g in names:
+        members = [x for x in pres.index if groups[x] == g]
+        mg = pres.loc[members]
+        nb_pan = int(mg.any(axis=0).sum())
+        nb_core = int(mg.all(axis=0).sum())
+        dg = df[df["Group"] == g]
+        summary.append({"Group": g, "Genomes": len(members), "Pangenes": nb_pan, "Core_genes": nb_core,
+                        "Accessory_genes": nb_pan - nb_core, "FST_1": int(dg["Strict"].sum()), "FST_min": len(dg)})
+    summary_defs = [{"field": "Group", "cellStyle": _gg_cell_style(cmap), "width": 120, "pinned": "left"},
+                    {"field": "Genomes", "width": 90},
+                    {"field": "Pangenes", "width": 100},
+                    {"field": "Core_genes", "headerName": "Core genes of the group", "width": 120},
+                    {"field": "Accessory_genes", "headerName": "Accessory in the group", "width": 120},
+                    {"field": "FST_1", "headerName": "Specific genes (FST = 1)", "width": 130},
+                    {"field": "FST_min", "headerName": f"Genes with FST >= {fst_min:g}", "flex": 1, "minWidth": 120}]
+    gene_defs = [{"field": "Group", "cellStyle": _gg_cell_style(cmap), "width": 115, "pinned": "left"},
+                 {"field": "Cluster", "width": 95},
+                 {"field": "Product", "flex": 1, "minWidth": 180},
+                 {"field": "FST", "width": 80, "filter": "agNumberColumnFilter"},
+                 {"field": "Presence_in_group", "headerName": "% of the group", "width": 120, "filter": "agNumberColumnFilter"},
+                 {"field": "Presence_in_others", "headerName": "% of the others", "width": 120, "filter": "agNumberColumnFilter"},
+                 {"field": "Strict", "headerName": "FST = 1", "width": 90}]
+    first = next((x["Group"] for x in summary if x["FST_min"] > 0), names[0])
+    header = (f"{len(names)} groups defined by {group_by} ({len(groups)} genomes, {matrix.shape[1]} pangenes); "
+              f"group-specific genes = FST (group vs others) >= {fst_min:g}, more frequent in the group")
+    return ({"display": "block"}, header, summary, summary_defs, df.to_dict("records"), gene_defs,
+            f"Group-specific genes: {len(df)} ({int(df['Strict'].sum())} with FST = 1)",
+            names, first, names, first, {}, "", fig_fst)
+
+
+@app.callback(
+    Output("circos-ggroups", "layout"),
+    Output("circos-ggroups", "tracks"),
+    Output("ggroups-circos-info", "children"),
+    Output("ggroups-circos-legend", "children"),
+    Input("ggroups-circos-group", "value"),
+    Input("ggroups-markers", "data"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    State("reference", "value"),
+    prevent_initial_call=True
+)
+def gg_circos(group, markers, session, projets, reference):
+    gfile = tmp_dir + "/" + str(session) + ".ggroups.json"
+    tfile = tmp_dir + "/" + str(session) + ".ggroups_genes.tsv"
+    if not group or not session or not os.path.exists(gfile) or not os.path.exists(tfile):
+        raise PreventUpdate
+    meta = json.load(open(gfile))
+    members = [g for g, v in meta["groups"].items() if v == group]
+    color = meta["colors"].get(group, "#3B82F6")
+    project_dir = _vntr_project_dir(projets)
+    # genome used for the positions: the reference if it belongs to the group, else the first member with a .ptt
+    candidates = ([reference] if reference in members else []) + members
+    genome, positions = None, {}
+    for g in candidates:
+        if g and is_string_without_special_character(str(g)):
+            positions = _ptt_positions(project_dir, g)
+            if positions:
+                genome = g
+                break
+    if not genome:
+        return [], [], f"No gene positions (.ptt) available for the genomes of {group}.", ""
+    df = pd.read_csv(tfile, sep="\t", dtype={"Cluster": str, "Group": str})
+    df = df[df["Group"] == group]
+    matrix_file = project_dir + "/1.Orthologs_Cluster.txt"
+    header, matrix = _load_ortholog_rows(matrix_file, _mtime(matrix_file)) if os.path.exists(matrix_file) else ([], {})
+    col = header.index(genome) if genome in header else None
+    marker_clusters = set((markers or {}).get(group, []))
+    strict, tol, mk, blocks = [], [], [], {}
+    for r in df.itertuples():
+        line = matrix.get(str(r.Cluster))
+        if not line or col is None:
+            continue
+        cells = line.rstrip("\n").split("\t")
+        if col >= len(cells):
+            continue
+        for gene in str(cells[col]).split(","):
+            gene = gene.strip()
+            rec = positions.get(gene) or positions.get(gene.split("|")[-1])
+            if not rec:
+                continue
+            block, a, b, product = rec
+            blocks[block] = max(blocks.get(block, 0), b)
+            d = {"block_id": block, "start": a, "end": b, "name": f"Cluster {r.Cluster}: {r.Product if isinstance(r.Product, str) else ''}"}
+            (strict if r.Strict else tol).append(d)
+            if str(r.Cluster) in marker_clusters:
+                mk.append({"block_id": block, "position": int((a + b) / 2), "value": 1, "name": f"Primers on cluster {r.Cluster}"})
+    lengths = _locus_lengths(project_dir, genome)
+    order = list(lengths) if lengths else sorted(blocks)
+    layout = [{"id": b, "label": b if len(order) <= 10 else "", "len": int(lengths.get(b, blocks.get(b, 0))), "color": "#4d4d4d"}
+              for b in order if lengths.get(b, blocks.get(b, 0))]
+    tracks = [
+        {"type": "HIGHLIGHT", "data": strict, "config": {"innerRadius": 300, "outerRadius": 350, "color": color, "tooltipContent": {"name": "name"}}},
+        {"type": "HIGHLIGHT", "data": tol, "config": {"innerRadius": 245, "outerRadius": 295, "color": color, "opacity": 0.45,
+                                                     "tooltipContent": {"name": "name"}}},
+        {"type": "SCATTER", "data": mk, "config": {"innerRadius": 200, "outerRadius": 240, "min": 0, "max": 2, "color": "#111827",
+                                                   "strokeWidth": 0, "size": 40, "shape": "triangle", "tooltipContent": {"name": "name"}}},
+    ]
+    sq = lambda c, o=1: html.Span(style={"display": "inline-block", "width": "10px", "height": "10px", "backgroundColor": c,
+                                         "opacity": o, "borderRadius": "3px", "marginRight": "5px"})
+    legend = [sq(color), html.Span(f"FST = 1 ({len(strict)})", style={"marginRight": "14px"}),
+              sq(color, 0.45), html.Span(f"FST >= threshold ({len(tol)})", style={"marginRight": "14px"}),
+              html.Span("▲ ", style={"color": "#111827"}), html.Span("Genes with diagnostic primers")]
+    info = f"Positions on {genome} ({'reference genome' if genome == reference else 'genome of the group'}); " \
+           f"genes absent from this genome are not shown."
+    return layout, tracks, info, legend
+
+
+@app.callback(
+    Output("circos-ggroups", "config"),
+    Input("circos-ggroups", "layout"),
+    prevent_initial_call=True
+)
+def gg_circos_ticks(circos_layout):
+    return circos_config_for_layout(circos_layout)
+
+
+def _gg_combination(target_set, others_set, marker_positives):
+    """Greedy combination of presence markers (a genome is assigned to the group when it is positive
+    for all the markers of the combination) minimising the false positives."""
+    if not marker_positives:
+        return None
+    score = lambda pos: (len(pos & target_set), -len(pos & others_set))
+    names = sorted(marker_positives, key=lambda m: -(len(marker_positives[m] & target_set) / max(len(target_set), 1)
+                                                     - len(marker_positives[m] & others_set) / max(len(others_set), 1)))
+    chosen = [names[0]]
+    pos = set(marker_positives[names[0]])
+    while pos & others_set:
+        best = None
+        for m in names:
+            if m in chosen:
+                continue
+            new = pos & marker_positives[m]
+            if len(new & others_set) < len(pos & others_set) and len(new & target_set) >= len(pos & target_set) - 0:
+                if best is None or score(new) > score(best[1]):
+                    best = (m, new)
+        if not best:
+            break
+        chosen.append(best[0]); pos = best[1]
+    sens = 100.0 * len(pos & target_set) / max(len(target_set), 1)
+    spec = 100.0 * (1 - len(pos & others_set) / max(len(others_set), 1))
+    return chosen, sens, spec
+
+
+@app.callback(
+    Output("table_ggroups_primers", "rowData"),
+    Output("table_ggroups_primers", "columnDefs"),
+    Output("ggroups-primers-info", "children"),
+    Output("ggroups-primers-combination", "children"),
+    Output("ggroups-markers", "data", allow_duplicate=True),
+    Output("ggroups-primers-status", "children"),
+    Input("ggroups-primers-run", "n_clicks"),
+    State("ggroups-primers-group", "value"),
+    State("ggroups-size-min", "value"),
+    State("ggroups-size-max", "value"),
+    State("ggroups-number", "value"),
+    State("ggroups-markers", "data"),
+    State("current_session", "value"),
+    State("projets", "value"),
+    prevent_initial_call=True
+)
+def gg_primers(n, group, pmin, pmax, nmax, markers_store, session, projets):
+    if not n or not session or not group:
+        raise PreventUpdate
+    err = lambda m: (no_update, no_update, "", "", no_update, html.Span(m, style={"color": "#B91C1C"}))
+    gfile = tmp_dir + "/" + str(session) + ".ggroups.json"
+    tfile = tmp_dir + "/" + str(session) + ".ggroups_genes.tsv"
+    if not os.path.exists(gfile) or not os.path.exists(tfile):
+        return err("Compute the genes specific to each group first.")
+    pmin, pmax = int(pmin or 150), int(pmax or 500)
+    if pmax < pmin + 20:
+        return err("The maximum product size must be larger than the minimum.")
+    nmax = max(1, min(int(nmax or 5), 20))
+    meta = json.load(open(gfile))
+    groups, cmap = meta["groups"], meta["colors"]
+    analysed = sorted(groups)
+    targets = [g for g in analysed if groups[g] == group]
+    target_set, others_set = set(targets), set(analysed) - set(targets)
+    df = pd.read_csv(tfile, sep="\t", dtype={"Cluster": str, "Group": str})
+    df = df[df["Group"] == group]
+    if df.empty:
+        return err(f"No specific gene for {group}: lower the FST threshold.")
+    project_dir = _vntr_project_dir(projets)
+    matrix_file = project_dir + "/1.Orthologs_Cluster.txt"
+    if not os.path.exists(matrix_file):
+        return err("Ortholog matrix not found.")
+    header, matrix = _load_ortholog_rows(matrix_file, _mtime(matrix_file))
+    col = {g: i for i, g in enumerate(header)}
+    target_genes = {g: read_fna_genes(project_dir, g) for g in targets if is_string_without_special_character(g)}
+    if not any(target_genes.values()):
+        return err("Gene sequences (.fna) not available for the genomes of the group.")
+    index = _nontarget_gene_index(project_dir, tuple(analysed), _mtime(matrix_file))   # genes of all the analysed genomes
+
+    def in_silico(l, r):
+        return _offtarget_genomes(index, l[-15:]) & _offtarget_genomes(index, r[-15:])
+
+    rows, positives, tried, nb_rejected, nb_mobile, nb_homolog, examined = [], {}, 0, 0, 0, 0, 0
+    t_start, timed_out = time_module.time(), False
+    min_spec = 80.0
+    mobile = re.compile(r"transposase|integrase|recombinase|\bIS\d|insertion element|phage|resolvase", re.I)
+    for r in df.itertuples():
+        if isinstance(r.Product, str) and mobile.search(r.Product):
+            nb_mobile += 1          # mobile elements: homologous copies in the other genomes, poor diagnostic markers
+            continue
+        if len(positives) >= nmax or tried >= 40:
+            break
+        line = matrix.get(str(r.Cluster))
+        if not line:
+            continue
+        cells = line.rstrip("\n").split("\t")
+        copies, template, template_name = [], None, ""
+        for g in targets:
+            gid = _gene_id(cells[col[g]]) if g in col and col[g] < len(cells) else None
+            sq = target_genes.get(g, {}).get(gid) if gid else None
+            if sq:
+                copies.append(sq)
+                if template is None or len(sq) > len(template):
+                    template, template_name = sq, f"{gid} ({g}, {len(sq)} bp)"
+        if template is None or len(template) < pmin + 10:
+            continue
+        examined += 1
+        if examined > 300 or time_module.time() - t_start > 45:   # time budget
+            timed_out = time_module.time() - t_start > 45
+            break
+        # quick pre-filter: 3 probes of 20 bp along the gene; homologous copies in the other genomes -> skip
+        probes = [template[int(len(template) * f) - 10: int(len(template) * f) + 10] for f in (0.25, 0.5, 0.75)]
+        hits = sum(1 for pr in probes if len(_offtarget_genomes(index, pr) & others_set) > (100 - min_spec) / 100 * len(others_set))
+        if hits == 3:
+            nb_homolog += 1
+            continue
+        tried += 1
+        excluded, best = set(), None
+        win = max(1000, pmax + 200)
+        if len(template) > win:             # long genes: central window
+            c0 = (len(template) - win) // 2
+            template = template[c0:c0 + win]
+        kw = dict(tm_min=57, tm_max=63)
+        lefts = [p for p in _candidates_left(template, 0, len(template) - 1, lmin=18, lmax=24, **kw) if _conserved(p["seq"], copies)]
+        rights = [p for p in _candidates_right(template, 0, len(template) - 1, lmin=18, lmax=24, **kw) if _conserved(revcomp(p["seq"]), copies)]
+        for attempt in range(3):
+            res = _best_pair([p for p in lefts if p["seq"] not in excluded], [p for p in rights if p["seq"] not in excluded],
+                             pmin, pmax, max_dtm=2.0)
+            if not res:
+                break
+            _, l, rr, size = res
+            pos = in_silico(l["seq"], rr["seq"])
+            sens = 100.0 * len(pos & target_set) / max(len(target_set), 1)
+            spec = 100.0 * (1 - len(pos & others_set) / max(len(others_set), 1))
+            if best is None or sens + spec > best[4] + best[5]:
+                best = (l, rr, size, pos, sens, spec)
+            if spec >= 100 - max_out_tolerance(df, r) and sens >= 50:
+                break
+            excluded.update([l["seq"], rr["seq"]])
+        if not best:
+            continue
+        if best[5] < min_spec:          # primers predicted to amplify too many other genomes (homologous genes)
+            nb_rejected += 1
+            continue
+        l, rr, size, pos, sens, spec = best
+        marker = f"M{len(positives) + 1}"
+        positives[marker] = pos
+        fp = sorted(pos & others_set)
+        for name, p in (("Forward", l), ("Reverse", rr)):
+            rows.append({"Group": group, "Marker": marker, "Cluster": str(r.Cluster),
+                         "Product": r.Product if isinstance(r.Product, str) else "",
+                         "Primer": name, "Sequence": p["seq"], "Tm": p["tm"], "GC": p["gc"], "Product_size": size,
+                         "Sensitivity": round(sens, 1), "Specificity": round(spec, 1),
+                         "False_positives": ", ".join(fp[:10]) + (f" (+{len(fp) - 10})" if len(fp) > 10 else ""),
+                         "Template": template_name})
+    pd.DataFrame(rows).to_csv(tmp_dir + "/" + str(session) + ".ggroups_primers.tsv", sep="\t", index=False)
+    store = dict(markers_store or {})
+    store[group] = sorted({x["Cluster"] for x in rows})
+    defs = [dict(d, cellStyle=_gg_cell_style(cmap)) if d["field"] == "Group" else d for d in columnDefs_ggroups_primers]
+    engine = "primer3-py" if _primer3 is not None else "built-in nearest-neighbour model"
+    info = (f"{len(positives)} markers for {group} ({len(targets)} genomes vs {len(others_set)} other genomes), "
+            f"{tried} genes tried ({nb_mobile} mobile-element genes and {nb_homolog} genes with homologous copies in the other "
+            f"genomes skipped), {nb_rejected} rejected (primers predicted to amplify more than {100 - min_spec:.0f}% of the "
+            f"other genomes, homologous genes). Tm: {engine}. In silico PCR limited to the annotated genes: "
+            "check the primers with Primer-BLAST before ordering; add a primer pair on a core gene as positive PCR control."
+            + (" Search stopped after 45 s." if timed_out else ""))
+    combo = _gg_combination(target_set, others_set, positives)
+    combo_div = ""
+    if combo:
+        chosen, sens, spec = combo
+        combo_div = html.Div([
+            html.B("Suggested combination: "),
+            html.Span(" + ".join(chosen) + f" (genome assigned to {group} when positive for all of them): "
+                                           f"sensitivity {sens:.0f}%, specificity {spec:.0f}%"),
+        ], style={"backgroundColor": "#F5F0FF", "border": "1px solid #E4D8FD", "borderRadius": "8px", "padding": "6px 10px"})
+    status = "" if positives else html.Span("No primer pair found: try a wider product size range or lower the FST threshold.",
+                                            style={"color": "#B91C1C"})
+    return rows, defs, info, combo_div, store, status
+
+
+def max_out_tolerance(df, r):
+    """Specificity target of a marker: 100% for a strictly specific gene, else 100 - % of the others carrying the gene."""
+    return 0.0 if r.Strict else float(r.Presence_in_others)
+
+
+@app.callback(
+    Output("download-ggroups-genes", "data"),
+    Input("download_table_ggroups_genes", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def gg_download_genes(n, session):
+    f = tmp_dir + "/" + str(session) + ".ggroups_genes.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return dcc.send_file(f, filename="group_specific_genes.tsv")
+
+
+@app.callback(
+    Output("download-ggroups-primers", "data"),
+    Input("download_table_ggroups_primers", "n_clicks"),
+    State("current_session", "value"),
+    prevent_initial_call=True
+)
+def gg_download_primers(n, session):
+    f = tmp_dir + "/" + str(session) + ".ggroups_primers.tsv"
+    if not session or not os.path.exists(f):
+        raise PreventUpdate
+    return dcc.send_file(f, filename="diagnostic_primers_groups.tsv")
 
 if __name__ == "__main__":
     init_db()
