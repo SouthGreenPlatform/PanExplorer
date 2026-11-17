@@ -1600,20 +1600,44 @@ def load_project_preview(proj_title):
                                         ),
                                         html.Hr(),
 
-                                        dbc.Button(
-                                            "Display alignment",
-                                            id="display_alignment",
-                                            color="primary",
-                                            className="me-2"
-                                        ),
-
-                                        dbc.Button(
-                                            "Close and highlight genes sharing the same PAV pattern",
-                                            id="activate_pattern",
-                                            color="primary",
-                                            className="me-2"
-                                        ),
+                                        html.Div([
+                                            dbc.Checklist(
+                                                id="fasta_seq_types",
+                                                options=[
+                                                    {"label": "Protein", "value": "protein"},
+                                                    {"label": "Nucleotide", "value": "nucleotide"},
+                                                ],
+                                                value=["protein"],
+                                                inline=True,
+                                                switch=True,
+                                                className="me-2",
+                                            ),
+                                            dbc.Button(
+                                                "Display alignment",
+                                                id="display_alignment",
+                                                color="primary",
+                                                className="me-2"
+                                            ),
+                                            dbc.Button(
+                                                "Display FASTA sequences",
+                                                id="display_fasta",
+                                                color="primary",
+                                                className="me-2"
+                                            ),
+                                            dbc.Button(
+                                                "Close and highlight genes sharing the same PAV pattern",
+                                                id="activate_pattern",
+                                                color="primary",
+                                                className="me-2"
+                                            ),
+                                        ], style={"display": "flex", "alignItems": "center", "flexWrap": "wrap", "gap": "6px"}),
+                                        html.Small("Sequence type: used for the FASTA display (protein and/or nucleotide); "
+                                                   "the alignment is protein unless only 'Nucleotide' is selected.",
+                                                   style={"color": "grey"}),
+                                        dcc.Store(id="cluster-fasta-store"),
+                                        dcc.Download(id="download-cluster-fasta"),
                                         dcc.Loading(children=html.Div(id='default-alignment-viewer-output')) ,
+                                        dcc.Loading(children=html.Div(id='fasta-viewer-output')) ,
                                     ])
                                 ], id="detail-modal", is_open=False, size="xl"),                        
                             
@@ -4078,9 +4102,10 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     Input('PAV_graph', 'clickData'),
     State("projets", "value"),
     State('metadata_table','selectedRows'),
+    State('reference', 'value'),
     prevent_initial_call=True
 )
-def update_detail_table(cell1,cell2,cell3,cell4,event_circos,event_pav,projets,metadata_table):
+def update_detail_table(cell1,cell2,cell3,cell4,event_circos,event_pav,projets,metadata_table,reference=None):
     cluster = get_cluster_from_trigger(ctx.triggered_id, cell1, cell2, cell3, cell4, event_circos, event_pav)
     if not cluster:
         raise PreventUpdate
@@ -4094,21 +4119,50 @@ def update_detail_table(cell1,cell2,cell3,cell4,event_circos,event_pav,projets,m
 
     nb_presence,dictionary,data = get_cluster_details(cluster,projets,list_of_strains)
 
-    return dag.AgGrid(
-        id="detail-grid",
-        columnDefs=[
-            {"field": "Species"},
-            {"field": "Genes"},
-            {"field": "Product"},
-        ],
-        rowData=dictionary,
-        defaultColDef={
-            "sortable": True,
-            "filter": True,
-            "resizable": True
-        },
-        style={"height": "400px"}
-    )
+    # the gene of the reference genome is pinned on top of the table
+    ref_rows = [r for r in dictionary if reference and r.get("Species") == reference]
+    other_rows = [r for r in dictionary if not (reference and r.get("Species") == reference)]
+    if not reference:
+        summary = html.Small("No reference genome selected.", style={"color": "grey"})
+    elif not ref_rows:
+        summary = html.Div(["Reference genome ", html.B(reference), ": cluster absent from this genome."],
+                           style={"marginBottom": "6px"})
+    elif ref_rows[0].get("Contig") == "":
+        summary = html.Div(["Reference genome ", html.B(reference), ": ", ref_rows[0]["Genes"],
+                            " (position not available)"], style={"marginBottom": "6px"})
+    else:
+        r = ref_rows[0]
+        summary = html.Div(["Position on the reference genome ", html.B(reference), ": ",
+                            html.B(f"{r['Contig']} : {r['Start']} - {r['End']} ({r['Strand']})"),
+                            f"  –  {r['Genes']}"], style={"marginBottom": "6px"})
+
+    return html.Div([
+        summary,
+        dag.AgGrid(
+            id="detail-grid",
+            columnDefs=[
+                {"field": "Species", "pinned": "left"},
+                {"field": "Genes"},
+                {"field": "Product"},
+                {"field": "Contig"},
+                {"field": "Start", "filter": "agNumberColumnFilter"},
+                {"field": "End", "filter": "agNumberColumnFilter"},
+                {"field": "Strand", "width": 90},
+                {"field": "Length", "headerName": "Length (bp)", "filter": "agNumberColumnFilter"},
+            ],
+            rowData=other_rows,
+            dashGridOptions={"pinnedTopRowData": ref_rows},
+            getRowStyle={"styleConditions": [
+                {"condition": "params.node.rowPinned", "style": {"backgroundColor": "#fff3cd", "fontWeight": "bold"}},
+            ]},
+            defaultColDef={
+                "sortable": True,
+                "filter": True,
+                "resizable": True
+            },
+            style={"height": "400px"}
+        ),
+    ])
 
 
 @app.callback(
@@ -4159,10 +4213,10 @@ def update_detail_segment(event_pav,projets,metadata_table,reference,session,cel
     State('metadata_table','selectedRows'),
     State('projets', 'value'),
     State('current_session', 'value'),
-
+    State('fasta_seq_types', 'value'),
     prevent_initial_call=True
 )
-def show_alignment(n_clicks, cell,metadata_table,projets,session):
+def show_alignment(n_clicks, cell,metadata_table,projets,session,seq_types=None):
     if not n_clicks or not cell:
         return ""
 
@@ -4175,16 +4229,15 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
 
     current_cluster = cell.get('value')
 
-    nb_presence,dictionaries,data = get_cluster_details(current_cluster,projets,list_of_strains)
+    # protein alignment, unless only "Nucleotide" is selected
+    seq_type = "nucleotide" if seq_types and "protein" not in seq_types and "nucleotide" in seq_types else "protein"
 
-    # create fasta file from selected genes
-    data = ""
-    for dict in dictionaries:
-        species = dict['Species']
-        gene = dict['Genes']
-        cmd = f"grep -A 1 '{gene}' {directory}/genomes/genomes/{species}.faa | tail -1"
-        protein_fasta = os.popen(cmd).read()
-        data = data + ">"+gene+"\n"+protein_fasta
+    # create fasta file from the genes of the cluster (paralogs included)
+    data, nb_seq, missing = build_cluster_fasta(current_cluster, projets, list_of_strains, seq_type)
+    if nb_seq < 2:
+        return dbc.Alert(f"Not enough {seq_type} sequences to build an alignment ({nb_seq} found).", color="warning")
+    if not validate_session_id(session):
+        raise PreventUpdate
 
     # write data to a temporary fasta file
     with open(f"{tmp_dir}/{session}.temp.fasta", "w") as text_file:
@@ -4197,8 +4250,11 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
     if os.path.exists(f"{tmp_dir}/{session}.temp.fasta") and validate_session_id(session):
 
         cmd_args = ["muscle", "-align", f"{tmp_dir}/{session}.temp.fasta", "-output", f"{tmp_dir}/{session}.temp.aln.fasta"]
-        with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
-            subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+        try:
+            with open(f"{tmp_dir}/{session}.muscle.log", "a") as log_file:
+                subprocess.run(cmd_args, stdout=log_file, stderr=subprocess.STDOUT, check=True)
+        except (subprocess.CalledProcessError, OSError) as e:
+            return dbc.Alert(f"Alignment failed: {e}", color="danger")
 
     # read alignment file
     with open(f"{tmp_dir}/{session}.temp.aln.fasta", "r") as file:
@@ -4213,6 +4269,79 @@ def show_alignment(n_clicks, cell,metadata_table,projets,session):
         #width=1800
     ),    
     return fig
+
+@app.callback(
+    Output("fasta-viewer-output", "children"),
+    Output("cluster-fasta-store", "data"),
+    Input("display_fasta", "n_clicks"),
+    State("selected-cell", "data"),
+    State('metadata_table', 'selectedRows'),
+    State('projets', 'value'),
+    State('fasta_seq_types', 'value'),
+    prevent_initial_call=True
+)
+def show_cluster_fasta(n_clicks, cell, metadata_table, projets, seq_types):
+    """Protein and/or nucleotide FASTA sequences of the genes of the selected cluster."""
+    if not n_clicks or not cell:
+        raise PreventUpdate
+    if not seq_types:
+        return dbc.Alert("Select at least one sequence type (Protein / Nucleotide).", color="warning"), no_update
+
+    list_of_strains = [s['Strain name'] for s in (metadata_table or [])]
+    cluster = cell.get('value')
+    labels = {"protein": "Protein sequences", "nucleotide": "Nucleotide sequences"}
+
+    blocks, store = [], {}
+    for seq_type in ("protein", "nucleotide"):
+        if seq_type not in seq_types:
+            continue
+        text, nb_seq, missing = build_cluster_fasta(cluster, projets, list_of_strains, seq_type)
+        store[seq_type] = text
+        pre_id = f"fasta-pre-{seq_type}"
+        blocks.append(html.Div([
+            html.Div([
+                html.B(f"{labels[seq_type]} ({nb_seq})"),
+                dcc.Clipboard(target_id=pre_id, title="Copy", style={"display": "inline-block", "fontSize": 18, "marginLeft": "10px"}),
+                dbc.Button("Download FASTA", id={"type": "download-fasta-btn", "index": seq_type},
+                           size="sm", color="secondary", outline=True, className="ms-2", disabled=not text),
+            ], style={"display": "flex", "alignItems": "center", "marginBottom": "4px"}),
+            html.Small(f"No {seq_type} sequence found for: " + ", ".join(missing[:20]) + (" ..." if len(missing) > 20 else ""),
+                       style={"color": "#b35c00"}) if missing else None,
+            html.Pre(text or "No sequence found.", id=pre_id,
+                     style={"maxHeight": "300px", "overflowY": "auto", "backgroundColor": "#f8f9fa",
+                            "border": "1px solid #dee2e6", "borderRadius": "6px", "padding": "8px",
+                            "fontSize": "12px", "whiteSpace": "pre"}),
+        ], style={"marginTop": "10px"}))
+    return html.Div(blocks), store
+
+
+@app.callback(
+    Output("fasta-viewer-output", "children", allow_duplicate=True),
+    Input("selected-cell", "data"),
+    prevent_initial_call=True
+)
+def reset_cluster_fasta(cell):
+    return None
+
+
+@app.callback(
+    Output("download-cluster-fasta", "data"),
+    Input({"type": "download-fasta-btn", "index": ALL}, "n_clicks"),
+    State("cluster-fasta-store", "data"),
+    State("selected-cell", "data"),
+    prevent_initial_call=True
+)
+def download_cluster_fasta(n_clicks, store, cell):
+    if not ctx.triggered_id or not any(n_clicks or []):
+        raise PreventUpdate
+    seq_type = ctx.triggered_id["index"]
+    text = (store or {}).get(seq_type)
+    if not text:
+        raise PreventUpdate
+    cluster = (cell or {}).get("value", "cluster")
+    suffix = "faa" if seq_type == "protein" else "fna"
+    return dict(content=text, filename=f"cluster_{cluster}.{suffix}")
+
 
 # @app.callback(
 #     Output("default-alignment-viewer-output","children"),
@@ -4500,6 +4629,140 @@ def _mtime(path):
         return 0
 
 
+def _project_dir(pathname):
+    """Directory of a project (registered project or user session)."""
+    row = query_db("SELECT path FROM projects WHERE title = ?", (pathname,), one=True)
+    return row[0] if row else conf["session_dir"] + "/" + pathname
+
+
+@lru_cache(maxsize=1024)
+def _load_contigs(contigs_file, mtime):
+    """{locus_tag: contig} from a <strain>.contigs.tsv file."""
+    contigs = {}
+    try:
+        with open(contigs_file, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                cols = line.rstrip("\n").split("\t")
+                if len(cols) >= 2 and cols[0] not in contigs:
+                    contigs[cols[0]] = cols[1]
+    except OSError:
+        pass
+    return contigs
+
+
+@lru_cache(maxsize=1024)
+def _load_ptt_positions(ptt_file, mtime, contigs_file, contigs_mtime):
+    """{gene identifier (PID, Gene, Synonym): position dict} for a .ptt file.
+
+    Coordinates of the .ptt are relative to the contig (block_id column when present,
+    otherwise the contig given by <strain>.contigs.tsv)."""
+    contigs = _load_contigs(contigs_file, contigs_mtime)
+    positions = {}
+    try:
+        with open(ptt_file, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                cols = line.rstrip("\n").split("\t")
+                if len(cols) < 9 or ".." not in cols[0]:
+                    continue
+                try:
+                    start, end = (int(x) for x in cols[0].split("..", 1))
+                except ValueError:
+                    continue
+                synonym = cols[5] if cols[5] and cols[5] != "-" else cols[3].split("|")[-1]
+                contig = cols[9] if len(cols) > 9 and cols[9] else contigs.get(synonym, "")
+                info = {"Synonym": synonym, "Contig": contig, "Start": start, "End": end,
+                        "Strand": cols[1], "Length": int(cols[2]) if cols[2].isdigit() else abs(end - start) + 1}
+                for idx in (3, 5, 4):  # PID has priority
+                    if cols[idx] and cols[idx] != "-":
+                        positions.setdefault(cols[idx], info)
+    except OSError:
+        pass
+    return positions
+
+
+def get_gene_positions(project_dir, strain):
+    gdir = project_dir + "/genomes/genomes/"
+    ptt_file = gdir + strain + ".ptt"
+    contigs_file = gdir + strain + ".contigs.tsv"
+    return _load_ptt_positions(ptt_file, _mtime(ptt_file), contigs_file, _mtime(contigs_file))
+
+
+_FASTA_ATTR_RE = re.compile(r"\[(?:protein_id|locus_tag|gene|ID)=([^\]\s]+)\]")
+
+
+@lru_cache(maxsize=256)
+def _load_fasta_index(fasta_file, mtime):
+    """{identifier: sequence} for a .faa / .fna file (first word of the header + [protein_id=], [locus_tag=]...)."""
+    seqs = {}
+    keys, chunks = None, []
+
+    def flush():
+        if keys:
+            seq = "".join(chunks)
+            for k in keys:
+                seqs.setdefault(k, seq)
+
+    try:
+        with open(fasta_file, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith(">"):
+                    flush()
+                    header = line[1:]
+                    first = header.split()[0] if header.split() else ""
+                    keys = [first] + _FASTA_ATTR_RE.findall(header)
+                    chunks = []
+                else:
+                    chunks.append(line)
+            flush()
+    except OSError:
+        pass
+    return seqs
+
+
+def get_gene_sequences(project_dir, strain, genes, seq_type="protein"):
+    """[(gene, header, sequence)] for the comma-separated genes of one strain."""
+    ext = ".faa" if seq_type == "protein" else ".fna"
+    fasta_file = project_dir + "/genomes/genomes/" + strain + ext
+    index = _load_fasta_index(fasta_file, _mtime(fasta_file))
+    positions = get_gene_positions(project_dir, strain)
+    result = []
+    for gene in str(genes).split(","):
+        gene = gene.strip()
+        if not gene or gene == "-":
+            continue
+        pos = positions.get(gene)
+        candidates = [gene, gene.split("|")[-1]] + ([pos["Synonym"]] if pos else [])
+        seq = next((index[c] for c in candidates if c in index), "")
+        header = f"{gene} [strain={strain}]"
+        if pos:
+            header += f" [location={pos['Contig']}:{pos['Start']}-{pos['End']}({pos['Strand']})]"
+        result.append((gene, header, seq))
+    return result
+
+
+def format_fasta(header, seq, width=60):
+    return ">" + header + "\n" + "\n".join(seq[i:i + width] for i in range(0, len(seq), width)) + "\n"
+
+
+def build_cluster_fasta(cluster, projets, list_of_strains, seq_type="protein"):
+    """(fasta text, number of sequences, list of genes without sequence) for a cluster."""
+    nb_presence, rows, _ = get_cluster_details(cluster, projets, list_of_strains)
+    project_dir = _project_dir(projets)
+    parts, missing = [], []
+    for row in rows:
+        for gene, header, seq in get_gene_sequences(project_dir, row["Species"], row["Genes"], seq_type):
+            if seq:
+                if row.get("Product"):
+                    header += f" {row['Product']}"
+                parts.append(format_fasta(header, seq))
+            else:
+                missing.append(f"{gene} ({row['Species']})")
+    return "".join(parts), len(parts), missing
+
+
 def get_cluster_details(cluster,pathname,list_of_strains):
 
     global directory
@@ -4537,8 +4800,20 @@ def get_cluster_details(cluster,pathname,list_of_strains):
         product = ""
         for gene in genes.split(","):
             product = products.get(gene.strip(), product)
+        positions = get_gene_positions(directory, item)
+        pos_list = [positions[g.strip()] for g in genes.split(",") if g.strip() in positions]
+
+        def _join(key):
+            values = [p[key] for p in pos_list]
+            return values[0] if len(values) == 1 else ", ".join(str(v) for v in values)
+
         list_of_list.append({'Cluster': int(cells[0]) if cells[0].isdigit() else cells[0],
-                             'Species': item, 'Genes': genes, 'Product': product})
+                             'Species': item, 'Genes': genes, 'Product': product,
+                             'Contig': _join("Contig") if pos_list else "",
+                             'Start': _join("Start") if pos_list else "",
+                             'End': _join("End") if pos_list else "",
+                             'Strand': _join("Strand") if pos_list else "",
+                             'Length': _join("Length") if pos_list else ""})
         nb_presence += 1
 
     return nb_presence, list_of_list, ""
