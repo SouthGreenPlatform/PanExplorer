@@ -5216,9 +5216,28 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     merged_with_cog = pd.merge(df2, df_cog_of_clusters_grouped_by_cluster, how="left", left_on='ClutserID', right_on='Cluster')
 
     # Get functions of clusters
-    df_functions = pd.read_csv(directory+"/functions_of_clusters.tsv",sep="\t")
-    df_functions.columns = ['Cluster', 'Product']
+    # If the file is missing, empty or malformed, do not crash: warn and leave the Product column empty
+    functions_file = directory + "/functions_of_clusters.tsv"
+    df_functions = pd.DataFrame({'Cluster': pd.Series(dtype='int64'), 'Product': pd.Series(dtype='object')})
+    if os.path.exists(functions_file) and os.path.getsize(functions_file) > 0:
+        try:
+            df_read = pd.read_csv(functions_file, sep="\t")
+            if df_read.shape[1] >= 2 and len(df_read) > 0:
+                df_read = df_read.iloc[:, [0, -1]]
+                df_read.columns = ['Cluster', 'Product']
+                df_read['Cluster'] = pd.to_numeric(
+                    df_read['Cluster'].astype(str).str.replace('CLUSTER', ''), errors='coerce')
+                df_read = df_read.dropna(subset=['Cluster'])
+                df_read['Cluster'] = df_read['Cluster'].astype('int64')
+                df_functions = df_read
+            else:
+                logger.warning("functions_of_clusters.tsv has no usable content (%s): Product column will be empty", functions_file)
+        except Exception as e:
+            logger.warning("Could not read functions_of_clusters.tsv (%s): %s. Product column will be empty", functions_file, e)
+    else:
+        logger.warning("functions_of_clusters.tsv not found or empty (%s): Product column will be empty", functions_file)
     merged_with_functions = pd.merge(merged_with_cog, df_functions, how="left", left_on='ClutserID', right_on='Cluster')
+    merged_with_functions['Product'] = merged_with_functions['Product'].fillna("")
     merged_with_cog = merged_with_functions
 
     
