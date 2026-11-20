@@ -3398,6 +3398,12 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
                                         [
                                             dbc.CardBody(
                                                 [
+                                                    html.Div([
+                                                        html.Button("Download ANI matrix (text)", id="download_ani_matrix_btn", className="thin-button", n_clicks=0),
+                                                        html.Button("Download ANI pairwise values (text)", id="download_ani_pairwise_btn", className="thin-button", n_clicks=0, style={"marginLeft": "10px"}),
+                                                        dcc.Download(id="download-ani-matrix"),
+                                                        dcc.Download(id="download-ani-pairwise"),
+                                                    ], style={"textAlign": "right", "marginBottom": "10px"}),
                                                     dcc.Graph(id='graph_ANI')
                                                 ],
                                                 style={"textAlign": "center"}
@@ -8093,6 +8099,64 @@ def parse_vcf(vcf_file, max_variants=2000, samples_subset=None):
     df_ordered = df[samples_subset]
     
     return df_ordered
+
+
+def _ani_project_directory(proj_title):
+    """Directory of the project (same logic as the other callbacks)."""
+    if not proj_title:
+        return None
+    row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
+    return row[0] if row else conf["session_dir"] + "/" + proj_title
+
+
+@app.callback(
+    Output("download-ani-matrix", "data"),
+    Input("download_ani_matrix_btn", "n_clicks"),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_ani_matrix(n, proj_title):
+    """Download the full ANI matrix (fastANI output, tab-separated text)."""
+    directory = _ani_project_directory(proj_title)
+    f = directory + "/fastani.out.matrix.complete.xls" if directory else None
+    if not f or not os.path.exists(f) or os.path.getsize(f) == 0:
+        logger.warning("ANI download: matrix file not found for project %s", proj_title)
+        raise PreventUpdate
+    return dcc.send_file(f, filename="ANI_matrix.tsv")
+
+
+@app.callback(
+    Output("download-ani-pairwise", "data"),
+    Input("download_ani_pairwise_btn", "n_clicks"),
+    State('projets', 'value'),
+    prevent_initial_call=True
+)
+def download_ani_pairwise(n, proj_title):
+    """Download pairwise ANI values as text.
+    Uses the raw fastANI output (fastani.out) when present, otherwise
+    converts the ANI matrix into a 3-column table (Genome1, Genome2, ANI)."""
+    directory = _ani_project_directory(proj_title)
+    if not directory:
+        raise PreventUpdate
+    raw = directory + "/fastani.out"
+    if os.path.exists(raw) and os.path.getsize(raw) > 0:
+        return dcc.send_file(raw, filename="fastANI_output.txt")
+    f = directory + "/fastani.out.matrix.complete.xls"
+    if not os.path.exists(f) or os.path.getsize(f) == 0:
+        logger.warning("ANI download: no ANI output found for project %s", proj_title)
+        raise PreventUpdate
+    try:
+        df = pd.read_csv(f, sep="\t")
+        df["Genomes"] = df["Genomes"].astype(str)
+        df = df.drop_duplicates(subset="Genomes").set_index("Genomes")
+        df.index.name = "Genome1"
+        long = df.stack().reset_index()
+        long.columns = ["Genome1", "Genome2", "ANI"]
+        long = long[long["Genome1"] != long["Genome2"].astype(str)]
+    except Exception as e:
+        logger.warning("ANI download: could not convert ANI matrix (%s)", e)
+        raise PreventUpdate
+    return dcc.send_data_frame(long.to_csv, "ANI_pairwise.tsv", sep="\t", index=False)
 
 
 def build_ani_clustered_heatmap(df_ani, height=1200, width=1700):
