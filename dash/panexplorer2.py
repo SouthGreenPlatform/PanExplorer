@@ -5370,7 +5370,7 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
         simplified_df_matrix[[reference]] = simplified_df_matrix[reference].str.extract('([^,]+),*', expand=True)
 
-        merged_with_positions = pd.merge(simplified_df_matrix, df_gene_positons, left_on=reference, right_on='PID')
+        merged_with_positions = _merge_with_gene_positions(simplified_df_matrix, [df_gene_positons], reference)
         
         #merged_with_positions = pd.merge(df_matrix, df_gene_positons, left_on=reference, right_on='PID')
 
@@ -5712,10 +5712,25 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
     data_COG2 = pd.DataFrame()
     fig_COG1 = None
     fig_COG2 = None
-    if os.path.exists(directory+"/cog_category_2_counts.txt") and os.path.getsize(directory+"/cog_category_2_counts.txt") > 0:
+    # cog_category_2_counts.txt may be missing, empty or malformed (e.g. eukaryotic
+    # projects without COG annotation, where the workflow wrote unrelated tables
+    # into it). In that case, skip the COG graphs instead of crashing the callback.
+    cog_counts_file = directory + "/cog_category_2_counts.txt"
+    data_COG2_loaded = None
+    if os.path.exists(cog_counts_file) and os.path.getsize(cog_counts_file) > 0:
+        try:
+            data_COG2_loaded = pd.read_csv(cog_counts_file, sep='\t')
+            if "COG" not in data_COG2_loaded.columns:
+                logger.warning("COG counts file %s has no 'COG' column (columns: %s): COG graphs skipped",
+                               cog_counts_file, list(data_COG2_loaded.columns)[:5])
+                data_COG2_loaded = None
+        except Exception as e:
+            logger.warning("COG counts file %s could not be parsed (%s): COG graphs skipped", cog_counts_file, e)
+            data_COG2_loaded = None
+    if data_COG2_loaded is not None:
         #data_COG1 = pd.read_csv(directory+'/cog_category_counts.txt',sep='\t')
         #data_COG1 = data_COG1.rename(columns={'COG': 'Genome'})
-        data_COG2 = pd.read_csv(directory+'/cog_category_2_counts.txt',sep='\t')
+        data_COG2 = data_COG2_loaded
         data_COG2 = data_COG2.rename(columns={'COG': 'Genome'})
         #data_COG1_selected = data_COG1[data_COG1["Genome"].isin(list_sp2)]
         data_COG2_selected = data_COG2[data_COG2["Genome"].isin(list_sp2)]
@@ -7715,6 +7730,28 @@ def update_MLVA(submit_vntr, selected, v_rows, rows, session):
 
 
 
+def _merge_with_gene_positions(matrix_df, positions_list, key_col):
+    """Merge the ortholog matrix with gene positions (.ptt).
+    Gene identifiers in the ortholog matrix may correspond to the PID column
+    (protein_id) or to Synonym (locus_tag) / Gene depending on how the genome
+    was annotated: try each of them, on each positions table, and keep the first
+    non-empty result. Returns an empty DataFrame if nothing matches."""
+    for col in ("PID", "Synonym", "Gene"):
+        for pos_df in positions_list:
+            if col not in pos_df.columns or pos_df.empty:
+                continue
+            right = pos_df
+            if col != "PID":
+                right = pos_df[pos_df[col].astype(str).str.strip().ne("-")]
+            merged = pd.merge(matrix_df, right, left_on=key_col, right_on=col)
+            if not merged.empty:
+                if col != "PID":
+                    logger.warning("Gene positions for %s matched on column '%s' instead of 'PID'", key_col, col)
+                return merged
+    logger.warning("No gene of %s found in its .ptt file (PID/Synonym/Gene): no gene positions", key_col)
+    return pd.DataFrame()
+
+
 def init_dataframes(pathname):
     
     #directory = get_directory(pathname)
@@ -7803,15 +7840,20 @@ def init_dataframes(pathname):
         
     dprint("df_init")
     dprint(df_matrix_init)
-    merged_with_positions = pd.merge(df_matrix_init, df_gene_positons, left_on=list_species_with_ptt[0], right_on='PID')
+    merged_with_positions = _merge_with_gene_positions(df_matrix_init, [df_gene_positons, df_gene_positons2], list_species_with_ptt[0])
     if merged_with_positions.empty:
-        merged_with_positions = pd.merge(df_matrix_init, df_gene_positons2, left_on=list_species_with_ptt[0], right_on='PID')
+        # no position available: keep the expected columns so that the rest of the app does not crash
+        merged_with_positions = pd.DataFrame(columns=['ClutserID', 'block_id', 'Location', 'Strand'])
 
     dprint("df_gene_positions")
     dprint(df_gene_positons)
     # rename and reorganize columns
     merged_with_positions = merged_with_positions.rename(columns={'ClutserID': 'name'})
-    merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', expand=True)
+    if merged_with_positions.empty:
+        merged_with_positions['start'] = pd.Series(dtype=int)
+        merged_with_positions['end'] = pd.Series(dtype=int)
+    else:
+        merged_with_positions[['start', 'end']] = merged_with_positions['Location'].str.split('\.\.', n=1, expand=True)
     #merged_with_positions.insert(0, 'block_id', 'chr1')
 
     
