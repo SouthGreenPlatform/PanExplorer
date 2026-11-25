@@ -1436,30 +1436,73 @@ def load_project_preview(proj_title):
                                 #     ], style={'display': 'inline-block', 'margin-right': '10px','width':'350px'}),
 
                                 
+                            ]),
+
+                            # ── Search in the gene PAV matrix: keyword / COG / KEGG / reference region ──
+                            html.Div(id='pav_search_container', style={"display": "flex", "alignItems": "flex-end", "gap": "10px", "flexWrap": "wrap", "marginTop": "8px"}, children=[
                                 html.Div([
-                                    html.Label("Highlight clusters by keyword or COG:"),
+                                    html.Label("Search clusters by:"),
+                                    dcc.Dropdown(
+                                            id='pav_search_type',
+                                            options=[
+                                                {'label': 'Keyword (function, gene name/ID)', 'value': 'keyword'},
+                                                {'label': 'COG (ID, category letter or term)', 'value': 'cog'},
+                                                {'label': 'KEGG (KO, module/pathway ID or name)', 'value': 'kegg'},
+                                            ],
+                                            value='keyword',
+                                            clearable=False,
+                                            style={'width': '290px'},
+                                            multi=False
+                                        ),
+                                    ], style={'display': 'inline-block', 'width': '290px'}),
+                                html.Div([
+                                    html.Label("Terms (comma-separated):"),
                                     dcc.Input(
                                             id='cluster_search',
+                                            type='text',
+                                            debounce=True,
+                                            placeholder='e.g. transporter, dnaK  |  COG1192, L  |  K02013, map02010',
+                                            style={'width': '330px'},
+                                            value = '',
+                                        ),
+                                    ], style={'display': 'inline-block', 'width': '330px'}),
+                                html.Div([
+                                    html.Label("Reference genome region(s):"),
+                                    dcc.Input(
+                                            id='bedfile',
+                                            type='text',
+                                            debounce=True,
+                                            placeholder='e.g. chr1:10000-50000  or  chr1 10000 50000',
                                             style={'width': '300px'},
                                             value = '',
                                         ),
-                                    
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
+                                    ], style={'display': 'inline-block', 'width': '300px'}),
                                 html.Div([
-                                    html.Label("Highlight genomic intervals (bedfile):"),
-                                    dcc.Textarea(
-                                            id='bedfile',
-                                            style={'width': '300px', 'height': 30},
-                                            value = '',
+                                    html.Label("Several terms:"),
+                                    dcc.RadioItems(
+                                            id='pav_search_combine',
+                                            options=[{'label': ' any (OR)', 'value': 'or'}, {'label': ' all (AND)', 'value': 'and'}],
+                                            value='or',
+                                            inline=True,
+                                            inputStyle={'marginRight': '3px', 'marginLeft': '6px'},
                                         ),
-                                    
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
-
+                                    ], style={'display': 'inline-block'}),
                                 html.Div([
-                                    
-                                    html.Button("Highlight", id="highlight_button",className="thin-button", n_clicks=0),
-                                    ], style={'display': 'inline-block', 'margin-right': '10px','width':'300px'}),
+                                    html.Label("Display:"),
+                                    dcc.RadioItems(
+                                            id='pav_search_mode',
+                                            options=[{'label': ' Highlight', 'value': 'highlight'}, {'label': ' Filter (show matches only)', 'value': 'filter'}],
+                                            value='highlight',
+                                            inline=True,
+                                            inputStyle={'marginRight': '3px', 'marginLeft': '6px'},
+                                        ),
+                                    ], style={'display': 'inline-block'}),
+                                html.Div([
+                                    html.Button("Search", id="highlight_button", className="thin-button", n_clicks=0),
+                                    html.Button("Reset", id="pav_search_reset", className="thin-button", n_clicks=0, style={'marginLeft': '6px'}),
+                                    ], style={'display': 'inline-block'}),
                             ]),
+                            html.Div(id='pav_search_status', style={'marginTop': '4px', 'fontSize': '13px', 'color': '#555'}),
                             
                             html.Br(),
                             # html.Div([
@@ -3481,16 +3524,20 @@ html.Div(id='snps-snmf-results', style={'display': 'none', 'paddingLeft': '15px'
     Output('pav_controls_container', 'style'),
     Output('stats_container', 'style'),
     Output('pav_upset_card_row', 'style'),
+    Output('pav_search_container', 'style'),
+    Output('pav_search_status', 'style'),
     Input('display_type', 'value'),
 )
 def toggle_pav_upset_display(display_type):
     hidden = {'display': 'none'}
     card_row = {"padding": "15px"}
+    search_style = {"display": "flex", "alignItems": "flex-end", "gap": "10px", "flexWrap": "wrap", "marginTop": "8px"}
+    status_style = {'marginTop': '4px', 'fontSize': '13px', 'color': '#555'}
     if display_type == 'Upset plot':
-        return hidden, {'display': 'block'}, hidden, hidden, card_row
+        return hidden, {'display': 'block'}, hidden, hidden, card_row, hidden, hidden
     if display_type == 'Statistics':
-        return hidden, hidden, hidden, {'display': 'block'}, hidden
-    return {'display': 'block'}, hidden, {"display": "flex","alignItems": "center", "gap": "10px"}, hidden, card_row
+        return hidden, hidden, hidden, {'display': 'block'}, hidden, hidden, hidden
+    return {'display': 'block'}, hidden, {"display": "flex","alignItems": "center", "gap": "10px"}, hidden, card_row, search_style, status_style
 
 
 # Meme bascule PAV matrix / Upset plot, appliquee cette fois aux segments
@@ -4038,9 +4085,12 @@ def show_nodes_on_pav(n_show, n_clear, selected_rows, node_names):
     Input('colorizing_labels', 'value'),
     State('cluster_search','value'),
     State('bedfile','value'),    
+    State('pav_search_type','value'),
+    State('pav_search_mode','value'),
+    State('pav_search_combine','value'),
     prevent_initial_call=True
 )
-def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,colorizing_labels,cluster_search,bedfile):
+def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_table,projets,url,session,current_layout,current_tracks,reference,proj_title,ordering,colorizing,colorizing_labels,cluster_search,bedfile,search_type='keyword',search_mode='highlight',search_combine='or'):
 
     if not n_clicks or not selected_cell:
         raise PreventUpdate
@@ -4109,7 +4159,8 @@ def apply_selection_in_PAV(n_clicks, selected_cell, current_figure, metadata_tab
     list_clusters1 = df_selected["ClutserID"].tolist()
     list_clusters2 = df_selected_opposite["ClutserID"].tolist()
 
-    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1,
+                      search_type=search_type, search_mode=search_mode, search_combine=search_combine)
 
 
     return False, fig, [{'label': str(cluster), 'value': str(cluster)}],list_strains,dictionary_selected,"Clusters respecting PAV pattern: "+str(len(dictionary_selected))+ " clusters", dictionary_selected_opposite, "Clusters respecting opposite PAV pattern: "+str(len(dictionary_selected_opposite))+ " clusters", None, current_layout, current_tracks, ["Clusters respecting opposite PAV pattern"],["Clusters respecting PAV pattern"],[reference],fig,empty_figure(), empty_figure()
@@ -5091,11 +5142,14 @@ def choose_reference_genome(options, cell_changed, selected_rows, row_data, curr
     State("my-dashbio-default-circos", "tracks"),
     State("chromosome",'value'),
     State("minimal_size_block",'value'),
+    State('pav_search_type','value'),
+    State('pav_search_mode','value'),
+    State('pav_search_combine','value'),
 
     background=True,
     prevent_initial_call=True
 )
-def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block):
+def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_title,url,n_clicks,specific_to,cluster_search,bedfile,metadata_table,current_layout,current_tracks,chromosome, minimal_size_block, search_type='keyword', search_mode='highlight', search_combine='or'):
     if not proj_title:
         return "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
@@ -5106,10 +5160,10 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
         path = row[0]
     directory = path
 
-    if is_stringlist_without_special_character(cluster_search) == False:
+    # the search text is no longer passed to a shell (pure pandas search): only check the type
+    if not isinstance(cluster_search, str):
         cluster_search = ""
-
-    if is_bed(bedfile) == False:
+    if not isinstance(bedfile, str):
         bedfile = ""
 
     session = str(uuid.uuid4())
@@ -5579,7 +5633,8 @@ def trigger_heavy_update(reference,ordering,colorizing,colorizing_labels,proj_ti
 
             
 
-    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1)
+    fig = heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,1,
+                      search_type=search_type, search_mode=search_mode, search_combine=search_combine)
 
     
     #fig.update_traces(showscale=False)
@@ -7089,8 +7144,293 @@ def pca(dimension_pca,colorizing_pca,session):
     return fig_scatter
 
 
+##########################################################################################
+# Search in the gene PAV matrix: keyword / COG / KEGG / genomic region of the reference.
+# Pure pandas (no shell call): the user text is never passed to grep/awk.
+# Returns the set of matching cluster IDs (int), used either to highlight the clusters
+# on the PAV heatmap or to restrict the heatmap to these clusters (filter mode).
+##########################################################################################
+_PAV_SEARCH_MAX_TERMS = 50
+_PAV_SEARCH_MAX_TERM_LEN = 100
+_PAV_SEARCH_MAX_REGIONS = 500
+
+
+def _pav_cluster_ids(series):
+    """Cluster IDs as numbers (accepts 12, '12', 'CLUSTER12', 12.0)."""
+    return pd.to_numeric(series.astype(str).str.replace('CLUSTER', '', regex=False).str.strip(), errors='coerce')
+
+
+def _pav_split_terms(text):
+    if not isinstance(text, str):
+        return []
+    terms = [t.strip() for t in re.split(r'[,;\n]+', text)]
+    terms = [t[:_PAV_SEARCH_MAX_TERM_LEN] for t in terms if t]
+    return terms[:_PAV_SEARCH_MAX_TERMS]
+
+
+def _pav_concat_text(df, cols):
+    """Concatenate several columns into one lower-case string per row (vectorized)."""
+    out = None
+    for c in cols:
+        col = df[c].fillna('').astype(str)
+        out = col if out is None else out + ' | ' + col
+    if out is None:
+        return pd.Series('', index=df.index)
+    return out.str.lower()
+
+
+def _pav_read_csv_safe(path, **kwargs):
+    try:
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            return pd.read_csv(path, **kwargs)
+    except Exception as e:
+        logger.warning("PAV search: could not read %s: %s", path, e)
+    return None
+
+
+def _pav_combine_masks(masks, combine):
+    """masks: list of (term, set_of_ids). Returns the union (or) / intersection (and)."""
+    result = None
+    for _, ids in masks:
+        if result is None:
+            result = set(ids)
+        elif combine == 'and':
+            result &= ids
+        else:
+            result |= ids
+    return result if result is not None else set()
+
+
+def _pav_keyword_table(directory, session):
+    """One searchable text per cluster: functions, COG, gene IDs of all genomes, reference annotation."""
+    pieces = []
+    df_cog = _pav_read_csv_safe(tmp_dir + "/" + str(session) + ".merged_with_cog_final.csv", sep='\t')
+    if df_cog is not None and 'ClutserID' in df_cog.columns:
+        cols = [c for c in ['Product', 'COG term', 'COG', 'COGcat'] if c in df_cog.columns]
+        if cols:
+            pieces.append(pd.DataFrame({'id': _pav_cluster_ids(df_cog['ClutserID']), 'text': _pav_concat_text(df_cog, cols)}))
+    # gene IDs / names of every genome (cells of the orthologs matrix)
+    df_matrix = _pav_read_csv_safe(tmp_dir + "/" + str(session) + ".df_matrix.csv", index_col=0)
+    if df_matrix is not None and 'ClutserID' in df_matrix.columns:
+        cols = [c for c in df_matrix.columns if c != 'ClutserID']
+        pieces.append(pd.DataFrame({'id': _pav_cluster_ids(df_matrix['ClutserID']), 'text': _pav_concat_text(df_matrix, cols)}))
+    # annotation of the reference genome (.ptt: Product, Gene, Synonym, PID...)
+    df_pos = _pav_read_csv_safe(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
+    if df_pos is not None and 'name' in df_pos.columns:
+        cols = [c for c in ['Product', 'Gene', 'Synonym', 'PID', 'Code', 'COG'] if c in df_pos.columns]
+        if cols:
+            pieces.append(pd.DataFrame({'id': _pav_cluster_ids(df_pos['name']), 'text': _pav_concat_text(df_pos, cols)}))
+    if not pieces:
+        return None
+    table = pd.concat(pieces, ignore_index=True).dropna(subset=['id'])
+    return table
+
+
+def _pav_search_keyword(directory, session, terms, combine, messages):
+    table = _pav_keyword_table(directory, session)
+    if table is None or table.empty:
+        messages.append("No annotation table available for keyword search.")
+        return set()
+    masks = []
+    for term in terms:
+        ids = set(table.loc[table['text'].str.contains(term.lower(), regex=False), 'id'].astype(int))
+        masks.append((term, ids))
+        if not ids:
+            messages.append(f"'{term}': no match.")
+    return _pav_combine_masks(masks, combine)
+
+
+def _pav_search_cog(directory, session, terms, combine, messages):
+    pieces = []
+    # all COGs of each cluster (cog_of_clusters.2.txt), not only the first one kept in the merged table
+    df_all = _pav_read_csv_safe(directory + "/cog_of_clusters.2.txt", sep='\t', header=None, dtype=str)
+    if df_all is not None and df_all.shape[1] >= 3:
+        df_all = df_all.iloc[:, :3]
+        df_all.columns = ['ClutserID', 'COG', 'COGcat']
+        pieces.append(df_all)
+    df_cog = _pav_read_csv_safe(tmp_dir + "/" + str(session) + ".merged_with_cog_final.csv", sep='\t', dtype=str)
+    if df_cog is not None and 'ClutserID' in df_cog.columns:
+        pieces.append(df_cog[[c for c in ['ClutserID', 'COG', 'COGcat', 'COG term'] if c in df_cog.columns]])
+    if not pieces:
+        messages.append("No COG annotation for this project.")
+        return set()
+    table = pd.concat(pieces, ignore_index=True)
+    for c in ['COG', 'COGcat', 'COG term']:
+        if c not in table.columns:
+            table[c] = ''
+        table[c] = table[c].fillna('').astype(str)
+    table['id'] = _pav_cluster_ids(table['ClutserID'])
+    table = table.dropna(subset=['id'])
+    if (table['COG'].str.strip() == '').all() and (table['COGcat'].str.strip() == '').all():
+        messages.append("No COG annotation for this project.")
+        return set()
+    masks = []
+    for term in terms:
+        t = term.strip()
+        if re.fullmatch(r'(?i)COG\d+', t):                       # COG identifier
+            m = table['COG'].str.upper().str.contains(t.upper(), regex=False)
+        elif re.fullmatch(r'[A-Za-z]', t):                       # functional category letter
+            m = table['COGcat'].str.upper().str.contains(t.upper(), regex=False)
+        else:                                                    # free text in the COG description
+            m = table['COG term'].str.lower().str.contains(t.lower(), regex=False) | \
+                table['COG'].str.lower().str.contains(t.lower(), regex=False)
+        ids = set(table.loc[m, 'id'].astype(int))
+        masks.append((t, ids))
+        if not ids:
+            messages.append(f"'{t}': no COG match.")
+    return _pav_combine_masks(masks, combine)
+
+
+def _pav_search_kegg(directory, session, terms, combine, messages):
+    data_kegg = _pav_read_csv_safe(directory + '/kegg_of_clusters.txt', sep='\t', header=None,
+                                   names=["module", "module_name", "KO", "cluster"], dtype=str)
+    if data_kegg is None:
+        messages.append("No KEGG annotation for this project (kegg_of_clusters.txt missing or empty).")
+        return set()
+    data_kegg = data_kegg.fillna('')
+    data_kegg['id'] = _pav_cluster_ids(data_kegg['cluster'].replace('', np.nan))
+    data_kegg = data_kegg.dropna(subset=['id'])
+    masks = []
+    for term in terms:
+        t = term.strip()
+        tl = t.lower()
+        if re.fullmatch(r'(?i)(ko:)?K\d{5}', t):                 # KEGG orthology
+            m = data_kegg['KO'].str.lower().str.contains(tl.replace('ko:', ''), regex=False)
+        elif re.fullmatch(r'(?i)(M\d{5}|map\d{5}|ko\d{5})', t):  # module / pathway identifier
+            tl2 = 'map' + tl[2:] if tl.startswith('ko') else tl
+            m = data_kegg['module'].str.lower() == tl2
+        else:                                                    # module / pathway name
+            m = data_kegg['module_name'].str.lower().str.contains(tl, regex=False)
+        ids = set(data_kegg.loc[m, 'id'].astype(int))
+        masks.append((t, ids))
+        if not ids:
+            messages.append(f"'{t}': no KEGG match.")
+    return _pav_combine_masks(masks, combine)
+
+
+def _pav_norm_chrom(name):
+    """'chr01', 'Chr1', 'chromosome_1', '1' -> '1' (tolerates the different naming conventions)."""
+    n = str(name).strip().lower()
+    n = re.sub(r'^(chromosome|chrom|chr)[_\-\s]*', '', n)
+    n = n.lstrip('0') or n
+    return n
+
+
+def _parse_pav_regions(text):
+    """Parse regions: 'chr1:100-200', BED lines 'chr1<TAB>100<TAB>200', '100-200' (any chromosome), 'chr1'.
+    Returns (list of (chrom_or_None, start, end), list of rejected lines)."""
+    regions, rejected = [], []
+    if not isinstance(text, str):
+        return regions, rejected
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith(('#', 'track', 'browser')):
+            continue
+        clean = line.replace(',', '')
+        m = re.fullmatch(r'(\S+?)\s*:\s*(\d+)\s*[-.]+\s*(\d+)', clean)                # chr:start-end
+        if not m:
+            m = re.fullmatch(r'(\S+)\s+(\d+)\s+(\d+)(\s+.*)?', clean)                 # BED
+        if m:
+            chrom, a, b = m.group(1), int(m.group(2)), int(m.group(3))
+        else:
+            m = re.fullmatch(r'(\d+)\s*(?:-+|\.\.|\s)\s*(\d+)', clean)                # start-end
+            if m:
+                chrom, a, b = None, int(m.group(1)), int(m.group(2))
+            elif re.fullmatch(r'[A-Za-z0-9_.\-|]+', clean) and not clean.isdigit():   # whole chromosome
+                chrom, a, b = clean, 0, float('inf')
+            else:
+                rejected.append(line)
+                continue
+        if a > b:
+            a, b = b, a
+        regions.append((chrom, a, b))
+        if len(regions) >= _PAV_SEARCH_MAX_REGIONS:
+            break
+    return regions, rejected
+
+
+def _pav_search_regions(session, regions_text, messages):
+    regions, rejected = _parse_pav_regions(regions_text)
+    for r in rejected[:5]:
+        messages.append(f"Region not understood: '{r}' (expected chr:start-end or BED).")
+    if not regions:
+        return set()
+    df_pos = _pav_read_csv_safe(tmp_dir + "/" + str(session) + ".merged_with_positions2.csv")
+    if df_pos is None or 'name' not in df_pos.columns or 'start' not in df_pos.columns:
+        messages.append("No gene positions for the reference genome: region search unavailable.")
+        return set()
+    df_pos = df_pos.copy()
+    df_pos['start'] = pd.to_numeric(df_pos['start'], errors='coerce')
+    df_pos['end'] = pd.to_numeric(df_pos['end'], errors='coerce') if 'end' in df_pos.columns else df_pos['start']
+    df_pos['id'] = _pav_cluster_ids(df_pos['name'])
+    df_pos = df_pos.dropna(subset=['start', 'end', 'id'])
+    chrom_col = df_pos['block_id'].astype(str) if 'block_id' in df_pos.columns else pd.Series('chr1', index=df_pos.index)
+    df_pos['chrom_norm'] = chrom_col.map(_pav_norm_chrom)
+    known = sorted(chrom_col.unique().tolist())
+    ids = set()
+    for chrom, a, b in regions:
+        # overlap between gene [start, end] and region [a, b]
+        m = (df_pos['start'] <= b) & (df_pos['end'] >= a)
+        if chrom is not None:
+            mc = df_pos['chrom_norm'] == _pav_norm_chrom(chrom)
+            if not mc.any():
+                messages.append(f"Chromosome '{chrom}' not found in the reference (available: {', '.join(known[:10])}{'…' if len(known) > 10 else ''}).")
+                continue
+            m = m & mc
+        ids |= set(df_pos.loc[m, 'id'].astype(int))
+    return ids
+
+
+def _pav_search_clusters(directory, session, search_type, terms_text, regions_text, combine='or'):
+    """Returns (set of cluster IDs or None if no search requested, list of messages)."""
+    messages = []
+    terms = _pav_split_terms(terms_text)
+    has_regions = isinstance(regions_text, str) and regions_text.strip() != ''
+    if not terms and not has_regions:
+        return None, messages
+    result = None
+    if terms:
+        try:
+            if search_type == 'cog':
+                result = _pav_search_cog(directory, session, terms, combine, messages)
+            elif search_type == 'kegg':
+                result = _pav_search_kegg(directory, session, terms, combine, messages)
+            else:
+                result = _pav_search_keyword(directory, session, terms, combine, messages)
+        except Exception as e:
+            logger.warning("PAV search (%s) failed: %s", search_type, e)
+            messages.append("Search failed (see logs).")
+            result = set()
+    if has_regions:
+        try:
+            region_ids = _pav_search_regions(session, regions_text, messages)
+        except Exception as e:
+            logger.warning("PAV region search failed: %s", e)
+            messages.append("Region search failed (see logs).")
+            region_ids = set()
+        # terms AND regions when both are given
+        result = region_ids if result is None else (result & region_ids)
+    return result, messages
+
+
+@app.callback(
+    Output('cluster_search', 'value'),
+    Output('bedfile', 'value'),
+    Output('highlight_button', 'n_clicks'),
+    Input('pav_search_reset', 'n_clicks'),
+    State('highlight_button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def reset_pav_search(n_reset, n_search):
+    if not n_reset:
+        raise PreventUpdate
+    # clearing the fields and bumping the Search button redraws the full heatmap
+    return '', '', (n_search or 0) + 1
+
+
 @app.callback(
     Output('PAV_graph', 'figure', allow_duplicate=True),
+    Output('pav_search_status', 'children'),
     State('projets', 'value'),
     State('current_session', 'value'),
     Input('ordering', 'value'),
@@ -7102,11 +7442,27 @@ def pca(dimension_pca,colorizing_pca,session):
     State('bedfile', 'value'),
     Input('colorizing', 'value'),
     Input('highlight_button', 'n_clicks'),
+    State('pav_search_type', 'value'),
+    Input('pav_search_mode', 'value'),
+    State('pav_search_combine', 'value'),
     prevent_initial_call=True    
 )
-def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,highlight_button):
+def heatmap_PAV_callback(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,highlight_button,search_type,search_mode,search_combine):
+    if not proj_title or not session:
+        raise PreventUpdate
+    # switching Highlight/Filter without any search: nothing to redraw
+    if ctx.triggered_id == 'pav_search_mode' and not (cluster_search or '').strip() and not (bedfile or '').strip():
+        raise PreventUpdate
+    return heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,highlight_button,
+                       search_type=search_type, search_mode=search_mode, search_combine=search_combine, return_status=True)
+
+
+def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_labels,cluster_search,bedfile,colorizing,highlight_button,
+                search_type='keyword', search_mode='highlight', search_combine='or', return_status=False):
+    """Builds the gene PAV heatmap. Also called directly (not as a callback) by apply_selection_in_PAV and
+    trigger_heavy_update. With return_status=True, returns (figure, status text of the search)."""
     if not proj_title:
-        return "No project."
+        return ("No project.", "") if return_status else "No project."
     row = query_db("SELECT path FROM projects WHERE title = ?", (proj_title,), one=True)
     path = ""
     if not row:
@@ -7123,11 +7479,12 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
     list_clusters2 = df_selected_opposite["ClutserID"].tolist()
 
 
-    if is_stringlist_without_special_character(cluster_search) == False:
+    if not isinstance(cluster_search, str):
         cluster_search = ""
-
-    if is_bed(bedfile) == False:
+    if not isinstance(bedfile, str):
         bedfile = ""
+    if search_mode not in ('highlight', 'filter'):
+        search_mode = 'highlight'
 
     list_sp2 = []
     if metadata_table:
@@ -7150,6 +7507,24 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
     cluster_names = df2["ClutserID"].astype(str).tolist()
 
+    ##############################################
+    # search: keyword / COG / KEGG / region
+    ##############################################
+    search_ids, search_messages = _pav_search_clusters(directory, session, search_type, cluster_search, bedfile, search_combine)
+    search_active = search_ids is not None
+    search_highlight = search_active and search_mode == 'highlight'
+    search_filter = search_active and search_mode == 'filter'
+    if search_active:
+        n_in_matrix = int(_pav_cluster_ids(df2["ClutserID"]).isin(search_ids).sum())
+        search_status = f"🔎 {n_in_matrix} gene cluster(s) match the search"
+        search_status += " — highlighted in red." if search_mode == 'highlight' else " — heatmap restricted to these clusters."
+        if search_highlight and colorizing not in (None, 'Default presence/absence'):
+            search_status += " (Highlight is only visible with the 'Default presence/absence' colouring; use Filter or change the colouring.)"
+        if search_messages:
+            search_status += "  ⚠ " + " ".join(search_messages)
+    else:
+        search_status = ""
+
     search_res2 = []
     ticktext = ['Absence']
     tickval = ['0']
@@ -7157,7 +7532,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
     zmax = 1
 
     dprint(cluster_search)
-    if colorizing == "Reference genome" or colorizing == "Core-genes" or colorizing == "Strain-specific genes" or cluster_search != "" or bedfile != "" or (list_clusters1 is not None and len(list_clusters1) > 0):
+    if colorizing == "Reference genome" or colorizing == "Core-genes" or colorizing == "Strain-specific genes" or search_highlight or (list_clusters1 is not None and len(list_clusters1) > 0):
        colorscale = [[0, 'whitesmoke'], [0.67, 'teal'], [1, 'red']]
     else:
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [1, 'teal']]
@@ -7262,7 +7637,7 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
     ##############################################
     # get clusters specific to a subset of samples
     ##############################################
-    elif list_clusters1 is not None and len(list_clusters1) > 0 and cluster_search == "":
+    elif list_clusters1 is not None and len(list_clusters1) > 0 and not search_highlight:
 
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'purple'], [0.8, 'purple'], [0.8, 'red'], [1, 'red']]
 
@@ -7336,70 +7711,27 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
 
             
 
-    elif cluster_search != "":
-        
-        #cmd = "grep -P '"+cluster_search+"' "+directory+"/1.Orthologs_Cluster.txt | awk {'print $1'}"
-        #returned_value = os.popen(cmd).read()
-        #cluster_search = returned_value
-        #df_search = pd.DataFrame([int(returned_value)], columns=['ClutserID'])
-        #search_res2 = df_search.to_dict('records')
-        
+    elif search_highlight:
+        # matching clusters stay red (1), the other present genes become teal (0.67)
         colorscale = [[0, 'whitesmoke'],[0.5, 'whitesmoke'], [0.5, 'teal'], [0.75, 'teal'], [0.75, 'red'], [1, 'red']]
         ticktext.append("Presence")
         tickval.append(0.67)
-
-        #COG1192
-        list_of_clusters = []
-        list_of_COGs = cluster_search.split(",")
-        for cog in list_of_COGs:
-            cog = re.sub(r'[^a-zA-Z0-9]', '', cog)
-            cmd = "grep -P '"+cog+"' "+directory+"/cog_of_clusters.txt | awk {'print $1'}"
-            cmd = "grep -i -P '"+ cog + "' "+tmp_dir+"/"+str(session)+".merged_with_cog_final.csv | awk -F '\t' {'print $3'}"
-            returned_value = os.popen(cmd).read()
-            list_of_clusters1 = returned_value.split("\n")
-            list_of_clusters.extend(list_of_clusters1)
-
-
-        
-        # remove empty values
-        list_of_clusters = list(filter(None, list_of_clusters))
-        list_of_clusters = list(map(int, list_of_clusters))
-        
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
-
-        
-
-        
+        is_match = _pav_cluster_ids(df2["ClutserID"]).isin(search_ids)
         for sample in list_sp2:
-            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+            df2[sample] = np.where((df2[sample] == 1) & (~is_match), 0.67, df2[sample])
+        search_res2 = pd.DataFrame(sorted(search_ids), columns=['ClutserID']).to_dict('records')
 
-    
-
-    if bedfile is not None and bedfile != "":
-
-        dprint("analysis of bedfile")
-        lines_of_bedfile = bedfile.split("\n")
-
-        df_search = pd.DataFrame(merged_with_positions2, columns=['name','Product','start','end'])
-        df_search['start'] = df_search['start'].astype(int)
-        df_search['end'] = df_search['end'].astype(int)
-
-        list_of_clusters = []
-        for line in lines_of_bedfile:
-            elements_of_line = line.split("\t")
-            start = int(elements_of_line[1])
-            end = int(elements_of_line[2])
-            df_subset = df_search.loc[(df_search['start']>=start) & (df_search['end']< end)]
-            df_subset.rename(columns={'name': 'ClutserID'}, inplace=True)
-            list_of_clusters1 = df_subset['ClutserID'].tolist()
-            list_of_clusters.extend(list_of_clusters1)
-
-        df_search = pd.DataFrame(list_of_clusters, columns=['ClutserID'])
-        search_res2 = df_search.to_dict('records')
-
-        for sample in list_sp2:
-            df2[sample] =  np.where( (df2[sample] == 1) & (df2["ClutserID"].isin(list_of_clusters)==False),0.67,df2[sample])
+    ##############################################
+    # filter mode: keep only the matching clusters
+    ##############################################
+    if search_filter:
+        df2 = df2[_pav_cluster_ids(df2["ClutserID"]).isin(search_ids).values].copy()
+        cluster_names = df2["ClutserID"].astype(str).tolist()
+        if len(df2) == 0:
+            fig = go.Figure()
+            fig.update_layout(title_text='Presence/Absence Variation (PAV) matrix of genes — no gene cluster matches the search',
+                              xaxis={'visible': False}, yaxis={'visible': False})
+            return (fig, search_status) if return_status else fig
 
 
     #if sample_ordering == "Hierarchical clustering":
@@ -7462,6 +7794,8 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
         merged_with_positions_scoary = pd.merge(df_scoary_results, pd.read_csv(tmp_dir + "/" + str(session) + ".df_matrix.csv"), left_on='Gene', right_on='ClutserID', how='right')
         if ordering != "Hierarchical clustering":
             merged_with_positions_scoary = pd.merge(df_scoary_results, merged_with_positions3, left_on='Gene', right_on='ClutserID', how='right')
+        elif search_filter:
+            merged_with_positions_scoary = merged_with_positions_scoary[_pav_cluster_ids(merged_with_positions_scoary['ClutserID']).isin(search_ids).values]
         
 
         pvalues_list = merged_with_positions_scoary['log_pval'].tolist()
@@ -7603,7 +7937,9 @@ def heatmap_PAV(proj_title,session,ordering,metadata_table,reference,colorizing_
         fig.update_traces(showscale=True)
     else:
         fig.update_traces(showscale=False)
-    return fig
+    if search_filter:
+        fig.update_layout(title_text=f"Presence/Absence Variation (PAV) matrix of genes — filtered on the search ({len(cluster_names)} clusters)")
+    return (fig, search_status) if return_status else fig
 
 
 @app.callback(
