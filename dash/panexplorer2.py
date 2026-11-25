@@ -28,6 +28,26 @@ from dash import html, dcc, Input, Output, State, Patch, callback_context, Diskc
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 
+# --- Export SVG pour toutes les figures Plotly (bouton appareil photo de la modebar) ---
+# dcc.Graph est remplacé par un wrapper qui ajoute toImageButtonOptions au config.
+# Un toImageButtonOptions défini localement sur un graphe garde la priorité (ex. {"format": "png"}
+# pour une très grosse heatmap).
+_ORIGINAL_DCC_GRAPH = dcc.Graph
+
+def _graph_with_svg_export(*args, **kwargs):
+    config = dict(kwargs.pop("config", None) or {})
+    graph_id = kwargs.get("id", args[0] if args else None)
+    image_opts = {
+        "format": "svg",
+        "filename": graph_id if isinstance(graph_id, str) else "panexplorer_figure",
+    }
+    image_opts.update(config.get("toImageButtonOptions") or {})
+    config["toImageButtonOptions"] = image_opts
+    config.setdefault("displaylogo", False)
+    return _ORIGINAL_DCC_GRAPH(*args, config=config, **kwargs)
+
+dcc.Graph = _graph_with_svg_export
+
 import diskcache
 
 import pandas as pd
